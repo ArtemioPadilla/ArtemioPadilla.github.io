@@ -11447,14 +11447,13 @@ section.resume-section .resume-section-content {
   border: none;
   outline: none;
   text-transform: uppercase !important;
-  display: flex;  
+  display: block;  
   flex-wrap: wrap;
   position: relative;
   justify-content: space-between;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   border-color: #e9ecef #e9ecef #dee2e6;
-  display: block;
   padding: 0.5rem 1rem;
   text-decoration: none;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
@@ -11486,4 +11485,10 @@ section.resume-section .resume-section-content {
 .active:after {
   content: "\2796"; /* Unicode character for "minus" sign (-) */
   color: rgba(255, 255, 255, 1);
+}
+
+
+/* Style the collapsible content. Note: hidden by default */
+.collapsible_hidden {
+  display: none;
 }
