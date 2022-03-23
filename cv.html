@@ -6,7 +6,7 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>Artemio Padilla - CV</title>
-        <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="./assets/img/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v6.1.1/js/all.js" crossorigin="anonymous"></script>
         <!-- Google fonts-->
@@ -27,8 +27,31 @@
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">About</a></li>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#experience">Experience</a></li>
-                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#education">Formal Education</a></li>
-                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#other/education">Other Education</a></li>
+                    <button type="button" class="collapsible">Education</button>
+                        <div class="content">
+                            <ul class="navbar-nav">
+                                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#education">Formal Education</a></li>
+                                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#othereducation">Other Education</a></li>
+                            </ul>
+                        </div>
+
+                        <script>
+                            var coll = document.getElementsByClassName("collapsible");
+                            var i;
+                            
+                            for (i = 0; i < coll.length; i++) {
+                            coll[i].addEventListener("click", function() {
+                                this.classList.toggle("active");
+                                var content = this.nextElementSibling;
+                                if (content.style.display === "block") {
+                                content.style.display = "none";
+                                } else {
+                                content.style.display = "block";
+                                }
+                            });
+                            }
+                            </script>
+                    
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#skills">Skills</a></li>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#leadership">Leadership</a></li>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#interests">Interests</a></li>
@@ -119,7 +142,7 @@
             <!-- Education-->
             <section class="resume-section" id="education">
                 <div class="resume-section-content">
-                    <h2 class="mb-5">Education</h2>
+                    <h2 class="mb-5">Formal Education</h2>
                     <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
                         <div class="flex-grow-1">
                             <h3 class="mb-0">National Autonomous University of Mexico</h3>
@@ -129,7 +152,8 @@
                         </div>
                         <div class="flex-shrink-0"><span class="text-primary">Sept 2020 - Expected Dec 2022</span></div>
                     </div>
-                    <div class="d-flex flex-column flex-md-row justify-content-between">
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
                         <div class="flex-grow-1">
                             <h3 class="mb-0">National Autonomous University of Mexico</h3>
                             <div class="subheading mb-3">Bachelor of Science in Physics</div>
@@ -137,31 +161,153 @@
                             <p>GPA: 3.73/4.0</p>
                         </div>
                         <div class="flex-shrink-0"><span class="text-primary">Sept 2013 - Sept 2020</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Colegio Fernández de Lizardi</h3>
+                            <div class="subheading mb-3">High School: Chemistry and Biological Sciences</div>
+                            <div>First place of the generation</div>
+                            <p>GPA: 3.89/4.0</p>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2010-2013</span></div>
                     </div>
                 </div>
             </section>
             <hr class="m-0" />
-            <!-- Education-->
-            <section class="resume-section" id="other-education">
+            <!-- Other Education-->
+            <section class="resume-section" id="othereducation">
                 <div class="resume-section-content">
                     <h2 class="mb-5">Other Education</h2>
+
                     <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
                         <div class="flex-grow-1">
-                            <h3 class="mb-0">National Autonomous University of Mexico</h3>
-                            <div class="subheading mb-3">Bachelor degree in Data Science</div>
-                            <div>Relevant coursework: Machine Learning, Deep Learning, Big Data I and II, Discrete Maths, Data Mining, Information Visualization, Relational Databases, noSQL Databases, Natural Language Processing, Time Series, Concurrent Programming, Stochastic Simulation, Statistics</div>
-                            <p>GPA: 3.84/4.0</p>
+                            <h3 class="mb-0">Online Course: Introduction to HTML5</h3>
+                            <div class="subheading mb-3">University of Michigan</div>
+                            <div><a href="https://www.coursera.org/account/accomplishments/certificate/32QWSABAM7EX" target="_blank"><strong>Completion Certificate.</a></div>
                         </div>
-                        <div class="flex-shrink-0"><span class="text-primary">Sept 2020 - Expected Dec 2022</span></div>
+                        <div class="flex-shrink-0"><span class="text-primary">2021</span></div>
                     </div>
-                    <div class="d-flex flex-column flex-md-row justify-content-between">
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
                         <div class="flex-grow-1">
-                            <h3 class="mb-0">National Autonomous University of Mexico</h3>
-                            <div class="subheading mb-3">Bachelor of Science in Physics</div>
-                            <div>Relevant coursework: Optics, Scientific Instrumentation, Robotics, Electronics, Mechanics, Quantum Mechanics, Metal Machining, Calculus I-IV, Statistical Mechanics, Observational Astronomy, Philosophy of Quantum Physics</div>
-                            <p>GPA: 3.73/4.0</p>
+                            <h3 class="mb-0">Online Course: Introduction to Git</h3>
+                            <div class="subheading mb-3">Datacamp</div>
+                            <div><a href="https://www.datacamp.com/statement-of-accomplishment/course/843b5ed460f50c0f94eade6cb4acabda0c8a1fa8" target="_blank"><strong>Statement of Accomplishment.</a></div>
                         </div>
-                        <div class="flex-shrink-0"><span class="text-primary">Sept 2013 - Sept 2020</span></div>
+                        <div class="flex-shrink-0"><span class="text-primary">2021</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Online Course: MongoDB Basics</h3>
+                            <div class="subheading mb-3">MongoDB</div>
+                            <div><a href="https://university.mongodb.com/course_completion/95f2b8c2-c379-4c7f-9ccb-e8842db9e95f?utm_source=copy&utm_medium=social&utm_campaign=university_social_sharing" target="_blank"><strong>Proof of Completion.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2021</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Seminar: The stories behind graphs</h3>
+                            <div class="subheading mb-3">DGTIC, UNAM</div>
+                            <div><a href="https://drive.google.com/file/d/1UgCqhfyGXut3V24bm3T_H5xbWf-YZkoJ/view?usp=sharing" target="_blank"><strong>Participation Diploma.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2021</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Online Course: Database Design</h3>
+                            <div class="subheading mb-3">Datacamp</div>
+                            <div><a href="https://www.datacamp.com/statement-of-accomplishment/course/2f92b8c4b132cd6c73f969b197ca55bf692cc6c2" target="_blank"><strong>Statement of Accomplishment.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2021</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Course/Workshop: High Level Efficiency - An approach to Julia language</h3>
+                            <div class="subheading mb-3">Datacamp</div>
+                            <div><a href="https://drive.google.com/file/d/1PRlLDb-_v9QiFjR209D9UCSkMcwnk-pi/view?usp=sharing" target="_blank"><strong>Statement of Accomplishment.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2021</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Online Course: A First Step Towards SAP HANA Query Optimization</h3>
+                            <div class="subheading mb-3">SAP</div>
+                            <div><a href="https://open.sap.com/verify/xefov-manat-kuses-tohut-domar" target="_blank"><strong>Course Certificate.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2020</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Seminar: Optics IONS OPUMA 2020</h3>
+                            <div class="subheading mb-3">Record of Achievement</div>
+                            <div><a href="https://drive.google.com/file/d/1rcdA_vNm1ZUdSOzqTl5CL4ecwpYt4gDP/view?usp=sharing" target="_blank"><strong>Certificate of Attendance.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2020</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Intensive Course of Philosophy: From Sophists to Aristotle</h3>
+                            <div class="subheading mb-3">FFyL, UNAM.</div>
+                            <div><a href="https://drive.google.com/file/d/1rbGsI0Lkhswf9RroaBUPBKWD0hwvGQvw/view?usp=sharing" target="_blank"><strong>Assistance Diploma.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2020</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Summer Research Internship</h3>
+                            <div class="subheading mb-3">CNyN, UNAM  Ensenada</div>
+                            <div>Scientific Poster developed on Atomic Force Microscopy. <a href="https://drive.google.com/file/d/0B54bk03wh2NUY3lkdlRGOC1Vc2M/view?usp=sharing&resourcekey=0-nUPLndxRpyyI-2QXjY0uAg" target="_blank"><strong>Participation Diploma.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2018</span></div>
+                    </div>
+
+                    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Course: Ethical Hacking and Penetration Tests</h3>
+                            <div class="subheading mb-3">Faculty of Sciences, UNAM</div>
+                            <div><a href="https://drive.google.com/file/d/0B54bk03wh2NUbi1QOVFlb0RCQTJaWVBTMV83R2FXTnIwRGZ3/view?usp=sharing&resourcekey=0-L4mM5x0SO8PqbgyY0FovDg" target="_blank"><strong>Assistance Diploma.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2017</span></div>
+                    </div>
+
+                    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Workshop: Heat transfer at the nanoscale</h3>
+                            <div class="subheading mb-3">Institute of Physics, UNAM</div>
+                            <div> <a href="https://drive.google.com/file/d/1v7AiHcDqF9ZtB7FO-IPBwoLNJwK8EBTo/view?usp=sharing" target="_blank"><strong>Assistance Diploma.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2016</span></div>
+                    </div>
+
+                    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Mexico National Convention of Mechatronics</h3>
+                            <div class="subheading mb-3">Assistance Diploma</div>
+                            <div>Puerto Vallarta, Jalisco.</div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2012</span></div>
+                    </div>
+
+                    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">British English Olympics</h3>
+                            <div class="subheading mb-3">BEO's English Competition</div>
+                            <div>Assistance Diploma. Competition took place in England</div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2012</span></div>
                     </div>
                 </div>
             </section>
@@ -231,12 +377,74 @@
             </section>
 
             <hr class="m-0" />
-            <!-- Publications-->
+            <!-- Leadership-->
             <section class="resume-section" id="leadership">
                 <div class="resume-section-content">
                     <h2 class="mb-5">Leadership</h2>
-                    <p>asdasdasd.</p>
-                    <p class="mb-0">asdasdasd.</p>
+    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Official Elected representative for Data Science Students at UNAM</h3>
+                            <div class="subheading mb-3">IIMAS, UNAM</div>
+                            <div>Elected by the majority of students to hold an administrative position at the academic committee of the bachelor's program of data science at UNAM.</div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">Sept 2021 - Present</span></div>
+                    </div>
+
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Debate Workshop: 2020-2</h3>
+                            <div class="subheading mb-3">Law Faculty, UNAM</div>
+                            <div><a href="https://drive.google.com/file/d/1ql-fwrNHVx0DPlOfwbgDsuTYEwFChy-G/view?usp=sharing" target="_blank">Semester long course.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2020</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Active Member Economics Faculty Debate's Team Member</h3>
+                            <div class="subheading mb-3">Economics Faculty, UNAM</div>
+                            <div>Participated in several debates, studied argumentation. fallacies, speech, parliamentary procedures and debate protocols.</div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2018 - 2019</span></div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">XII Model of United Nations</h3>
+                            <div class="subheading mb-3">Mexican Congress of the Union</div>
+                            <div>Represented India in the International Science Council.</div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2019</span></div>
+                    </div>
+    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Model of United Nations, ULAMUN X</h3>
+                            <div class="subheading mb-3">Latinoamerican University</div>
+                            <div>Represented India in the Counter-Terrorism Committee. <a href="https://drive.google.com/file/d/1sbKPBTxltEkZvHyd-qNJBcov-PuPItDK/view?usp=sharing" target="_blank">Participation Diploma.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2018</span></div>
+                    </div>
+    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Debate competition: UNAMESA de Debate</h3>
+                            <div class="subheading mb-3">Economy Faculty, UNAM</div>
+                            <div><a href="https://drive.google.com/file/d/1tsTngCcO6Rfa3FK3_bk2PvliMdgOSkOk/view?usp=sharing" target="_blank">Participation Diploma.</a></div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2018</span></div>
+                    </div>
+    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Oratory  Workshop: 2019-1</h3>
+                            <div class="subheading mb-3">Law Faculty, UNAM</div>
+                            <div>Semester long course.</div>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">2018</span></div>
+                    </div>
                 </div>
             </section>
 
@@ -245,8 +453,9 @@
             <section class="resume-section" id="interests">
                 <div class="resume-section-content">
                     <h2 class="mb-5">Interests</h2>
-                    <p>Other interest.</p>
-                    <p class="mb-0">Other interest 2.</p>
+                    <p class="mb-4">I'm interested with all technology development related topics. From physical technology to technology for complex systems. I believe the fortunate ones that have the opportunity to learn and master the knowledge that we as society have cultivated for centuries have the duty to retribute our luck to the society.</p>
+                    <p class="mb-4">I'm interested in topics such as robotics, cybernetics, political theory, self-organization, artificial intelligence and economics. </p>
+                    <p class="mb-0">When not doing academic work I love to watch movies and videos that expand my view of the world and love to spend my spare time with my close friends and family.</p>
                 </div>
             </section>
             <hr class="m-0" />
@@ -257,41 +466,22 @@
                     <ul class="fa-ul mb-0">
                         <li>
                             <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-                            Google Analytics Certified Developer
+                            3<sup>rd</sup>
+                            Place - UN Youth Hackaton 2021 - General Award. <a href="https://drive.google.com/file/d/1ioafxN5doSh7epGbyQ1c9Y6vX6dpTyd6/view?usp=sharing" target="_blank">Price Certificate.</a>  <a href="https://drive.google.com/file/d/1O-Vv_Gd_M0AfYL4tFhDMHz87xSaGOBpv/view?usp=sharing" target="_blank">Participation Diploma.</a>
                         </li>
                         <li>
                             <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-                            Mobile Web Specialist - Google Certification
+                            1<sup>st</sup>
+                            Place - UN Youth Hackaton 2021 - All student team award. <a href="https://drive.google.com/file/d/1ioafxN5doSh7epGbyQ1c9Y6vX6dpTyd6/view?usp=sharing" target="_blank">Price Certificate.</a>  <a href="https://drive.google.com/file/d/14IOQi0gD6eedfyZXQPwIf2n_KpgYOcui/view?usp=sharing" target="_blank">Participation Diploma.</a>
                         </li>
                         <li>
                             <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-                            1
-                            <sup>st</sup>
-                            Place - University of Colorado Boulder - Emerging Tech Competition 2009
+                            Special Mention - Model of United Nations, ULAMUN X - Latinoamerican University - 2018
                         </li>
                         <li>
                             <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-                            1
-                            <sup>st</sup>
-                            Place - University of Colorado Boulder - Adobe Creative Jam 2008 (UI Design Category)
-                        </li>
-                        <li>
-                            <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-                            2
-                            <sup>nd</sup>
-                            Place - University of Colorado Boulder - Emerging Tech Competition 2008
-                        </li>
-                        <li>
-                            <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-                            1
-                            <sup>st</sup>
-                            Place - James Buchanan High School - Hackathon 2006
-                        </li>
-                        <li>
-                            <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-                            3
-                            <sup>rd</sup>
-                            Place - James Buchanan High School - Hackathon 2005
+                            3<sup>rd</sup>
+                            Place - Experimental Physics Demonstration - Area of Kinematics and Dynamics: Project on the Conservation of Energy - 2014. <a href="https://drive.google.com/file/d/0B54bk03wh2NUYnV5UlV1ZHdIVDA/view?usp=sharing&resourcekey=0-7YOSvdxLU7GTx70ZT_4evQ" target="_blank">Price Certificate.</a> <a href="https://drive.google.com/file/d/0B54bk03wh2NUbGhpOWcxdnQwY1k/view?usp=sharing&resourcekey=0-BTtz8ibEI_-reqhwIIuI1Q" target="_blank">Participation Diploma.</a>
                         </li>
                     </ul>
                 </div>
@@ -306,17 +496,11 @@
                     <ul class="fa-ul mb-0">
                         <li>
                             <span class="fa-li"><i class="fa-solid fa-book"></i></span>
-                            Google Analytics Certified Developer
+                            <a href="https://www.mdpi.com/2073-4352/9/7/340" target="_blank"><strong>Peer reviewed article:</strong> Determination of the Chemical Composition of Lithium Niobate Powders - crystals magazine - 2020</a>
                         </li>
                         <li>
                             <span class="fa-li"><i class="fa-solid fa-book"></i></span>
-                            Mobile Web Specialist - Google Certification
-                        </li>
-                        <li>
-                            <span class="fa-li"><i class="fa-solid fa-book"></i></span>
-                            1
-                            <sup>st</sup>
-                            Place - University of Colorado Boulder - Emerging Tech Competition 2009
+                            <a href="http://oreon.dgbiblio.unam.mx/F/VN2GFIVJBPAXX8X2NVXGP7SI3BP4V8C2XY6EAE28HRN26DRGPK-43240?func=find-b&request=artemio+santiago+padilla+robles&find_code=WRD&adjacent=N&local_base=TES01&x=0&y=0&filter_code_2=WYR&filter_request_2=&filter_code_3=WYR&filter_request_3=" target="_blank"><strong>Bachelor's degree thesis (Physics):</strong> Chemical characterization and plasmonic enhanced Raman amplification experiments in an modular spectroscopy system - UNAM - 2020</a>
                         </li>
                     </ul>
                 </div>
@@ -330,15 +514,16 @@
                     <ul class="fa-ul mb-0">
                         <li>
                             <span class="fa-li"><i class="fa-solid fa-comment"></i></span>
-                            English
+                            <strong>Spanish:</strong> Native
                         </li>
                         <li>
                             <span class="fa-li"><i class="fa-solid fa-comment"></i></span>
-                            Spanish
+                            <strong>English:</strong> Fluid. <a href="https://drive.google.com/file/d/13zcQg04YPX3i-h0xyXS72pg3UH2zTPy3/view?usp=sharing" target="_blank">TOEFL Certificate</a> <a href="https://efset.org/cert/86CkW6" target="_blank">EFSET Certificate</a> <a href="https://drive.google.com/file/d/0B54bk03wh2NUTmx0bE5BUExCTEE/view?usp=sharing&resourcekey=0-v9NaEe0ZzSLQEG-3rLVUTA" target="_blank">Cambridge Certificate</a> 
+                        </li>
                         </li>
                         <li>
                             <span class="fa-li"><i class="fa-solid fa-comment"></i></span>
-                            French
+                            <strong>French:</strong> Basics
                         </li>
                     </ul>
                 </div>

@@ -4074,8 +4074,8 @@ textarea.form-control-lg {
 }
 
 .navbar-text {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding-top: 0rem;
+  padding-bottom: 0rem;
 }
 
 .navbar-collapse {
@@ -11432,4 +11432,58 @@ section.resume-section .resume-section-content {
     padding-top: 5rem;
     padding-bottom: 5rem;
   }
+}
+
+
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+
+  font-weight: 800;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  background-color: rgb(0, 4, 255);
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  text-transform: uppercase !important;
+  display: flex;  
+  flex-wrap: wrap;
+  position: relative;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-color: #e9ecef #e9ecef #dee2e6;
+  display: block;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+  background-color: rgb(0, 4, 255);
+  color: rgba(255, 255, 255, 0.75);
+  border-color: #e9ecef #e9ecef #dee2e6;
+  
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+  display: none;
+  overflow: hidden;
+  background-color: rgb(0, 4, 255);
+}
+
+.collapsible:after {
+  content: '\02795'; /* Unicode character for "plus" sign (+) */
+  font-size: 13px;
+  color: white;
+  float: right;
+}
+
+.active:after {
+  content: "\2796"; /* Unicode character for "minus" sign (-) */
+  color: rgba(255, 255, 255, 1);
 }
