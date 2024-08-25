@@ -18,7 +18,8 @@ main {
     height: 200px;
     width: 200px;
     margin: 0 auto;
-    margin-top: 20px;
+    margin-top: 0px;
+    padding: 1rem;
 }
 
 .img {
@@ -178,7 +179,6 @@ body {
     
     color: rgb(185, 185, 185);
 }
-
 .typed_wrap h1 {
 	display: inline;
     font-size: 1.4rem;
