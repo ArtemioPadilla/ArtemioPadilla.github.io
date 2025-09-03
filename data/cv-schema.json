@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/cv-schema.json",
+  "title": "Curriculum Vitae Data Schema",
+  "type": "object",
+  "required": ["personal", "experience", "projects", "education", "skills", "metadata"],
+  "properties": {
+    "personal": {
+      "type": "object",
+      "required": ["name", "title", "location", "contact", "summary"],
+      "properties": {
+        "name": {
+          "type": "object",
+          "required": ["first", "last", "full"],
+          "properties": {
+            "first": {"type": "string"},
+            "last": {"type": "string"},
+            "full": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "title": {"type": "string"},
+        "location": {"type": "string"},
+        "contact": {
+          "type": "object",
+            "required": ["email"],
+            "properties": {
+              "phone": {"type": "string"},
+              "email": {"type": "string", "format": "email"},
+              "linkedin": {"type": "string", "format": "uri"},
+              "github": {"type": "string", "format": "uri"},
+              "orcid": {"type": "string", "format": "uri"},
+              "twitter": {"type": "string", "format": "uri"},
+              "facebook": {"type": "string", "format": "uri"}
+            },
+            "additionalProperties": true
+        },
+        "profileImage": {"type": "string", "format": "uri"},
+        "summary": {
+          "type": "object",
+          "required": ["brief"],
+          "properties": {
+            "brief": {"type": "string"},
+            "tagline": {"type": "string"},
+            "full": {"type": "string"},
+            "connection": {"type": "string"},
+            "current": {"type": "string"},
+            "strengths": {"type": "array", "items": {"type": "string"}},
+            "closing": {"type": "string"}
+          }, "additionalProperties": true
+        }
+      }, "additionalProperties": true
+    },
+    "experience": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "company", "startDate", "highlights"],
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "company": {"type": "string"},
+          "location": {"type": "string"},
+          "startDate": {"type": ["string", "null"], "pattern": "^\\d{4}(-\\d{2})?$"},
+          "endDate": {"type": ["string", "null"], "pattern": "^\\d{4}(-\\d{2})?$"},
+          "current": {"type": ["boolean", "null"]},
+          "highlights": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["text"],
+              "properties": {
+                "text": {"type": "string"},
+                "metrics": {"type": "object", "additionalProperties": {"anyOf": [{"type": "string"}, {"type": "number"}, {"type": "null"}]}}
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "projects": {"type": "array", "items": {"type": "object", "required": ["name", "year"], "properties": {"name": {"type": "string"}, "description": {"type": "string"}, "url": {"type": "string", "format": "uri"}, "year": {"type": "string"}, "type": {"type": "string"}}, "additionalProperties": true}},
+    "education": {"type": "array", "items": {"type": "object", "required": ["degree", "institution"], "properties": {"degree": {"type": "string"}, "institution": {"type": "string"}, "startDate": {"type": ["string", "null"], "pattern": "^\\d{4}(-\\d{2})?$"}, "endDate": {"type": ["string", "null"], "pattern": "^\\d{4}(-\\d{2})?$"}, "gpa": {"type": ["string", "null"]}, "coursework": {"type": ["string", "null"]}, "achievement": {"type": ["string", "null"]}}, "additionalProperties": true}},
+    "certifications": {"type": "array", "items": {"type": "object", "required": ["name", "date"], "properties": {"name": {"type": "string"}, "issuer": {"type": "string"}, "date": {"type": "string"}, "url": {"type": "string", "format": "uri"}, "description": {"type": "string"}, "type": {"type": "string"}}, "additionalProperties": true}},
+    "skills": {"type": "object", "required": ["languages"], "properties": {"languages": {"type": "array", "items": {"type": "string"}}, "cloudAndMLOps": {"type": "array", "items": {"type": "string"}}, "databases": {"type": "object", "properties": {"relational": {"type": "array", "items": {"type": "string"}}, "nosql": {"type": "array", "items": {"type": "string"}}}}, "bigData": {"type": "array", "items": {"type": "string"}}, "machineLearning": {"type": "array", "items": {"type": "string"}}, "visualization": {"type": "array", "items": {"type": "string"}}, "tools": {"type": "array", "items": {"type": "string"}}, "design": {"type": "array", "items": {"type": "string"}}}, "additionalProperties": true},
+    "leadership": {"type": "array", "items": {"type": "object", "required": ["role", "organization", "period"], "properties": {"role": {"type": "string"}, "organization": {"type": "string"}, "period": {"type": "string"}, "location": {"type": "string"}, "highlights": {"type": "array", "items": {"type": "string"}}, "description": {"type": "string"}}, "additionalProperties": true}},
+    "publications": {"type": "array", "items": {"type": "object", "required": ["title", "year"], "properties": {"title": {"type": "string"}, "journal": {"type": "string"}, "institution": {"type": "string"}, "year": {"type": ["number", "string"]}, "url": {"type": "string", "format": "uri"}, "type": {"type": "string"}, "doi": {"type": "string"}}, "additionalProperties": true}},
+    "awards": {"type": "array", "items": {"type": "object", "required": ["title", "year"], "properties": {"title": {"type": "string"}, "organization": {"type": "string"}, "description": {"type": "string"}, "year": {"type": ["string", "number"]}, "certificates": {"type": "array", "items": {"type": "object", "required": ["name"], "properties": {"name": {"type": "string"}, "url": {"type": "string", "format": "uri"}}, "additionalProperties": true}}}, "additionalProperties": true}},
+    "languages": {"type": "array", "items": {"type": "object", "required": ["name", "level"], "properties": {"name": {"type": "string"}, "level": {"type": "string"}, "certifications": {"type": "array", "items": {"type": "object", "required": ["name"], "properties": {"name": {"type": "string"}, "url": {"type": "string", "format": "uri"}}, "additionalProperties": true}}}, "additionalProperties": true}},
+    "interests": {"type": "object", "properties": {"professional": {"type": "array", "items": {"type": "string"}}, "personal": {"type": "array", "items": {"type": "string"}}, "philosophy": {"type": "string"}}, "additionalProperties": true},
+    "metadata": {"type": "object", "required": ["version", "lastUpdated"], "properties": {"version": {"type": "string"}, "lastUpdated": {"type": "string"}, "source": {"type": "string"}, "templateOptions": {"type": "object", "properties": {"formats": {"type": "object"}, "resumeMaxItems": {"type": "object"}}}}, "additionalProperties": true}
+  },
+  "additionalProperties": false
+}

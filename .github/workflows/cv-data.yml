@@ -1,0 +1,47 @@
+name: Validate & Generate CV Data
+
+on:
+  push:
+    paths:
+      - 'data/cv-data.json'
+      - 'data/cv-schema.json'
+      - 'scripts/generate-cv-data.js'
+      - '.github/workflows/cv-data.yml'
+  pull_request:
+    paths:
+      - 'data/cv-data.json'
+      - 'data/cv-schema.json'
+      - 'scripts/generate-cv-data.js'
+      - '.github/workflows/cv-data.yml'
+
+jobs:
+  validate-generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Validate CV JSON
+        run: npm run validate:cv
+
+      - name: Regenerate JS fallback
+        run: npm run build:cv
+
+      - name: Check for diff in generated file
+        run: |
+          if ! git diff --quiet -- data/cv-data.js; then
+            echo "Generated cv-data.js differed from committed version. Failing." >&2
+            git --no-pager diff -- data/cv-data.js >&2
+            exit 1
+          fi
+
+      - name: Summary
+        run: echo "CV data validated and cv-data.js is in sync."

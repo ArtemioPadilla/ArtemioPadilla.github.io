@@ -1,0 +1,20 @@
+{
+  "name": "artemiopadilla-cv-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal CV static site with canonical JSON data and generated JS fallback",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build:cv": "node scripts/generate-cv-data.js",
+    "validate:cv": "node scripts/generate-cv-data.js --check",
+  "format:cv": "npx prettier --write data/cv-data.json",
+  "setup:hooks": "node scripts/install-hooks.js",
+  "prepare:cv-release": "node scripts/update-cv-metadata.js",
+  "release:cv": "npm run build:cv && git add data/cv-data.js data/cv-data.json && git commit -m 'chore(cv): release $npm_package_version' || echo 'No changes'"
+  },
+  "devDependencies": {
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1"
+  }
+}

@@ -1,6 +1,5 @@
 // CV Data for direct file:// access (auto-generated from cv-data.json)
-window.cvData = 
-{
+window.cvData = {
   "personal": {
     "name": {
       "first": "Artemio Santiago",
@@ -34,7 +33,6 @@ window.cvData =
       "closing": "I also co-founded SECiD at UNAM, fostering Mexico's data science community with the same precision I once applied to spectrometers. I thrive in roles where ML infrastructure requires both microscopic attention to detail and macroscopic business impact—achieved not just through code, but by orchestrating people, processes, and technology."
     }
   },
-  
   "experience": [
     {
       "id": "circulo-mlops",
@@ -150,11 +148,26 @@ window.cvData =
       "startDate": "2021-08",
       "endDate": "2022-08",
       "highlights": [
-        { "text": "Represented the student body across two campuses, liaising among students, faculty, and administration during the post-pandemic return to in-person classes", "metrics": {} },
-        { "text": "Influenced academic decisions: faculty selection processes, alumni survey design, and feedback for the ongoing curriculum redesign", "metrics": {} },
-        { "text": "Improved student resources, securing access to campus Wi-Fi and institute GPU infrastructure", "metrics": {} },
-        { "text": "Organized postgraduate info sessions to help students explore advanced study opportunities", "metrics": {} },
-        { "text": "Advocated for students via committee participation, review of faculty CVs and demo classes, and transparent communication on administrative processes", "metrics": {} }
+        {
+          "text": "Represented the student body across two campuses, liaising among students, faculty, and administration during the post-pandemic return to in-person classes",
+          "metrics": {}
+        },
+        {
+          "text": "Influenced academic decisions: faculty selection processes, alumni survey design, and feedback for the ongoing curriculum redesign",
+          "metrics": {}
+        },
+        {
+          "text": "Improved student resources, securing access to campus Wi-Fi and institute GPU infrastructure",
+          "metrics": {}
+        },
+        {
+          "text": "Organized postgraduate info sessions to help students explore advanced study opportunities",
+          "metrics": {}
+        },
+        {
+          "text": "Advocated for students via committee participation, review of faculty CVs and demo classes, and transparent communication on administrative processes",
+          "metrics": {}
+        }
       ]
     },
     {
@@ -282,7 +295,6 @@ window.cvData =
       ]
     }
   ],
-  
   "projects": [
     {
       "name": "Portfolio Management Strategy Simulator",
@@ -313,7 +325,6 @@ window.cvData =
       "type": "Discrete Maths & CS Project"
     }
   ],
-  
   "education": [
     {
       "degree": "Bachelor's Degree in Data Science",
@@ -341,7 +352,6 @@ window.cvData =
       "achievement": "First place of my generation"
     }
   ],
-  
   "certifications": [
     {
       "name": "Introduction to HTML5",
@@ -393,9 +403,16 @@ window.cvData =
       "type": "Workshop"
     }
   ],
-  
   "skills": {
-    "languages": ["Python", "SQL", "R", "Julia", "C++", "MATLAB", "Fortran"],
+    "languages": [
+      "Python",
+      "SQL",
+      "R",
+      "Julia",
+      "C++",
+      "MATLAB",
+      "Fortran"
+    ],
     "cloudAndMLOps": [
       "AWS (SageMaker, EMR, Lambda, Glue)",
       "Airflow",
@@ -405,16 +422,48 @@ window.cvData =
       "Snowflake"
     ],
     "databases": {
-      "relational": ["PostgreSQL", "MySQL"],
-      "nosql": ["MongoDB", "Cassandra", "Neo4j", "Redis"]
+      "relational": [
+        "PostgreSQL",
+        "MySQL"
+      ],
+      "nosql": [
+        "MongoDB",
+        "Cassandra",
+        "Neo4j",
+        "Redis"
+      ]
     },
-    "bigData": ["Spark (PySpark)", "EMR", "Data Lake architectures"],
-    "machineLearning": ["Scikit-learn", "TensorFlow", "PyTorch", "XGBoost", "Feature Engineering"],
-    "visualization": ["Matplotlib", "Seaborn", "Plotly", "D3.js"],
-    "tools": ["Git", "Linux", "Raspberry Pi", "Cloudflare"],
-    "design": ["Adobe Illustrator", "Photoshop", "After Effects", "Premier"]
+    "bigData": [
+      "Spark (PySpark)",
+      "EMR",
+      "Data Lake architectures"
+    ],
+    "machineLearning": [
+      "Scikit-learn",
+      "TensorFlow",
+      "PyTorch",
+      "XGBoost",
+      "Feature Engineering"
+    ],
+    "visualization": [
+      "Matplotlib",
+      "Seaborn",
+      "Plotly",
+      "D3.js"
+    ],
+    "tools": [
+      "Git",
+      "Linux",
+      "Raspberry Pi",
+      "Cloudflare"
+    ],
+    "design": [
+      "Adobe Illustrator",
+      "Photoshop",
+      "After Effects",
+      "Premier"
+    ]
   },
-  
   "leadership": [
     {
       "role": "Co-Founder & Secretary-General",
@@ -470,7 +519,6 @@ window.cvData =
       "description": "Competed in formal debate tournament focusing on economic policy and social issues"
     }
   ],
-  
   "publications": [
     {
       "title": "Determination of the Chemical Composition of Lithium Niobate Powders",
@@ -488,7 +536,6 @@ window.cvData =
       "type": "Physics Bachelor's Thesis"
     }
   ],
-  
   "awards": [
     {
       "title": "3rd Place - UN Youth Hackathon 2021 - General Award",
@@ -539,7 +586,6 @@ window.cvData =
       ]
     }
   ],
-  
   "languages": [
     {
       "name": "Spanish",
@@ -568,7 +614,6 @@ window.cvData =
       "level": "Basic"
     }
   ],
-  
   "interests": {
     "professional": [
       "Technology development across the stack—from physical instrumentation to complexity sciences",
@@ -591,10 +636,9 @@ window.cvData =
     ],
     "philosophy": "I believe those fortunate enough to master knowledge have a duty to give back to society."
   },
-  
   "metadata": {
-    "version": "1.0.0",
-    "lastUpdated": "2025-01-03",
+    "version": "1.0.1",
+    "lastUpdated": "2025-09-03",
     "source": "Extracted from cv.html",
     "templateOptions": {
       "formats": {
