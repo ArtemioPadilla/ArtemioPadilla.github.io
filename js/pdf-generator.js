@@ -1,31 +1,65 @@
-// PDF Generator for CV using jsPDF
-// Simplified version with manual text wrapping for better control
+// PDF Generator for CV using jsPDF with JSON data source
+// Generates full CV from the same JSON data used for HTML rendering
 
-function generatePDF() {
+async function generatePDF(format = 'full') {
+    // Load CV data from JSON
+    let cvData;
+    
+    // First check if data is already loaded via script tag (for file:// access)
+    // Always attempt a fresh fetch (cache-busted) so recent edits appear; fall back to window.cvData if fetch fails
+    try {
+        const response = await fetch('data/cv-data.json?cb=' + Date.now(), { cache: 'no-store' });
+        if (!response.ok) throw new Error('network');
+        cvData = await response.json();
+        // Update global cache
+        window.cvData = cvData;
+    } catch (e) {
+        if (window.cvData) {
+            console.warn('Using previously loaded cvData due to fetch issue:', e);
+            cvData = window.cvData;
+        } else {
+            console.error('Error loading CV data:', e);
+            alert('Failed to load CV data for PDF generation');
+            return;
+        }
+    }
+
+    // Validation only (no mutation)
+    if (!(cvData.experience||[]).some(e=>e.id==='unam-student-rep')) {
+        console.warn('[PDF Validation] Student Representative experience missing (id: unam-student-rep). Update source data.');
+    }
+
     // Initialize jsPDF
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
     
-    // Page dimensions - conservative settings
+    // Page dimensions
     const pageWidth = 210;
     const pageHeight = 297;
-    const leftMargin = 30;
-    const rightMargin = 30;
-    const topMargin = 30;
-    const bottomMargin = 30;
-    const contentWidth = pageWidth - leftMargin - rightMargin; // 150mm
+    const leftMargin = 18;
+    const rightMargin = 18;
+    const topMargin = 20;
+    const bottomMargin = 20;
+    const contentWidth = pageWidth - leftMargin - rightMargin;
     let yPos = topMargin;
     let pageNum = 1;
     
-    // Colors
+    // Colors & style tokens
+    // Color palette (reverted to blue-focused scheme)
     const blue = [0, 123, 255];
-    const darkGray = [50, 50, 50];
-    const gray = [100, 100, 100];
+    const darkGray = [40, 40, 40];
+    const gray = [105, 105, 105];
+    const lightGray = [200, 200, 200];
+    const accent = blue; // use blue as accent
+    const lineHeight = 5;
+    const bulletIndent = 4; // mm
+    const sectionSpacing = 6;
+    const bulletGap = 2;
     
     // Set default font
     pdf.setFont('helvetica', 'normal');
     
-    // Manual text wrapping function
+    // Helper functions
     function wrapText(text, maxWidth, fontSize) {
         pdf.setFontSize(fontSize);
         const words = text.split(' ');
@@ -52,307 +86,408 @@ function generatePDF() {
         return lines;
     }
     
-    // Render text with manual wrapping
-    function renderWrappedText(text, x, y, maxWidth, fontSize, lineHeight) {
-        const lines = wrapText(text, maxWidth, fontSize);
+    function sanitizeText(t) {
+        if (!t) return '';
+        let s = t
+            .replace(/[\u2010-\u2015]/g, '-') // various dashes
+            .replace(/[\u2212]/g, '-') // minus sign
+            .replace(/[⁻−]/g, '-')
+            .replace(/10⁻9/g, '10^-9')
+            .replace(/10⁻⁹/g, '10^-9')
+            .replace(/10⁹/g, '10^9')
+            // Heuristic: if caret was lost and we have pattern 10-9 (very common for 10^-9 meters), restore caret
+            // Only do this when base is 10 and a hyphen followed by 1-2 digits (to avoid over-aggressive substitutions like version numbers 10-90 etc.)
+            .replace(/(?<!\d)10-([0-9]{1,2})(\b)/g, '10^-$1$2')
+            .replace(/[\u2000-\u200B\u00A0\u202F\u205F\u180E\u1680\u3000]/g, '') // remove a wide range of unicode spaces
+            .replace(/\s+/g, ' ')
+            .trim();
+    // Strip any remaining non-ASCII (after NFKD normalize) which can trigger font fallback + odd spacing in jsPDF
+    try { s = s.normalize('NFKD'); } catch(e){}
+    s = s.replace(/[^\x20-\x7E]/g, '');
+        // Convert any earlier 1e-9 artifacts back to 10^-9 for caret-based superscript rendering
+        s = s.replace(/\b1e(-?\d+)\b/g, (m, exp) => `10^${exp}`);
+        // Compress sequences of spaced single letters (artifact cleanup)
+        s = s.replace(/(?:\b\w\b\s+){6,}\b\w\b/g, seq => seq.replace(/\s+/g, '')); // join long sequences
+    // Additional collapse: if 4+ single-letter tokens in a row, join all (defensive)
+    s = s.replace(/(?:\b[A-Za-z]\b\s*){4,}/g, seq => seq.replace(/\s+/g, ''));
+    // Collapse any letter-by-letter spaced words of length >=5 (e.g., "t h e   d i s c i p l i n e")
+    s = s.replace(/(?:[A-Za-z]\s){4,}[A-Za-z]/g, seq => seq.replace(/\s/g, ''));
+        // Repair words that became split into letters but separated by double (word) boundaries. Split on 2+ spaces to keep real word gaps.
+        s = s.split(/ {2,}/).map(chunk => {
+            if (/^(?:[A-Za-z] ){2,}[A-Za-z]$/.test(chunk)) return chunk.replace(/ /g,'');
+            return chunk;
+        }).join(' ');
+        return s;
+    }
+
+    function fixSpacedOutParagraph(p) {
+        // Detect pattern of many letter-space-letter repeats (heuristic)
+        const ratio = (p.match(/\b\w\b/g) || []).length / (p.split(/\s+/).length || 1);
+        if (/(?:[A-Za-z]\s){15,}[A-Za-z]/.test(p) || ratio > 0.65) {
+            return p.replace(/([A-Za-z])\s(?=[A-Za-z])/g, '$1');
+        }
+        return p;
+    }
+
+    function renderWrappedText(text, x, y, maxWidth, fontSize, lineHt) {
+        const lines = wrapText(sanitizeText(text), maxWidth, fontSize);
         pdf.setFontSize(fontSize);
         
         lines.forEach((line, index) => {
-            pdf.text(line, x, y + (index * lineHeight));
+            pdf.text(line, x, y + (index * lineHt));
         });
         
-        return lines.length * lineHeight;
+        return lines.length * lineHt;
+    }
+
+    // Simplified paragraph rendering: show caret expressions literally (e.g., 10^-9) without superscript formatting
+    function renderParagraphWithExponents(text, x, y, maxWidth, fontSize, lineHt) {
+        const clean = sanitizeText(text);
+        const lines = wrapText(clean, maxWidth, fontSize);
+        pdf.setFontSize(fontSize);
+        lines.forEach((ln, i) => pdf.text(ln, x, y + i * lineHt));
+        return lines.length * lineHt;
     }
     
-    // Check for page break
-    function checkPageBreak(requiredSpace) {
+    function checkPageBreak(requiredSpace, reflowHeader = true) {
         if (yPos + requiredSpace > pageHeight - bottomMargin) {
             pdf.addPage();
             yPos = topMargin;
             pageNum++;
-            addPageNumber();
+            if (reflowHeader) drawRunningHeader();
             return true;
         }
         return false;
     }
     
-    // Add page number
-    function addPageNumber() {
-        // Page number is added at the end for all pages
-    }
-    
-    // Add section header
     function addSectionHeader(title) {
         checkPageBreak(15);
         pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(12);
-        pdf.setTextColor(...blue);
+        pdf.setFontSize(11.5);
+        pdf.setTextColor(...accent);
         pdf.text(title.toUpperCase(), leftMargin, yPos);
-        
-        // Add underline
-        pdf.setDrawColor(...blue);
-        pdf.setLineWidth(0.5);
-        pdf.line(leftMargin, yPos + 2, leftMargin + 50, yPos + 2);
-        
+        // Accent bar
+        pdf.setDrawColor(...accent);
+        pdf.setLineWidth(0.7);
+        pdf.line(leftMargin, yPos + 1.8, leftMargin + 60, yPos + 1.8);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(...darkGray);
-        yPos += 10;
+        yPos += 8;
+    }
+
+    function drawRunningHeader() {
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(10);
+        pdf.setTextColor(...accent);
+        pdf.text(`${personal.name.first.split(' ')[0]} ${personal.name.last.split(' ')[0]}`, leftMargin, topMargin - 6);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(8);
+        pdf.setTextColor(...gray);
+        pdf.text(`${personal.title}  •  ${personal.contact.email}  •  ${personal.location}`, pageWidth - rightMargin, topMargin - 6, { align: 'right' });
+        // Horizontal rule
+        pdf.setDrawColor(...lightGray);
+        pdf.setLineWidth(0.3);
+        pdf.line(leftMargin, topMargin - 4, pageWidth - rightMargin, topMargin - 4);
+    }
+
+    const BULLET_OFFSET_FACTOR = 0.14; // smaller number -> lower bullet (was 0.30)
+    function drawBullet(baselineY, fontSize) {
+        const r = 1.08;
+        pdf.setFillColor(...accent);
+        const centerY = baselineY - (fontSize * BULLET_OFFSET_FACTOR);
+        pdf.circle(leftMargin + 1.8, centerY, r, 'F');
+    }
+
+    function renderBulletParagraph(text, fontSize = 9) {
+        const clean = sanitizeText(text);
+        const maxWidth = contentWidth - bulletIndent;
+        const lines = wrapText(clean, maxWidth, fontSize);
+        // Pre-calc required height and page-break if needed BEFORE drawing to avoid overlapping footer/page number
+        const requiredHeight = lines.length * (lineHeight - 0.2) + bulletGap + 1.5; // extra padding
+        if (yPos + requiredHeight > pageHeight - bottomMargin) {
+            checkPageBreak(requiredHeight);
+        }
+        const baseline = yPos;
+        drawBullet(baseline, fontSize);
+        const xStart = leftMargin + bulletIndent;
+        pdf.setFontSize(fontSize);
+        lines.forEach((ln, idx) => {
+            const lineBaseline = baseline + (idx * (lineHeight - 0.2));
+            pdf.text(ln, xStart, lineBaseline);
+        });
+        yPos = baseline + lines.length * (lineHeight - 0.2) + bulletGap;
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return 'Present';
+        if (dateStr.includes('-')) {
+            const [year, month] = dateStr.split('-');
+            const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                               'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+            return `${monthNames[parseInt(month)]} ${year}`;
+        }
+        return dateStr;
     }
     
     // ============ HEADER ============
-    // Name - simplified
+    const personal = cvData.personal;
+    
+    // Header block
     pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(22);
+    pdf.setFontSize(20);
     pdf.setTextColor(...darkGray);
-    pdf.text('Artemio Santiago', leftMargin, yPos);
-    yPos += 8;
-    
-    pdf.setFontSize(22);
-    pdf.text('Padilla Robles', leftMargin, yPos);
-    yPos += 12;
-    
-    // Title
+    pdf.text(sanitizeText(`${personal.name.first} ${personal.name.last}`), leftMargin, yPos);
+    yPos += 9;
     pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(14);
-    pdf.setTextColor(...blue);
-    pdf.text('MLOps & Automation Engineer Sr.', leftMargin, yPos);
-    yPos += 10;
-    
-    // Contact - simple left-aligned
-    pdf.setFontSize(10);
+    pdf.setFontSize(12.5);
+    pdf.setTextColor(...accent);
+    pdf.text(sanitizeText(personal.title), leftMargin, yPos);
+    yPos += 7;
+    pdf.setFontSize(9);
     pdf.setTextColor(...gray);
-    pdf.text('Mexico City', leftMargin, yPos);
-    yPos += 5;
-    pdf.text('55-6047-6808', leftMargin, yPos);
-    yPos += 5;
-    pdf.text('artemiopadilla@gmail.com', leftMargin, yPos);
-    yPos += 15;
+    const contactLine = sanitizeText(`${personal.location}  •  ${personal.contact.phone}  •  ${personal.contact.email}`);
+    pdf.text(contactLine, leftMargin, yPos);
+    yPos += 10;
+    // Horizontal separator
+    pdf.setDrawColor(...lightGray);
+    pdf.setLineWidth(0.3);
+    pdf.line(leftMargin, yPos, pageWidth - rightMargin, yPos);
+    yPos += 6;
     
     // ============ PROFESSIONAL SUMMARY ============
     addSectionHeader('Professional Summary');
     
-    const summaryText = "I'm a Mexican engineer focused on building reliable ML infrastructure that improves " +
-                       "large-scale decision quality. With a background in nanoscience research (STM/AFM/Raman " +
-                       "spectroscopy) and a peer-reviewed publication, I learned the discipline of working at " +
-                       "10^-9 meters in ultra-high vacuum. Today, I apply the same rigor to ML infrastructure—ensuring " +
-                       "models scale reliably to 10^9 requests.";
-    
-    pdf.setFontSize(10);
-    const summaryHeight = renderWrappedText(summaryText, leftMargin, yPos, contentWidth, 10, 5);
-    yPos += summaryHeight + 10;
+    // Build rich summary including tagline, connection, current context, strengths, and closing
+    pdf.setFontSize(9.5);
+    // Paragraphs for readability
+    const paragraphs = [
+        personal.summary.brief,
+        personal.summary.tagline,
+        personal.summary.full,
+        personal.summary.connection, // no truncation; show full
+        personal.summary.current
+    ].filter(Boolean);
+    paragraphs.forEach((p, idx) => {
+        const cleaned = fixSpacedOutParagraph(sanitizeText(p));
+        if (typeof pdf.setCharSpace === 'function') pdf.setCharSpace(0);
+        const h = renderParagraphWithExponents(cleaned, leftMargin, yPos, contentWidth, 9.1, lineHeight - 0.3);
+        yPos += h + 2;
+        checkPageBreak(25);
+    });
+    if (personal.summary.strengths && personal.summary.strengths.length) {
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(9.5);
+        pdf.setTextColor(...darkGray);
+        pdf.text('Core Strengths:', leftMargin, yPos);
+        pdf.setFont('helvetica', 'normal');
+        yPos += 5;
+    personal.summary.strengths.forEach(s => renderBulletParagraph(s, 8.9));
+    }
+    if (personal.summary.closing) {
+        yPos += 2;
+        const closingClean = fixSpacedOutParagraph(sanitizeText(personal.summary.closing));
+        const closingHeight = renderWrappedText(closingClean, leftMargin, yPos, contentWidth, 8.9, lineHeight - 0.3);
+        yPos += closingHeight;
+    }
+    yPos += sectionSpacing;
     
     // ============ PROFESSIONAL EXPERIENCE ============
     addSectionHeader('Professional Experience');
     
-    // Job 1
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(11);
-    pdf.text('MLOps & Automation Engineer Sr.', leftMargin, yPos);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(...gray);
-    pdf.text('Dec 2023 – Present', pageWidth - rightMargin - 35, yPos);
-    yPos += 5;
+    // Determine which experiences to include based on format
+    let experiences = cvData.experience;
+    if (format === 'resume') {
+        experiences = experiences.slice(0, 3);
+    } else if (format === 'summary') {
+        experiences = experiences.slice(0, 2);
+    }
     
-    pdf.setFont('helvetica', 'italic');
-    pdf.setFontSize(10);
-    pdf.setTextColor(...gray);
-    pdf.text('Círculo de Crédito', leftMargin, yPos);
-    yPos += 6;
-    
-    // Bullet points
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(...darkGray);
-    
-    const bullet1 = "• Founded division: established the company's MLOps & Automation division (strategy, tooling, governance).";
-    const bullet1Height = renderWrappedText(bullet1, leftMargin, yPos, contentWidth - 5, 9, 5);
-    yPos += bullet1Height + 3;
-    
-    const bullet2 = "• Accelerated model deployment: led productization of 9 analytical models (collections scoring, loan estimations, inference systems), cutting deployment time from >2 quarters to <1 quarter.";
-    const bullet2Height = renderWrappedText(bullet2, leftMargin, yPos, contentWidth - 5, 9, 5);
-    yPos += bullet2Height + 10;
-    
-    // Job 2
-    checkPageBreak(30);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(11);
-    pdf.setTextColor(...darkGray);
-    pdf.text('Data Engineer', leftMargin, yPos);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(...gray);
-    pdf.text('Aug 2022 – Dec 2023', pageWidth - rightMargin - 35, yPos);
-    yPos += 5;
-    
-    pdf.setFont('helvetica', 'italic');
-    pdf.setFontSize(10);
-    pdf.text('Círculo de Crédito', leftMargin, yPos);
-    yPos += 6;
-    
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(...darkGray);
-    const bullet3 = "• Initiated the company's knowledge graph as the foundation for automation and smarter data integration.";
-    const bullet3Height = renderWrappedText(bullet3, leftMargin, yPos, contentWidth - 5, 9, 5);
-    yPos += bullet3Height + 3;
-    
-    const bullet4 = "• Led external data enrichment (e.g., RENAPO), improving records for 80M+ individuals at scale.";
-    const bullet4Height = renderWrappedText(bullet4, leftMargin, yPos, contentWidth - 5, 9, 5);
-    yPos += bullet4Height + 10;
-    
-    // Job 3
-    checkPageBreak(30);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(11);
-    pdf.setTextColor(...darkGray);
-    pdf.text('Search Engine Evaluator', leftMargin, yPos);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(...gray);
-    pdf.text('Sept 2019 – Aug 2022', pageWidth - rightMargin - 35, yPos);
-    yPos += 5;
-    
-    pdf.setFont('helvetica', 'italic');
-    pdf.setFontSize(10);
-    pdf.text('Appen (Remote)', leftMargin, yPos);
-    yPos += 6;
-    
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(...darkGray);
-    const bullet5 = "• Evaluated companies, entities, and information sources against Google's information-quality guidelines, consistently ranking in the top 20% of evaluators.";
-    const bullet5Height = renderWrappedText(bullet5, leftMargin, yPos, contentWidth - 5, 9, 5);
-    yPos += bullet5Height + 3;
-    
-    const bullet6 = "• Assessed relevance, accuracy, and usefulness of search results to improve algorithms and user experience.";
-    const bullet6Height = renderWrappedText(bullet6, leftMargin, yPos, contentWidth - 5, 9, 5);
-    yPos += bullet6Height + 10;
-    
-    // Job 4
-    checkPageBreak(30);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(11);
-    pdf.setTextColor(...darkGray);
-    pdf.text('Laboratory Research Assistant – Nanosciences Lab', leftMargin, yPos);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(...gray);
-    pdf.text('Aug 2017 – Sept 2020', pageWidth - rightMargin - 35, yPos);
-    yPos += 5;
-    
-    pdf.setFont('helvetica', 'italic');
-    pdf.setFontSize(10);
-    pdf.text('Institute of Physics (UNAM)', leftMargin, yPos);
-    yPos += 6;
-    
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(...darkGray);
-    const bullet7 = "• Co-developed a modular optical system enabling enhanced Raman spectroscopy techniques for nanoscale research.";
-    const bullet7Height = renderWrappedText(bullet7, leftMargin, yPos, contentWidth - 5, 9, 5);
-    yPos += bullet7Height + 3;
-    
-    const bullet8 = "• Designed, assembled, and calibrated precision components under ultra-high vacuum, ensuring high SNR and reproducibility.";
-    const bullet8Height = renderWrappedText(bullet8, leftMargin, yPos, contentWidth - 5, 9, 5);
-    yPos += bullet8Height + 10;
+    experiences.forEach(job => {
+        checkPageBreak(40);
+        
+        // Job title + company inline for compactness
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(10.5);
+        pdf.setTextColor(...darkGray);
+        const titleText = job.title;
+        pdf.text(titleText, leftMargin, yPos);
+        
+        // Dates
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        pdf.setTextColor(...gray);
+        const dateText = `${formatDate(job.startDate)} – ${job.endDate ? formatDate(job.endDate) : 'Present'}`;
+        pdf.text(dateText, pageWidth - rightMargin - pdf.getTextWidth(dateText), yPos);
+        yPos += 4.5;
+        pdf.setFont('helvetica', 'italic');
+        pdf.setFontSize(9.5);
+        pdf.setTextColor(...accent);
+        pdf.text(job.company, leftMargin, yPos);
+        yPos += 4.5;
+        
+        // Highlights
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        pdf.setTextColor(...darkGray);
+        
+        // Select top highlights for condensed formats
+        let highlights = job.highlights;
+        if (format === 'resume') {
+            highlights = highlights.slice(0, 3);
+        } else if (format === 'summary') {
+            highlights = highlights.slice(0, 2);
+        }
+        
+        highlights.forEach(highlight => {
+            // Avoid very long highlights causing dense first page: truncate in full format as well
+            let txt = highlight.text;
+            if (format === 'full' && txt.length > 210) txt = txt.slice(0, 210) + '...';
+            renderBulletParagraph(sanitizeText(txt), 8.9);
+        });
+        yPos += 2;
+        // Divider
+        pdf.setDrawColor(...lightGray);
+        pdf.setLineWidth(0.2);
+        pdf.line(leftMargin, yPos, pageWidth - rightMargin, yPos);
+        yPos += 4;
+    });
     
     // ============ EDUCATION ============
     checkPageBreak(40);
     addSectionHeader('Education');
     
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(11);
-    pdf.setTextColor(...darkGray);
-    pdf.text("Bachelor's Degree in Data Science", leftMargin, yPos);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(...gray);
-    pdf.text('Sept 2020 – Jun 2022', pageWidth - rightMargin - 35, yPos);
-    yPos += 5;
-    
-    pdf.setFont('helvetica', 'italic');
-    pdf.setFontSize(10);
-    pdf.text('National Autonomous University of Mexico (UNAM)', leftMargin, yPos);
-    yPos += 5;
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.text('GPA: 3.84/4.0', leftMargin, yPos);
-    yPos += 8;
-    
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(11);
-    pdf.setTextColor(...darkGray);
-    pdf.text('Bachelor of Science in Physics', leftMargin, yPos);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(...gray);
-    pdf.text('Sept 2013 – Sept 2020', pageWidth - rightMargin - 35, yPos);
-    yPos += 5;
-    
-    pdf.setFont('helvetica', 'italic');
-    pdf.setFontSize(10);
-    pdf.text('National Autonomous University of Mexico (UNAM)', leftMargin, yPos);
-    yPos += 5;
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.text('GPA: 3.73/4.0', leftMargin, yPos);
-    yPos += 10;
+    // Education selection based on format (full => all, resume => 2, summary => 1)
+    let educationItems = cvData.education;
+    if (format === 'resume') educationItems = educationItems.slice(0, 2);
+    if (format === 'summary') educationItems = educationItems.slice(0, 1);
+
+    educationItems.forEach(edu => {
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(11);
+        pdf.setTextColor(...darkGray);
+        pdf.text(edu.degree, leftMargin, yPos);
+        
+        // Dates
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        pdf.setTextColor(...gray);
+        const eduDateText = `${formatDate(edu.startDate)} – ${formatDate(edu.endDate)}`;
+        pdf.text(eduDateText, pageWidth - rightMargin - pdf.getTextWidth(eduDateText), yPos);
+        yPos += 5;
+        
+        pdf.setFont('helvetica', 'italic');
+        pdf.setFontSize(10);
+        pdf.text(edu.institution, leftMargin, yPos);
+        yPos += 5;
+        
+        if (edu.gpa) {
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(9);
+            pdf.text(`GPA: ${edu.gpa}`, leftMargin, yPos);
+            yPos += 5;
+        }
+        
+        yPos += 3;
+    });
     
     // ============ TECHNICAL SKILLS ============
     checkPageBreak(40);
     addSectionHeader('Technical Skills');
     
+    const skills = cvData.skills;
     pdf.setFontSize(9);
     pdf.setTextColor(...darkGray);
     
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Languages:', leftMargin, yPos);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text('Python, SQL, R, Julia, C++, MATLAB', leftMargin + 25, yPos);
-    yPos += 6;
+    // Two-column skills layout
+    const colGap = 10;
+    const colWidth = (contentWidth - colGap) / 2;
+    const leftX = leftMargin;
+    const rightX = leftMargin + colWidth + colGap;
+    let leftY = yPos;
+    let rightY = yPos;
+
+    function renderSkillBlock(x, y, title, items) {
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(9);
+        pdf.setTextColor(...accent);
+        pdf.text(title, x, y);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(...darkGray);
+        const h = renderWrappedText(items.join(', '), x, y + 3.5, colWidth, 8.5, 4.2) + 7;
+        return h;
+    }
+    const blocks = [
+        ['Languages', skills.languages],
+        ['Cloud & MLOps', skills.cloudAndMLOps],
+        ['Databases', [...skills.databases.relational, ...skills.databases.nosql]],
+        ['Big Data', skills.bigData],
+        ['ML', skills.machineLearning],
+        ['Visualization', skills.visualization],
+        ['Tools', skills.tools],
+        ['Design', skills.design]
+    ];
+    blocks.forEach((b, idx) => {
+        const targetLeft = leftY <= rightY;
+        const x = targetLeft ? leftX : rightX;
+        const newHeight = renderSkillBlock(x, targetLeft ? leftY : rightY, b[0], b[1]);
+        if (targetLeft) leftY += newHeight; else rightY += newHeight;
+    });
+    yPos = Math.max(leftY, rightY) + 2;
     
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Cloud & MLOps:', leftMargin, yPos);
-    pdf.setFont('helvetica', 'normal');
-    const cloudText = 'AWS (SageMaker, EMR, Lambda, Glue), Airflow, Docker, Snowflake';
-    const cloudHeight = renderWrappedText(cloudText, leftMargin + 25, yPos, contentWidth - 30, 9, 5);
-    yPos += Math.max(cloudHeight, 6);
-    
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Databases:', leftMargin, yPos);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text('PostgreSQL, MySQL, MongoDB, Cassandra, Neo4j, Redis', leftMargin + 25, yPos);
-    yPos += 6;
-    
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Big Data:', leftMargin, yPos);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text('Spark (PySpark), EMR, Data Lake architectures', leftMargin + 25, yPos);
-    yPos += 10;
+    // ============ CERTIFICATIONS (if space permits and full format) ============
+    if (format === 'full') {
+        checkPageBreak(40);
+        addSectionHeader('Certifications & Training');
+        
+        pdf.setFontSize(9);
+        pdf.setTextColor(...darkGray);
+        
+        // Full format includes all certifications; others already omitted
+        const certs = cvData.certifications.slice(0, format === 'full' ? cvData.certifications.length : 5);
+        certs.forEach(cert => {
+            checkPageBreak(10);
+            const certText = `• ${cert.name} - ${cert.issuer} (${cert.date})`;
+            const certHeight = renderWrappedText(certText, leftMargin, yPos, contentWidth - 5, 9, 5);
+            yPos += certHeight + 3;
+        });
+        
+        yPos += 7;
+    }
     
     // ============ LEADERSHIP & ACHIEVEMENTS ============
     checkPageBreak(40);
-    addSectionHeader('Leadership & Achievements');
+    // ============ LEADERSHIP =========
+    addSectionHeader('Leadership');
     
     pdf.setFontSize(9);
     pdf.setTextColor(...darkGray);
     
-    const achievements = [
-        '• Co-Founder & Secretary-General, SECiD (Data Science Alumni Society) - 2024-Present',
-        '• Student Representative, UNAM Data Science Program - 2021-2022',
-        '• Peer-reviewed publication in Crystals journal - 2020',
-        '• 1st Place, UN Youth Hackathon (All student team award) - 2021',
-        '• 3rd Place, UN Youth Hackathon (General Award) - 2021'
-    ];
-    
-    achievements.forEach(achievement => {
-        checkPageBreak(10);
-        const height = renderWrappedText(achievement, leftMargin, yPos, contentWidth - 5, 9, 5);
-        yPos += height + 3;
+    // Leadership roles
+    const leadershipList = (format === 'full') ? cvData.leadership : cvData.leadership.slice(0, 2);
+    leadershipList.forEach(role => {
+        checkPageBreak(15);
+        renderBulletParagraph(`${role.role}, ${role.organization} (${role.period})`, 9);
     });
-    
-    yPos += 7;
+
+    yPos += 4;
+    // ============ AWARDS =========
+    checkPageBreak(30);
+    addSectionHeader('Awards');
+    const awardsList = (format === 'full') ? cvData.awards : cvData.awards.slice(0, 4);
+    awardsList.forEach(award => {
+        checkPageBreak(12);
+        renderBulletParagraph(`${award.title}${award.year ? ` (${award.year})` : ''}`, 9);
+    });
+    yPos += 2;
+    // ============ PUBLICATIONS =========
+    checkPageBreak(30);
+    addSectionHeader('Publications');
+    const pubs = (format === 'full') ? cvData.publications : cvData.publications.slice(0, 1);
+    pubs.forEach(pub => {
+        checkPageBreak(12);
+        renderBulletParagraph(`${pub.title}${pub.journal ? ` – ${pub.journal}` : pub.institution ? ` – ${pub.institution}` : ''} (${pub.year})`, 9);
+    });
+    yPos += 4;
     
     // ============ LANGUAGES ============
     checkPageBreak(25);
@@ -361,11 +496,60 @@ function generatePDF() {
     pdf.setFontSize(9);
     pdf.setTextColor(...darkGray);
     
-    pdf.text('• Spanish (Native)', leftMargin, yPos);
-    yPos += 5;
-    pdf.text('• English (Fluent - TOEFL Certified)', leftMargin, yPos);
-    yPos += 5;
-    pdf.text('• French (Basic)', leftMargin, yPos);
+    cvData.languages.forEach(lang => {
+        renderBulletParagraph(`${lang.name} (${lang.level})`, 9);
+    });
+    
+    // ============ PROJECTS (if full format and space permits) ============
+    if (format === 'full') {
+        checkPageBreak(50);
+        if (yPos < pageHeight - bottomMargin - 50) {
+            addSectionHeader('Selected Projects');
+            
+            pdf.setFontSize(9);
+            pdf.setTextColor(...darkGray);
+            
+            cvData.projects.slice(0, 3).forEach(project => {
+                checkPageBreak(18);
+                // Project name (bold) and year with safe spacing
+                pdf.setFont('helvetica', 'bold');
+                const nameWidth = pdf.getTextWidth(project.name); // measure while bold
+                const maxNameWidth = contentWidth - 25; // reserve space for year
+                let displayName = project.name;
+                let usedWidth = nameWidth;
+                if (nameWidth > maxNameWidth) {
+                    // Truncate overly long names
+                    let truncated = project.name;
+                    while (pdf.getTextWidth(truncated + '…') > maxNameWidth && truncated.length > 4) {
+                        truncated = truncated.slice(0, -1);
+                    }
+                    displayName = truncated + '…';
+                    usedWidth = pdf.getTextWidth(displayName);
+                }
+                pdf.text(displayName, leftMargin, yPos);
+                // Year in normal font a small gap after name
+                pdf.setFont('helvetica', 'normal');
+                const gap = 2; // mm gap between name and year
+                pdf.text(` (${project.year})`, leftMargin + usedWidth + gap, yPos);
+                yPos += 5;
+                const projDescHeight = renderWrappedText(project.description, leftMargin + 5, yPos, contentWidth - 10, 9, 5);
+                yPos += projDescHeight + 5;
+            });
+        }
+    }
+
+    // ============ INTERESTS (Full only if space) ============
+    if (format === 'full' && cvData.interests) {
+        checkPageBreak(40);
+        if (yPos < pageHeight - bottomMargin - 30) {
+            addSectionHeader('Interests');
+            pdf.setFontSize(9);
+            pdf.setTextColor(...darkGray);
+            const interestText = `${cvData.interests.philosophy} Professional: ${cvData.interests.professional.join(', ')}. Personal: ${cvData.interests.personal.join(', ')}`;
+            const intHeight = renderWrappedText(interestText, leftMargin, yPos, contentWidth, 9, 5);
+            yPos += intHeight + 5;
+        }
+    }
     
     // Add page numbers to all pages
     const totalPages = pdf.internal.getNumberOfPages();
@@ -378,15 +562,28 @@ function generatePDF() {
     
     // Set document properties
     pdf.setProperties({
-        title: 'Artemio Padilla - CV',
+        title: `${cvData.personal.name.full} - CV`,
         subject: 'Curriculum Vitae',
-        author: 'Artemio Padilla',
+        author: cvData.personal.name.full,
         keywords: 'MLOps, Data Engineering, Machine Learning, CV',
         creator: 'Artemio Padilla CV Generator'
     });
     
+    // Determine filename based on format
+    let filename;
+    switch(format) {
+        case 'resume':
+            filename = `${cvData.personal.name.first}_${cvData.personal.name.last.split(' ')[0]}_Resume.pdf`;
+            break;
+        case 'summary':
+            filename = `${cvData.personal.name.first}_${cvData.personal.name.last.split(' ')[0]}_Summary.pdf`;
+            break;
+        default:
+            filename = `${cvData.personal.name.first}_${cvData.personal.name.last.split(' ')[0]}_CV.pdf`;
+    }
+    
     // Save the PDF
-    pdf.save('Artemio_Padilla_CV.pdf');
+    pdf.save(filename);
 }
 
 // Initialize button when DOM is loaded
@@ -395,7 +592,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (pdfButton) {
         pdfButton.addEventListener('click', function(e) {
             e.preventDefault();
-            generatePDF();
+            generatePDF('full');
         });
     }
     
@@ -404,7 +601,24 @@ document.addEventListener('DOMContentLoaded', function() {
     if (floatButton) {
         floatButton.addEventListener('click', function(e) {
             e.preventDefault();
-            generatePDF();
+            generatePDF('full');
+        });
+    }
+    
+    // Handle format-specific buttons if they exist
+    const resumeButton = document.getElementById('downloadResumeBtn');
+    if (resumeButton) {
+        resumeButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            generatePDF('resume');
+        });
+    }
+    
+    const summaryButton = document.getElementById('downloadSummaryBtn');
+    if (summaryButton) {
+        summaryButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            generatePDF('summary');
         });
     }
 });

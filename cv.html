@@ -26,7 +26,7 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
     
-    <!-- Custom styles for PDF button -->
+    <!-- Custom styles for PDF button and loading states -->
     <style>
       /* Floating PDF download button */
       .pdf-float-btn {
@@ -90,6 +90,43 @@
         box-shadow: 0 5px 15px rgba(189, 93, 56, 0.3);
       }
       
+      /* Loading state styles */
+      .loading-placeholder {
+        padding: 20px;
+        text-align: center;
+        color: #6c757d;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      
+      .loading-spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #bd5d38;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Error state */
+      .error-message {
+        padding: 20px;
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        margin: 20px 0;
+      }
+      
       /* Hide floating button on mobile when navigation is visible */
       @media (max-width: 991px) {
         .pdf-float-btn {
@@ -113,6 +150,15 @@
     <!-- Skip to content link for accessibility -->
     <a href="#about" class="sr-only sr-only-focusable">Skip to main content</a>
     
+    <!-- noscript fallback -->
+    <noscript>
+      <div style="padding: 20px; background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; margin: 20px;">
+        <h2>JavaScript Required</h2>
+        <p>This CV requires JavaScript to load dynamic content. Please enable JavaScript to view the full CV.</p>
+        <p>Alternatively, you can download the PDF version or visit <a href="cv-backup.html">the static version</a>.</p>
+      </div>
+    </noscript>
+    
     <!-- Floating PDF Download Button -->
     <button class="pdf-float-btn" onclick="generatePDF()" aria-label="Download PDF version">
       <i class="fas fa-file-pdf"></i>
@@ -122,12 +168,13 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
       <a class="navbar-brand js-scroll-trigger" href="#page-top">
         <span class="d-block d-lg-none">Artemio Padilla</span>
-        <span class="d-none d-lg-block"
-          ><img
+        <span class="d-none d-lg-block">
+          <img
             class="img-fluid img-profile rounded-circle mx-auto mb-2"
             src="https://avatars.githubusercontent.com/u/58867702?s=400&u=d7a94bffbddcf21bb4ae8b3cec7cdce4c43e4836&v=4"
             alt="Profile"
-        /></span>
+          />
+        </span>
       </a>
       <button
         class="navbar-toggler"
@@ -174,52 +221,9 @@
       <!-- About-->
       <section class="resume-section" id="about">
         <div class="resume-section-content">
-          <h1 class="mb-0">
-            Artemio Santiago
-            <span class="text-primary">Padilla Robles</span>
-          </h1>
-          <div class="subheading mb-5">
-            Mexico City · 55-6047-6808 ·
-            <a href="mailto:artemiopadilla@gmail.com">artemiopadilla@gmail.com</a>
-          </div>
-          <p class="lead mb-3">I’m a Mexican engineer focused on building reliable ML infrastructure that improves large‑scale decision quality.</p>
-
-          <!-- Updated About section -->
-          <p class="lead mb-3"><strong>From atomic force microscopy to MLOps: I’ve scaled from nanometers to terabytes.</strong></p>
-          <p class="lead mb-3">
-            With a background in nanoscience research (STM/AFM/Raman spectroscopy) and a peer‑reviewed publication, I learned the discipline of working at 10⁻⁹ meters in ultra‑high vacuum. Today, I apply the same rigor to ML infrastructure—ensuring models scale reliably to 10⁹ requests.
-          </p>
-          <p class="lead mb-3">
-            <strong>The connection?</strong> Both demand obsessive care with signal‑to‑noise ratios, drift compensation, and reproducibility. Debugging a production model feels like aligning a scanning tunneling microscope—except the stakes are millions of financial decisions instead of a research publication.
-          </p>
-          <p class="lead mb-3">
-            At <strong>Círculo de Crédito</strong>, I’ve built ML infrastructure with scientific‑instrument‑grade reliability (<strong>99.99% uptime</strong>, <strong>sub‑second latency</strong>), while coordinating cross‑functional teams and external partners to translate advanced models into real business value. Because when models decide who gets credit, “good enough” isn’t enough.
-          </p>
-          <ul class="mb-4">
-            <li>Patience forged from months refining a single spectrum</li>
-            <li>Urgency of keeping production alive at scale</li>
-            <li>Experience delivering infra where reliability is non‑negotiable</li>
-            <li>Ability to align teams and stakeholders—internal and external—toward measurable impact</li>
-          </ul>
-          <p class="lead mb-4">
-            I also co‑founded <strong>SECiD at UNAM</strong>, fostering Mexico’s data science community with the same precision I once applied to spectrometers. I thrive in roles where ML infrastructure requires both microscopic attention to detail and macroscopic business impact—achieved not just through code, but by orchestrating people, processes, and technology.
-          </p>
-
-          <div class="social-icons">
-            <a class="social-icon" href="https://www.linkedin.com/in/artemiop/" aria-label="LinkedIn"
-              ><i class="fab fa-linkedin-in"></i
-            ></a>
-            <a class="social-icon" href="https://github.com/ArtemioPadilla" aria-label="GitHub"><i class="fab fa-github"></i></a>
-            <a class="social-icon" href="https://orcid.org/0000-0001-6585-2501" aria-label="ORCID"><i class="fa-brands fa-orcid"></i></a>
-            <a class="social-icon" href="https://twitter.com/ArtemioPadilla" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-            <a class="social-icon" href="https://fb.me/ArtemioPadilla/" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-          </div>
-          
-          <!-- PDF Download Button -->
-          <div class="mt-4">
-            <button id="downloadPdfBtn" class="btn btn-primary btn-lg" style="background-color: #bd5d38; border-color: #bd5d38;">
-              <i class="fas fa-file-pdf me-2"></i>Download PDF Version
-            </button>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading personal information...</p>
           </div>
         </div>
       </section>
@@ -229,173 +233,21 @@
       <!-- Experience-->
       <section class="resume-section" id="experience">
         <div class="resume-section-content">
-          <h2 class="mb-5">Professional Experience</h2>
-
-          <!-- MLOps & Automation Engineer Sr. -->
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">MLOps & Automation Engineer Sr.</h3>
-              <div class="subheading mb-3">Círculo de Crédito</div>
-              <ul>
-                <li><strong>Founded division:</strong> established the company’s MLOps & Automation division (strategy, tooling, governance).</li>
-                <li><strong>Accelerated model deployment:</strong> led productization of 9 analytical models (collections scoring, loan estimations, inference systems), cutting deployment time from &gt;2 quarters to &lt;1 quarter.</li>
-                <li><strong>Enabled data science at scale:</strong> implemented and managed SageMaker development environments with <strong>4,753 hours</strong> of usage across <strong>32 users</strong> and 9 models.</li>
-                <li><strong>Flagship model:</strong> productized No‑Hit credit score model (governance, monitoring, retraining cadence).</li>
-                <li><strong>GenAI innovation:</strong> delivered an internal RAG chatbot with GenAI + IaC and established LLM governance across security, legal, and product.</li>
-                <li><strong>Enterprise automation:</strong> integrated Snowflake + AWS to streamline the data platform: <strong>109</strong> automatic validations, <strong>60</strong> ETL processes, zero manual hours in periodic workflows, and data cleansing for <strong>millions</strong> of persons and addresses.</li>
-                <li><strong>MLOps best practices:</strong> SageMaker environments as IaC; continuous training pipelines for <strong>20+ monthly models</strong>; cross‑platform templates (batch/online, cloud & on‑prem); centralized model/experiment registry; standardized Dev–Ops interfaces.</li>
-                <li><strong>Cloud orchestration:</strong> EMR, Lambda, Snowflake, Glue, SageMaker with idempotency and resilience principles.</li>
-                <li><strong>Leadership & coordination:</strong> aligned cross‑functional teams and external partners to ensure advanced models delivered measurable business value.</li>
-                <li><strong>Admin of:</strong> SageMaker, Airflow, Data Catalog.</li>
-                <li><strong>Operational excellence:</strong> authored internal runbooks & documentation reducing incident resolution time and onboarding effort.</li>
-              </ul>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">Dec 2023 – Present</span></div>
-          </div>
-
-          <!-- Data Engineer -->
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Data Engineer</h3>
-              <div class="subheading mb-3">Círculo de Crédito</div>
-              <ul>
-                <li><strong>Initiated the company’s knowledge graph</strong> as the foundation for automation and smarter data integration.</li>
-                <li><strong>Led external data enrichment</strong> (e.g., RENAPO), improving records for <strong>80M+ individuals</strong> at scale.</li>
-                <li><strong>Kickstarted data platform automation</strong> on AWS (data lake), enabling current cloud‑first operations.</li>
-                <li><strong>Introduced engineering best practices:</strong> idempotent processes, CI/CD pipelines, and Git workflows.</li>
-                <li><strong>Delivered trainings</strong> to Data & Analytics on Git (theory + labs), SageMaker, MLflow, and EMR–SageMaker integration.</li>
-                <li><strong>Implemented business ETL workflows</strong> (Spark/PySpark + SQL) supporting finance, risk & analytics domains.</li>
-                <li><strong>Provided technical support</strong> & onboarding to Analytics (version control, reproducible experimentation).</li>
-                <li><strong>Documented core pipelines</strong> and standards; reduced onboarding friction and ad‑hoc questions.</li>
-              </ul>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">Aug 2022 – Dec 2023</span></div>
-          </div>
-
-          <!-- Search Engine Evaluator -->
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Search Engine Evaluator</h3>
-              <div class="subheading mb-3">Appen (Remote)</div>
-              <ul>
-                <li>Evaluated companies, entities, and information sources against Google’s information‑quality guidelines, consistently ranking in the <strong>top 20%</strong> of evaluators.</li>
-                <li>Assessed relevance, accuracy, and usefulness of search results to improve algorithms and user experience.</li>
-                <li>Leveraged <strong>Google’s internal tools</strong>, including the <strong>Knowledge Graph</strong>, to validate information quality and entity relationships.</li>
-                <li>Produced structured feedback and documentation to refine evaluation models and strengthen result integrity.</li>
-                <li>Full‑time remote role conducted entirely in English (international collaboration & communication).</li>
-              </ul>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">Sept 2019 – Aug 2022</span></div>
-          </div>
-
-          <!-- Research Assistant -->
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Laboratory Research Assistant – Nanosciences Lab</h3>
-              <div class="subheading mb-3">Institute of Physics (UNAM)</div>
-              <ul>
-                <li>Co‑developed a modular optical system enabling enhanced Raman spectroscopy techniques for nanoscale research.</li>
-                <li>Designed, assembled, and calibrated precision components under ultra‑high vacuum, ensuring high SNR and reproducibility.</li>
-                <li>Conducted experiments; collected and analyzed spectral data; contributed to experimental rigor and scientific insight.</li>
-                <li>Co‑authored a peer‑reviewed publication based on system design and performance findings.</li>
-              </ul>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">Aug 2017 – Sept 2020</span></div>
-          </div>
-
-          <!-- Accountant Assistant -->
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Accountant Assistant</h3>
-              <div class="subheading mb-3">Insultec Mexico</div>
-              <ul>
-                <li>Managed financial records and accounting documentation for small business operations.</li>
-                <li>Assisted with invoice processing, expense tracking, and basic bookkeeping tasks.</li>
-                <li>Supported administrative operations and client communications.</li>
-              </ul>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2014 – 2015</span></div>
-          </div>
-
-          <!-- Private Teacher -->
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Private Teacher</h3>
-              <div class="subheading mb-3">Private tutor for high school students</div>
-              <ul>
-                <li>Provided personalized tutoring in mathematics, physics, and chemistry to high school students.</li>
-                <li>Developed customized learning plans to address individual student needs and learning styles.</li>
-                <li>Helped students improve their grades and prepare for university entrance exams.</li>
-              </ul>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2013 – 2015</span></div>
-          </div>
-
-          <!-- Technician -->
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Technician</h3>
-              <div class="subheading mb-3">Freelancer</div>
-              <ul>
-                <li>Provided electronics repair services for computers, smartphones, and consumer electronics.</li>
-                <li>Diagnosed hardware and software issues, performing component-level repairs.</li>
-                <li>Built custom PC systems and provided technical consulting to individual clients.</li>
-              </ul>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2011 – 2013</span></div>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading professional experience...</p>
           </div>
         </div>
       </section>
 
       <hr class="m-0" />
 
-      <!-- Projects (unchanged other than minor grammar) -->
+      <!-- Projects -->
       <section class="resume-section" id="projects">
         <div class="resume-section-content">
-          <h2 class="mb-5">Projects</h2>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">
-                <a href="https://github.com/ArtemioPadilla/Portfolio-Management-Strategy-Simulator" target="_blank"><strong>Portfolio Management Strategy Simulator</strong></a>
-              </h3>
-              <div class="subheading mb-3">Algorithmic Trading Project</div>
-              <p>Simulator for portfolio‑selection strategies using ranking functions; includes multiple optimization techniques and ranking strategies.</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2022</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">
-                <a href="https://github.com/ArtemioPadilla/MachineLearningAndCOVID" target="_blank"><strong>Machine Learning and COVID</strong></a>
-              </h3>
-              <div class="subheading mb-3">Machine Learning Project</div>
-              <p>Implemented ML classifiers to predict infections, hospitalizations, and deaths during the COVID‑19 pandemic.</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2022</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">
-                <a href="https://github.com/ArtemioPadilla/PrivateServer" target="_blank"><strong>Private Server</strong></a>
-              </h3>
-              <div class="subheading mb-3">Self‑hosted Infrastructure</div>
-              <p>Docker‑based private server for multiple applications; networking via Cloudflare tunnels.</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2022</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">
-                <a href="https://github.com/ArtemioPadilla/MxMagicTowns-PueblosMagicosMx/" target="_blank"><strong>TSP for Mexican Magic Towns</strong></a>
-              </h3>
-              <div class="subheading mb-3">Discrete Maths & CS Project</div>
-              <p>Backtracking exploration and approximation algorithms to compute near‑optimal routes for arbitrary sets of towns.</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2020</span></div>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading projects...</p>
           </div>
         </div>
       </section>
@@ -405,34 +257,9 @@
       <!-- Education -->
       <section class="resume-section" id="education">
         <div class="resume-section-content">
-          <h2 class="mb-5">Formal Education</h2>
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">National Autonomous University of Mexico (UNAM)</h3>
-              <div class="subheading mb-3">Bachelor’s Degree in Data Science</div>
-              <div>Relevant coursework: Machine Learning, Deep Learning, Big Data I–II, Discrete Maths, Data Mining, Information Visualization, Relational & NoSQL Databases, NLP, Time Series, Concurrent Programming, Stochastic Simulation, Statistics</div>
-              <p>GPA: 3.84/4.0</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">Sept 2020 – Jun 2022</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">National Autonomous University of Mexico (UNAM)</h3>
-              <div class="subheading mb-3">Bachelor of Science in Physics</div>
-              <div>Relevant coursework: Optics, Scientific Instrumentation, Robotics, Electronics, Mechanics, Quantum Mechanics, Metal Machining, Calculus I–IV, Statistical Mechanics, Observational Astronomy, Philosophy of Quantum Physics</div>
-              <p>GPA: 3.73/4.0</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">Sept 2013 – Sept 2020</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Colegio Fernández de Lizardi</h3>
-              <div class="subheading mb-3">High School: Chemistry and Biological Sciences</div>
-              <div>First place of my generation</div>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2010 – 2013</span></div>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading education...</p>
           </div>
         </div>
       </section>
@@ -442,69 +269,9 @@
       <!-- Other Education -->
       <section class="resume-section" id="othereducation">
         <div class="resume-section-content">
-          <h2 class="mb-5">Other Education</h2>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Online Course: Introduction to HTML5</h3>
-              <div class="subheading mb-3">University of Michigan</div>
-              <div><a href="https://www.coursera.org/account/accomplishments/certificate/32QWSABAM7EX" target="_blank"><strong>Completion Certificate</strong></a></div>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2021</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Online Course: Introduction to Git</h3>
-              <div class="subheading mb-3">Datacamp</div>
-              <div><a href="https://www.datacamp.com/statement-of-accomplishment/course/843b5ed460f50c0f94eade6cb4acabda0c8a1fa8" target="_blank"><strong>Statement of Accomplishment</strong></a></div>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2021</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Online Course: MongoDB Basics</h3>
-              <div class="subheading mb-3">MongoDB University</div>
-              <div>Fundamentals of NoSQL database design, CRUD operations, and aggregation pipelines</div>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2021</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Online Course: Database Design</h3>
-              <div class="subheading mb-3">Coursera</div>
-              <div>Relational database design principles, normalization, and SQL optimization</div>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2021</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Course/Workshop: High Level Efficiency - An approach to Julia language</h3>
-              <div class="subheading mb-3">UNAM</div>
-              <div>High-performance scientific computing using Julia for numerical analysis and parallel processing</div>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2020</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Online Course: A First Step Towards SAP HANA Query Optimization</h3>
-              <div class="subheading mb-3">SAP</div>
-              <div>In-memory database optimization techniques and query performance tuning</div>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2020</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Workshop: Heat transfer at the nanoscale</h3>
-              <div class="subheading mb-3">Institute of Physics, UNAM</div>
-              <div>Advanced topics in nanoscale thermal transport and measurement techniques</div>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2019</span></div>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading certifications...</p>
           </div>
         </div>
       </section>
@@ -514,229 +281,86 @@
       <!-- Skills -->
       <section class="resume-section" id="skills">
         <div class="resume-section-content">
-          <h2 class="mb-5">Skills</h2>
-          <div class="subheading mb-3">Programming Languages & Tools</div>
-          <ul class="list-inline dev-icons">
-            <li class="list-inline-item"><i class="fab fa-python"></i></li>
-            <li class="list-inline-item"><i class="fas fa-database"></i></li>
-            <li class="list-inline-item"><i class="fa-brands fa-r-project"></i></li>
-            <li class="list-inline-item"><i class="fa-brands fa-github"></i></li>
-            <li class="list-inline-item"><i class="fa-brands fa-raspberry-pi"></i></li>
-            <li class="list-inline-item"><i class="fa-brands fa-docker"></i></li>
-            <li class="list-inline-item"><i class="fa-brands fa-linux"></i></li>
-            <li class="list-inline-item"><i class="fa-brands fa-cloudflare"></i></li>
-            <li class="list-inline-item"><i class="fab fa-html5"></i></li>
-            <li class="list-inline-item"><i class="fab fa-css3-alt"></i></li>
-          </ul>
-          <div class="subheading mb-3">Other:</div>
-          <ul class="fa-ul mb-0">
-            <li>
-              <span class="fa-li"><i class="fas fa-database"></i></span>
-              <strong>Relational Databases:</strong> PostgreSQL, MySQL
-            </li>
-            <li>
-              <span class="fa-li"><i class="fa-solid fa-folder"></i></span>
-              <strong>NoSQL Databases:</strong> MongoDB, Cassandra, Neo4j, Redis
-            </li>
-            <li>
-              <span class="fa-li"><i class="fa-solid fa-server"></i></span>
-              <strong>Big Data:</strong> Spark (PySpark), EMR
-            </li>
-            <li>
-              <span class="fa-li"><i class="fa-solid fa-paintbrush"></i></span>
-              <strong>Adobe:</strong> Illustrator, Photoshop, After Effects, Premier
-            </li>
-            <li>
-              <span class="fa-li"><i class="fa-solid fa-code"></i></span>
-              <strong>Other programming languages:</strong> C++ for Arduino, Julia, Fortran, MATLAB
-            </li>
-          </ul>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading skills...</p>
+          </div>
         </div>
       </section>
 
       <hr class="m-0" />
 
-      <!-- Leadership (updated with SECiD + Student Rep) -->
+      <!-- Leadership -->
       <section class="resume-section" id="leadership">
         <div class="resume-section-content">
-          <h2 class="mb-5">Leadership</h2>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Co‑Founder & Secretary‑General</h3>
-              <div class="subheading mb-3">Sociedad de Egresados en Ciencia de Datos (SECiD)</div>
-              <ul>
-                <li><strong>Founded and structured SECiD</strong>, the first alumni society for Data Science graduates from UNAM.</li>
-                <li><strong>Built the organization’s digital presence</strong>, including a cost‑free hosted website and the first operational commissions.</li>
-                <li><strong>Forged partnerships</strong> with global educational institutions to expand learning and collaboration.</li>
-                <li><strong>Launched a dedicated job board</strong> to connect members with industry opportunities.</li>
-                <li><strong>Promoted community growth and governance</strong>, fostering collaboration and a sustainable platform for professional development.</li>
-              </ul>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">May 2024 – Present · Mexico City (Hybrid)</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Student Representative – BSc in Data Science</h3>
-              <div class="subheading mb-3">UNAM (FES Acatlán & IIMAS)</div>
-              <ul>
-                <li><strong>Represented the student body</strong> across two campuses, liaising among students, faculty, and administration during the post‑pandemic return to in‑person classes.</li>
-                <li><strong>Influenced academic decisions</strong>: faculty selection processes, alumni survey design, and feedback for the ongoing curriculum redesign.</li>
-                <li><strong>Improved student resources</strong>, securing access to campus Wi‑Fi and institute GPU infrastructure.</li>
-                <li><strong>Organized postgraduate info sessions</strong> to help students explore advanced study opportunities.</li>
-                <li><strong>Advocated for students</strong> via committee participation, review of faculty CVs and demo classes, and transparent communication on administrative processes.</li>
-              </ul>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">Aug 2021 – Jul 2022</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Active Member Economics Faculty Debate's Team</h3>
-              <div class="subheading mb-3">Economics Faculty, UNAM</div>
-              <ul>
-                <li>Participated in intercollegiate debate competitions representing UNAM.</li>
-                <li>Developed critical thinking and public speaking skills through regular practice sessions.</li>
-                <li>Collaborated with team members to research and prepare arguments on economic and social topics.</li>
-              </ul>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2019 – 2020</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Debate Workshop</h3>
-              <div class="subheading mb-3">Law Faculty, UNAM</div>
-              <p>Advanced debate techniques, argumentation theory, and competitive debate formats.</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2020-2</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Oratory Workshop</h3>
-              <div class="subheading mb-3">Law Faculty, UNAM</div>
-              <p>Public speaking fundamentals, speech construction, and persuasive communication techniques.</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2019-1</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">XII Model of United Nations</h3>
-              <div class="subheading mb-3">Mexican Congress of the Union</div>
-              <p>Represented a UN member state in diplomatic simulations, negotiating resolutions on global issues.</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2018</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Model of United Nations, ULAMUN X</h3>
-              <div class="subheading mb-3">Latinoamerican University</div>
-              <p>Earned Special Mention for outstanding diplomatic performance and negotiation skills.</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2018</span></div>
-          </div>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-            <div class="flex-grow-1">
-              <h3 class="mb-0">Debate Competition: UNAMESA de Debate</h3>
-              <div class="subheading mb-3">Economics Faculty, UNAM</div>
-              <p>Competed in formal debate tournament focusing on economic policy and social issues.</p>
-            </div>
-            <div class="flex-shrink-0"><span class="text-primary">2019</span></div>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading leadership roles...</p>
           </div>
         </div>
       </section>
 
       <hr class="m-0" />
 
-      <!-- Interests / Awards / Publications / Languages (retain, minor wording fixes if desired) -->
+      <!-- Interests -->
       <section class="resume-section" id="interests">
         <div class="resume-section-content">
-          <h2 class="mb-5">Interests</h2>
-          <p class="mb-4">I’m interested in technology development across the stack—from physical instrumentation to complexity sciences. I believe those fortunate enough to master knowledge have a duty to give back to society.</p>
-          <p class="mb-4">Other interests: philosophy, optics, materials science, robotics, cybernetics, control theory, political theory, self‑organization, AI, and economics.</p>
-          <p class="mb-0">Outside work and study, I enjoy films, time with friends and family, swimming, and walking in nature.</p>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading interests...</p>
+          </div>
         </div>
       </section>
 
       <hr class="m-0" />
 
+      <!-- Awards -->
       <section class="resume-section" id="awards">
         <div class="resume-section-content">
-          <h2 class="mb-5">Awards</h2>
-          <ul class="fa-ul mb-0">
-            <li>
-              <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-              3<sup>rd</sup>
-              Place - UN Youth Hackathon 2021 - General Award. <a href="https://drive.google.com/file/d/1ioafxN5doSh7epGbyQ1c9Y6vX6dpTyd6/view?usp=sharing" target="_blank">Price Certificate</a> · <a href="https://drive.google.com/file/d/1O-Vv_Gd_M0AfYL4tFhDMHz87xSaGOBpv/view?usp=sharing" target="_blank">Participation Diploma</a>
-            </li>
-            <li>
-              <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-              1<sup>st</sup>
-              Place - UN Youth Hackathon 2021 - All student team award. <a href="https://drive.google.com/file/d/1ioafxN5doSh7epGbyQ1c9Y6vX6dpTyd6/view?usp=sharing" target="_blank">Price Certificate</a> · <a href="https://drive.google.com/file/d/14IOQi0gD6eedfyZXQPwIf2n_KpgYOcui/view?usp=sharing" target="_blank">Participation Diploma</a>
-            </li>
-            <li>
-              <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-              Special Mention - Model of United Nations, ULAMUN X - Latinoamerican University - 2018
-            </li>
-            <li>
-              <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-              3<sup>rd</sup>
-              Place - Experimental Physics Demonstration - Area of Kinematics and Dynamics: Project on the Conservation of Energy - 2014. <a href="https://drive.google.com/file/d/0B54bk03wh2NUYnV5UlV1ZHdIVDA/view?usp=sharing&resourcekey=0-7YOSvdxLU7GTx70ZT_4evQ" target="_blank">Price Certificate</a> · <a href="https://drive.google.com/file/d/0B54bk03wh2NUbGhpOWcxdnQwY1k/view?usp=sharing&resourcekey=0-BTtz8ibEI_-reqhwIIuI1Q" target="_blank">Participation Diploma</a>
-            </li>
-          </ul>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading awards...</p>
+          </div>
         </div>
       </section>
 
       <hr class="m-0" />
 
+      <!-- Publications -->
       <section class="resume-section" id="publications">
         <div class="resume-section-content">
-          <h2 class="mb-5">Publications</h2>
-          <ul class="fa-ul mb-0">
-            <li>
-              <span class="fa-li"><i class="fa-solid fa-book"></i></span>
-              <a href="https://www.mdpi.com/2073-4352/9/7/340" target="_blank"><strong>Peer‑reviewed article:</strong> Determination of the Chemical Composition of Lithium Niobate Powders — <em>Crystals</em>, 2020</a>
-            </li>
-            <li>
-              <span class="fa-li"><i class="fa-solid fa-book"></i></span>
-              <a href="http://132.248.9.195/ptd2020/septiembre/0803160/Index.html" target="_blank"><strong>Physics Bachelor’s Thesis:</strong> Chemical characterization and plasmonic‑enhanced Raman amplification experiments in a modular spectroscopy system — UNAM, 2020</a>
-            </li>
-          </ul>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading publications...</p>
+          </div>
         </div>
       </section>
 
       <hr class="m-0" />
 
+      <!-- Languages -->
       <section class="resume-section" id="languages">
         <div class="resume-section-content">
-          <h2 class="mb-5">Languages</h2>
-          <ul class="fa-ul mb-0">
-            <li><span class="fa-li"><i class="fa-solid fa-comment"></i></span><strong>Spanish:</strong> Native</li>
-            <li>
-              <span class="fa-li"><i class="fa-solid fa-comment"></i></span>
-              <strong>English:</strong> Fluent — <a href="https://drive.google.com/file/d/13zcQg04YPX3i-h0xyXS72pg3UH2zTPy3/view?usp=sharing" target="_blank">TOEFL</a> ·
-              <a href="https://efset.org/cert/86CkW6" target="_blank">EFSET</a> ·
-              <a href="https://drive.google.com/file/d/0B54bk03wh2NUTmx0bE5BUExCTEE/view?usp=sharing&resourcekey=0-v9NaEe0ZzSLQEG-3rLVUTA" target="_blank">Cambridge</a>
-            </li>
-            <li><span class="fa-li"><i class="fa-solid fa-comment"></i></span><strong>French:</strong> Basic</li>
-          </ul>
+          <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <p>Loading languages...</p>
+          </div>
         </div>
       </section>
     </div>
 
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Core theme JS-->
-    <script src="js/scripts.js"></script>
+  <!-- Core theme JS (filename corrected)-->
+  <script src="js/script.js"></script>
     <!-- Navigation collapsible functionality -->
     <script src="js/nav-collapsible.js"></script>
     <!-- jsPDF library for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- CV Data (for file:// access) -->
+    <script src="data/cv-data.js"></script>
+    <!-- CV Renderer for dynamic content -->
+    <script src="js/cv-renderer.js"></script>
     <!-- PDF Generator -->
     <script src="js/pdf-generator.js"></script>
   </body>
