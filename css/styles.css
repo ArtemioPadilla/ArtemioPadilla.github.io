@@ -33,7 +33,7 @@
   --bs-gray-700: #495057;
   --bs-gray-800: #343a40;
   --bs-gray-900: #212529;
-  --bs-primary: #bd5d38;
+  --bs-primary: #28a745;
   --bs-secondary: #6c757d;
   --bs-success: #198754;
   --bs-info: #0dcaf0;
@@ -41,7 +41,7 @@
   --bs-danger: #dc3545;
   --bs-light: #f8f9fa;
   --bs-dark: #212529;
-  --bs-primary-rgb: 41, 204, 97;
+  --bs-primary-rgb: 40, 167, 69;
   --bs-secondary-rgb: 108, 117, 125;
   --bs-success-rgb: 25, 135, 84;
   --bs-info-rgb: 13, 202, 240;
@@ -11400,7 +11400,7 @@ p.lead {
   margin-right: 0;
 }
 .social-icons .social-icon:hover {
-  background-color: #29cc61;
+  background-color: #28a745;
 }
 
 .dev-icons {
@@ -11441,7 +11441,7 @@ section.resume-section .resume-section-content {
   font-weight: 800;
   letter-spacing: 0.05rem;
   text-transform: uppercase;
-  background-color: #29cc61;
+  background-color: #28a745;
   color: rgba(0, 0, 0, 1);
   cursor: pointer;
   border: none;
@@ -11462,8 +11462,8 @@ section.resume-section .resume-section-content {
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 .active, .collapsible:hover {
-  background-color: #29cc61;
-  color: rgba(0, 0, 0, 0.5);
+  background-color: #218838;
+  color: rgba(255, 255, 255, 0.9);
   border-color: #e9ecef #e9ecef #dee2e6;
   
 }

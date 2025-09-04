@@ -28,20 +28,24 @@
     
     <!-- Custom styles for PDF button and loading states -->
     <style>
-      /* Floating PDF download button */
-      .pdf-float-btn {
+      /* Floating PDF dropdown container */
+      .pdf-float-dropdown {
         position: fixed;
         bottom: 30px;
         right: 30px;
+        z-index: 1000;
+      }
+      
+      /* Floating PDF download button */
+      .pdf-float-btn {
         width: 60px;
         height: 60px;
         border-radius: 50%;
-        background-color: #bd5d38;
+        background-color: #007bff;
         color: white;
         border: none;
-        box-shadow: 0 4px 12px rgba(189, 93, 56, 0.4);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
         cursor: pointer;
-        z-index: 1000;
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
@@ -49,33 +53,75 @@
       }
       
       .pdf-float-btn:hover {
-        background-color: #a94f2e;
+        background-color: #0056b3;
         transform: scale(1.1);
-        box-shadow: 0 6px 20px rgba(189, 93, 56, 0.6);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
       }
       
       .pdf-float-btn i {
         font-size: 24px;
       }
       
-      /* Tooltip for floating button */
-      .pdf-float-btn::before {
-        content: 'Download PDF';
+      /* Dropdown menu */
+      .pdf-dropdown-content {
+        display: none;
         position: absolute;
-        right: 70px;
-        background-color: #333;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-        font-size: 12px;
-        white-space: nowrap;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s;
+        bottom: 70px;
+        right: 0;
+        background-color: white;
+        min-width: 200px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        border-radius: 8px;
+        overflow: hidden;
+        animation: slideUp 0.3s ease;
       }
       
-      .pdf-float-btn:hover::before {
-        opacity: 1;
+      .pdf-dropdown-content.show {
+        display: block;
+      }
+      
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .pdf-dropdown-content a {
+        color: #333;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: background-color 0.2s ease;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      
+      .pdf-dropdown-content a:last-child {
+        border-bottom: none;
+      }
+      
+      .pdf-dropdown-content a:hover {
+        background-color: #f8f9fa;
+        color: #007bff;
+      }
+      
+      .pdf-dropdown-content a i {
+        margin-right: 8px;
+        color: #007bff;
+        width: 20px;
+        text-align: center;
+      }
+      
+      .pdf-dropdown-content a small {
+        display: block;
+        color: #6c757d;
+        font-size: 11px;
+        margin-top: 2px;
+        margin-left: 28px;
       }
       
       /* Main button enhancement */
@@ -83,11 +129,15 @@
         transition: all 0.3s ease;
         font-weight: 500;
         letter-spacing: 0.5px;
+        background-color: #007bff !important;
+        border-color: #007bff !important;
       }
       
       #downloadPdfBtn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(189, 93, 56, 0.3);
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        background-color: #0056b3 !important;
+        border-color: #0056b3 !important;
       }
       
       /* Loading state styles */
@@ -104,7 +154,7 @@
       
       .loading-spinner {
         border: 3px solid #f3f3f3;
-        border-top: 3px solid #bd5d38;
+        border-top: 3px solid #007bff;
         border-radius: 50%;
         width: 40px;
         height: 40px;
@@ -127,11 +177,14 @@
         margin: 20px 0;
       }
       
-      /* Hide floating button on mobile when navigation is visible */
+      /* Mobile responsive adjustments */
       @media (max-width: 991px) {
-        .pdf-float-btn {
+        .pdf-float-dropdown {
           bottom: 20px;
           right: 20px;
+        }
+        
+        .pdf-float-btn {
           width: 50px;
           height: 50px;
         }
@@ -140,8 +193,17 @@
           font-size: 20px;
         }
         
-        .pdf-float-btn::before {
-          display: none;
+        .pdf-dropdown-content {
+          min-width: 180px;
+          bottom: 60px;
+        }
+        
+        .pdf-dropdown-content a {
+          padding: 10px 12px;
+        }
+        
+        .pdf-dropdown-content a small {
+          font-size: 10px;
         }
       }
     </style>
@@ -159,10 +221,26 @@
       </div>
     </noscript>
     
-    <!-- Floating PDF Download Button -->
-    <button class="pdf-float-btn" onclick="generatePDF()" aria-label="Download PDF version">
-      <i class="fas fa-file-pdf"></i>
-    </button>
+    <!-- Floating PDF Download Button with Dropdown -->
+    <div class="pdf-float-dropdown">
+      <button class="pdf-float-btn" id="pdfMenuBtn" aria-label="Download PDF options">
+        <i class="fas fa-file-pdf"></i>
+      </button>
+      <div class="pdf-dropdown-content" id="pdfDropdown">
+        <a href="#" onclick="generatePDF('full'); return false;">
+          <i class="fas fa-file-alt"></i> Full CV
+          <small>Complete with all details</small>
+        </a>
+        <a href="#" onclick="generatePDF('resume'); return false;">
+          <i class="fas fa-file"></i> 2-Page Resume
+          <small>Resume highlights</small>
+        </a>
+        <a href="#" onclick="generatePDF('summary'); return false;">
+          <i class="fas fa-file-invoice"></i> 1-Page Resume
+          <small>Executive summary</small>
+        </a>
+      </div>
+    </div>
     
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
@@ -363,5 +441,35 @@
     <script src="js/cv-renderer.js"></script>
     <!-- PDF Generator -->
     <script src="js/pdf-generator.js"></script>
+    
+    <!-- PDF Dropdown Menu Script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const pdfMenuBtn = document.getElementById('pdfMenuBtn');
+        const pdfDropdown = document.getElementById('pdfDropdown');
+        
+        if (pdfMenuBtn && pdfDropdown) {
+          // Toggle dropdown on button click
+          pdfMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            pdfDropdown.classList.toggle('show');
+          });
+          
+          // Close dropdown when clicking outside
+          document.addEventListener('click', function(e) {
+            if (!pdfDropdown.contains(e.target) && e.target !== pdfMenuBtn) {
+              pdfDropdown.classList.remove('show');
+            }
+          });
+          
+          // Close dropdown after selecting an option
+          pdfDropdown.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+              pdfDropdown.classList.remove('show');
+            });
+          });
+        }
+      });
+    </script>
   </body>
 </html>

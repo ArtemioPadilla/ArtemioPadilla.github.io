@@ -146,24 +146,37 @@ class CVRenderer {
                 </a>
             </div>
             
-            <!-- PDF Download Button -->
-            <div class="mt-4">
-                <button id="downloadPdfBtn" class="btn btn-primary btn-lg" style="background-color: #bd5d38; border-color: #bd5d38;">
-                    <i class="fas fa-file-pdf me-2"></i>Download PDF Version
+            <!-- PDF Download Dropdown -->
+            <div class="mt-4 dropdown">
+                <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="downloadPdfBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-file-pdf me-2"></i>Download PDF
                 </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadPdfBtn">
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="generatePDF('full'); return false;">
+                            <i class="fas fa-file-alt me-2"></i>Full CV
+                            <small class="d-block text-muted">Complete with all details</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="generatePDF('resume'); return false;">
+                            <i class="fas fa-file me-2"></i>2-Page Resume
+                            <small class="d-block text-muted">Resume highlights</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="generatePDF('summary'); return false;">
+                            <i class="fas fa-file-invoice me-2"></i>1-Page Resume
+                            <small class="d-block text-muted">Executive summary</small>
+                        </a>
+                    </li>
+                </ul>
             </div>
         `;
         
         content.innerHTML = html;
         
-        // Re-attach PDF button event listener
-        const pdfButton = document.getElementById('downloadPdfBtn');
-        if (pdfButton && typeof generatePDF === 'function') {
-            pdfButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                generatePDF();
-            });
-        }
+        // Bootstrap dropdown will handle the button click - no need for additional listener
     }
 
     // Render Experience section
@@ -254,7 +267,7 @@ class CVRenderer {
                     </div>
                     <div class="flex-shrink-0">
                         <span class="text-primary">
-                            ${this.formatDate(edu.startDate, true)} – ${this.formatDate(edu.endDate, true)}
+                            ${this.formatDate(edu.startDate, true)} – ${edu.endDate ? this.formatDate(edu.endDate, true) : (edu.expectedEndDate ? `Expected ${this.formatDate(edu.expectedEndDate, true)}` : 'Present')}
                         </span>
                     </div>
                 </div>

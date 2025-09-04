@@ -33,12 +33,12 @@ async function generatePDF(format = 'full') {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
     
-    // Page dimensions
+    // Page dimensions - standard margins for all formats for professional appearance
     const pageWidth = 210;
     const pageHeight = 297;
     const leftMargin = 18;
     const rightMargin = 18;
-    const topMargin = 20;
+    const topMargin = format === 'summary' ? 16 : 20;  // Reduced top margin for 1-page
     const bottomMargin = 20;
     const contentWidth = pageWidth - leftMargin - rightMargin;
     let yPos = topMargin;
@@ -51,10 +51,10 @@ async function generatePDF(format = 'full') {
     const gray = [105, 105, 105];
     const lightGray = [200, 200, 200];
     const accent = blue; // use blue as accent
-    const lineHeight = 5;
-    const bulletIndent = 4; // mm
-    const sectionSpacing = 6;
-    const bulletGap = 2;
+    const lineHeight = format === 'summary' ? 4.5 : 5;  // More readable line height
+    const bulletIndent = 4; // mm - standard indent for all formats
+    const sectionSpacing = format === 'summary' ? 4 : 6;  // Reduced space between sections for 1-page
+    const bulletGap = format === 'summary' ? 1.5 : 2;  // Slightly more gap
     
     // Set default font
     pdf.setFont('helvetica', 'normal');
@@ -161,18 +161,20 @@ async function generatePDF(format = 'full') {
     }
     
     function addSectionHeader(title) {
+        // Add small gap before header for 1-page to prevent overlap
+        if (format === 'summary') yPos += 1;  // Small gap before headers
         checkPageBreak(15);
         pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(11.5);
+        pdf.setFontSize(format === 'summary' ? 11 : 11.5);  // Slightly larger for 1-page
         pdf.setTextColor(...accent);
         pdf.text(title.toUpperCase(), leftMargin, yPos);
         // Accent bar
         pdf.setDrawColor(...accent);
-        pdf.setLineWidth(0.7);
-        pdf.line(leftMargin, yPos + 1.8, leftMargin + 60, yPos + 1.8);
+        pdf.setLineWidth(format === 'summary' ? 0.5 : 0.7);
+        pdf.line(leftMargin, yPos + 1.8, leftMargin + (format === 'summary' ? 50 : 60), yPos + 1.8);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(...darkGray);
-        yPos += 8;
+        yPos += format === 'summary' ? 6 : 8;  // Reduced space after header
     }
 
     function drawRunningHeader() {
@@ -232,64 +234,106 @@ async function generatePDF(format = 'full') {
     // ============ HEADER ============
     const personal = cvData.personal;
     
-    // Header block
+    // Header block - smaller for 1-page
     pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(20);
+    pdf.setFontSize(format === 'summary' ? 18 : 20);
     pdf.setTextColor(...darkGray);
     pdf.text(sanitizeText(`${personal.name.first} ${personal.name.last}`), leftMargin, yPos);
-    yPos += 9;
+    yPos += format === 'summary' ? 6 : 9;
     pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(12.5);
+    pdf.setFontSize(format === 'summary' ? 11 : 12.5);
     pdf.setTextColor(...accent);
     pdf.text(sanitizeText(personal.title), leftMargin, yPos);
-    yPos += 7;
-    pdf.setFontSize(9);
+    yPos += format === 'summary' ? 5 : 7;
+    
+    // Add subtitle for condensed versions
+    if (format === 'summary' || format === 'resume') {
+        pdf.setFont('helvetica', 'italic');
+        pdf.setFontSize(8);
+        pdf.setTextColor(...gray);
+        const subtitle = format === 'summary' 
+            ? '1-Page Resume Highlights • Full CV at: https://artemiopadilla.github.io/cv.html'
+            : '2-Page Resume Highlights • Full CV at: https://artemiopadilla.github.io/cv.html';
+        pdf.text(subtitle, leftMargin, yPos);
+        yPos += 4;
+    }
+    pdf.setFontSize(format === 'summary' ? 8.5 : 9);
     pdf.setTextColor(...gray);
     const contactLine = sanitizeText(`${personal.location}  •  ${personal.contact.phone}  •  ${personal.contact.email}`);
     pdf.text(contactLine, leftMargin, yPos);
-    yPos += 10;
+    yPos += format === 'summary' ? 6 : 10;
     // Horizontal separator
     pdf.setDrawColor(...lightGray);
     pdf.setLineWidth(0.3);
     pdf.line(leftMargin, yPos, pageWidth - rightMargin, yPos);
-    yPos += 6;
+    yPos += format === 'summary' ? 4 : 6;
     
     // ============ PROFESSIONAL SUMMARY ============
     addSectionHeader('Professional Summary');
     
-    // Build rich summary including tagline, connection, current context, strengths, and closing
+    // Condense summary based on format
     pdf.setFontSize(9.5);
-    // Paragraphs for readability
-    const paragraphs = [
-        personal.summary.brief,
-        personal.summary.tagline,
-        personal.summary.full,
-        personal.summary.connection, // no truncation; show full
-        personal.summary.current
-    ].filter(Boolean);
+    let paragraphs = [];
+    
+    if (format === 'summary') {
+        // 1-page: Just the brief (1-2 lines)
+        paragraphs = [personal.summary.brief].filter(Boolean);
+    } else if (format === 'resume') {
+        // 2-page: Brief + tagline
+        paragraphs = [
+            personal.summary.brief,
+            personal.summary.tagline
+        ].filter(Boolean);
+    } else {
+        // Full CV: Everything
+        paragraphs = [
+            personal.summary.brief,
+            personal.summary.tagline,
+            personal.summary.full,
+            personal.summary.connection,
+            personal.summary.current
+        ].filter(Boolean);
+    }
+    
+    // Render selected paragraphs
     paragraphs.forEach((p, idx) => {
         const cleaned = fixSpacedOutParagraph(sanitizeText(p));
         if (typeof pdf.setCharSpace === 'function') pdf.setCharSpace(0);
-        const h = renderParagraphWithExponents(cleaned, leftMargin, yPos, contentWidth, 9.1, lineHeight - 0.3);
-        yPos += h + 2;
+        const fontSize = format === 'summary' ? 8.5 : 9.1;
+        const h = renderParagraphWithExponents(cleaned, leftMargin, yPos, contentWidth, fontSize, lineHeight - 0.3);
+        yPos += h + (format === 'summary' ? 1 : 2);
         checkPageBreak(25);
     });
-    if (personal.summary.strengths && personal.summary.strengths.length) {
+    
+    // Only show strengths for full CV, inline for 2-page resume
+    if (format === 'resume' && personal.summary.strengths && personal.summary.strengths.length) {
+        // Show first 2 strengths inline for 2-page resume
+        const topStrengths = personal.summary.strengths.slice(0, 2).join('. ');
+        pdf.setFont('helvetica', 'italic');
+        pdf.setFontSize(8.5);
+        pdf.setTextColor(...gray);
+        const strengthsHeight = renderWrappedText(sanitizeText(topStrengths), leftMargin, yPos, contentWidth, 8.5, lineHeight - 0.3);
+        yPos += strengthsHeight + 2;
+    } else if (format === 'full' && personal.summary.strengths && personal.summary.strengths.length) {
+        // Full CV: show all strengths as bullets
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(9.5);
         pdf.setTextColor(...darkGray);
         pdf.text('Core Strengths:', leftMargin, yPos);
         pdf.setFont('helvetica', 'normal');
         yPos += 5;
-    personal.summary.strengths.forEach(s => renderBulletParagraph(s, 8.9));
+        personal.summary.strengths.forEach(s => renderBulletParagraph(s, 8.9));
     }
-    if (personal.summary.closing) {
+    
+    // Only show closing for full CV
+    if (format === 'full' && personal.summary.closing) {
         yPos += 2;
         const closingClean = fixSpacedOutParagraph(sanitizeText(personal.summary.closing));
         const closingHeight = renderWrappedText(closingClean, leftMargin, yPos, contentWidth, 8.9, lineHeight - 0.3);
         yPos += closingHeight;
     }
-    yPos += sectionSpacing;
+    
+    yPos += format === 'summary' ? 2 : sectionSpacing;
     
     // ============ PROFESSIONAL EXPERIENCE ============
     addSectionHeader('Professional Experience');
@@ -297,9 +341,9 @@ async function generatePDF(format = 'full') {
     // Determine which experiences to include based on format
     let experiences = cvData.experience;
     if (format === 'resume') {
-        experiences = experiences.slice(0, 3);
+        experiences = experiences.slice(0, 3);  // 2-page: 3 jobs
     } else if (format === 'summary') {
-        experiences = experiences.slice(0, 2);
+        experiences = experiences.slice(0, 3);  // 1-page: 3 jobs with fewer highlights
     }
     
     experiences.forEach(job => {
@@ -335,59 +379,87 @@ async function generatePDF(format = 'full') {
         if (format === 'resume') {
             highlights = highlights.slice(0, 3);
         } else if (format === 'summary') {
-            highlights = highlights.slice(0, 2);
+            // For 1-page: show 2-3 highlights for most recent job, 1 for others
+            const jobIndex = experiences.indexOf(job);
+            highlights = jobIndex === 0 ? highlights.slice(0, 3) : highlights.slice(0, 1);
         }
         
+        const bulletFontSize = format === 'summary' ? 8.5 : 8.9;
         highlights.forEach(highlight => {
-            // Avoid very long highlights causing dense first page: truncate in full format as well
+            // Don't truncate for 1-page since we only show 1 highlight - show complete text
             let txt = highlight.text;
             if (format === 'full' && txt.length > 210) txt = txt.slice(0, 210) + '...';
-            renderBulletParagraph(sanitizeText(txt), 8.9);
+            // No truncation for summary - we have space for 1 complete highlight per job
+            renderBulletParagraph(sanitizeText(txt), bulletFontSize);
         });
-        yPos += 2;
+        yPos += format === 'summary' ? 2 : 2;  // Reduced space after highlights
         // Divider
         pdf.setDrawColor(...lightGray);
         pdf.setLineWidth(0.2);
         pdf.line(leftMargin, yPos, pageWidth - rightMargin, yPos);
-        yPos += 4;
+        yPos += format === 'summary' ? 4 : 4;  // Reduced space after divider
     });
     
     // ============ EDUCATION ============
     checkPageBreak(40);
     addSectionHeader('Education');
     
-    // Education selection based on format (full => all, resume => 2, summary => 1)
+    // Education selection based on format
     let educationItems = cvData.education;
-    if (format === 'resume') educationItems = educationItems.slice(0, 2);
-    if (format === 'summary') educationItems = educationItems.slice(0, 1);
+    if (format === 'resume') educationItems = educationItems.slice(0, 2);  // 2-page: 2 degrees
+    if (format === 'summary') educationItems = educationItems.slice(0, 3);  // 1-page: 3 degrees (all formal education)
 
     educationItems.forEach(edu => {
-        pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(11);
-        pdf.setTextColor(...darkGray);
-        pdf.text(edu.degree, leftMargin, yPos);
-        
-        // Dates
-        pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(9);
-        pdf.setTextColor(...gray);
-        const eduDateText = `${formatDate(edu.startDate)} – ${formatDate(edu.endDate)}`;
-        pdf.text(eduDateText, pageWidth - rightMargin - pdf.getTextWidth(eduDateText), yPos);
-        yPos += 5;
-        
-        pdf.setFont('helvetica', 'italic');
-        pdf.setFontSize(10);
-        pdf.text(edu.institution, leftMargin, yPos);
-        yPos += 5;
-        
-        if (edu.gpa) {
+        if (format === 'summary') {
+            // Ultra-compact format for 1-page
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(9);
+            pdf.setTextColor(...darkGray);
+            pdf.text(edu.degree, leftMargin, yPos);
+            
+            // Dates on same line
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(8);
+            pdf.setTextColor(...gray);
+            const endDateText = edu.endDate ? formatDate(edu.endDate) : (edu.expectedEndDate ? `Expected ${formatDate(edu.expectedEndDate)}` : 'Present');
+            const eduDateText = `${formatDate(edu.startDate)} – ${endDateText}`;
+            pdf.text(eduDateText, pageWidth - rightMargin - pdf.getTextWidth(eduDateText), yPos);
+            yPos += 3.5;
+            
+            pdf.setFont('helvetica', 'italic');
+            pdf.setFontSize(8);
+            pdf.text(edu.institution, leftMargin, yPos);
+            yPos += 4;  // Better spacing between education entries
+        } else {
+            // Original format for 2-page and full
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(11);
+            pdf.setTextColor(...darkGray);
+            pdf.text(edu.degree, leftMargin, yPos);
+            
+            // Dates
             pdf.setFont('helvetica', 'normal');
             pdf.setFontSize(9);
-            pdf.text(`GPA: ${edu.gpa}`, leftMargin, yPos);
+            pdf.setTextColor(...gray);
+            const endDateText = edu.endDate ? formatDate(edu.endDate) : (edu.expectedEndDate ? `Expected ${formatDate(edu.expectedEndDate)}` : 'Present');
+            const eduDateText = `${formatDate(edu.startDate)} – ${endDateText}`;
+            pdf.text(eduDateText, pageWidth - rightMargin - pdf.getTextWidth(eduDateText), yPos);
             yPos += 5;
+            
+            pdf.setFont('helvetica', 'italic');
+            pdf.setFontSize(10);
+            pdf.text(edu.institution, leftMargin, yPos);
+            yPos += 5;
+            
+            if (edu.gpa) {
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+                pdf.text(`GPA: ${edu.gpa}`, leftMargin, yPos);
+                yPos += 5;
+            }
+            
+            yPos += 3;
         }
-        
-        yPos += 3;
     });
     
     // ============ TECHNICAL SKILLS ============
@@ -408,12 +480,15 @@ async function generatePDF(format = 'full') {
 
     function renderSkillBlock(x, y, title, items) {
         pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(9);
+        pdf.setFontSize(format === 'summary' ? 8 : 9);
         pdf.setTextColor(...accent);
         pdf.text(title, x, y);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(...darkGray);
-        const h = renderWrappedText(items.join(', '), x, y + 3.5, colWidth, 8.5, 4.2) + 7;
+        const fontSize = format === 'summary' ? 7.5 : 8.5;
+        const lineHeight = format === 'summary' ? 3.5 : 4.2;
+        const offset = format === 'summary' ? 2.5 : 3.5;
+        const h = renderWrappedText(items.join(', '), x, y + offset, colWidth, fontSize, lineHeight) + (format === 'summary' ? 5 : 7);
         return h;
     }
     const blocks = [
@@ -434,16 +509,19 @@ async function generatePDF(format = 'full') {
     });
     yPos = Math.max(leftY, rightY) + 2;
     
-    // ============ CERTIFICATIONS (if space permits and full format) ============
-    if (format === 'full') {
+    // ============ CERTIFICATIONS ============
+    // Skip certifications for 1-page to save space
+    if (format !== 'summary') {
         checkPageBreak(40);
         addSectionHeader('Certifications & Training');
         
         pdf.setFontSize(9);
         pdf.setTextColor(...darkGray);
         
-        // Full format includes all certifications; others already omitted
-        const certs = cvData.certifications.slice(0, format === 'full' ? cvData.certifications.length : 5);
+        // Limit certifications based on format
+        const certLimit = format === 'full' ? cvData.certifications.length : 5;  // resume: top 5
+        const certs = cvData.certifications.slice(0, certLimit);
+        
         certs.forEach(cert => {
             checkPageBreak(10);
             const certText = `• ${cert.name} - ${cert.issuer} (${cert.date})`;
@@ -455,50 +533,110 @@ async function generatePDF(format = 'full') {
     }
     
     // ============ LEADERSHIP & ACHIEVEMENTS ============
-    checkPageBreak(40);
-    // ============ LEADERSHIP =========
-    addSectionHeader('Leadership');
-    
-    pdf.setFontSize(9);
-    pdf.setTextColor(...darkGray);
-    
-    // Leadership roles
-    const leadershipList = (format === 'full') ? cvData.leadership : cvData.leadership.slice(0, 2);
-    leadershipList.forEach(role => {
-        checkPageBreak(15);
-        renderBulletParagraph(`${role.role}, ${role.organization} (${role.period})`, 9);
-    });
+    // Skip these sections for 1-page resume to save space
+    if (format !== 'summary') {
+        checkPageBreak(40);
+        // ============ LEADERSHIP =========
+        addSectionHeader('Leadership');
+        
+        pdf.setFontSize(9);
+        pdf.setTextColor(...darkGray);
+        
+        // Leadership roles
+        const leadershipList = (format === 'full') ? cvData.leadership : cvData.leadership.slice(0, 2);
+        leadershipList.forEach(role => {
+            checkPageBreak(15);
+            renderBulletParagraph(`${role.role}, ${role.organization} (${role.period})`, 9);
+        });
 
-    yPos += 4;
-    // ============ AWARDS =========
-    checkPageBreak(30);
-    addSectionHeader('Awards');
-    const awardsList = (format === 'full') ? cvData.awards : cvData.awards.slice(0, 4);
-    awardsList.forEach(award => {
-        checkPageBreak(12);
-        renderBulletParagraph(`${award.title}${award.year ? ` (${award.year})` : ''}`, 9);
-    });
-    yPos += 2;
-    // ============ PUBLICATIONS =========
-    checkPageBreak(30);
-    addSectionHeader('Publications');
-    const pubs = (format === 'full') ? cvData.publications : cvData.publications.slice(0, 1);
-    pubs.forEach(pub => {
-        checkPageBreak(12);
-        renderBulletParagraph(`${pub.title}${pub.journal ? ` – ${pub.journal}` : pub.institution ? ` – ${pub.institution}` : ''} (${pub.year})`, 9);
-    });
-    yPos += 4;
+        yPos += 4;
+        // ============ AWARDS =========
+        checkPageBreak(30);
+        addSectionHeader('Awards');
+        const awardsList = (format === 'full') ? cvData.awards : cvData.awards.slice(0, 4);
+        awardsList.forEach(award => {
+            checkPageBreak(12);
+            renderBulletParagraph(`${award.title}${award.year ? ` (${award.year})` : ''}`, 9);
+        });
+        yPos += 2;
+        // ============ PUBLICATIONS =========
+        checkPageBreak(30);
+        addSectionHeader('Publications');
+        const pubs = (format === 'full') ? cvData.publications : cvData.publications.slice(0, 1);
+        pubs.forEach(pub => {
+            checkPageBreak(12);
+            renderBulletParagraph(`${pub.title}${pub.journal ? ` – ${pub.journal}` : pub.institution ? ` – ${pub.institution}` : ''} (${pub.year})`, 9);
+        });
+        yPos += 4;
+    }
     
-    // ============ LANGUAGES ============
-    checkPageBreak(25);
-    addSectionHeader('Languages');
-    
-    pdf.setFontSize(9);
-    pdf.setTextColor(...darkGray);
-    
-    cvData.languages.forEach(lang => {
-        renderBulletParagraph(`${lang.name} (${lang.level})`, 9);
-    });
+    // ============ LANGUAGES & AWARDS (Two-column for 1-page) ============
+    if (format === 'summary') {
+        // Two-column layout for 1-page resume
+        checkPageBreak(35);
+        
+        const colWidth = (contentWidth - 10) / 2;
+        const col1X = leftMargin;
+        const col2X = leftMargin + colWidth + 10;
+        
+        // Languages column
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(10);
+        pdf.setTextColor(...accent);
+        pdf.text('LANGUAGES', col1X, yPos);
+        pdf.setDrawColor(...accent);
+        pdf.setLineWidth(0.5);
+        pdf.line(col1X, yPos + 1.8, col1X + 30, yPos + 1.8);
+        
+        // Awards column
+        pdf.text('AWARDS', col2X, yPos);
+        pdf.line(col2X, yPos + 1.8, col2X + 30, yPos + 1.8);
+        
+        yPos += 5;
+        
+        // Languages content
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(8.5);
+        pdf.setTextColor(...darkGray);
+        let langY = yPos;
+        cvData.languages.forEach(lang => {
+            pdf.text(`• ${lang.name} (${lang.level})`, col1X, langY);
+            langY += 4;
+        });
+        
+        // Awards content (last 3)
+        let awardY = yPos;
+        const recentAwards = cvData.awards.slice(0, 3);
+        recentAwards.forEach(award => {
+            const awardText = `• ${award.title}${award.year ? ` (${award.year})` : ''}`;
+            // Wrap text if too long
+            const maxWidth = colWidth - 5;
+            if (pdf.getTextWidth(awardText) > maxWidth) {
+                const lines = wrapText(awardText, maxWidth, 8.5);
+                lines.forEach((line, idx) => {
+                    pdf.text(line, col2X, awardY);
+                    awardY += 3.5;
+                });
+            } else {
+                pdf.text(awardText, col2X, awardY);
+                awardY += 4;
+            }
+        });
+        
+        yPos = Math.max(langY, awardY) + 2;
+        
+    } else {
+        // Single column for other formats
+        checkPageBreak(25);
+        addSectionHeader('Languages');
+        
+        pdf.setFontSize(9);
+        pdf.setTextColor(...darkGray);
+        
+        cvData.languages.forEach(lang => {
+            renderBulletParagraph(`${lang.name} (${lang.level})`, 9);
+        });
+    }
     
     // ============ PROJECTS (if full format and space permits) ============
     if (format === 'full') {
@@ -551,13 +689,22 @@ async function generatePDF(format = 'full') {
         }
     }
     
-    // Add page numbers to all pages
+    // Add page numbers and footer to all pages
     const totalPages = pdf.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
         pdf.setFontSize(9);
         pdf.setTextColor(...gray);
-        pdf.text(`Page ${i} / ${totalPages}`, pageWidth / 2, pageHeight - 15, { align: 'center' });
+        
+        // For condensed resumes, add footer with CV link
+        if ((format === 'summary' && i === 1) || (format === 'resume' && i === totalPages)) {
+            pdf.setFont('helvetica', 'italic');
+            pdf.setFontSize(7.5);
+            pdf.text('For complete CV with all details, visit: https://artemiopadilla.github.io/cv.html', pageWidth / 2, pageHeight - 10, { align: 'center' });
+        } else if (format !== 'summary') {
+            // Regular page numbers for full CV and non-last pages of 2-page resume
+            pdf.text(`Page ${i} / ${totalPages}`, pageWidth / 2, pageHeight - 15, { align: 'center' });
+        }
     }
     
     // Set document properties
@@ -569,41 +716,30 @@ async function generatePDF(format = 'full') {
         creator: 'Artemio Padilla CV Generator'
     });
     
-    // Determine filename based on format
+    // Determine filename based on format with clear differentiation
     let filename;
+    const firstName = cvData.personal.name.first;
+    const lastName = cvData.personal.name.last.split(' ')[0];
+    
     switch(format) {
         case 'resume':
-            filename = `${cvData.personal.name.first}_${cvData.personal.name.last.split(' ')[0]}_Resume.pdf`;
+            filename = `${firstName}_${lastName}_Resume_2pg.pdf`;
             break;
         case 'summary':
-            filename = `${cvData.personal.name.first}_${cvData.personal.name.last.split(' ')[0]}_Summary.pdf`;
+            filename = `${firstName}_${lastName}_Resume_1pg.pdf`;
             break;
         default:
-            filename = `${cvData.personal.name.first}_${cvData.personal.name.last.split(' ')[0]}_CV.pdf`;
+            filename = `${firstName}_${lastName}_CV_Full.pdf`;
     }
     
     // Save the PDF
     pdf.save(filename);
 }
 
-// Initialize button when DOM is loaded
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    const pdfButton = document.getElementById('downloadPdfBtn');
-    if (pdfButton) {
-        pdfButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            generatePDF('full');
-        });
-    }
-    
-    // Also handle the floating button
-    const floatButton = document.querySelector('.pdf-float-btn');
-    if (floatButton) {
-        floatButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            generatePDF('full');
-        });
-    }
+    // Both download buttons are now dropdowns handled in their respective files
+    // No direct PDF generation on button click needed
     
     // Handle format-specific buttons if they exist
     const resumeButton = document.getElementById('downloadResumeBtn');

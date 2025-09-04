@@ -49,19 +49,8 @@
             "deploymentReduction": "75%",
             "beforeTime": ">2 quarters",
             "afterTime": "<1 quarter"
-          }
-        },
-        {
-          "text": "Enabled data science at scale: implemented and managed SageMaker-based environments, achieving 10,500+ hours of usage across 38 users and 9+ models developed",
-          "metrics": {
-            "hours": 10500,
-            "users": 38,
-            "models": 9
-          }
-        },
-        {
-          "text": "GenAI innovation: developed and deployed an internal RAG chatbot with GenAI + IaC, introducing LLM governance across security, legal, and product dimensions",
-          "metrics": {}
+          },
+          "priority": 1
         },
         {
           "text": "Enterprise automation: integrated Snowflake + AWS to streamline the enterprise data platform: 292 ETL processes and validations, zero man-hours in periodic workflows, and data cleansing for millions of persons and addresses",
@@ -69,29 +58,49 @@
             "processes": 292,
             "scale": "millions",
             "manHours": 0
-          }
+          },
+          "priority": 2
+        },
+        {
+          "text": "Enabled data science at scale: implemented and managed SageMaker-based environments, achieving 10,500+ hours of usage across 38 users and 9+ models developed",
+          "metrics": {
+            "hours": 10500,
+            "users": 38,
+            "models": 9
+          },
+          "priority": 3
         },
         {
           "text": "MLOps best practices: SageMaker environments as IaC; continuous training pipelines for 20+ monthly models; cross-platform templates (batch/online, cloud & on-prem); centralized model/experiment registry; standardized DevOps interfaces",
           "metrics": {
             "monthlyModels": 20
-          }
+          },
+          "priority": 4
         },
         {
-          "text": "Cloud orchestration: EMR, Lambda, Snowflake, Glue, SageMaker with idempotency and resilience principles",
-          "metrics": {}
+          "text": "GenAI innovation: developed and deployed an internal RAG chatbot with GenAI + IaC, introducing LLM governance across security, legal, and product dimensions",
+          "metrics": {},
+          "priority": 5
         },
         {
           "text": "Leadership & coordination: aligned cross-functional teams and external partners to ensure advanced models deliver measurable business value",
-          "metrics": {}
-        },
-        {
-          "text": "Admin of: SageMaker, Airflow, Data Catalog, Internal GenAI chatbot",
-          "metrics": {}
+          "metrics": {},
+          "priority": 6
         },
         {
           "text": "Delivered trainings across Data & Analytics teams on Git (theory + labs), SageMaker, MLflow, and EMR–SageMaker integration, fostering adoption of modern ML and data engineering practices",
-          "metrics": {}
+          "metrics": {},
+          "priority": 7
+        },
+        {
+          "text": "Cloud orchestration: EMR, Lambda, Snowflake, Glue, SageMaker with idempotency and resilience principles",
+          "metrics": {},
+          "priority": 8
+        },
+        {
+          "text": "Admin of: SageMaker, Airflow, Data Catalog, Internal GenAI chatbot",
+          "metrics": {},
+          "priority": 9
         }
       ]
     },
@@ -104,38 +113,46 @@
       "endDate": "2023-12",
       "highlights": [
         {
-          "text": "Initiated the company's knowledge graph as the foundation for automation and smarter data integration",
-          "metrics": {}
-        },
-        {
           "text": "Led external data enrichment (e.g., RENAPO), improving records for 80M+ individuals at scale",
           "metrics": {
             "scale": "80M+"
-          }
+          },
+          "priority": 1
         },
         {
           "text": "Kickstarted data platform automation on AWS (data lake), enabling current cloud-first operations",
-          "metrics": {}
+          "metrics": {},
+          "priority": 2
+        },
+        {
+          "text": "Initiated the company's knowledge graph as the foundation for automation and smarter data integration",
+          "metrics": {},
+          "priority": 3
         },
         {
           "text": "Introduced engineering best practices: idempotent processes, CI/CD pipelines, and Git workflows",
-          "metrics": {}
-        },
-        {
-          "text": "Delivered trainings to Data & Analytics on Git (theory + labs), SageMaker, MLflow, and EMR–SageMaker integration",
-          "metrics": {}
+          "metrics": {},
+          "priority": 4
         },
         {
           "text": "Implemented business ETL workflows (Spark/PySpark + SQL) supporting finance, risk & analytics domains",
-          "metrics": {}
+          "metrics": {},
+          "priority": 5
+        },
+        {
+          "text": "Delivered trainings to Data & Analytics on Git (theory + labs), SageMaker, MLflow, and EMR–SageMaker integration",
+          "metrics": {},
+          "priority": 6
         },
         {
           "text": "Provided technical support & onboarding to Analytics (version control, reproducible experimentation)",
-          "metrics": {}
+          "metrics": {},
+          "priority": 7
         },
         {
           "text": "Documented core pipelines and standards; reduced onboarding friction and ad-hoc questions",
-          "metrics": {}
+          "metrics": {},
+          "priority": 8
         }
       ]
     },
@@ -325,6 +342,15 @@
     }
   ],
   "education": [
+    {
+      "degree": "Master's Degree in Applied Artificial Intelligence",
+      "institution": "Instituto Tecnológico y de Estudios Superiores de Monterrey (ITESM)",
+      "startDate": "2024-09",
+      "endDate": null,
+      "expectedEndDate": "2026-12",
+      "gpa": null,
+      "coursework": "Data Science and Analytics, Artificial Intelligence and Machine Learning (AI&ML), Internet of Things and Sensor Networks (IoT), Data Visualization, Machine Learning Operations (MLOps), Software Analysis, Design, and Development, Disruptive Strategy and Digital Transformation, Autonomous Navigation"
+    },
     {
       "degree": "Bachelor's Degree in Data Science",
       "institution": "National Autonomous University of Mexico (UNAM)",
