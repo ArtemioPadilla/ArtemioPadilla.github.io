@@ -353,6 +353,38 @@
   ],
   "certifications": [
     {
+      "name": "Certificado de Alta Especialidad: Inteligencia artificial y aprendizaje automático",
+      "issuer": "Tecnológico de Monterrey",
+      "date": "2025-04",
+      "credentialId": "140696909",
+      "expirationDate": "2030-04",
+      "type": "High Specialty Certificate"
+    },
+    {
+      "name": "Certificado de Alta Especialidad: Visualización de datos",
+      "issuer": "Tecnológico de Monterrey",
+      "date": "2025-04",
+      "credentialId": "140697173",
+      "expirationDate": "2030-04",
+      "type": "High Specialty Certificate"
+    },
+    {
+      "name": "Certificado de Alta Especialidad: Ciencia de datos",
+      "issuer": "Tecnológico de Monterrey",
+      "date": "2024-12",
+      "credentialId": "126396150",
+      "expirationDate": "2027-12",
+      "type": "High Specialty Certificate"
+    },
+    {
+      "name": "Certificado de Alta Especialidad: Internet de las cosas y redes de sensores",
+      "issuer": "Tecnológico de Monterrey",
+      "date": "2024-12",
+      "credentialId": "126399084",
+      "expirationDate": "2027-12",
+      "type": "High Specialty Certificate"
+    },
+    {
       "name": "Introduction to HTML5",
       "issuer": "University of Michigan",
       "date": "2021",
@@ -375,9 +407,18 @@
     },
     {
       "name": "Database Design",
-      "issuer": "Coursera",
-      "date": "2021",
+      "issuer": "DataCamp",
+      "date": "2021-04",
+      "credentialId": "18563296",
       "description": "Relational database design principles, normalization, and SQL optimization",
+      "type": "Online Course"
+    },
+    {
+      "name": "Introduction to SQL",
+      "issuer": "DataCamp",
+      "date": "2020-10",
+      "credentialId": "16515577",
+      "description": "SQL fundamentals, query writing, and database manipulation",
       "type": "Online Course"
     },
     {
@@ -390,9 +431,18 @@
     {
       "name": "A First Step Towards SAP HANA Query Optimization",
       "issuer": "SAP",
-      "date": "2020",
+      "date": "2020-12",
+      "credentialId": "openSAP",
       "description": "In-memory database optimization techniques and query performance tuning",
       "type": "Online Course"
+    },
+    {
+      "name": "English Certificate C2 Proficient",
+      "issuer": "EF SET",
+      "date": "2020-04",
+      "credentialId": "EF SET score C2 PROFICIENT",
+      "description": "C2 level proficiency in English (highest level in CEFR)",
+      "type": "Language Certificate"
     },
     {
       "name": "Heat transfer at the nanoscale",
