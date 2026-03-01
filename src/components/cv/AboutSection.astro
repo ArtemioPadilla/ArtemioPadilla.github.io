@@ -1,0 +1,84 @@
+---
+import type { CVPersonal } from "@/types/cv";
+import SocialIcons from "./SocialIcons.astro";
+
+interface Props {
+  personal: CVPersonal;
+}
+
+const { personal } = Astro.props;
+const { name, title, location, contact, summary, profileImage } = personal;
+---
+
+<section id="about" class="scroll-mt-8">
+  <div class="flex flex-col-reverse md:flex-row md:items-start gap-8">
+    <!-- Text content -->
+    <div class="flex-1">
+      <h1 class="font-heading text-5xl md:text-6xl font-bold text-text uppercase tracking-wide leading-tight">
+        {name.full}
+      </h1>
+
+      <div class="flex items-center gap-2 mt-3 mb-6">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-accent animate-pulse"></span>
+        <span class="text-lg text-text-muted">
+          {title} &middot; {location}
+        </span>
+      </div>
+
+      <!-- Summary paragraphs -->
+      <div class="space-y-4 text-text-muted leading-relaxed">
+        {summary.brief && (
+          <p class="text-text text-lg font-medium">{summary.brief}</p>
+        )}
+
+        {summary.tagline && (
+          <p class="text-primary italic">{summary.tagline}</p>
+        )}
+
+        {summary.full && <p>{summary.full}</p>}
+
+        {summary.connection && <p>{summary.connection}</p>}
+
+        {summary.current && <p>{summary.current}</p>}
+      </div>
+
+      <!-- Strengths -->
+      {summary.strengths && summary.strengths.length > 0 && (
+        <div class="mt-6">
+          <h2 class="text-sm font-semibold text-text uppercase tracking-wider mb-3">
+            Key Strengths
+          </h2>
+          <ul class="space-y-2">
+            {summary.strengths.map((strength) => (
+              <li class="flex items-start gap-3 text-text-muted">
+                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                <span>{strength}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <!-- Closing -->
+      {summary.closing && (
+        <p class="mt-6 text-text-muted leading-relaxed">{summary.closing}</p>
+      )}
+
+      <!-- Social Icons -->
+      <div class="mt-8">
+        <SocialIcons contact={contact} />
+      </div>
+    </div>
+
+    <!-- Profile image -->
+    {profileImage && (
+      <div class="flex-shrink-0 flex justify-center md:justify-end">
+        <img
+          src={profileImage}
+          alt={name.full}
+          class="w-36 h-36 md:w-44 md:h-44 rounded-full object-cover border-4 border-surface-light shadow-xl"
+        />
+      </div>
+    )}
+  </div>
+</section>

@@ -1,0 +1,141 @@
+---
+import type { CurrentlyWorkingOn } from "@/types/cv";
+
+interface Props {
+  data: CurrentlyWorkingOn;
+}
+
+const { data } = Astro.props;
+---
+
+<section id="currently-working" class="scroll-mt-8">
+  <h2 class="font-heading text-3xl font-bold text-text uppercase tracking-wide mb-8">
+    Currently Working On
+  </h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Education Card -->
+    {data.education && (
+      <div class="cv-card">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-2xl">🎓</span>
+          <h3 class="text-lg font-semibold text-text">Education</h3>
+        </div>
+
+        <p class="text-text font-medium">{data.education.degree}</p>
+        <p class="text-text-muted text-sm mb-4">{data.education.institution}</p>
+
+        <!-- Progress bar -->
+        <div class="mb-2">
+          <div class="flex justify-between text-xs text-text-muted mb-1">
+            <span>Progress</span>
+            <span>{data.education.progress}%</span>
+          </div>
+          <div class="w-full h-2 bg-surface rounded-full overflow-hidden">
+            <div
+              class="h-full bg-primary rounded-full transition-all duration-500"
+              style={`width: ${data.education.progress}%`}
+            ></div>
+          </div>
+        </div>
+
+        <p class="text-xs text-text-muted mt-2">
+          Expected completion: {data.education.expectedCompletion}
+        </p>
+      </div>
+    )}
+
+    <!-- Active Projects Card -->
+    {data.projects && data.projects.length > 0 && (
+      <div class="cv-card">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-2xl">🚀</span>
+          <h3 class="text-lg font-semibold text-text">Active Projects</h3>
+        </div>
+
+        <div class="space-y-4">
+          {data.projects.map((project) => (
+            <div>
+              <p class="text-text font-medium text-sm">{project.name}</p>
+              <p class="text-text-muted text-xs mt-1">{project.description}</p>
+              <div class="flex flex-wrap gap-1.5 mt-2">
+                {project.technologies.map((tech) => (
+                  <span class="tech-pill">{tech}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Learning Card -->
+    {data.learning && data.learning.length > 0 && (
+      <div class="cv-card">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-2xl">📚</span>
+          <h3 class="text-lg font-semibold text-text">Learning</h3>
+        </div>
+
+        <div class="space-y-3">
+          {data.learning.map((item) => (
+            <div class="flex items-start gap-3">
+              <span class="text-lg flex-shrink-0">{item.icon}</span>
+              <div>
+                <p class="text-text text-sm font-medium">{item.topic}</p>
+                <p class="text-text-muted text-xs">{item.platform}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Next Goals Card -->
+    {data.nextGoals && data.nextGoals.length > 0 && (
+      <div class="cv-card">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-2xl">🎯</span>
+          <h3 class="text-lg font-semibold text-text">Next Goals</h3>
+        </div>
+
+        <div class="space-y-3">
+          {data.nextGoals.map((item) => (
+            <div class="flex items-start gap-3">
+              <span class="mt-1 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span>
+              <div>
+                <p class="text-text text-sm font-medium">{item.goal}</p>
+                <p class="text-text-muted text-xs">Target: {item.targetDate}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .cv-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: border-color 0.2s ease;
+  }
+
+  .cv-card:hover {
+    border-color: var(--color-primary);
+  }
+
+  .tech-pill {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    background-color: var(--color-surface-light);
+    color: var(--color-primary);
+    border: 1px solid var(--color-border);
+  }
+</style>

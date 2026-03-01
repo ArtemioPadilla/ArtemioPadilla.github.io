@@ -1,0 +1,72 @@
+---
+import type { Interests } from "@/types/cv";
+
+interface Props {
+  interests: Interests;
+}
+
+const { interests } = Astro.props;
+---
+
+<section id="interests" class="scroll-mt-8">
+  <h2 class="font-heading text-3xl font-bold text-text uppercase tracking-wide mb-6">
+    Interests
+  </h2>
+
+  {/* Philosophy quote */}
+  {interests.philosophy && (
+    <blockquote class="border-l-4 border-primary pl-4 py-2 mb-8">
+      <p class="text-text italic leading-relaxed">
+        "{interests.philosophy}"
+      </p>
+    </blockquote>
+  )}
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {/* Professional interests */}
+    {interests.professional && interests.professional.length > 0 && (
+      <div>
+        <h3 class="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
+          Professional
+        </h3>
+        <div class="flex flex-wrap gap-2">
+          {interests.professional.map((interest) => (
+            <span class="interest-tag">{interest}</span>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* Personal interests */}
+    {interests.personal && interests.personal.length > 0 && (
+      <div>
+        <h3 class="text-sm font-semibold text-accent uppercase tracking-wider mb-3">
+          Personal
+        </h3>
+        <div class="flex flex-wrap gap-2">
+          {interests.personal.map((interest) => (
+            <span class="interest-tag">{interest}</span>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .interest-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .interest-tag:hover {
+    border-color: var(--color-primary);
+    color: var(--color-text);
+  }
+</style>

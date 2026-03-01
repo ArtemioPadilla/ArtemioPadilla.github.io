@@ -1,0 +1,63 @@
+---
+import type { LeadershipRole } from "@/types/cv";
+
+interface Props {
+  roles: LeadershipRole[];
+}
+
+const { roles } = Astro.props;
+---
+
+<section id="leadership" class="scroll-mt-8">
+  <h2 class="font-heading text-3xl font-bold text-text uppercase tracking-wide mb-6">
+    Leadership & Community
+  </h2>
+
+  <div class="space-y-0">
+    {roles.map((role) => (
+      <div class="leadership-entry">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-2">
+          <div>
+            <h3 class="text-base font-semibold text-text">{role.role}</h3>
+            <p class="text-primary text-sm font-medium">
+              {role.organization}
+              {role.location && (
+                <span class="text-text-muted font-normal"> &middot; {role.location}</span>
+              )}
+            </p>
+          </div>
+
+          <span class="text-sm text-text-muted flex-shrink-0 whitespace-nowrap">
+            {role.period}
+          </span>
+        </div>
+
+        {role.description && (
+          <p class="text-sm text-text-muted leading-relaxed mt-2">{role.description}</p>
+        )}
+
+        {role.highlights && role.highlights.length > 0 && (
+          <ul class="space-y-1.5 mt-3">
+            {role.highlights.map((highlight) => (
+              <li class="flex items-start gap-3 text-sm text-text-muted leading-relaxed">
+                <span class="mt-1.5 w-1 h-1 rounded-full bg-border flex-shrink-0"></span>
+                <span>{highlight}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .leadership-entry {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .leadership-entry:last-child {
+    border-bottom: none;
+  }
+</style>

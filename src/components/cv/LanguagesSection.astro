@@ -1,0 +1,74 @@
+---
+import type { Language } from "@/types/cv";
+
+interface Props {
+  languages: Language[];
+}
+
+const { languages } = Astro.props;
+
+const levelColors: Record<string, string> = {
+  Native: "bg-accent/20 text-accent border-accent/30",
+  Fluent: "bg-primary/20 text-primary border-primary/30",
+  Advanced: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  Intermediate: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+  Basic: "bg-surface-light text-text-muted border-border",
+};
+---
+
+<section id="languages" class="scroll-mt-8">
+  <h2 class="font-heading text-3xl font-bold text-text uppercase tracking-wide mb-6">
+    Languages
+  </h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    {languages.map((lang) => (
+      <div class="language-card">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-lg font-semibold text-text">{lang.name}</h3>
+          <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${levelColors[lang.level] || levelColors["Basic"]}`}>
+            {lang.level}
+          </span>
+        </div>
+
+        {lang.certifications && lang.certifications.length > 0 && (
+          <div class="flex flex-wrap gap-2 mt-2">
+            {lang.certifications.map((cert) => (
+              cert.url ? (
+                <a
+                  href={cert.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium bg-surface text-text-muted hover:text-primary border border-border hover:border-primary transition-colors"
+                >
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {cert.name}
+                </a>
+              ) : (
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium bg-surface text-text-muted border border-border">
+                  {cert.name}
+                </span>
+              )
+            ))}
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .language-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    transition: border-color 0.2s ease;
+  }
+
+  .language-card:hover {
+    border-color: var(--color-primary);
+  }
+</style>

@@ -4,124 +4,90 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is Artemio Padilla's personal portfolio website built as a static site with multiple HTML pages. The site is self-hosted on a Raspberry Pi 4b and uses Cloudflared for DNS management.
+Artemio Padilla's personal portfolio website built with **Astro 5 + TypeScript + Tailwind CSS v4**. Deployed to GitHub Pages via GitHub Actions.
 
 ## Architecture
 
-### Main Site Structure
-- **Main Portfolio** (`index.html`): Landing page with sections for overview, projects, and social feed. Built with Shorthand CSS framework
-- **CV Page** (`cv.html`): Dynamic curriculum vitae with data-driven rendering from JSON source, supports multi-format PDF export
-- **CV Backup** (`cv-backup.html`): Static HTML fallback for CV (no JavaScript dependency)
-- **Landing Tree** (`landing-tree/`): Alternative landing page with particle.js effects and typed.js animations
-- **2024 Update** (`2024-update/Personal/`): Newer portfolio template with multiple pages (about, contact, portfolio, resume, services)
+### Tech Stack
+- **Framework**: Astro 5 (static output, zero JS by default)
+- **Language**: TypeScript (strict mode)
+- **Styling**: Tailwind CSS v4 with `@theme` CSS custom properties
+- **Interactive Islands**: Preact (PDF generation, clipboard, vCard, particles, typed.js)
+- **PDF Generation**: jsPDF (dynamically imported, client-side only)
+- **Validation**: Ajv + ajv-formats (JSON Schema, build-time)
+- **Deployment**: GitHub Pages via GitHub Actions
 
-### Directory Structure
-- `data/`: Canonical structured CV data (JSON) with schema validation
-- `js/`: CV rendering engine and PDF generation scripts
-- `scripts/`: Node.js automation tools for validation, generation, and hooks
-- `assets/`: Shared images, fonts, and legacy JavaScript
-- `.github/`: CI/CD workflows for automated testing
+### Pages
+- `/` — Home page with hero, about, featured projects, contact (content from `src/data/site-data.ts`)
+- `/cv` — Full CV rendered from JSON data at build time (12 Astro components, zero client JS for content)
+- `/links` — Link hub with particles background, typed.js tagline, social icons, external links
+- `/404` — Custom 404 page with glitch animation
 
-### Technology Stack
-- **CSS Frameworks**: Shorthand CSS (main site), Bootstrap (CV page)
-- **JavaScript Libraries**:
-  - jQuery for DOM manipulation
-  - Feather Icons for iconography
-  - Slick Carousel for sliders
-  - Smooth Scroll for navigation
-  - Particle.js for background effects (landing tree)
-  - Typed.js for text animations (landing tree)
-  - jsPDF for PDF generation with custom layouts
-- **Build Tools**:
-  - Node.js for automation scripts
-  - Ajv for JSON schema validation
-  - Git hooks for pre-commit validation
-- **Analytics**: Amplitude tracking integrated across pages
+### CV Data Pipeline
+1. **Source of Truth**: `src/content/cv/cv-data.json`
+2. **Schema Validation**: `src/content/cv/cv-schema.json` (JSON Schema draft-07)
+3. **Build-time Loading**: `src/utils/cv-loader.ts` validates with Ajv and returns typed `CVData`
+4. **Static Rendering**: 12 Astro components render CV sections as pre-built HTML
+5. **PDF Export**: `src/utils/pdf-generator.ts` generates 3 formats (full/resume/summary) client-side
+6. **Build fails** if CV data doesn't validate — no invalid data can be deployed
 
-## Key Files
-
-### Core Pages
-- `index.html`: Main portfolio page
-- `cv.html`: Dynamic curriculum vitae page with PDF export
-- `cv-backup.html`: Static CV fallback (no JavaScript required)
-- `landing-tree/landing-tree.html`: Alternative landing page with animations
-
-### Data Files
-- `data/cv-data.json`: Canonical CV data source (single source of truth)
-- `data/cv-schema.json`: JSON schema for CV data validation
-- `data/cv-data.js`: Auto-generated JavaScript fallback for offline support
-
-### JavaScript Components
-- `js/cv-renderer.js`: Dynamic CV rendering engine
-- `js/pdf-generator.js`: Multi-format PDF export (full/resume/summary)
-- `js/nav-collapsible.js`: Navigation collapse functionality
-- `assets/js/script.js`: Main site JavaScript functionality
-
-### Automation Scripts
-- `scripts/generate-cv-data.js`: Validates and generates JS fallback from JSON
-- `scripts/update-cv-metadata.js`: Updates version and lastUpdated fields
-- `scripts/install-hooks.js`: Sets up git pre-commit hooks
-
-### Styles
-- `css/styles.css`: CV page Bootstrap-based styles
-
-## CV Data Pipeline
-
-The CV system uses a data-driven architecture:
-
-1. **Source of Truth**: `data/cv-data.json` - All CV content in structured JSON format
-2. **Validation**: JSON schema validation via `data/cv-schema.json` using Ajv
-3. **Fallback Generation**: Auto-generated `data/cv-data.js` for offline/file:// protocol support
-4. **Dynamic Rendering**: `js/cv-renderer.js` transforms JSON data into HTML
-5. **PDF Export**: `js/pdf-generator.js` supports three formats:
-   - Full CV (comprehensive with all details)
-   - Resume (condensed 2-page version)
-   - Summary (1-page executive summary)
-
-### Automation Workflow
-- **Pre-commit Hook**: Validates JSON and regenerates JS fallback automatically
-- **CI/CD**: GitHub Actions workflow verifies data integrity on every push
-- **Version Management**: Automated version bumping and metadata updates
-
-## Development Scripts
-
-```bash
-# Install dependencies and set up git hooks
-npm install
-npm run setup:hooks
-
-# CV Data Management
-npm run validate:cv        # Validate cv-data.json against schema
-npm run build:cv          # Validate and generate JS fallback
-npm run format:cv         # Format cv-data.json with Prettier
-
-# Release Workflow
-npm run prepare:cv-release # Bump version and update lastUpdated
-npm run release:cv        # Build and commit CV artifacts
+### Project Structure
+```
+src/
+├── content/cv/           # CV JSON data + schema (source of truth)
+├── types/cv.ts           # TypeScript interfaces for all CV data
+├── utils/                # cv-loader, date-formatter, text-sanitizer, pdf-generator
+├── components/
+│   ├── layout/           # BaseLayout, Navigation, Footer, ThemeToggle
+│   ├── home/             # Hero, About, ProjectCard, Contact
+│   ├── cv/               # 12 section components + CvLayout + SocialIcons
+│   ├── cv-interactive/   # Preact islands (PdfDownloader, CopyToClipboard, VCardDownload)
+│   └── links/            # ParticlesBackground.tsx, TypedTagline.tsx
+├── pages/                # index, cv, links, 404
+├── data/site-data.ts     # Home page content (separate from CV)
+└── styles/global.css     # Tailwind v4 @theme + dark/light mode + global styles
+scripts/
+├── validate-cv.ts        # Ajv validation script (run via npm run validate:cv)
+└── update-cv-metadata.ts # Version bumping for CV releases
+.github/workflows/
+├── deploy.yml            # Build + deploy to GitHub Pages
+└── cv-data.yml           # Validate CV data on push/PR
 ```
 
-## External Dependencies
+## Development Commands
 
-### CDN Libraries
-- Shorthand CSS
-- Bootstrap
-- jQuery
-- Feather Icons
-- Slick Carousel
-- Font Awesome
-- Amplitude Analytics
-- jsPDF (for PDF generation)
+```bash
+npm run dev              # Start dev server (http://localhost:4321)
+npm run build            # Validate CV + build static site to dist/
+npm run preview          # Preview built site locally
+npm run validate:cv      # Validate cv-data.json against schema
+npm run format:cv        # Format cv-data.json with Prettier
+npm run prepare:cv-release  # Bump version + update lastUpdated
+```
 
-### Development Dependencies (npm)
-- Ajv & ajv-formats (JSON schema validation)
-- Node.js (build automation)
+## Theming / Dark & Light Mode
 
-## Navigation Structure
+- **Dark mode is default**. Light mode toggled via `html.light` class (persisted in localStorage)
+- All colors use CSS custom properties defined in `src/styles/global.css` under `@theme`
+- Light mode overrides ALL semantic variables in an `html.light {}` block
+- Components use semantic Tailwind classes (`text-text`, `bg-surface`, `border-border`) or explicit `var(--color-*)` references — both adapt automatically to theme changes
+- Key variable: `--color-heading` — white in dark mode, near-black in light mode. Use `text-[var(--color-heading)]` instead of `text-white` for any heading text that should flip with the theme
 
-The site uses anchor-based navigation with smooth scrolling between sections:
-- Home
-- Overview
-- Projects
-- CV (separate page with dynamic content)
-- Link Tree (external)
-- About
+### CSS Variables (dark mode defaults)
+```
+--color-primary: #4f8ff7      --color-accent: #34d399
+--color-bg: #09090b           --color-surface: #111111
+--color-text: #e4e4e7         --color-text-muted: #a1a1aa
+--color-border: #27272a       --color-heading: #ffffff
+--font-sans: Inter             --font-heading: Saira Extra Condensed
+```
+
+## Design Principles
+
+- **Home page content is independent from CV** — `src/data/site-data.ts` vs `src/content/cv/cv-data.json`
+- **CV is reusable** — swap the JSON file and everything re-renders (TypeScript types document the contract)
+- **Zero JS for CV content** — all sections are build-time static HTML; only PDF/clipboard/vCard are interactive Preact islands
+- **Never use `text-white` for headings** — use `text-[var(--color-heading)]` so it adapts to light/dark mode
+- **All borders and dividers use `var(--color-border)`** — never hardcode rgba values
+- **Component-scoped styles** use `<style>` blocks with `var(--color-*)` for theme adaptation
+- **Light mode overrides** use `:global(html.light)` in component `<style>` blocks when CSS-variable-based approach isn't sufficient

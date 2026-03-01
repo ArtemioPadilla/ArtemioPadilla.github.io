@@ -1,0 +1,118 @@
+---
+import CvLayout from "../components/cv/CvLayout.astro";
+import AboutSection from "../components/cv/AboutSection.astro";
+import CurrentlyWorking from "../components/cv/CurrentlyWorking.astro";
+import ExperienceSection from "../components/cv/ExperienceSection.astro";
+import ProjectsSection from "../components/cv/ProjectsSection.astro";
+import EducationSection from "../components/cv/EducationSection.astro";
+import CertificationsSection from "../components/cv/CertificationsSection.astro";
+import SkillsSection from "../components/cv/SkillsSection.astro";
+import LeadershipSection from "../components/cv/LeadershipSection.astro";
+import InterestsSection from "../components/cv/InterestsSection.astro";
+import AwardsSection from "../components/cv/AwardsSection.astro";
+import PublicationsSection from "../components/cv/PublicationsSection.astro";
+import LanguagesSection from "../components/cv/LanguagesSection.astro";
+import PdfDownloader from "../components/cv-interactive/PdfDownloader";
+import CopyToClipboard from "../components/cv-interactive/CopyToClipboard";
+import VCardDownload from "../components/cv-interactive/VCardDownload";
+import { loadAndValidateCV } from "../utils/cv-loader";
+
+const cvData = loadAndValidateCV();
+---
+
+<CvLayout>
+  <!-- Interactive islands (client-side only) -->
+  <PdfDownloader cvData={cvData} client:load />
+  <CopyToClipboard
+    email={cvData.personal.contact.email}
+    phone={cvData.personal.contact.phone}
+    client:visible
+  />
+  <VCardDownload personal={cvData.personal} client:idle />
+  <AboutSection personal={cvData.personal} />
+
+  <hr class="cv-divider" />
+
+  {cvData.currentlyWorkingOn && (
+    <>
+      <CurrentlyWorking data={cvData.currentlyWorkingOn} />
+      <hr class="cv-divider" />
+    </>
+  )}
+
+  <ExperienceSection experiences={cvData.experience} />
+
+  <hr class="cv-divider" />
+
+  <ProjectsSection projects={cvData.projects} />
+
+  <hr class="cv-divider" />
+
+  <EducationSection education={cvData.education} />
+
+  <hr class="cv-divider" />
+
+  {cvData.certifications && cvData.certifications.length > 0 && (
+    <>
+      <CertificationsSection certifications={cvData.certifications} />
+      <hr class="cv-divider" />
+    </>
+  )}
+
+  <SkillsSection skills={cvData.skills} />
+
+  <hr class="cv-divider" />
+
+  {cvData.leadership && cvData.leadership.length > 0 && (
+    <>
+      <LeadershipSection roles={cvData.leadership} />
+      <hr class="cv-divider" />
+    </>
+  )}
+
+  {cvData.interests && (
+    <>
+      <InterestsSection interests={cvData.interests} />
+      <hr class="cv-divider" />
+    </>
+  )}
+
+  {cvData.awards && cvData.awards.length > 0 && (
+    <>
+      <AwardsSection awards={cvData.awards} />
+      <hr class="cv-divider" />
+    </>
+  )}
+
+  {cvData.publications && cvData.publications.length > 0 && (
+    <>
+      <PublicationsSection publications={cvData.publications} />
+      <hr class="cv-divider" />
+    </>
+  )}
+
+  {cvData.languages && cvData.languages.length > 0 && (
+    <LanguagesSection languages={cvData.languages} />
+  )}
+
+  <!-- Footer -->
+  <div class="mt-16 pt-8 border-t border-border text-center">
+    <p class="text-xs text-text-muted">
+      Last updated: {cvData.metadata.lastUpdated} &middot; Version {cvData.metadata.version}
+    </p>
+  </div>
+</CvLayout>
+
+<style>
+  .cv-divider {
+    border: none;
+    height: 1px;
+    margin: 3rem 0;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-border),
+      transparent
+    );
+  }
+</style>

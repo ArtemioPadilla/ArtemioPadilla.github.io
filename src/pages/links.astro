@@ -1,0 +1,365 @@
+---
+import ParticlesBackground from "../components/links/ParticlesBackground";
+import TypedTagline from "../components/links/TypedTagline";
+
+const typedItems = [
+  "Curious",
+  "Empathetic",
+  "Adaptable",
+  "Passionate",
+  "Supportive",
+  "Collaborative",
+  "Proactive",
+  "Analytical",
+  "Resilient",
+  "Innovative",
+  "Dependable",
+  "Detail-Oriented",
+  "Mentor",
+  "Resourceful",
+  "Communicative",
+  "Leader",
+  "Visionary",
+  "Honest",
+  "Loyal",
+  "Perceptive",
+  "Driven",
+  "Self-Taught",
+  "Strategic",
+  "Pragmatic",
+  "Eclectic",
+  "Optimistic",
+  "A Good Friend",
+  "An Engineer",
+  "Teacher",
+];
+
+const socialIcons = [
+  {
+    href: "https://fb.me/ArtemioPadilla/",
+    label: "Facebook",
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+  },
+  {
+    href: "https://www.instagram.com/ArtemioP/",
+    label: "Instagram",
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`,
+  },
+  {
+    href: "https://www.linkedin.com/in/artemiop/",
+    label: "LinkedIn",
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`,
+  },
+  {
+    href: "https://x.com/ArtemioPadilla",
+    label: "X / Twitter",
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+  },
+  {
+    href: "https://www.youtube.com/channel/UCMzMOL4OT61qyupbGjGKIsA",
+    label: "YouTube",
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+  },
+  {
+    href: "https://github.com/ArtemioPadilla",
+    label: "GitHub",
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
+  },
+  {
+    href: "https://orcid.org/0000-0001-6585-2501",
+    label: "ORCID",
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 01-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-3.919-3.722h-2.4z"/></svg>`,
+  },
+];
+
+const externalLinks = [
+  {
+    href: "/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>`,
+    title: "Personal Website",
+    subtitle: "artemiopadilla.github.io",
+  },
+  {
+    href: "/resume.pdf",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>`,
+    title: "Resume",
+    subtitle: "Professional Resume",
+  },
+  {
+    href: "/cv",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+    title: "Curriculum Vitae",
+    subtitle: "artemiopadilla.github.io/cv",
+  },
+  {
+    href: "mailto:artemiopadilla@gmail.com",
+    title: "Email Me",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+    subtitle: "artemiopadilla@gmail.com",
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artemio Padilla - Links</title>
+    <meta
+      name="description"
+      content="Artemio Padilla - Deep Learning Architect. Connect with me on social media."
+    />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+  </head>
+  <body>
+    <ParticlesBackground client:idle />
+
+    <main class="main">
+      <div class="img-container">
+        <img src="/images/profile.webp" alt="Artemio Padilla" class="img" />
+      </div>
+
+      <a href="/" class="username">Artemio Padilla</a>
+
+      <TypedTagline items={typedItems} client:load />
+
+      <section class="some-icons-container">
+        {
+          socialIcons.map((link) => (
+            <a
+              href={link.href}
+              class="some-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={link.label}
+            >
+              <Fragment set:html={link.svg} />
+            </a>
+          ))
+        }
+
+        {
+          externalLinks.map((link) => (
+            <a
+              href={link.href}
+              class="external-link"
+              target={link.href.startsWith("/") ? "_self" : "_blank"}
+              rel={
+                link.href.startsWith("/") ? undefined : "noopener noreferrer"
+              }
+            >
+              <span class="external-link__icon">
+                <Fragment set:html={link.icon} />
+              </span>
+              {link.title}
+              <h2 class="external-link__header">{link.subtitle}</h2>
+            </a>
+          ))
+        }
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    font-family: "Quicksand", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .main {
+    position: relative;
+    z-index: 1;
+    padding: 20px 10px;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .img-container {
+    height: 200px;
+    width: 200px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  .img {
+    object-fit: cover;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+
+  .username {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 900;
+    margin: 20px;
+    display: block;
+    text-decoration: none;
+    color: rgb(185, 185, 185);
+    transition: color 0.3s ease;
+  }
+  .username:hover {
+    color: rgb(255, 255, 255);
+  }
+
+  .some-icons-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+  }
+
+  .some-link {
+    font-size: 2rem;
+    padding: 0.2rem;
+    width: 50px;
+    height: 50px;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    box-shadow: 1px 1px rgba(172, 172, 172, 0.5);
+    border-radius: 2px;
+    margin-bottom: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+  .some-link:hover {
+    transform: scale(1.01);
+    box-shadow: 3px 4px red;
+    background-color: rgba(255, 255, 255, 1);
+  }
+
+  .external-link {
+    display: block;
+    text-align: center;
+    box-shadow: 2px 2px rgb(172, 172, 172);
+    background-color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    color: rgb(43, 43, 43);
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    flex-basis: 100%;
+    font-size: 1rem;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+  .external-link:hover {
+    transform: scale(1.01);
+    box-shadow: 4px 4px red;
+    background-color: rgba(255, 255, 255, 1);
+  }
+
+  .external-link__icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  .external-link__header {
+    margin: 0.2rem 0;
+    color: rgb(27, 27, 27);
+    font-size: 0.8rem;
+  }
+
+  /* Typed.js styles */
+  :global(.typed_wrap) {
+    height: auto;
+    text-align: center;
+    font-size: 1rem;
+    display: block;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgb(185, 185, 185);
+  }
+  :global(.typed_wrap h1) {
+    display: inline;
+    font-size: 1.4rem;
+  }
+  :global(.typed::after) {
+    content: "|";
+    display: inline;
+    animation: blink 0.7s infinite;
+  }
+  :global(.typed-cursor) {
+    opacity: 0;
+    display: none;
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* Responsive */
+  @media screen and (min-width: 600px) {
+    .main {
+      width: 60%;
+      margin: 0 auto;
+    }
+    .some-icons-container {
+      justify-content: center;
+    }
+    .some-link {
+      margin: 0.4rem;
+    }
+  }
+
+  @media screen and (min-width: 1100px) {
+    .main {
+      width: 40%;
+      margin: 0 auto;
+      padding: 20px;
+    }
+  }
+</style>

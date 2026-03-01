@@ -1,0 +1,22 @@
+---
+import type { Experience } from "@/types/cv";
+import ExperienceItem from "./ExperienceItem.astro";
+
+interface Props {
+  experiences: Experience[];
+}
+
+const { experiences } = Astro.props;
+---
+
+<section id="experience" class="scroll-mt-8">
+  <h2 class="font-heading text-3xl font-bold text-text uppercase tracking-wide mb-6">
+    Professional Experience
+  </h2>
+
+  <div>
+    {experiences.map((exp) => (
+      <ExperienceItem experience={exp} />
+    ))}
+  </div>
+</section>

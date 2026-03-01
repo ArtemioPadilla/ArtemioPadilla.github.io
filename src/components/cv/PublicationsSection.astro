@@ -1,0 +1,76 @@
+---
+import type { Publication } from "@/types/cv";
+
+interface Props {
+  publications: Publication[];
+}
+
+const { publications } = Astro.props;
+---
+
+<section id="publications" class="scroll-mt-8">
+  <h2 class="font-heading text-3xl font-bold text-text uppercase tracking-wide mb-6">
+    Publications
+  </h2>
+
+  <div class="space-y-0">
+    {publications.map((pub) => (
+      <div class="publication-entry">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-1">
+          <div class="flex-1">
+            <h3 class="text-base font-semibold text-text leading-snug">
+              {pub.url ? (
+                <a
+                  href={pub.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="hover:text-primary transition-colors"
+                >
+                  {pub.title}
+                  <svg class="inline-block w-3.5 h-3.5 ml-1 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              ) : (
+                pub.title
+              )}
+            </h3>
+
+            <div class="flex items-center flex-wrap gap-x-3 gap-y-1 mt-1">
+              {pub.journal && (
+                <p class="text-sm text-primary font-medium">{pub.journal}</p>
+              )}
+              {pub.institution && (
+                <p class="text-sm text-text-muted">{pub.institution}</p>
+              )}
+              {pub.type && (
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-light text-text-muted border border-border">
+                  {pub.type}
+                </span>
+              )}
+            </div>
+
+            {pub.doi && (
+              <p class="text-xs text-text-muted mt-1">
+                DOI: <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">{pub.doi}</a>
+              </p>
+            )}
+          </div>
+
+          <span class="text-sm text-text-muted flex-shrink-0">{pub.year}</span>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .publication-entry {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .publication-entry:last-child {
+    border-bottom: none;
+  }
+</style>

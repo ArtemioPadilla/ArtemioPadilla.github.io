@@ -1,0 +1,183 @@
+---
+import BaseLayout from "@components/layout/BaseLayout.astro";
+---
+
+<BaseLayout title="CV — Artemio Padilla" description="Curriculum Vitae of Artemio Padilla — Deep Learning Architect.">
+  <!-- Mobile hamburger button -->
+  <button
+    id="cv-sidebar-toggle"
+    class="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] transition-all duration-300 hover:border-[var(--color-primary)]/30 hover:text-[var(--color-heading)] lg:hidden"
+    aria-label="Toggle sidebar navigation"
+  >
+    <svg id="hamburger-icon" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    <svg id="close-icon" class="hidden h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+
+  <!-- Sidebar overlay (mobile) -->
+  <div id="cv-sidebar-overlay" class="fixed inset-0 z-30 hidden bg-black/60 backdrop-blur-sm lg:hidden"></div>
+
+  <!-- Sidebar -->
+  <aside
+    id="cv-sidebar"
+    class="fixed top-0 left-0 z-40 h-screen w-[260px] -translate-x-full transform overflow-y-auto border-r border-[var(--color-border)] bg-[var(--color-surface)] transition-transform duration-300 ease-in-out lg:translate-x-0"
+  >
+    <div class="flex h-full flex-col px-5 py-8">
+      <!-- Profile image -->
+      <div class="mb-4 flex justify-center">
+        <div class="relative">
+          <img
+            src="/images/profile.webp"
+            alt="Artemio Padilla"
+            class="h-28 w-28 rounded-full border-2 border-[var(--color-primary)]/30 object-cover shadow-lg"
+          />
+          <div class="absolute inset-0 rounded-full shadow-[inset_0_0_20px_rgba(0,0,0,0.3)]"></div>
+        </div>
+      </div>
+
+      <!-- Name -->
+      <h2 class="mb-1 text-center font-heading text-xl font-bold tracking-wide text-[var(--color-heading)]">
+        Artemio Padilla
+      </h2>
+      <p class="mb-6 text-center text-xs text-[var(--color-text-muted)]">
+        Deep Learning Architect
+      </p>
+
+      <!-- Navigation -->
+      <nav class="flex-1 space-y-0.5">
+        <div class="mb-2">
+          <a href="#about" class="cv-nav-link">About</a>
+          <a href="#currently-working" class="cv-nav-link">Currently Working On</a>
+        </div>
+
+        <div class="my-3 h-[1px] bg-[var(--color-border)]"></div>
+
+        <div class="mb-2">
+          <a href="#experience" class="cv-nav-link">Experience</a>
+          <a href="#projects" class="cv-nav-link">Projects</a>
+        </div>
+
+        <div class="my-3 h-[1px] bg-[var(--color-border)]"></div>
+
+        <div class="mb-2">
+          <a href="#education" class="cv-nav-link">Education</a>
+          <a href="#certifications" class="cv-nav-link">Certifications</a>
+        </div>
+
+        <div class="my-3 h-[1px] bg-[var(--color-border)]"></div>
+
+        <div class="mb-2">
+          <a href="#skills" class="cv-nav-link">Skills</a>
+          <a href="#leadership" class="cv-nav-link">Leadership</a>
+          <a href="#interests" class="cv-nav-link">Interests</a>
+          <a href="#awards" class="cv-nav-link">Awards</a>
+          <a href="#publications" class="cv-nav-link">Publications</a>
+          <a href="#languages" class="cv-nav-link">Languages</a>
+        </div>
+      </nav>
+
+      <!-- Back to home -->
+      <div class="mt-6 border-t border-[var(--color-border)] pt-4">
+        <a
+          href="/"
+          class="flex items-center gap-2 text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-heading)]"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to home
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="min-h-screen lg:ml-[260px]">
+    <div class="mx-auto max-w-4xl px-6 py-12 lg:py-16">
+      <slot />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .cv-nav-link {
+    display: block;
+    padding: 0.4rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .cv-nav-link:hover {
+    color: var(--color-heading);
+    background-color: var(--color-surface-light);
+  }
+
+  .cv-nav-link.active {
+    color: var(--color-primary);
+    background-color: var(--color-surface-light);
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById("cv-sidebar-toggle");
+  const sidebar = document.getElementById("cv-sidebar");
+  const overlay = document.getElementById("cv-sidebar-overlay");
+  const hamburgerIcon = document.getElementById("hamburger-icon");
+  const closeIcon = document.getElementById("close-icon");
+
+  function openSidebar() {
+    sidebar?.classList.remove("-translate-x-full");
+    sidebar?.classList.add("translate-x-0");
+    overlay?.classList.remove("hidden");
+    hamburgerIcon?.classList.add("hidden");
+    closeIcon?.classList.remove("hidden");
+  }
+
+  function closeSidebar() {
+    sidebar?.classList.add("-translate-x-full");
+    sidebar?.classList.remove("translate-x-0");
+    overlay?.classList.add("hidden");
+    hamburgerIcon?.classList.remove("hidden");
+    closeIcon?.classList.add("hidden");
+  }
+
+  toggle?.addEventListener("click", () => {
+    const isOpen = !sidebar?.classList.contains("-translate-x-full");
+    if (isOpen) closeSidebar();
+    else openSidebar();
+  });
+
+  overlay?.addEventListener("click", closeSidebar);
+
+  // Close sidebar on mobile nav click
+  const navLinks = sidebar?.querySelectorAll(".cv-nav-link");
+  navLinks?.forEach((link) => {
+    link.addEventListener("click", () => {
+      if (window.innerWidth < 1024) closeSidebar();
+    });
+  });
+
+  // Active link highlighting
+  const sections = document.querySelectorAll("section[id]");
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          navLinks?.forEach((link) => link.classList.remove("active"));
+          const activeLink = sidebar?.querySelector(`a[href="#${entry.target.id}"]`);
+          activeLink?.classList.add("active");
+        }
+      });
+    },
+    { rootMargin: "-20% 0px -70% 0px" }
+  );
+
+  sections.forEach((section) => observer.observe(section));
+</script>

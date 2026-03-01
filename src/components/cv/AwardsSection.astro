@@ -1,0 +1,71 @@
+---
+import type { Award } from "@/types/cv";
+
+interface Props {
+  awards: Award[];
+}
+
+const { awards } = Astro.props;
+---
+
+<section id="awards" class="scroll-mt-8">
+  <h2 class="font-heading text-3xl font-bold text-text uppercase tracking-wide mb-6">
+    Awards
+  </h2>
+
+  <div class="space-y-0">
+    {awards.map((award) => (
+      <div class="award-entry">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-1">
+          <div>
+            <h3 class="text-base font-semibold text-text">{award.title}</h3>
+            {award.organization && (
+              <p class="text-primary text-sm font-medium">{award.organization}</p>
+            )}
+          </div>
+
+          <span class="text-sm text-text-muted flex-shrink-0">{award.year}</span>
+        </div>
+
+        {award.description && (
+          <p class="text-sm text-text-muted leading-relaxed mt-1">{award.description}</p>
+        )}
+
+        {award.certificates && award.certificates.length > 0 && (
+          <div class="flex flex-wrap gap-2 mt-3">
+            {award.certificates.map((cert) => (
+              cert.url ? (
+                <a
+                  href={cert.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-surface-light text-text-muted hover:text-primary hover:border-primary border border-border transition-colors"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  {cert.name}
+                </a>
+              ) : (
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-surface-light text-text-muted border border-border">
+                  {cert.name}
+                </span>
+              )
+            ))}
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .award-entry {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .award-entry:last-child {
+    border-bottom: none;
+  }
+</style>

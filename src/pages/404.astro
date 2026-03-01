@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../components/layout/BaseLayout.astro";
+import Navigation from "../components/layout/Navigation.astro";
+---
+
+<BaseLayout title="404 - Not Found">
+  <Navigation />
+  <main class="flex min-h-screen flex-col items-center justify-center px-6 pt-20">
+    <div class="pointer-events-none absolute h-[300px] w-[400px] rounded-full bg-[var(--color-primary)]/[0.06] blur-[120px]"></div>
+
+    <h1 class="glitch-text relative font-heading text-[8rem] font-bold leading-none text-[var(--color-heading)] sm:text-[10rem]">
+      404
+    </h1>
+    <p class="mt-2 text-lg tracking-wide text-[var(--color-text-muted)]">
+      This page doesn't exist
+    </p>
+    <a
+      href="/"
+      class="mt-10 inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] px-6 py-3 text-sm font-medium text-[var(--color-text-muted)] no-underline transition-all duration-300 hover:border-[var(--color-primary)] hover:text-[var(--color-heading)]"
+    >
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+      Go home
+    </a>
+  </main>
+</BaseLayout>
+
+<style>
+  .glitch-text {
+    text-shadow:
+      2px 0 var(--color-primary),
+      -2px 0 var(--color-accent);
+    opacity: 0.15;
+    animation: glitch 3s ease-in-out infinite;
+  }
+
+  @keyframes glitch {
+    0%, 90%, 100% { opacity: 0.15; }
+    92% { opacity: 0.2; text-shadow: -3px 0 var(--color-primary), 3px 0 var(--color-accent); }
+    94% { opacity: 0.15; text-shadow: 3px 0 var(--color-primary), -2px 0 var(--color-accent); }
+    96% { opacity: 0.2; text-shadow: -2px 0 var(--color-primary), 2px 0 var(--color-accent); }
+  }
+</style>
