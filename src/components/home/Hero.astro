@@ -129,16 +129,17 @@ const [firstName, lastName] = [name.split(" ")[0], name.split(" ").slice(1).join
 
   .hero-grid {
     background-image:
-      linear-gradient(var(--color-border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+      linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
     background-size: 80px 80px;
-    opacity: 0.15;
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent);
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent);
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent);
   }
 
   :global(html.light) .hero-grid {
-    opacity: 0.3;
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
   }
 
   .cta-button {

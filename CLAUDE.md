@@ -2,6 +2,41 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Agent Triforce Configuration
+
+This project uses the Agent Triforce multi-agent development system:
+- **Prometeo (PM)**: Product strategy, feature specs, business logic
+- **Forja (Dev)**: Architecture, implementation, testing, documentation
+- **Centinela (QA)**: Security audit, code review, compliance
+
+### Agent Invocation
+- "Use Prometeo to define the feature for [X]"
+- "Use Forja to implement [X]"
+- "Use Centinela to audit [X]"
+
+### Skills
+- `/agent-triforce:feature-spec [description]` — Create a feature specification
+- `/agent-triforce:implement-feature [spec-name]` — Implement a feature from its spec
+- `/agent-triforce:security-audit [scope]` — Run a security audit
+- `/agent-triforce:code-health` — Scan for dead code and tech debt
+- `/agent-triforce:release-check` — Pre-release verification gate
+- `/agent-triforce:review-findings [review-file]` — Fix QA review findings
+
+### Project Conventions
+- Feature specs: `docs/specs/{feature-name}.md`
+- Architecture Decision Records: `docs/adr/ADR-{NNN}-{title}.md`
+- QA reviews: `docs/reviews/{feature-name}-review.md`
+- Tests: `tests/`
+
+### Git Conventions
+- Branches: `{type}/{short-description}` (feat/, fix/, refactor/, docs/, test/)
+- Commits: Conventional Commits (feat:, fix:, docs:, refactor:, test:, chore:)
+
+### Code Standards
+- Functions <30 lines, one level of abstraction, meaningful names
+- No hardcoded secrets, URLs, or config values
+- No commented-out code (it belongs in git history)
+
 ## Repository Overview
 
 Artemio Padilla's personal portfolio website built with **Astro 5 + TypeScript + Tailwind CSS v4**. Deployed to GitHub Pages via GitHub Actions.
@@ -91,3 +126,18 @@ npm run prepare:cv-release  # Bump version + update lastUpdated
 - **All borders and dividers use `var(--color-border)`** — never hardcode rgba values
 - **Component-scoped styles** use `<style>` blocks with `var(--color-*)` for theme adaptation
 - **Light mode overrides** use `:global(html.light)` in component `<style>` blocks when CSS-variable-based approach isn't sufficient
+
+## Tech Stack Preferences
+
+- **Language**: TypeScript 5.x (strict mode)
+- **Framework**: Astro 5 (SSG), Preact (islands)
+- **Styling**: Tailwind CSS v4
+- **Build**: Vite (via Astro), tsx
+- **Validation**: Ajv + ajv-formats (JSON Schema, build-time)
+- **PDF**: jsPDF (client-side, dynamic import)
+- **Infrastructure**: GitHub Pages, GitHub Actions
+- **Testing**: None yet (planned)
+
+## MCP Configuration
+
+- **GitHub Issues**: Configured via `gh` CLI for issue tracking
