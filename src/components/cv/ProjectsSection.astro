@@ -1,11 +1,20 @@
 ---
 import type { Project } from "@/types/cv";
+import type { GitHubRepo } from "@/utils/github";
+import { LANGUAGE_COLORS } from "@/utils/github";
 
 interface Props {
   projects: Project[];
+  githubRepos?: GitHubRepo[];
 }
 
-const { projects } = Astro.props;
+const { projects, githubRepos = [] } = Astro.props;
+
+// Filter out repos that are already listed as curated projects (by URL match)
+const curatedUrls = new Set(projects.map((p) => p.url?.replace(/\/$/, "").toLowerCase()).filter(Boolean));
+const additionalRepos = githubRepos.filter(
+  (r) => !curatedUrls.has(r.html_url.replace(/\/$/, "").toLowerCase())
+);
 ---
 
 <section id="projects" class="scroll-mt-8">
@@ -13,6 +22,7 @@ const { projects } = Astro.props;
     Projects
   </h2>
 
+  <!-- Curated projects -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
     {projects.map((project) => (
       <div class="project-card">
@@ -50,6 +60,74 @@ const { projects } = Astro.props;
       </div>
     ))}
   </div>
+
+  <!-- GitHub Repositories -->
+  {additionalRepos.length > 0 && (
+    <div class="mt-10">
+      <div class="flex items-center gap-3 mb-6">
+        <svg class="w-5 h-5 text-text-muted" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+        </svg>
+        <h3 class="text-lg font-semibold text-text">Open Source on GitHub</h3>
+        <a
+          href="https://github.com/ArtemioPadilla"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="ml-auto text-xs text-text-muted hover:text-primary transition-colors"
+        >
+          View all &rarr;
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {additionalRepos.map((repo) => {
+          const langColor = repo.language ? LANGUAGE_COLORS[repo.language] || "#8b8b8b" : null;
+          return (
+            <a
+              href={repo.html_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="repo-card block no-underline"
+            >
+              <h4 class="text-sm font-semibold text-text leading-tight mb-1.5 group-hover:text-primary transition-colors">
+                {repo.name}
+              </h4>
+
+              {repo.description && (
+                <p class="text-xs text-text-muted leading-relaxed mb-3 line-clamp-2">{repo.description}</p>
+              )}
+
+              <div class="flex flex-wrap items-center gap-3 mt-auto">
+                {langColor && (
+                  <span class="inline-flex items-center gap-1.5 text-xs text-text-muted">
+                    <span class="h-2.5 w-2.5 rounded-full flex-shrink-0" style={`background-color: ${langColor}`}></span>
+                    {repo.language}
+                  </span>
+                )}
+                {repo.stargazers_count > 0 && (
+                  <span class="inline-flex items-center gap-1 text-xs text-text-muted">
+                    <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z" />
+                    </svg>
+                    {repo.stargazers_count}
+                  </span>
+                )}
+                {repo.topics.length > 0 && (
+                  <div class="flex flex-wrap gap-1.5">
+                    {repo.topics.slice(0, 3).map((topic) => (
+                      <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/5 text-text-muted border border-border">
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  )}
 </section>
 
 <style>
@@ -66,5 +144,27 @@ const { projects } = Astro.props;
   .project-card:hover {
     border-color: var(--color-primary);
     transform: translateY(-1px);
+  }
+
+  .repo-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .repo-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 </style>

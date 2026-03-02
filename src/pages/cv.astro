@@ -16,8 +16,10 @@ import PdfDownloader from "../components/cv-interactive/PdfDownloader";
 import CopyToClipboard from "../components/cv-interactive/CopyToClipboard";
 import VCardDownload from "../components/cv-interactive/VCardDownload";
 import { loadAndValidateCV } from "../utils/cv-loader";
+import { fetchGitHubRepos } from "../utils/github";
 
 const cvData = loadAndValidateCV();
+const githubRepos = await fetchGitHubRepos();
 ---
 
 <CvLayout>
@@ -44,7 +46,7 @@ const cvData = loadAndValidateCV();
 
   <hr class="cv-divider" />
 
-  <ProjectsSection projects={cvData.projects} />
+  <ProjectsSection projects={cvData.projects} githubRepos={githubRepos} />
 
   <hr class="cv-divider" />
 

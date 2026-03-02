@@ -9,5 +9,8 @@ export default defineConfig({
   integrations: [preact(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ["jspdf"],
+    },
   },
 });

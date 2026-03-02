@@ -6,6 +6,7 @@ import Hero from "../components/home/Hero.astro";
 import About from "../components/home/About.astro";
 import ProjectCard from "../components/home/ProjectCard.astro";
 import Contact from "../components/home/Contact.astro";
+import AiArtShowcase from "../components/home/AiArtShowcase.astro";
 import { siteData } from "../data/site-data";
 import { fetchGitHubRepos } from "../utils/github";
 
@@ -99,6 +100,14 @@ const repos = await fetchGitHubRepos();
         )}
       </div>
     </section>
+
+    <!-- Divider -->
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent"></div>
+    </div>
+
+    <!-- AI Art -->
+    <AiArtShowcase />
 
     <!-- Divider -->
     <div class="mx-auto max-w-6xl px-6">
