@@ -20,6 +20,8 @@ import { siteData } from "../data/site-data";
     <div class="page-grid pointer-events-none fixed inset-0 z-0"></div>
     <!-- Mouse-interactive grid glow (spotlight near cursor) -->
     <div class="grid-glow pointer-events-none fixed inset-0 z-0"></div>
+    <!-- Soft glow orb that follows cursor -->
+    <div class="cursor-glow pointer-events-none z-0"></div>
 
     <!-- Identity -->
     <IdentityStrip
@@ -70,12 +72,13 @@ import { siteData } from "../data/site-data";
       linear-gradient(90deg, rgba(37, 99, 235, 0.035) 1px, transparent 1px);
   }
 
-  .hub-grid {
-    grid-auto-rows: 1fr;
+  .hub-grid > div {
+    display: flex;
+    animation: hub-card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  .hub-grid > div {
-    animation: hub-card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  .hub-grid > div > :global(:first-child) {
+    flex: 1;
   }
 
   @keyframes hub-card-in {
@@ -92,35 +95,62 @@ import { siteData } from "../data/site-data";
   /* ── Mouse-interactive grid spotlight ── */
   .grid-glow {
     background-image:
-      linear-gradient(rgba(79, 143, 247, 0.12) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(79, 143, 247, 0.12) 1px, transparent 1px);
+      linear-gradient(rgba(79, 143, 247, 0.35) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79, 143, 247, 0.35) 1px, transparent 1px);
     background-size: 80px 80px;
-    mask-image: radial-gradient(circle 250px at var(--mx, -500px) var(--my, -500px), black 0%, transparent 100%);
-    -webkit-mask-image: radial-gradient(circle 250px at var(--mx, -500px) var(--my, -500px), black 0%, transparent 100%);
+    mask-image: radial-gradient(circle 400px at var(--mx, -500px) var(--my, -500px), black 0%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle 400px at var(--mx, -500px) var(--my, -500px), black 0%, transparent 70%);
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
   :global(html.light) .grid-glow {
     background-image:
-      linear-gradient(rgba(37, 99, 235, 0.12) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(37, 99, 235, 0.12) 1px, transparent 1px);
+      linear-gradient(rgba(37, 99, 235, 0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37, 99, 235, 0.25) 1px, transparent 1px);
+  }
+
+  /* ── Cursor glow orb ── */
+  .cursor-glow {
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(79, 143, 247, 0.08) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    position: fixed;
+    left: var(--mx, -500px);
+    top: var(--my, -500px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  :global(html.light) .cursor-glow {
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.06) 0%, transparent 70%);
   }
 </style>
 
 <script>
   const glow = document.querySelector('.grid-glow') as HTMLElement;
+  const orb = document.querySelector('.cursor-glow') as HTMLElement;
   if (glow) {
     glow.style.opacity = '1';
+    if (orb) orb.style.opacity = '1';
     document.addEventListener('mousemove', (e) => {
       requestAnimationFrame(() => {
-        glow.style.setProperty('--mx', e.clientX + 'px');
-        glow.style.setProperty('--my', e.clientY + 'px');
+        const x = e.clientX + 'px';
+        const y = e.clientY + 'px';
+        glow.style.setProperty('--mx', x);
+        glow.style.setProperty('--my', y);
+        if (orb) {
+          orb.style.setProperty('--mx', x);
+          orb.style.setProperty('--my', y);
+        }
       });
     }, { passive: true });
     // Hide on touch devices
     document.addEventListener('touchstart', () => {
       glow.style.opacity = '0';
+      if (orb) orb.style.opacity = '0';
     }, { once: true, passive: true });
   }
 </script>
