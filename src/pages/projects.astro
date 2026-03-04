@@ -2,11 +2,8 @@
 import BaseLayout from "../components/layout/BaseLayout.astro";
 import Navigation from "../components/layout/Navigation.astro";
 import Footer from "../components/layout/Footer.astro";
-import ProjectCard from "../components/home/ProjectCard.astro";
-import { fetchGitHubRepos } from "../utils/github";
+import RepoGrid from "../components/projects/RepoGrid.tsx";
 import { siteData } from "../data/site-data";
-
-const repos = await fetchGitHubRepos();
 ---
 
 <BaseLayout
@@ -57,27 +54,10 @@ const repos = await fetchGitHubRepos();
         </div>
       </div>
 
-      <!-- Project grid -->
-      <div class="mt-10 grid gap-4 sm:grid-cols-2">
-        {
-          repos.map((repo) => (
-            <ProjectCard
-              title={repo.name.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-              description={repo.description}
-              tags={repo.topics}
-              url={repo.html_url}
-              language={repo.language}
-              stars={repo.stargazers_count}
-            />
-          ))
-        }
+      <!-- Project grid (client-side rendered) -->
+      <div class="mt-10">
+        <RepoGrid client:visible />
       </div>
-
-      {repos.length === 0 && (
-        <p class="mt-16 text-center text-[var(--color-text-muted)]">
-          Could not load repositories. Check back soon.
-        </p>
-      )}
     </div>
   </main>
 
