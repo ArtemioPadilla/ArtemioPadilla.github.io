@@ -16,7 +16,7 @@ import { siteData } from "../data/site-data";
   <Navigation currentPath="/" />
 
   <main class="relative">
-    <!-- Full-page grid backdrop (extends behind everything) -->
+    <!-- Full-page grid backdrop -->
     <div class="page-grid pointer-events-none fixed inset-0 z-0"></div>
 
     <!-- Identity -->
@@ -30,19 +30,9 @@ import { siteData } from "../data/site-data";
       github={siteData.contact.github}
     />
 
-    <!-- Dashboard -->
-    <section class="relative z-10 px-6 pb-20 md:pb-28">
+    <!-- Card grid — flows directly from identity strip -->
+    <section class="relative z-10 px-6 pb-24 md:pb-32">
       <div class="mx-auto max-w-5xl">
-        <!-- Section label -->
-        <div class="section-label mb-8 flex items-center gap-3">
-          <div class="h-[2px] w-8 rounded-full bg-[var(--color-primary)]"></div>
-          <span class="text-[10px] font-semibold tracking-[0.3em] text-[var(--color-primary)] uppercase">
-            Dashboard
-          </span>
-          <div class="h-[1px] flex-1 bg-gradient-to-r from-[var(--color-border)] to-transparent"></div>
-        </div>
-
-        <!-- Card grid -->
         <div class="hub-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div style="animation-delay: 80ms;"><BlogCard /></div>
           <div style="animation-delay: 140ms;"><CvCard /></div>
@@ -63,39 +53,21 @@ import { siteData } from "../data/site-data";
 </BaseLayout>
 
 <style>
-  /* Subtle full-page grid — ties the whole page together */
   .page-grid {
     background-image:
-      linear-gradient(rgba(79, 143, 247, 0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(79, 143, 247, 0.025) 1px, transparent 1px);
+      linear-gradient(rgba(79, 143, 247, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79, 143, 247, 0.03) 1px, transparent 1px);
     background-size: 80px 80px;
-    mask-image: linear-gradient(to bottom, transparent, black 10%, black 80%, transparent);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 80%, transparent);
+    mask-image: linear-gradient(to bottom, transparent 5%, black 15%, black 75%, transparent 95%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 5%, black 15%, black 75%, transparent 95%);
   }
 
   :global(html.light) .page-grid {
     background-image:
-      linear-gradient(rgba(37, 99, 235, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(37, 99, 235, 0.03) 1px, transparent 1px);
+      linear-gradient(rgba(37, 99, 235, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37, 99, 235, 0.035) 1px, transparent 1px);
   }
 
-  /* Section label entrance */
-  .section-label {
-    animation: label-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
-  }
-
-  @keyframes label-in {
-    from {
-      opacity: 0;
-      transform: translateX(-12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  /* Staggered card entrance */
   .hub-grid > div {
     animation: hub-card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }

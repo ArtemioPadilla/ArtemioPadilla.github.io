@@ -56,13 +56,68 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <title>{title}</title>
   </head>
   <body class="min-h-screen antialiased">
+    <!-- Reading progress bar -->
+    <div id="reading-progress" class="fixed top-0 left-0 z-[100] h-[2px] w-0 bg-[var(--color-primary)] transition-none" style="will-change: width;"></div>
+
     <slot />
+
+    <!-- Scroll-to-top button -->
+    <button
+      id="scroll-top"
+      class="fixed right-6 bottom-8 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] opacity-0 shadow-lg transition-all duration-300 hover:border-[var(--color-primary)] hover:text-[var(--color-heading)] hover:shadow-[0_0_16px_rgba(79,143,247,0.15)]"
+      style="pointer-events: none; transform: translateY(12px);"
+      aria-label="Scroll to top"
+    >
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+      </svg>
+    </button>
 
     <!-- Theme toggle script -->
     <script is:inline>
       const theme = localStorage.getItem("theme") || "dark";
       document.documentElement.classList.toggle("light", theme === "light");
       document.documentElement.classList.toggle("dark", theme !== "light");
+    </script>
+
+    <!-- Reading progress + scroll-to-top -->
+    <script>
+      const progressBar = document.getElementById("reading-progress");
+      const scrollBtn = document.getElementById("scroll-top");
+
+      function updateProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight > 0 && progressBar) {
+          const progress = Math.min((scrollTop / docHeight) * 100, 100);
+          progressBar.style.width = `${progress}%`;
+        }
+      }
+
+      function updateScrollBtn() {
+        if (!scrollBtn) return;
+        if (window.scrollY > 400) {
+          scrollBtn.style.opacity = "1";
+          scrollBtn.style.pointerEvents = "auto";
+          scrollBtn.style.transform = "translateY(0)";
+        } else {
+          scrollBtn.style.opacity = "0";
+          scrollBtn.style.pointerEvents = "none";
+          scrollBtn.style.transform = "translateY(12px)";
+        }
+      }
+
+      window.addEventListener("scroll", () => {
+        updateProgress();
+        updateScrollBtn();
+      }, { passive: true });
+
+      scrollBtn?.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      updateProgress();
+      updateScrollBtn();
     </script>
   </body>
 </html>
