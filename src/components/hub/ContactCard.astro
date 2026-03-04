@@ -10,39 +10,17 @@ interface Props {
 const { email, linkedin, github } = Astro.props;
 ---
 
-<HubCard title="Contact" icon="✉️" href={`mailto:${email}`} accentColor="var(--color-text-muted)">
-  <div>
-    <p class="text-sm text-[var(--color-text-muted)]">
-      Open to collaboration and interesting problems.
-    </p>
-    <div class="mt-3 flex items-center gap-3">
-      <a
-        href={linkedin}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-xs text-[var(--color-text-muted)] no-underline transition-colors hover:text-[var(--color-heading)]"
-        onclick="event.stopPropagation();"
-      >
-        LinkedIn
-      </a>
-      <span class="text-[var(--color-border)]">&middot;</span>
-      <a
-        href={github}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-xs text-[var(--color-text-muted)] no-underline transition-colors hover:text-[var(--color-heading)]"
-        onclick="event.stopPropagation();"
-      >
-        GitHub
-      </a>
-      <span class="text-[var(--color-border)]">&middot;</span>
-      <a
-        href="/links"
-        class="text-xs text-[var(--color-text-muted)] no-underline transition-colors hover:text-[var(--color-heading)]"
-        onclick="event.stopPropagation();"
-      >
-        All links
-      </a>
-    </div>
+<HubCard title="Contact" href={`mailto:${email}`} accentColor="var(--color-text-muted)">
+  <svg slot="icon" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+
+  <p class="text-sm text-[var(--color-text-muted)]">
+    Open to collaboration, interesting problems, and ML conversations.
+  </p>
+  <div class="mt-auto flex items-center gap-3 pt-3 text-xs text-[var(--color-text-muted)]">
+    <span>LinkedIn</span>
+    <span class="text-[var(--color-border)]">&middot;</span>
+    <span>GitHub</span>
+    <span class="text-[var(--color-border)]">&middot;</span>
+    <span>Links</span>
   </div>
 </HubCard>

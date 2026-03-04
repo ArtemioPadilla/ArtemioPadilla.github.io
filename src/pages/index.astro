@@ -27,16 +27,21 @@ import { siteData } from "../data/site-data";
       github={siteData.contact.github}
     />
 
+    <!-- Divider -->
+    <div class="mx-auto max-w-5xl px-6">
+      <div class="h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent"></div>
+    </div>
+
     <!-- Dashboard grid -->
-    <section class="px-6 pb-24 md:pb-32">
+    <section class="px-6 py-12 md:py-16">
       <div class="mx-auto max-w-5xl">
         <div class="hub-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div style="animation-delay: 0ms;"><BlogCard /></div>
-          <div style="animation-delay: 50ms;"><CvCard /></div>
-          <div style="animation-delay: 100ms;"><LabCard /></div>
-          <div style="animation-delay: 150ms;"><ProjectsCard /></div>
-          <div style="animation-delay: 200ms;"><ArtCard /></div>
-          <div style="animation-delay: 250ms;"><ContactCard
+          <div style="animation-delay: 50ms;"><BlogCard /></div>
+          <div style="animation-delay: 100ms;"><CvCard /></div>
+          <div style="animation-delay: 150ms;"><LabCard /></div>
+          <div style="animation-delay: 200ms;"><ProjectsCard /></div>
+          <div style="animation-delay: 250ms;"><ArtCard /></div>
+          <div style="animation-delay: 300ms;"><ContactCard
             email={siteData.contact.email}
             linkedin={siteData.contact.linkedin}
             github={siteData.contact.github}

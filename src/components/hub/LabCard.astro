@@ -11,11 +11,13 @@ const featuredTool = tools.find((t) => t.data.featured);
 const toolCount = tools.length;
 ---
 
-<HubCard title="Lab" icon="🧪" href="/lab" accentColor="#f59e0b">
+<HubCard title="Lab" href="/lab" accentColor="#f59e0b">
+  <svg slot="icon" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l.8 2.4c.3.9-.2 1.8-1.1 2.1l-.1 0c-3 .9-6.2.9-9.2 0a1.724 1.724 0 01-1.1-2.1l.8-2.4" /></svg>
+
   {featuredTool ? (
     <div>
       <p class="text-sm text-[var(--color-heading)]">{featuredTool.data.title}</p>
-      <p class="mt-1 text-xs text-[var(--color-text-muted)]">{featuredTool.data.description}</p>
+      <p class="mt-1 text-xs leading-relaxed text-[var(--color-text-muted)]">{featuredTool.data.description}</p>
     </div>
   ) : (
     <p class="text-sm text-[var(--color-text-muted)]">Interactive tools & experiments</p>
