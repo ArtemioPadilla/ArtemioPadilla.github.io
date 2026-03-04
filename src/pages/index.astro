@@ -18,6 +18,8 @@ import { siteData } from "../data/site-data";
   <main class="relative">
     <!-- Full-page grid backdrop -->
     <div class="page-grid pointer-events-none fixed inset-0 z-0"></div>
+    <!-- Mouse-interactive grid glow (spotlight near cursor) -->
+    <div class="grid-glow pointer-events-none fixed inset-0 z-0"></div>
 
     <!-- Identity -->
     <IdentityStrip
@@ -68,6 +70,10 @@ import { siteData } from "../data/site-data";
       linear-gradient(90deg, rgba(37, 99, 235, 0.035) 1px, transparent 1px);
   }
 
+  .hub-grid {
+    grid-auto-rows: 1fr;
+  }
+
   .hub-grid > div {
     animation: hub-card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
@@ -82,4 +88,39 @@ import { siteData } from "../data/site-data";
       transform: translateY(0);
     }
   }
+
+  /* ── Mouse-interactive grid spotlight ── */
+  .grid-glow {
+    background-image:
+      linear-gradient(rgba(79, 143, 247, 0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79, 143, 247, 0.12) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(circle 250px at var(--mx, -500px) var(--my, -500px), black 0%, transparent 100%);
+    -webkit-mask-image: radial-gradient(circle 250px at var(--mx, -500px) var(--my, -500px), black 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  :global(html.light) .grid-glow {
+    background-image:
+      linear-gradient(rgba(37, 99, 235, 0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37, 99, 235, 0.12) 1px, transparent 1px);
+  }
 </style>
+
+<script>
+  const glow = document.querySelector('.grid-glow') as HTMLElement;
+  if (glow) {
+    glow.style.opacity = '1';
+    document.addEventListener('mousemove', (e) => {
+      requestAnimationFrame(() => {
+        glow.style.setProperty('--mx', e.clientX + 'px');
+        glow.style.setProperty('--my', e.clientY + 'px');
+      });
+    }, { passive: true });
+    // Hide on touch devices
+    document.addEventListener('touchstart', () => {
+      glow.style.opacity = '0';
+    }, { once: true, passive: true });
+  }
+</script>
