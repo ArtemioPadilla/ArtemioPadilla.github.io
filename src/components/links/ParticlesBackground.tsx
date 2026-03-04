@@ -1,7 +1,22 @@
-import { useEffect, useRef } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 export default function ParticlesBackground() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isLight, setIsLight] = useState(false);
+
+  useEffect(() => {
+    setIsLight(document.documentElement.classList.contains("light"));
+
+    const observer = new MutationObserver(() => {
+      setIsLight(document.documentElement.classList.contains("light"));
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let cleanup: (() => void) | undefined;
@@ -11,6 +26,15 @@ export default function ParticlesBackground() {
       const { loadSlim } = await import("tsparticles-slim");
 
       await loadSlim(tsParticles);
+
+      const particleColor = isLight ? "#71717a" : "#ffffff";
+      const linkColor = isLight ? "#71717a" : "#ffffff";
+      const bgColor = isLight ? "#fafafa" : "#000000";
+
+      const existing = tsParticles.domItem(0);
+      if (existing) {
+        existing.destroy();
+      }
 
       const container = await tsParticles.load("particles-js", {
         fullScreen: false,
@@ -22,10 +46,10 @@ export default function ParticlesBackground() {
               area: 1200,
             },
           },
-          color: { value: "#ffffff" },
+          color: { value: particleColor },
           shape: { type: "circle" },
           opacity: {
-            value: { min: 0.05, max: 0.8 },
+            value: { min: 0.05, max: isLight ? 0.5 : 0.8 },
             animation: {
               enable: true,
               speed: 0.4,
@@ -38,8 +62,8 @@ export default function ParticlesBackground() {
           links: {
             enable: true,
             distance: 80,
-            color: "#ffffff",
-            opacity: 0.08,
+            color: linkColor,
+            opacity: isLight ? 0.12 : 0.08,
             width: 0.5,
           },
           move: {
@@ -85,7 +109,7 @@ export default function ParticlesBackground() {
     return () => {
       cleanup?.();
     };
-  }, []);
+  }, [isLight]);
 
   return (
     <div
@@ -97,8 +121,9 @@ export default function ParticlesBackground() {
         left: 0,
         width: "100%",
         height: "100%",
-        backgroundColor: "#000000",
+        backgroundColor: isLight ? "#fafafa" : "#000000",
         zIndex: 0,
+        transition: "background-color 0.3s ease",
       }}
     />
   );
