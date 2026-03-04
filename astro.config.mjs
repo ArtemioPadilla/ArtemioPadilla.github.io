@@ -7,10 +7,18 @@ export default defineConfig({
   site: "https://artemiopadilla.github.io",
   output: "static",
   integrations: [preact(), sitemap()],
+  markdown: {
+    shikiConfig: {
+      themes: {
+        dark: "github-dark-dimmed",
+        light: "github-light",
+      },
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      include: ["jspdf"],
+      include: ["jspdf", "fuse.js"],
     },
   },
 });

@@ -1,0 +1,88 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import PostHeader from "../../components/blog/PostHeader.astro";
+import TableOfContents from "../../components/blog/TableOfContents.astro";
+import GiscusComments from "../../components/blog/GiscusComments.astro";
+import PostNavigation from "../../components/blog/PostNavigation.astro";
+import { getReadingTime } from "../../utils/reading-time";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => {
+    return import.meta.env.PROD ? !data.draft : true;
+  });
+
+  const sorted = posts.sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
+
+  return sorted.map((post, index) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      prevPost:
+        index < sorted.length - 1
+          ? { slug: sorted[index + 1].id, title: sorted[index + 1].data.title }
+          : null,
+      nextPost:
+        index > 0
+          ? { slug: sorted[index - 1].id, title: sorted[index - 1].data.title }
+          : null,
+    },
+  }));
+}
+
+const { post, prevPost, nextPost } = Astro.props;
+const { Content, headings } = await render(post);
+const readingTime = getReadingTime(post.body ?? "");
+---
+
+<BaseLayout
+  title={`${post.data.title} — Artemio Padilla`}
+  description={post.data.description}
+  ogImage={post.data.heroImage}
+>
+  <Navigation currentPath="/blog" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <div class="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12">
+        <!-- Article -->
+        <article class="mx-auto max-w-none lg:max-w-3xl">
+          <PostHeader
+            title={post.data.title}
+            pubDate={post.data.pubDate}
+            updatedDate={post.data.updatedDate}
+            tags={post.data.tags}
+            readingTime={readingTime.text}
+            heroImage={post.data.heroImage}
+            heroAlt={post.data.heroAlt}
+          />
+
+          <!-- Mobile TOC -->
+          <TableOfContents headings={headings} />
+
+          <!-- Content -->
+          <div class="blog-prose">
+            <Content />
+          </div>
+
+          <!-- Post navigation -->
+          <PostNavigation prevPost={prevPost} nextPost={nextPost} />
+
+          <!-- Comments -->
+          <GiscusComments slug={post.id} />
+        </article>
+
+        <!-- Desktop TOC sidebar -->
+        <aside class="hidden lg:block">
+          <TableOfContents headings={headings} />
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

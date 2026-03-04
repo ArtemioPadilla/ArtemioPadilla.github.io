@@ -1,0 +1,118 @@
+---
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+
+const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{
+  filteredHeadings.length > 0 && (
+    <>
+      {/* Desktop: sticky sidebar */}
+      <nav
+        aria-label="Table of contents"
+        class="toc-nav hidden lg:block"
+      >
+        <div class="sticky top-24">
+          <h2 class="mb-4 font-heading text-sm font-bold uppercase tracking-wider text-[var(--color-heading)]">
+            On this page
+          </h2>
+          <ul class="space-y-1 border-l border-[var(--color-border)]">
+            {filteredHeadings.map((heading) => (
+              <li>
+                <a
+                  href={`#${heading.slug}`}
+                  class:list={[
+                    "toc-link block border-l-2 border-transparent py-1 text-sm text-[var(--color-text-muted)] no-underline transition-all duration-200 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]",
+                    heading.depth === 2 ? "pl-4" : "pl-8",
+                  ]}
+                  data-heading-slug={heading.slug}
+                >
+                  {heading.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+
+      {/* Mobile: collapsible */}
+      <nav aria-label="Table of contents" class="mb-8 lg:hidden">
+        <details class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+          <summary class="cursor-pointer px-4 py-3 text-sm font-medium text-[var(--color-heading)] select-none">
+            On this page
+          </summary>
+          <ul class="space-y-1 border-t border-[var(--color-border)] px-4 py-3">
+            {filteredHeadings.map((heading) => (
+              <li>
+                <a
+                  href={`#${heading.slug}`}
+                  class:list={[
+                    "block py-1 text-sm text-[var(--color-text-muted)] no-underline transition-colors duration-200 hover:text-[var(--color-primary)]",
+                    heading.depth === 3 ? "ml-4" : "",
+                  ]}
+                >
+                  {heading.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      </nav>
+    </>
+  )
+}
+
+<script>
+  function initTableOfContents() {
+    const tocLinks = document.querySelectorAll<HTMLAnchorElement>(".toc-link");
+    if (tocLinks.length === 0) return;
+
+    const headingSlugs = Array.from(tocLinks).map(
+      (link) => link.dataset.headingSlug as string,
+    );
+    const headingElements = headingSlugs
+      .map((slug) => document.getElementById(slug))
+      .filter((el): el is HTMLElement => el !== null);
+
+    if (headingElements.length === 0) return;
+
+    let activeSlug: string | null = null;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            activeSlug = entry.target.id;
+            updateActiveLink(activeSlug);
+            break;
+          }
+        }
+      },
+      {
+        rootMargin: "-80px 0px -70% 0px",
+        threshold: 0,
+      },
+    );
+
+    for (const heading of headingElements) {
+      observer.observe(heading);
+    }
+
+    function updateActiveLink(slug: string) {
+      for (const link of tocLinks) {
+        const isActive = link.dataset.headingSlug === slug;
+        link.classList.toggle("border-[var(--color-primary)]", isActive);
+        link.classList.toggle("text-[var(--color-primary)]", isActive);
+        link.classList.toggle("border-transparent", !isActive);
+        link.classList.toggle("text-[var(--color-text-muted)]", !isActive);
+      }
+    }
+  }
+
+  initTableOfContents();
+  document.addEventListener("astro:after-swap", initTableOfContents);
+</script>

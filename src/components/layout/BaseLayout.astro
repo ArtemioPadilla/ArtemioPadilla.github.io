@@ -23,6 +23,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="author" content="Artemio Padilla" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="canonical" href={canonicalURL} />
+    <link rel="alternate" type="application/rss+xml" title="Artemio Padilla — Blog" href="/rss.xml" />
 
     <!-- OpenGraph -->
     <meta property="og:title" content={title} />

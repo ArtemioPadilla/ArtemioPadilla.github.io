@@ -1,0 +1,115 @@
+---
+interface Props {
+  title: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags: string[];
+  readingTime: string;
+  heroImage?: string;
+  heroAlt?: string;
+}
+
+const { title, pubDate, updatedDate, tags, readingTime, heroImage, heroAlt } =
+  Astro.props;
+
+const formattedDate = pubDate.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "2-digit",
+});
+
+const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "2-digit",
+});
+---
+
+<header class="mb-10">
+  <!-- Breadcrumb -->
+  <nav aria-label="Breadcrumb" class="mb-6">
+    <ol class="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+      <li>
+        <a
+          href="/blog/"
+          class="transition-colors duration-300 hover:text-[var(--color-primary)]"
+        >
+          Blog
+        </a>
+      </li>
+      <li class="text-[var(--color-border)]">/</li>
+      <li class="truncate text-[var(--color-text)]">{title}</li>
+    </ol>
+  </nav>
+
+  <!-- Title -->
+  <h1
+    class="font-heading text-4xl font-bold uppercase tracking-wide text-[var(--color-heading)] sm:text-5xl lg:text-6xl"
+  >
+    {title}
+  </h1>
+
+  <!-- Meta row -->
+  <div
+    class="mt-4 flex flex-wrap items-center gap-2 text-sm text-[var(--color-text-muted)]"
+  >
+    <time datetime={pubDate.toISOString()}>
+      {formattedDate}
+    </time>
+    <span class="text-[var(--color-border)]">|</span>
+    <span class="inline-flex items-center gap-1">
+      <svg
+        class="h-3.5 w-3.5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      {readingTime}
+    </span>
+    {
+      formattedUpdatedDate && (
+        <>
+          <span class="text-[var(--color-border)]">|</span>
+          <span>Updated: {formattedUpdatedDate}</span>
+        </>
+      )
+    }
+  </div>
+
+  <!-- Tags -->
+  {
+    tags.length > 0 && (
+      <div class="mt-4 flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <a
+            href={`/blog/tags/${tag}/`}
+            class="rounded-full border border-[var(--color-border)] px-3 py-1 text-xs font-medium text-[var(--color-text-muted)] no-underline transition-all duration-300 hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)]"
+          >
+            {tag}
+          </a>
+        ))}
+      </div>
+    )
+  }
+
+  <!-- Hero image -->
+  {
+    heroImage && (
+      <div class="mt-8 overflow-hidden rounded-xl border border-[var(--color-border)]">
+        <img
+          src={heroImage}
+          alt={heroAlt || title}
+          class="h-auto w-full object-cover"
+          loading="eager"
+        />
+      </div>
+    )
+  }
+</header>
