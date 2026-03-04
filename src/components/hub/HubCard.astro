@@ -12,20 +12,26 @@ const { title, href, accentColor = "var(--color-primary)", external = false } = 
 <a
   href={href}
   {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-  class="hub-card group relative flex min-h-[200px] flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 no-underline transition-all duration-500 hover:border-[var(--hub-accent)]/30 sm:p-7"
+  class="hub-card card-surface group relative flex min-h-[210px] flex-col overflow-hidden rounded-2xl p-6 no-underline transition-all duration-500 sm:p-7"
   style={`--hub-accent: ${accentColor};`}
 >
-  <!-- Glow on hover -->
-  <div class="hub-card-glow"></div>
+  <!-- Gradient border (hidden → visible on hover) -->
+  <div class="card-border-gradient"></div>
+
+  <!-- Top glow wash -->
+  <div class="card-top-glow"></div>
+
+  <!-- Scanline accent (subtle horizontal line inside card) -->
+  <div class="card-scanline"></div>
 
   <div class="relative z-10 flex flex-1 flex-col">
-    <!-- Icon + arrow -->
+    <!-- Icon + arrow row -->
     <div class="flex items-start justify-between">
-      <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--hub-accent)]">
+      <div class="icon-frame flex h-10 w-10 items-center justify-center rounded-xl">
         <slot name="icon" />
       </div>
       <svg
-        class="h-4 w-4 text-[var(--color-text-muted)] transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[var(--hub-accent)]"
+        class="arrow-icon h-4 w-4 transition-all duration-500"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -39,7 +45,7 @@ const { title, href, accentColor = "var(--color-primary)", external = false } = 
     </div>
 
     <!-- Title -->
-    <h2 class="mt-4 font-heading text-xl font-bold uppercase tracking-wide text-[var(--color-heading)] transition-colors duration-300 group-hover:text-[var(--hub-accent)]">
+    <h2 class="card-title mt-4 font-heading text-xl font-bold uppercase tracking-wide transition-colors duration-300">
       {title}
     </h2>
 
@@ -51,37 +57,152 @@ const { title, href, accentColor = "var(--color-primary)", external = false } = 
 </a>
 
 <style>
-  .hub-card-glow {
+  .hub-card {
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    position: relative;
+  }
+
+  /* Gradient border overlay */
+  .card-border-gradient {
     position: absolute;
     inset: 0;
     border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--hub-accent) 40%, transparent) 0%,
+      transparent 40%,
+      transparent 60%,
+      color-mix(in srgb, var(--hub-accent) 20%, transparent) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
     opacity: 0;
     transition: opacity 0.5s ease;
-    background: radial-gradient(
-      ellipse 80% 50% at 50% 0%,
-      color-mix(in srgb, var(--hub-accent) 6%, transparent) 0%,
-      transparent 60%
-    );
   }
 
-  .hub-card:hover .hub-card-glow {
+  .hub-card:hover .card-border-gradient {
     opacity: 1;
   }
 
-  :global(html.light) .hub-card-glow {
+  /* Top glow */
+  .card-top-glow {
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 120px;
+    border-radius: 0 0 50% 50%;
     background: radial-gradient(
-      ellipse 80% 50% at 50% 0%,
-      color-mix(in srgb, var(--hub-accent) 3%, transparent) 0%,
-      transparent 60%
+      ellipse at 50% 0%,
+      color-mix(in srgb, var(--hub-accent) 8%, transparent) 0%,
+      transparent 80%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  .hub-card:hover .card-top-glow {
+    opacity: 1;
+  }
+
+  :global(html.light) .card-top-glow {
+    background: radial-gradient(
+      ellipse at 50% 0%,
+      color-mix(in srgb, var(--hub-accent) 5%, transparent) 0%,
+      transparent 80%
     );
   }
 
+  /* Scanline — thin accent strip at top */
+  .card-scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 10%,
+      color-mix(in srgb, var(--hub-accent) 30%, transparent) 50%,
+      transparent 90%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  .hub-card:hover .card-scanline {
+    opacity: 1;
+  }
+
+  /* Icon frame */
+  .icon-frame {
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--hub-accent);
+    transition: all 0.4s ease;
+  }
+
+  .hub-card:hover .icon-frame {
+    border-color: color-mix(in srgb, var(--hub-accent) 30%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--hub-accent) 15%, transparent);
+  }
+
+  /* Arrow */
+  .arrow-icon {
+    color: var(--color-text-muted);
+    opacity: 0.4;
+  }
+
+  .hub-card:hover .arrow-icon {
+    color: var(--hub-accent);
+    opacity: 1;
+    transform: translate(2px, -2px);
+  }
+
+  /* Title */
+  .card-title {
+    color: var(--color-heading);
+  }
+  .hub-card:hover .card-title {
+    color: var(--hub-accent);
+  }
+
+  /* Hover lift */
+  .hub-card:hover {
+    border-color: color-mix(in srgb, var(--hub-accent) 20%, var(--color-border));
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 32px color-mix(in srgb, var(--hub-accent) 6%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--hub-accent) 10%, transparent);
+  }
+
+  :global(html.light) .hub-card:hover {
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.06),
+      0 0 0 1px color-mix(in srgb, var(--hub-accent) 15%, transparent);
+  }
+
+  /* Entrance animation */
   .hub-card {
     animation: card-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   @keyframes card-enter {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
