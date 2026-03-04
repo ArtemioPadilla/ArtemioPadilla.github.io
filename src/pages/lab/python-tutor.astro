@@ -1,0 +1,56 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import PythonTutor from "../../components/lab/python-tutor/PythonTutor.tsx";
+---
+
+<BaseLayout
+  title="Python Tutor — Lab — Artemio Padilla"
+  description="Step-by-step Python execution visualizer. See stack frames, heap objects, and pointer arrows as your code runs."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Python Tutor</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">🔬</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Python Tutor
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Step-by-step Python execution visualizer. See how your code runs line by line with stack frames, heap objects, and pointer arrows.
+        </p>
+      </div>
+
+      <!-- Tutor -->
+      <PythonTutor client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>
+          Use <kbd class="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono">←</kbd> <kbd class="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono">→</kbd> to step, <kbd class="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono">Space</kbd> to play/pause.
+          Python runs entirely in your browser via WebAssembly — nothing is sent to a server.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .tutor-container {
+    box-shadow: 0 0 0 1px var(--color-border);
+  }
+</style>
