@@ -9,11 +9,11 @@ export const siteData = {
   about: {
     heading: "Designing intelligent systems at scale",
     description:
-      "I'm a Mexican engineer who designs and builds deep learning systems that operate at scale. With a background in nanoscience research, two degrees from UNAM, and a Master's in Applied AI, I bring scientific rigor to every architecture I ship.",
+      "I'm a Mexican engineer who designs and builds deep learning systems that operate at scale. With a background in nanoscience research, two degrees from UNAM, and a Master's in Applied AI, I bring scientific rigor to every architecture I ship — currently at AWS's GenAI Innovation Center, delivering generative AI solutions across Latin America.",
     highlights: [
       { label: "DL Systems", detail: "production architectures at scale" },
       { label: "ML Platforms", detail: "built end-to-end, from infra to model" },
-      { label: "Physics + AI", detail: "nanoscience to neural networks" },
+      { label: "GenAI", detail: "AWS Innovation Center, LATAM" },
       { label: "Open Source", detail: "tools & research contributions" },
     ],
   },

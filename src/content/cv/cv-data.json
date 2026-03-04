@@ -34,13 +34,34 @@
   },
   "experience": [
     {
+      "id": "aws-genai",
+      "title": "Deep Learning Architect",
+      "company": "Amazon Web Services (AWS)",
+      "location": "Mexico City",
+      "startDate": "2025-12",
+      "endDate": null,
+      "current": true,
+      "highlights": [
+        {
+          "text": "GenAI Innovation Center — LATAM: deliver generative AI solutions to leading organizations through a rapid 45-day POC-to-production model",
+          "metrics": {},
+          "priority": 1
+        },
+        {
+          "text": "Built a WhatsApp scheduling agent for peer-to-peer commerce for a major financial institution using agentic frameworks, Bedrock Agent Core, and Strands",
+          "metrics": {},
+          "priority": 2
+        }
+      ]
+    },
+    {
       "id": "circulo-mlops",
       "title": "MLOps & Automation Engineer Sr. / Deep Learning Architect",
       "company": "Círculo de Crédito",
       "location": "Mexico City",
       "startDate": "2023-12",
-      "endDate": null,
-      "current": true,
+      "endDate": "2025-12",
+      "current": false,
       "highlights": [
         {
           "text": "Accelerated model deployment: led productization of 9 analytical models (collections scoring, loan estimations, inference systems), cutting deployment time from >2 quarters to <1 quarter",
