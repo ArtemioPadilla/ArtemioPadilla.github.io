@@ -42,6 +42,21 @@ const repos = await fetchGitHubRepos();
         </a>
       </div>
 
+      <!-- Activity calendar -->
+      <div class="mt-10 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-6">
+        <h2 class="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-text-muted)]">
+          Contribution Activity
+        </h2>
+        <div class="activity-chart overflow-x-auto">
+          <img
+            src="https://ghchart.rshah.org/4f8ff7/ArtemioPadilla"
+            alt="GitHub contribution chart for ArtemioPadilla"
+            class="mx-auto w-full min-w-[680px]"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
       <!-- Project grid -->
       <div class="mt-10 grid gap-4 sm:grid-cols-2">
         {

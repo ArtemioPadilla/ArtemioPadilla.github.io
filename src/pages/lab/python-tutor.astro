@@ -37,10 +37,13 @@ import PythonTutor from "../../components/lab/python-tutor/PythonTutor.tsx";
       <PythonTutor client:visible />
 
       <!-- Info -->
-      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+      <div class="mt-6 space-y-2 text-xs text-[var(--color-text-muted)]">
         <p>
           Use <kbd class="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono">←</kbd> <kbd class="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono">→</kbd> to step, <kbd class="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono">Space</kbd> to play/pause.
           Python runs entirely in your browser via WebAssembly — nothing is sent to a server.
+        </p>
+        <p>
+          Inspired by <a href="https://pythontutor.com/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-primary)] hover:underline">Python Tutor</a> by <a href="https://pg.ucsd.edu/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-primary)] hover:underline">Philip Guo</a>. This is an independent client-side reimplementation using <a href="https://pyodide.org/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-primary)] hover:underline">Pyodide</a>.
         </p>
       </div>
     </div>
