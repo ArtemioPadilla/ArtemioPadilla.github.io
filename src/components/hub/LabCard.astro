@@ -1,0 +1,26 @@
+---
+import { getCollection } from "astro:content";
+import HubCard from "./HubCard.astro";
+
+const allTools = await getCollection("lab", ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const tools = allTools.sort((a, b) => a.data.order - b.data.order);
+const featuredTool = tools.find((t) => t.data.featured);
+const toolCount = tools.length;
+---
+
+<HubCard title="Lab" icon="🧪" href="/lab" accentColor="#f59e0b">
+  {featuredTool ? (
+    <div>
+      <p class="text-sm text-[var(--color-heading)]">{featuredTool.data.title}</p>
+      <p class="mt-1 text-xs text-[var(--color-text-muted)]">{featuredTool.data.description}</p>
+    </div>
+  ) : (
+    <p class="text-sm text-[var(--color-text-muted)]">Interactive tools & experiments</p>
+  )}
+  <p class="mt-auto pt-3 text-xs font-medium text-[var(--color-text-muted)]">
+    {toolCount} {toolCount === 1 ? "tool" : "tools"}
+  </p>
+</HubCard>

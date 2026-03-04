@@ -1,0 +1,68 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import ToolCard from "../../components/lab/ToolCard.astro";
+
+const allTools = await getCollection("lab", ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const tools = allTools.sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Lab — Artemio Padilla"
+  description="Interactive browser-based tools and experiments."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-4xl">
+      <!-- Section label -->
+      <div class="mb-4 flex items-center gap-3">
+        <div class="h-[2px] w-8 rounded-full bg-[var(--color-primary)]"></div>
+        <span class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-primary)]">
+          Lab
+        </span>
+      </div>
+
+      <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl md:text-5xl">
+        Tools & Experiments
+      </h1>
+      <p class="mt-4 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+        Interactive browser-based tools. Everything runs client-side — no server required.
+      </p>
+
+      <!-- Tool grid -->
+      <div class="mt-10 grid gap-4 sm:grid-cols-2">
+        {
+          tools.map((tool) => {
+            const href = tool.data.requiresCustomPage
+              ? `/lab/${tool.data.componentSlug}`
+              : `/lab/${tool.id}`;
+            return (
+              <ToolCard
+                title={tool.data.title}
+                description={tool.data.description}
+                icon={tool.data.icon}
+                tags={tool.data.tags}
+                status={tool.data.status}
+                href={href}
+              />
+            );
+          })
+        }
+      </div>
+
+      {tools.length === 0 && (
+        <p class="mt-16 text-center text-[var(--color-text-muted)]">
+          No tools yet. Check back soon.
+        </p>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

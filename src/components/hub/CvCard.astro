@@ -1,0 +1,21 @@
+---
+import { loadAndValidateCV } from "../../utils/cv-loader";
+import HubCard from "./HubCard.astro";
+
+const cv = loadAndValidateCV();
+const currentJob = cv.experience.find((e) => e.current);
+---
+
+<HubCard title="CV" icon="📄" href="/cv" accentColor="var(--color-accent)">
+  {currentJob ? (
+    <div>
+      <p class="text-sm text-[var(--color-heading)]">{currentJob.title}</p>
+      <p class="mt-1 text-xs text-[var(--color-text-muted)]">{currentJob.company}</p>
+    </div>
+  ) : (
+    <p class="text-sm text-[var(--color-text-muted)]">Full curriculum vitae</p>
+  )}
+  <p class="mt-auto pt-3 text-xs font-medium text-[var(--color-text-muted)]">
+    {cv.experience.length} roles &middot; {cv.education.length} degrees
+  </p>
+</HubCard>

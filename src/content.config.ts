@@ -15,4 +15,24 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+const lab = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/lab" }),
+  schema: z.object({
+    title: z.string().max(100),
+    description: z.string().max(300),
+    icon: z.string(),
+    tags: z.array(z.string()).default([]),
+    status: z.enum(["alpha", "beta", "stable"]).default("alpha"),
+    featured: z.boolean().default(false),
+    order: z.number().default(0),
+    componentSlug: z.string(),
+    requiresCustomPage: z.boolean().default(false),
+    draft: z.boolean().default(false),
+    createdDate: z.coerce.date(),
+    // Future auth (documented, not implemented):
+    // access: z.enum(["public", "private"]).default("public"),
+    // requiredRole: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, lab };

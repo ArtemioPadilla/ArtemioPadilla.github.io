@@ -1,0 +1,100 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import PythonRepl from "../../components/lab/PythonRepl.tsx";
+---
+
+<BaseLayout
+  title="Python REPL — Lab — Artemio Padilla"
+  description="Run Python code directly in your browser. Powered by Pyodide with NumPy pre-loaded."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Python REPL</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">🐍</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Python REPL
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Run Python code directly in your browser. Powered by Pyodide (CPython compiled to WebAssembly) with NumPy pre-loaded.
+        </p>
+      </div>
+
+      <!-- REPL -->
+      <PythonRepl client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>
+          Press <kbd class="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono">⌘</kbd>+<kbd class="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono">Enter</kbd> to run.
+          Python runs entirely in your browser via WebAssembly — nothing is sent to a server.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .repl-container {
+    box-shadow: 0 0 0 1px var(--color-border);
+  }
+
+  .repl-editor {
+    tab-size: 4;
+    caret-color: var(--color-primary);
+  }
+
+  .repl-output {
+    background: color-mix(in srgb, var(--color-surface) 90%, black);
+  }
+
+  :global(html.light) .repl-output {
+    background: color-mix(in srgb, var(--color-surface) 95%, black);
+  }
+
+  .repl-stdout {
+    color: var(--color-accent);
+  }
+
+  :global(html.light) .repl-stdout {
+    color: #059669;
+  }
+
+  .repl-run-btn {
+    background: linear-gradient(135deg, var(--color-accent) 0%, #059669 100%);
+  }
+
+  .repl-run-btn:hover:not(:disabled) {
+    box-shadow: 0 0 16px rgba(52, 211, 153, 0.3);
+    transform: translateY(-1px);
+  }
+
+  :global(html.light) .repl-run-btn {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  }
+
+  .repl-pulse {
+    background: var(--color-primary);
+    animation: repl-pulse-anim 1.5s ease-in-out infinite;
+  }
+
+  @keyframes repl-pulse-anim {
+    0%, 100% { opacity: 0.3; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+</style>

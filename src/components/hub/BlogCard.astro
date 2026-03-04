@@ -1,0 +1,33 @@
+---
+import { getCollection } from "astro:content";
+import HubCard from "./HubCard.astro";
+
+const allPosts = await getCollection("blog", ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const posts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const latestPost = posts[0];
+const postCount = posts.length;
+---
+
+<HubCard title="Blog" icon="📝" href="/blog" accentColor="var(--color-primary)">
+  {latestPost ? (
+    <div>
+      <p class="text-sm leading-relaxed text-[var(--color-text-muted)]">
+        <span class="text-[var(--color-heading)]">{latestPost.data.title}</span>
+      </p>
+      <p class="mt-2 text-xs text-[var(--color-text-muted)]">
+        {latestPost.data.pubDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+      </p>
+    </div>
+  ) : (
+    <p class="text-sm text-[var(--color-text-muted)]">Coming soon</p>
+  )}
+  <p class="mt-auto pt-3 text-xs font-medium text-[var(--color-text-muted)]">
+    {postCount} {postCount === 1 ? "post" : "posts"}
+  </p>
+</HubCard>

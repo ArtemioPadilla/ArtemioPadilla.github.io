@@ -1,0 +1,48 @@
+---
+import HubCard from "./HubCard.astro";
+
+interface Props {
+  email: string;
+  linkedin: string;
+  github: string;
+}
+
+const { email, linkedin, github } = Astro.props;
+---
+
+<HubCard title="Contact" icon="✉️" href={`mailto:${email}`} accentColor="var(--color-text-muted)">
+  <div>
+    <p class="text-sm text-[var(--color-text-muted)]">
+      Open to collaboration and interesting problems.
+    </p>
+    <div class="mt-3 flex items-center gap-3">
+      <a
+        href={linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-xs text-[var(--color-text-muted)] no-underline transition-colors hover:text-[var(--color-heading)]"
+        onclick="event.stopPropagation();"
+      >
+        LinkedIn
+      </a>
+      <span class="text-[var(--color-border)]">&middot;</span>
+      <a
+        href={github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-xs text-[var(--color-text-muted)] no-underline transition-colors hover:text-[var(--color-heading)]"
+        onclick="event.stopPropagation();"
+      >
+        GitHub
+      </a>
+      <span class="text-[var(--color-border)]">&middot;</span>
+      <a
+        href="/links"
+        class="text-xs text-[var(--color-text-muted)] no-underline transition-colors hover:text-[var(--color-heading)]"
+        onclick="event.stopPropagation();"
+      >
+        All links
+      </a>
+    </div>
+  </div>
+</HubCard>

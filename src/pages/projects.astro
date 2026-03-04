@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../components/layout/BaseLayout.astro";
+import Navigation from "../components/layout/Navigation.astro";
+import Footer from "../components/layout/Footer.astro";
+import ProjectCard from "../components/home/ProjectCard.astro";
+import { fetchGitHubRepos } from "../utils/github";
+import { siteData } from "../data/site-data";
+
+const repos = await fetchGitHubRepos();
+---
+
+<BaseLayout
+  title="Projects — Artemio Padilla"
+  description="Open source projects and tools by Artemio Padilla."
+>
+  <Navigation currentPath="/projects" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Section label -->
+      <div class="mb-4 flex items-center gap-3">
+        <div class="h-[2px] w-8 rounded-full bg-[var(--color-primary)]"></div>
+        <span class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-primary)]">
+          Projects
+        </span>
+      </div>
+
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl md:text-5xl">
+          Open Source
+        </h1>
+        <a
+          href={siteData.contact.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] no-underline transition-colors hover:text-[var(--color-heading)]"
+        >
+          View all on GitHub
+          <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
+
+      <!-- Project grid -->
+      <div class="mt-10 grid gap-4 sm:grid-cols-2">
+        {
+          repos.map((repo) => (
+            <ProjectCard
+              title={repo.name.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+              description={repo.description}
+              tags={repo.topics}
+              url={repo.html_url}
+              language={repo.language}
+              stars={repo.stargazers_count}
+            />
+          ))
+        }
+      </div>
+
+      {repos.length === 0 && (
+        <p class="mt-16 text-center text-[var(--color-text-muted)]">
+          Could not load repositories. Check back soon.
+        </p>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

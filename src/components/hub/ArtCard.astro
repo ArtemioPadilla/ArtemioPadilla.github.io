@@ -1,0 +1,48 @@
+---
+import HubCard from "./HubCard.astro";
+
+const AI_ART_BASE = "https://ai-art.artemiop.com";
+
+interface Collection {
+  name: string;
+  coverImage: string;
+}
+
+let collections: Collection[] = [];
+let thumbnailUrl = "";
+
+try {
+  const res = await fetch(`${AI_ART_BASE}/collections/manifest.json`);
+  if (res.ok) {
+    const data = await res.json();
+    collections = data.collections ?? [];
+    if (collections.length > 0 && collections[0].coverImage) {
+      thumbnailUrl = `${AI_ART_BASE}/${collections[0].coverImage}`;
+    }
+  }
+} catch {
+  // Build-time fetch failed
+}
+
+const collectionCount = collections.length;
+---
+
+<HubCard title="Art" icon="🎨" href={AI_ART_BASE} accentColor="#f472b6" external>
+  <div>
+    {thumbnailUrl ? (
+      <div class="mt-1 overflow-hidden rounded-lg">
+        <img
+          src={thumbnailUrl}
+          alt="AI Art preview"
+          loading="lazy"
+          class="h-20 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+      </div>
+    ) : (
+      <p class="text-sm text-[var(--color-text-muted)]">AI-generated art collections</p>
+    )}
+  </div>
+  <p class="mt-auto pt-3 text-xs font-medium text-[var(--color-text-muted)]">
+    {collectionCount > 0 ? `${collectionCount} ${collectionCount === 1 ? "collection" : "collections"}` : "AI art gallery"}
+  </p>
+</HubCard>

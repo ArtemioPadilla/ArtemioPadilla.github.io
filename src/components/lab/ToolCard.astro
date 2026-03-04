@@ -1,0 +1,92 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  icon: string;
+  tags: string[];
+  status: "alpha" | "beta" | "stable";
+  href: string;
+}
+
+const { title, description, icon, tags, status, href } = Astro.props;
+
+const statusColors = {
+  alpha: "border-amber-500/30 text-amber-500",
+  beta: "border-[var(--color-primary)]/30 text-[var(--color-primary)]",
+  stable: "border-[var(--color-accent)]/30 text-[var(--color-accent)]",
+};
+---
+
+<a
+  href={href}
+  class="tool-card group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 no-underline transition-all duration-500 hover:border-[var(--color-primary)]/30 sm:p-7"
+>
+  <div class="tool-card-glow"></div>
+
+  <div class="relative z-10 flex flex-1 flex-col">
+    <!-- Icon + status -->
+    <div class="flex items-start justify-between">
+      <span class="text-3xl" role="img">{icon}</span>
+      <span class={`rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${statusColors[status]}`}>
+        {status}
+      </span>
+    </div>
+
+    <!-- Title -->
+    <h3 class="mt-4 font-heading text-xl font-bold uppercase tracking-wide text-[var(--color-heading)] transition-colors duration-300 group-hover:text-[var(--color-primary)]">
+      {title}
+    </h3>
+
+    <!-- Description -->
+    <p class="mt-2 flex-1 text-sm leading-relaxed text-[var(--color-text-muted)]">
+      {description}
+    </p>
+
+    <!-- Tags -->
+    {tags.length > 0 && (
+      <div class="mt-4 flex flex-wrap gap-2">
+        {tags.slice(0, 4).map((tag) => (
+          <span class="rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-xs font-medium text-[var(--color-text-muted)] transition-all duration-300 group-hover:border-[var(--color-primary)]/20 group-hover:text-[var(--color-primary)]">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </div>
+</a>
+
+<style>
+  .tool-card-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background: radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      rgba(79, 143, 247, 0.06) 0%,
+      transparent 60%
+    );
+  }
+
+  .tool-card:hover .tool-card-glow {
+    opacity: 1;
+  }
+
+  :global(html.light) .tool-card-glow {
+    background: radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      rgba(37, 99, 235, 0.03) 0%,
+      transparent 60%
+    );
+  }
+
+  .tool-card {
+    animation: card-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes card-enter {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

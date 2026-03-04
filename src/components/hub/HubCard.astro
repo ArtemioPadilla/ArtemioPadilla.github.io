@@ -1,0 +1,86 @@
+---
+interface Props {
+  title: string;
+  icon: string;
+  href: string;
+  accentColor?: string;
+  external?: boolean;
+}
+
+const { title, icon, href, accentColor = "var(--color-primary)", external = false } = Astro.props;
+---
+
+<a
+  href={href}
+  {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+  class="hub-card group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 no-underline transition-all duration-500 hover:border-[var(--hub-accent)]/30 sm:p-7"
+  style={`--hub-accent: ${accentColor};`}
+>
+  <!-- Glow on hover -->
+  <div class="hub-card-glow"></div>
+
+  <div class="relative z-10 flex flex-1 flex-col">
+    <!-- Icon + arrow -->
+    <div class="flex items-start justify-between">
+      <span class="text-2xl" role="img">{icon}</span>
+      <svg
+        class="h-4 w-4 text-[var(--color-text-muted)] transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[var(--hub-accent)]"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        {external ? (
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        ) : (
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7v10" />
+        )}
+      </svg>
+    </div>
+
+    <!-- Title -->
+    <h2 class="mt-4 font-heading text-xl font-bold uppercase tracking-wide text-[var(--color-heading)] transition-colors duration-300 group-hover:text-[var(--hub-accent)]">
+      {title}
+    </h2>
+
+    <!-- Slot content -->
+    <div class="mt-3 flex-1">
+      <slot />
+    </div>
+  </div>
+</a>
+
+<style>
+  .hub-card-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background: radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      color-mix(in srgb, var(--hub-accent) 6%, transparent) 0%,
+      transparent 60%
+    );
+  }
+
+  .hub-card:hover .hub-card-glow {
+    opacity: 1;
+  }
+
+  :global(html.light) .hub-card-glow {
+    background: radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      color-mix(in srgb, var(--hub-accent) 3%, transparent) 0%,
+      transparent 60%
+    );
+  }
+
+  .hub-card {
+    animation: card-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes card-enter {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

@@ -2,174 +2,66 @@
 import BaseLayout from "../components/layout/BaseLayout.astro";
 import Navigation from "../components/layout/Navigation.astro";
 import Footer from "../components/layout/Footer.astro";
-import Hero from "../components/home/Hero.astro";
-import About from "../components/home/About.astro";
-import ProjectCard from "../components/home/ProjectCard.astro";
-import Contact from "../components/home/Contact.astro";
-import AiArtShowcase from "../components/home/AiArtShowcase.astro";
+import IdentityStrip from "../components/hub/IdentityStrip.astro";
+import BlogCard from "../components/hub/BlogCard.astro";
+import CvCard from "../components/hub/CvCard.astro";
+import LabCard from "../components/hub/LabCard.astro";
+import ProjectsCard from "../components/hub/ProjectsCard.astro";
+import ArtCard from "../components/hub/ArtCard.astro";
+import ContactCard from "../components/hub/ContactCard.astro";
 import { siteData } from "../data/site-data";
-import { fetchGitHubRepos } from "../utils/github";
-
-const repos = await fetchGitHubRepos();
 ---
 
 <BaseLayout title="Artemio Padilla — Deep Learning Architect">
   <Navigation currentPath="/" />
 
   <main>
-    <!-- Hero -->
-    <Hero
+    <!-- Identity -->
+    <IdentityStrip
       name={siteData.hero.name}
       title={siteData.hero.title}
       tagline={siteData.hero.tagline}
-      cta={siteData.hero.cta}
-    />
-
-    <!-- About -->
-    <About
-      heading={siteData.about.heading}
-      description={siteData.about.description}
-      highlights={siteData.about.highlights}
-    />
-
-    <!-- Divider -->
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent"></div>
-    </div>
-
-    <!-- Projects -->
-    <section id="projects" class="px-6 py-24 md:py-32">
-      <div class="mx-auto max-w-6xl">
-        <!-- Section label -->
-        <div class="mb-4 flex items-center gap-3">
-          <div class="h-[2px] w-8 rounded-full bg-[var(--color-primary)]"></div>
-          <span class="text-xs font-semibold tracking-[0.25em] text-[var(--color-primary)] uppercase">
-            Projects
-          </span>
-        </div>
-
-        <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <h2 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl md:text-5xl">
-            Open Source
-          </h2>
-          <a
-            href={siteData.contact.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] no-underline transition-colors hover:text-[var(--color-heading)]"
-          >
-            View all on GitHub
-            <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
-          </a>
-        </div>
-
-        <!-- Project grid -->
-        <div class="mt-10 grid gap-4 sm:grid-cols-2">
-          {
-            repos.slice(0, 8).map((repo) => (
-              <ProjectCard
-                title={repo.name.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-                description={repo.description}
-                tags={repo.topics}
-                url={repo.html_url}
-                language={repo.language}
-                stars={repo.stargazers_count}
-              />
-            ))
-          }
-        </div>
-
-        {repos.length > 8 && (
-          <p class="mt-8 text-center text-sm text-[var(--color-text-muted)]">
-            Showing 8 of {repos.length} repositories.
-            <a
-              href={siteData.contact.github + "?tab=repositories"}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-[var(--color-primary)] hover:underline"
-            >
-              See all on GitHub &rarr;
-            </a>
-          </p>
-        )}
-      </div>
-    </section>
-
-    <!-- Divider -->
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent"></div>
-    </div>
-
-    <!-- AI Art -->
-    <AiArtShowcase />
-
-    <!-- Divider -->
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent"></div>
-    </div>
-
-    <!-- Quote -->
-    <section class="px-6 py-20 md:py-28">
-      <div class="mx-auto max-w-3xl text-center">
-        <blockquote class="quote-animate">
-          <svg class="mx-auto mb-6 h-8 w-8 text-[var(--color-primary)]/20" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11H10v10H0z" />
-          </svg>
-          <p class="text-lg leading-relaxed text-[var(--color-text-muted)] sm:text-xl md:text-2xl">
-            Know all the theories, master all the techniques, but as you touch a human soul be just another human soul.
-          </p>
-          <footer class="mt-6">
-            <cite class="text-sm font-medium not-italic text-[var(--color-text-muted)]/40">
-              Carl Jung
-            </cite>
-          </footer>
-        </blockquote>
-      </div>
-    </section>
-
-    <!-- Divider -->
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent"></div>
-    </div>
-
-    <!-- Contact -->
-    <Contact
+      highlights={siteData.hero.highlights}
       email={siteData.contact.email}
       linkedin={siteData.contact.linkedin}
       github={siteData.contact.github}
     />
+
+    <!-- Dashboard grid -->
+    <section class="px-6 pb-24 md:pb-32">
+      <div class="mx-auto max-w-5xl">
+        <div class="hub-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div style="animation-delay: 0ms;"><BlogCard /></div>
+          <div style="animation-delay: 50ms;"><CvCard /></div>
+          <div style="animation-delay: 100ms;"><LabCard /></div>
+          <div style="animation-delay: 150ms;"><ProjectsCard /></div>
+          <div style="animation-delay: 200ms;"><ArtCard /></div>
+          <div style="animation-delay: 250ms;"><ContactCard
+            email={siteData.contact.email}
+            linkedin={siteData.contact.linkedin}
+            github={siteData.contact.github}
+          /></div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <Footer />
 </BaseLayout>
 
 <style>
-  .quote-animate {
-    animation: quote-fade 1s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 30%;
+  .hub-grid > div {
+    animation: hub-card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  @supports not (animation-timeline: view()) {
-    .quote-animate {
-      animation: quote-fade 1s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-  }
-
-  @keyframes quote-fade {
+  @keyframes hub-card-in {
     from {
       opacity: 0;
-      transform: scale(0.96);
+      transform: translateY(24px);
     }
     to {
       opacity: 1;
-      transform: scale(1);
+      transform: translateY(0);
     }
   }
 </style>

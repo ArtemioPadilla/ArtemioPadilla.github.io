@@ -47,7 +47,15 @@ const year = new Date().getFullYear();
       </div>
     </div>
 
-    <div class="mt-8 text-center">
+    <div class="mt-8 flex flex-col items-center gap-3">
+      <div class="flex items-center gap-4 text-xs text-[var(--color-text-muted)]">
+        <a href="/links" class="no-underline transition-colors hover:text-[var(--color-heading)]">Links</a>
+        <span class="text-[var(--color-border)]">&middot;</span>
+        <a href="/rss.xml" class="no-underline transition-colors hover:text-[var(--color-heading)]">RSS</a>
+      </div>
+      <p class="max-w-md text-center text-[10px] leading-relaxed text-[var(--color-text-muted)]/40 italic">
+        "Know all the theories, master all the techniques, but as you touch a human soul be just another human soul." — Carl Jung
+      </p>
       <p class="text-xs text-[var(--color-text-muted)]">
         &copy; {year} Artemio Padilla
       </p>

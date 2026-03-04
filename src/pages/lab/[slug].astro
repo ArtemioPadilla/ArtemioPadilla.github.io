@@ -1,0 +1,56 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import ToolLoader from "../../components/lab/ToolLoader.tsx";
+
+export async function getStaticPaths() {
+  const allTools = await getCollection("lab", ({ data }) => {
+    return !data.draft && !data.requiresCustomPage;
+  });
+
+  return allTools.map((tool) => ({
+    params: { slug: tool.data.componentSlug },
+    props: { tool },
+  }));
+}
+
+const { tool } = Astro.props;
+---
+
+<BaseLayout
+  title={`${tool.data.title} — Lab — Artemio Padilla`}
+  description={tool.data.description}
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">{tool.data.title}</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">{tool.data.icon}</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            {tool.data.title}
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          {tool.data.description}
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <ToolLoader client:visible slug={tool.data.componentSlug} />
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
