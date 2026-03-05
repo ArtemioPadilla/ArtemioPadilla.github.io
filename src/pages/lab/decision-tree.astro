@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import DecisionTree from "../../components/lab/decision-tree/DecisionTree.tsx";
+---
+
+<BaseLayout
+  title="Decision Tree Builder — Lab — Artemio Padilla"
+  description="Build classification and regression trees from data. Visualize splits, feature importance, and decision boundaries step by step."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Decision Tree Builder</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">&#127795;</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Decision Tree Builder
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Build classification and regression trees from data. Visualize splits, feature importance, and decision boundaries step by step.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <DecisionTree client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>
+          CART / ID3 algorithm implemented from scratch — no ML libraries. Supports Gini impurity, information gain (entropy), and variance reduction. All computation runs entirely in your browser.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

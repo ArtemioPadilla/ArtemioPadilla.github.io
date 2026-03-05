@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import TuringMachine from "../../components/lab/turing-machine/TuringMachine.tsx";
+---
+
+<BaseLayout
+  title="Turing Machine Simulator — Lab — Artemio Padilla"
+  description="Simulate Turing machines with visual tape, head movement, and state transitions. Includes classic programs like Busy Beaver."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Turing Machine Simulator</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">📼</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Turing Machine Simulator
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Simulate Turing machines with an interactive visual tape, head pointer, state transitions, and a canvas-rendered state diagram. Includes 7 classic presets.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <TuringMachine client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>
+          Step through execution or run at adjustable speed. Edit the transition table, configure states, or load a preset. All computation runs entirely in your browser. Step limit: 10,000 steps.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import RayTracer from "../../components/lab/ray-tracer/RayTracer.tsx";
+---
+
+<BaseLayout
+  title="Ray Tracer — Lab — Artemio Padilla"
+  description="Real-time software ray tracer with reflections, refractions, and Phong shading. Drag objects, adjust materials, and watch rays bounce."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Ray Tracer</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">💎</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Ray Tracer
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Real-time software ray tracer with reflections, refractions, and Phong shading. Drag objects, adjust materials, and watch rays bounce.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <RayTracer client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>All computations run entirely in your browser using Canvas ImageData. Click and drag spheres to reposition them, drag the background to orbit the camera, and scroll to zoom. Adjust render settings in the panel to trade quality for speed.</p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

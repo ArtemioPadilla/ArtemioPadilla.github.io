@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import GeneticAlgorithm from "../../components/lab/genetic-algorithm/GeneticAlgorithm.tsx";
+---
+
+<BaseLayout
+  title="Genetic Algorithm Visualizer — Lab — Artemio Padilla"
+  description="Watch evolution solve optimization problems. TSP routes, function optimization, and string evolution with configurable GA parameters."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Genetic Algorithm Visualizer</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">&#x1F9EC;</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Genetic Algorithm Visualizer
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Watch evolution solve optimization problems in real time. Configure population, mutation, crossover, and selection strategies across three problem types.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <GeneticAlgorithm client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>All computation runs entirely in your browser. No data is sent anywhere.</p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
