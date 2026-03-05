@@ -44,8 +44,9 @@ import { siteData } from "../data/site-data";
         <h2 class="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-text-muted)]">
           Contribution Activity
         </h2>
-        <div class="activity-chart overflow-x-auto">
+        <div id="activity-chart" class="activity-chart overflow-x-auto">
           <img
+            id="ghchart-img"
             src="https://ghchart.rshah.org/4f8ff7/ArtemioPadilla"
             alt="GitHub contribution chart for ArtemioPadilla"
             class="mx-auto w-full min-w-[680px]"
@@ -63,3 +64,15 @@ import { siteData } from "../data/site-data";
 
   <Footer />
 </BaseLayout>
+
+<script>
+  const img = document.getElementById('ghchart-img') as HTMLImageElement;
+  if (img) {
+    img.onerror = () => {
+      const container = document.getElementById('activity-chart');
+      if (container) {
+        container.innerHTML = `<a href="https://github.com/ArtemioPadilla" target="_blank" rel="noopener noreferrer" class="block text-center text-sm text-[var(--color-primary)] hover:underline">View contribution activity on GitHub →</a>`;
+      }
+    };
+  }
+</script>

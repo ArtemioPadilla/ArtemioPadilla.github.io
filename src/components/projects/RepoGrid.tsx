@@ -133,6 +133,42 @@ function SkeletonCard() {
   );
 }
 
+const CACHE_KEY = "gh_repos_cache";
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+function getCached(): Repo[] | null {
+  try {
+    const raw = sessionStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL_MS) {
+      sessionStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function setCache(data: Repo[]) {
+  try {
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
+  } catch {
+    // sessionStorage full or unavailable — ignore
+  }
+}
+
+function filterAndSort(data: Repo[]): Repo[] {
+  return data
+    .filter((r) => !r.fork && !EXCLUDED_REPOS.has(r.name) && r.description)
+    .sort(
+      (a, b) =>
+        b.stargazers_count - a.stargazers_count ||
+        Date.parse(b.pushed_at) - Date.parse(a.pushed_at)
+    );
+}
+
 export default function RepoGrid() {
   const [repos, setRepos] = useState<Repo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -140,6 +176,13 @@ export default function RepoGrid() {
 
   useEffect(() => {
     let cancelled = false;
+
+    const cached = getCached();
+    if (cached) {
+      setRepos(filterAndSort(cached));
+      setLoading(false);
+      return;
+    }
 
     fetch(
       `https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&sort=updated`,
@@ -150,21 +193,17 @@ export default function RepoGrid() {
       }
     )
       .then((res) => {
+        if (res.status === 403)
+          throw new Error(
+            "GitHub API rate limit reached. Please try again later."
+          );
         if (!res.ok) throw new Error(`GitHub API returned ${res.status}`);
         return res.json();
       })
       .then((data: Repo[]) => {
         if (cancelled) return;
-        const filtered = data
-          .filter(
-            (r) => !r.fork && !EXCLUDED_REPOS.has(r.name) && r.description
-          )
-          .sort(
-            (a, b) =>
-              b.stargazers_count - a.stargazers_count ||
-              Date.parse(b.pushed_at) - Date.parse(a.pushed_at)
-          );
-        setRepos(filtered);
+        setCache(data);
+        setRepos(filterAndSort(data));
         setLoading(false);
       })
       .catch((err) => {
@@ -191,9 +230,17 @@ export default function RepoGrid() {
 
   if (error) {
     return (
-      <p class="mt-16 text-center text-[var(--color-text-muted)]">
-        Could not load repositories: {error}
-      </p>
+      <div class="mt-12 text-center">
+        <p class="text-[var(--color-text-muted)]">{error}</p>
+        <a
+          href={`https://github.com/${GITHUB_USER}?tab=repositories`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-3 inline-block text-sm text-[var(--color-primary)] hover:underline"
+        >
+          View repositories on GitHub →
+        </a>
+      </div>
     );
   }
 
