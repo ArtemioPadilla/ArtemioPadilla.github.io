@@ -10,17 +10,138 @@ const allTools = await getCollection("lab", ({ data }) => {
 });
 
 const tools = allTools.sort((a, b) => a.data.order - b.data.order);
+
+// Category definitions: slug → category key
+const categoryMap: Record<string, string> = {
+  // Machine Learning & AI
+  "neural-network": "ml",
+  "gradient-descent": "ml",
+  "activation-functions": "ml",
+  "loss-explorer": "ml",
+  "convolution-viz": "ml",
+  "diffusion-viz": "ml",
+  "tokenizer": "ml",
+  "embedding-explorer": "ml",
+  "confusion-matrix": "ml",
+  "decision-tree": "ml",
+  "clustering": "ml",
+  "genetic-algorithm": "ml",
+  "mcmc-visualizer": "ml",
+
+  // Mathematics & Statistics
+  "fourier-viz": "math",
+  "distributions": "math",
+  "linear-algebra": "math",
+  "bezier-editor": "math",
+  "ab-test": "math",
+  "markov-chain": "math",
+  "voronoi": "math",
+
+  // Algorithms & Data Structures
+  "sorting-viz": "algo",
+  "graph-algorithms": "algo",
+  "data-structures": "algo",
+  "pathfinding": "algo",
+  "compression-viz": "algo",
+  "l-system": "algo",
+  "cellular-automata": "algo",
+
+  // Computer Science Theory
+  "turing-machine": "cs",
+  "state-machine": "cs",
+  "regex-automaton": "cs",
+  "memory-allocator": "cs",
+
+  // Graphics & Creative
+  "shader-playground": "gfx",
+  "ray-tracer": "gfx",
+  "pixel-art": "gfx",
+  "perlin-noise": "gfx",
+  "color-palette": "gfx",
+
+  // Developer Tools
+  "regex-tester": "dev",
+  "json-validator": "dev",
+  "jwt-decoder": "dev",
+  "cron-parser": "dev",
+  "diff-viewer": "dev",
+  "hash-generator": "dev",
+  "timestamp": "dev",
+  "base-converter": "dev",
+  "qr-generator": "dev",
+  "sql-playground": "dev",
+
+  // Audio & Music
+  "audio-visualizer": "audio",
+  "music-theory": "audio",
+
+  // Python
+  "python-repl": "python",
+  "python-tutor": "python",
+
+  // Systems & Networking
+  "network-protocols": "systems",
+  "blockchain": "systems",
+  "physics-sandbox": "systems",
+};
+
+interface CategoryMeta {
+  key: string;
+  label: string;
+  icon: string;
+  description: string;
+}
+
+const categories: CategoryMeta[] = [
+  { key: "ml", label: "Machine Learning & AI", icon: "brain", description: "Neural networks, optimization, embeddings, and generative models" },
+  { key: "math", label: "Mathematics & Statistics", icon: "sigma", description: "Fourier, probability, linear algebra, and statistical testing" },
+  { key: "algo", label: "Algorithms & Data Structures", icon: "flow", description: "Sorting, pathfinding, graphs, compression, and fractals" },
+  { key: "cs", label: "Computer Science Theory", icon: "cpu", description: "Turing machines, automata, state machines, and memory" },
+  { key: "gfx", label: "Graphics & Creative", icon: "palette", description: "Shaders, ray tracing, pixel art, and procedural generation" },
+  { key: "dev", label: "Developer Tools", icon: "wrench", description: "Regex, JSON, JWT, SQL, hashing, and encoding utilities" },
+  { key: "audio", label: "Audio & Music", icon: "music", description: "Audio analysis, music theory, and Web Audio experiments" },
+  { key: "python", label: "Python", icon: "python", description: "Browser-based Python REPL and code execution visualizer" },
+  { key: "systems", label: "Systems & Networking", icon: "globe", description: "Network protocols, blockchain, and physics simulation" },
+];
+
+// Group tools by category
+const grouped = new Map<string, typeof tools>();
+for (const cat of categories) {
+  grouped.set(cat.key, []);
+}
+
+for (const tool of tools) {
+  const slug = tool.data.componentSlug;
+  const catKey = categoryMap[slug] ?? "dev";
+  const arr = grouped.get(catKey);
+  if (arr) arr.push(tool);
+}
+
+const totalCount = tools.length;
+
+// SVG icon paths for categories
+const categoryIcons: Record<string, string> = {
+  brain: '<path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 14.5M14.25 3.104c.251.023.501.05.75.082M19.8 14.5l-2.209 2.209c-.42.42-.659.994-.659 1.591v.8a2.25 2.25 0 01-2.25 2.25h-1.364a2.25 2.25 0 01-2.25-2.25v-.8c0-.597-.239-1.17-.659-1.591L8.2 14.5m11.6 0H4.2m0 0l2.209-2.209c.42-.42.659-.994.659-1.591V5.318A2.25 2.25 0 019.318 3.068" />',
+  sigma: '<path stroke-linecap="round" stroke-linejoin="round" d="M4.745 3A23.933 23.933 0 003 12c0 3.183.62 6.22 1.745 9M19.5 3l-6 9 6 9M4.745 3H12l-3 4.5M4.745 21H12l-3-4.5" />',
+  flow: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6z" />',
+  cpu: '<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5M4.5 15.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25z" />',
+  palette: '<path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />',
+  wrench: '<path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085" />',
+  music: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z" />',
+  python: '<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />',
+  globe: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />',
+};
 ---
 
 <BaseLayout
   title="Lab — Artemio Padilla"
-  description="Interactive browser-based tools and experiments."
+  description="Interactive browser-based tools and experiments. 53 tools across ML, algorithms, math, graphics, and developer utilities."
 >
   <Navigation currentPath="/lab" />
 
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
-    <div class="mx-auto max-w-4xl">
-      <!-- Section label -->
+    <div class="mx-auto max-w-5xl">
+      <!-- Header -->
       <div class="mb-4 flex items-center gap-3">
         <div class="h-[2px] w-8 rounded-full bg-[var(--color-primary)]"></div>
         <span class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-primary)]">
@@ -32,28 +153,79 @@ const tools = allTools.sort((a, b) => a.data.order - b.data.order);
         Tools & Experiments
       </h1>
       <p class="mt-4 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
-        Interactive browser-based tools. Everything runs client-side — no server required.
+        {totalCount} interactive browser-based tools. Everything runs client-side — no server required.
       </p>
 
-      <!-- Tool grid -->
-      <div class="mt-10 grid gap-4 sm:grid-cols-2">
-        {
-          tools.map((tool) => {
-            const href = tool.data.requiresCustomPage
-              ? `/lab/${tool.data.componentSlug}`
-              : `/lab/${tool.id}`;
-            return (
-              <ToolCard
-                title={tool.data.title}
-                description={tool.data.description}
-                icon={tool.data.icon}
-                tags={tool.data.tags}
-                status={tool.data.status}
-                href={href}
-              />
-            );
-          })
-        }
+      <!-- Category nav pills -->
+      <nav class="mt-8 flex flex-wrap gap-2" aria-label="Tool categories">
+        <a
+          href="#all"
+          class="cat-pill active rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-muted)] transition-all hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)]"
+          data-cat="all"
+        >
+          All ({totalCount})
+        </a>
+        {categories.map((cat) => {
+          const count = grouped.get(cat.key)?.length ?? 0;
+          return (
+            <a
+              href={`#${cat.key}`}
+              class="cat-pill rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-muted)] transition-all hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)]"
+              data-cat={cat.key}
+            >
+              {cat.label} ({count})
+            </a>
+          );
+        })}
+      </nav>
+
+      <!-- Categories -->
+      <div class="mt-10 space-y-12" id="categories-container">
+        {categories.map((cat) => {
+          const catTools = grouped.get(cat.key) ?? [];
+          if (catTools.length === 0) return null;
+          const iconSvg = categoryIcons[cat.icon] ?? categoryIcons.wrench;
+          return (
+            <section class="category-section" data-category={cat.key} id={cat.key}>
+              <!-- Category header -->
+              <div class="mb-6 flex items-center gap-3">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+                  <svg class="h-4.5 w-4.5 text-[var(--color-primary)]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <Fragment set:html={iconSvg} />
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-heading)]">
+                    {cat.label}
+                  </h2>
+                  <p class="text-xs text-[var(--color-text-muted)]">{cat.description}</p>
+                </div>
+                <span class="ml-auto rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--color-text-muted)]">
+                  {catTools.length}
+                </span>
+              </div>
+
+              <!-- Tool grid -->
+              <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {catTools.map((tool) => {
+                  const href = tool.data.requiresCustomPage
+                    ? `/lab/${tool.data.componentSlug}`
+                    : `/lab/${tool.id}`;
+                  return (
+                    <ToolCard
+                      title={tool.data.title}
+                      description={tool.data.description}
+                      icon={tool.data.icon}
+                      tags={tool.data.tags}
+                      status={tool.data.status}
+                      href={href}
+                    />
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
       </div>
 
       {tools.length === 0 && (
@@ -66,3 +238,61 @@ const tools = allTools.sort((a, b) => a.data.order - b.data.order);
 
   <Footer />
 </BaseLayout>
+
+<style>
+  .cat-pill.active {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: rgba(79, 143, 247, 0.08);
+  }
+
+  :global(html.light) .cat-pill.active {
+    background: rgba(37, 99, 235, 0.06);
+  }
+
+  .category-section {
+    animation: section-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .category-section.hidden-cat {
+    display: none;
+  }
+
+  @keyframes section-enter {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<script>
+  const pills = document.querySelectorAll<HTMLAnchorElement>(".cat-pill");
+  const sections = document.querySelectorAll<HTMLElement>(".category-section");
+
+  pills.forEach((pill) => {
+    pill.addEventListener("click", (e) => {
+      e.preventDefault();
+      const cat = pill.dataset.cat;
+
+      // Update active pill
+      pills.forEach((p) => p.classList.remove("active"));
+      pill.classList.add("active");
+
+      // Filter sections
+      sections.forEach((s) => {
+        if (cat === "all" || s.dataset.category === cat) {
+          s.classList.remove("hidden-cat");
+        } else {
+          s.classList.add("hidden-cat");
+        }
+      });
+
+      // Scroll to top of content if filtering
+      if (cat !== "all") {
+        const target = document.getElementById(cat!);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    });
+  });
+</script>
