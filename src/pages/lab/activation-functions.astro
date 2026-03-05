@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import ActivationFunctions from "../../components/lab/activation-functions/ActivationFunctions.tsx";
+---
+
+<BaseLayout
+  title="Activation Functions — Lab — Artemio Padilla"
+  description="Interactive gallery of neural network activation functions with derivatives and property comparison."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Activation Functions</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl font-mono">&sigma;</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Activation Functions
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Compare neural network activation functions side by side. Visualize curves, derivatives, and key properties.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <ActivationFunctions client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>Toggle functions and switch to derivative view. All computation runs entirely in your browser.</p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

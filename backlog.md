@@ -39,10 +39,19 @@
 - [x] **Gradient Descent Animator** — 2D loss landscapes with 5 optimizers (SGD, Momentum, Adam, AdaGrad, RMSProp). Canvas heatmap + contours.
 - [x] **Tokenizer Playground** — BPE visualization, token chip coloring, model comparison (GPT-4, Claude, Llama). Step-by-step merge animation.
 - [x] **Neural Network Playground** — Build small networks, train on 6 toy datasets, watch decision boundaries evolve. From-scratch backprop.
+- [x] **Convolution Visualizer** — Animated kernel sliding across grids, stride/padding controls, preset kernels (edge detect, blur, sharpen).
+- [x] **Activation Function Gallery** — 10 functions (ReLU, GELU, Swish, etc.) with derivatives, overlay comparison, properties panel.
+- [x] **Loss Function Explorer** — 8 loss functions with curve + interactive modes, drag predictions, gradient view, parameter controls.
+- [x] **Diffusion Process Visualizer** — Forward/reverse diffusion on 2D point clouds, 6 shapes, 3 noise schedules, density heatmap.
+- [x] **Fourier Transform Visualizer** — Draw signals, DFT decomposition, epicycle animation, magnitude/phase spectrum, harmonic reconstruction.
+- [x] **Probability Distribution Explorer** — 15 distributions (continuous + discrete), parameter sliders, CDF toggle, sampling, probability calculator.
+- [x] **JWT Decoder** — Decode JWTs with color-coded parts, claims table, live expiry countdown, preset tokens.
+- [x] **Cron Expression Parser** — Human-readable descriptions, visual SVG timeline, next 10 executions, field reference.
+- [x] **Diff Viewer** — Side-by-side and unified diff with word-level highlighting, LCS algorithm, scroll sync.
+- [x] **Confusion Matrix Builder** — Paste CSV or build manually, precision/recall/F1 per class, normalization modes, Cohen's Kappa.
+- [x] **Color Palette Generator** — Sequential/diverging/categorical modes, WCAG contrast matrix, colorblind simulation, chart preview.
+- [x] **Embedding Space Explorer** — PCA + t-SNE from scratch, 2D/3D Canvas visualization, KNN, preset datasets, animated t-SNE clustering.
 - [ ] **Transformer Attention Visualizer** — Paste text, see self-attention heatmaps across layers/heads. Uses ONNX Runtime Web with a tiny model.
-- [ ] **Confusion Matrix Builder** — Upload predictions CSV or paste data, get interactive confusion matrix + precision/recall/F1 per class. Plotly or D3.
-- [ ] **Embedding Space Explorer** — Upload embeddings, visualize with t-SNE/UMAP in 3D (Three.js). Color by label, hover for details.
-- [ ] **Color Palette Generator** — Generate accessible color palettes for data visualization. Contrast checks, colorblind simulation.
 
 ---
 
