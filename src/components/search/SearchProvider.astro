@@ -1,0 +1,48 @@
+---
+import { getCollection } from "astro:content";
+import CommandPalette from "./CommandPalette.tsx";
+
+// Static pages
+const staticEntries = [
+  { title: "Home", description: "Dashboard hub — blog, CV, lab, projects", url: "/", section: "Page" },
+  { title: "Blog", description: "Articles on deep learning, ML infrastructure, and engineering", url: "/blog", section: "Page" },
+  { title: "CV", description: "Full curriculum vitae — experience, education, skills", url: "/cv", section: "Page" },
+  { title: "Projects", description: "Open source repositories and GitHub activity", url: "/projects", section: "Page" },
+  { title: "Lab", description: "Interactive browser-based tools and experiments", url: "/lab", section: "Page" },
+  { title: "Links", description: "Social links, profiles, and contact information", url: "/links", section: "Page" },
+];
+
+// Blog posts
+const blogPosts = await getCollection("blog", ({ data }) => !data.draft);
+const blogEntries = blogPosts.map((post) => ({
+  title: post.data.title,
+  description: post.data.description,
+  url: `/blog/${post.id}/`,
+  section: "Blog",
+  tags: post.data.tags,
+}));
+
+// Lab tools
+const labTools = await getCollection("lab", ({ data }) => !data.draft);
+const labEntries = labTools.map((tool) => ({
+  title: tool.data.title,
+  description: tool.data.description,
+  url: tool.data.requiresCustomPage ? `/lab/${tool.data.componentSlug}/` : `/lab/${tool.id}/`,
+  section: "Lab",
+  tags: tool.data.tags,
+}));
+
+// CV sections
+const cvEntries = [
+  { title: "Experience", description: "Professional work history and roles", url: "/cv#experience", section: "CV" },
+  { title: "Education", description: "Degrees, institutions, and coursework", url: "/cv#education", section: "CV" },
+  { title: "Skills", description: "Programming languages, frameworks, and tools", url: "/cv#skills", section: "CV" },
+  { title: "Publications", description: "Research papers and academic work", url: "/cv#publications", section: "CV" },
+  { title: "Projects", description: "Notable personal and academic projects", url: "/cv#projects", section: "CV" },
+  { title: "Leadership", description: "Organizations, roles, and community involvement", url: "/cv#leadership", section: "CV" },
+];
+
+const allEntries = [...staticEntries, ...blogEntries, ...labEntries, ...cvEntries];
+---
+
+<CommandPalette client:idle entries={allEntries} />

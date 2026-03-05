@@ -1,17 +1,41 @@
 ---
+import SearchProvider from "../search/SearchProvider.astro";
+
 interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  jsonLd?: Record<string, any>;
 }
 
 const {
   title,
   description = "Artemio Padilla — Deep Learning Architect. From atomic force microscopy to neural networks.",
   ogImage,
+  jsonLd,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const defaultJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Artemio Padilla",
+  url: Astro.site?.toString() ?? "https://artemiopadilla.github.io",
+  description,
+  author: {
+    "@type": "Person",
+    name: "Artemio Padilla",
+    jobTitle: "Deep Learning Architect",
+    url: Astro.site?.toString() ?? "https://artemiopadilla.github.io",
+    sameAs: [
+      "https://github.com/ArtemioPadilla",
+      "https://www.linkedin.com/in/artemiop/",
+    ],
+  },
+};
+
+const structuredData = jsonLd ?? defaultJsonLd;
 ---
 
 <!doctype html>
@@ -53,6 +77,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       />
     </noscript>
 
+    <!-- Structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
     <title>{title}</title>
   </head>
   <body class="min-h-screen antialiased">
@@ -60,6 +87,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <div id="reading-progress" class="fixed top-0 left-0 z-[100] h-[2px] w-0 bg-[var(--color-primary)] transition-none" style="will-change: width;"></div>
 
     <slot />
+
+    <!-- Global search (Cmd+K / Ctrl+K) -->
+    <SearchProvider />
 
     <!-- Scroll-to-top button -->
     <button
