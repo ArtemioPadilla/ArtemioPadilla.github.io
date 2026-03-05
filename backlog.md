@@ -34,14 +34,14 @@
 ---
 
 ## Lab Tools (interactive browser-based, no server)
-- [ ] **Tokenizer Playground** — Input text → token IDs with BPE visualization, compare tokenizers (GPT, Claude, Llama). Uses tiktoken-wasm or custom WASM tokenizer.
+- [x] **Regex Tester** — Live regex testing with match highlighting, group extraction, replace mode. Pure JS RegExp.
+- [x] **JSON Schema Validator** — Paste JSON + schema, validate with Ajv. Detailed error reporting with paths.
+- [x] **Gradient Descent Animator** — 2D loss landscapes with 5 optimizers (SGD, Momentum, Adam, AdaGrad, RMSProp). Canvas heatmap + contours.
+- [x] **Tokenizer Playground** — BPE visualization, token chip coloring, model comparison (GPT-4, Claude, Llama). Step-by-step merge animation.
+- [x] **Neural Network Playground** — Build small networks, train on 6 toy datasets, watch decision boundaries evolve. From-scratch backprop.
 - [ ] **Transformer Attention Visualizer** — Paste text, see self-attention heatmaps across layers/heads. Uses ONNX Runtime Web with a tiny model.
-- [ ] **Gradient Descent Animator** — 2D/3D loss landscape with particle tracing different optimizers (SGD, Adam, AdaGrad). Canvas/WebGL. Adjustable learning rate, momentum.
-- [ ] **Neural Network Playground** — Build small networks (like TF Playground), train on toy datasets, see decision boundaries evolve. TensorFlow.js.
 - [ ] **Confusion Matrix Builder** — Upload predictions CSV or paste data, get interactive confusion matrix + precision/recall/F1 per class. Plotly or D3.
 - [ ] **Embedding Space Explorer** — Upload embeddings, visualize with t-SNE/UMAP in 3D (Three.js). Color by label, hover for details.
-- [ ] **Regex Tester** — Live regex testing with match highlighting and group extraction. Simple but useful.
-- [ ] **JSON Schema Validator** — Paste JSON + schema, get validation with error highlighting. Uses Ajv (already a dependency).
 - [ ] **Color Palette Generator** — Generate accessible color palettes for data visualization. Contrast checks, colorblind simulation.
 
 ---
