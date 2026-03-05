@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import BaseConverter from "../../components/lab/base-converter/BaseConverter.tsx";
+---
+
+<BaseLayout
+  title="Base Converter — Lab — Artemio Padilla"
+  description="Convert between binary, hex, decimal, and octal with bit visualization and IEEE 754 float inspector."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Base Converter</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl font-bold" style="font-family: var(--font-mono);">01</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Base Converter
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Convert between binary, hex, decimal, and octal with clickable bit visualization, IEEE 754 float inspector, and bitwise operations.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <BaseConverter client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>All conversions run entirely in your browser. Supports BigInt for numbers larger than 2^53.</p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

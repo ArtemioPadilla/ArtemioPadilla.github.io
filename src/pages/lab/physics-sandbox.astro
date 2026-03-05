@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import PhysicsSandbox from "../../components/lab/physics-sandbox/PhysicsSandbox.tsx";
+---
+
+<BaseLayout
+  title="Physics Sandbox — Lab — Artemio Padilla"
+  description="Simulate pendulums, springs, projectiles, collisions, and orbits. Adjust parameters and watch physics unfold in real-time."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Physics Sandbox</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">⚛</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Physics Sandbox
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Simulate pendulums, springs, projectiles, collisions, and orbits. Adjust parameters and watch physics unfold in real-time.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <PhysicsSandbox client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>All simulations run entirely in your browser using Canvas. Drag on the canvas to interact — set pendulum angles, add collision balls, or launch orbital bodies. Use RK4 integration for accurate physics with fixed timestep.</p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

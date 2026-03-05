@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import GraphAlgorithms from "../../components/lab/graph-algorithms/GraphAlgorithms.tsx";
+---
+
+<BaseLayout
+  title="Graph Algorithms — Lab — Artemio Padilla"
+  description="Draw graphs and visualize BFS, DFS, Dijkstra, A*, and MST algorithms step by step."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Graph Algorithms</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl font-mono">⬢</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Graph Algorithms
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Build graphs interactively and watch algorithms explore them step by step. Visualize queues, distances, and paths as they animate.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <GraphAlgorithms client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>
+          Click the canvas to add nodes. Shift+drag between nodes to create edges. Right-click to delete. All computation runs entirely in your browser.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

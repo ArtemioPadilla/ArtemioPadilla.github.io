@@ -52,6 +52,23 @@
 - [x] **Color Palette Generator** — Sequential/diverging/categorical modes, WCAG contrast matrix, colorblind simulation, chart preview.
 - [x] **Embedding Space Explorer** — PCA + t-SNE from scratch, 2D/3D Canvas visualization, KNN, preset datasets, animated t-SNE clustering.
 - [ ] **Transformer Attention Visualizer** — Paste text, see self-attention heatmaps across layers/heads. Uses ONNX Runtime Web with a tiny model.
+- [x] **Sorting Visualizer** — 10 sorting algorithms with bar-chart animation, race mode, and sound. Generator-based stepping.
+- [x] **Bezier Curve Editor** — Cubic/quadratic curves, de Casteljau animation, drag control points, continuity joining.
+- [x] **Cellular Automata** — 2D Game of Life + 1D Wolfram rules, pattern library, ImageData rendering.
+- [x] **Shader Playground** — WebGL fragment shader editor, 10 GLSL presets, live uniforms, fullscreen mode.
+- [x] **Graph Algorithms Visualizer** — 8 algorithms (BFS, DFS, Dijkstra, A*, Kruskal, Prim, topo sort, SCC), Canvas graph editor.
+- [x] **Data Structure Visualizer** — 7 structures (stack, queue, BST, min-heap, hash table, linked list, trie) with step-by-step animation.
+- [x] **State Machine Designer** — DFA/NFA visual editor, string simulation, NFA→DFA conversion, export DOT.
+- [x] **Linear Algebra Playground** — Matrix operations, eigenvalues, SVD, 2D grid deformation visualization.
+- [x] **Hash Generator** — MD5 + CRC32 from scratch, SHA-1/256/384/512 via Web Crypto, file hashing, HMAC.
+- [x] **Timestamp Converter** — Unix↔human-readable, timezone support, duration calculator, ISO 8601.
+- [x] **Base Converter** — Binary/octal/decimal/hex, arbitrary base 2–36, IEEE 754 float inspector with clickable bits.
+- [x] **Audio Visualizer** — Microphone + file input, waveform/frequency/spectrogram views, Web Audio API.
+- [x] **QR Code Generator** — From-scratch Reed-Solomon QR encoding, SVG/Canvas output, customizable colors.
+- [x] **Physics Sandbox** — 2D rigid body simulation, gravity, collisions, springs, Canvas rendering.
+- [x] **Markov Chain Simulator** — State diagram editor, transition matrix, stationary distribution, random walk animation.
+- [x] **Regex to NFA/DFA** — Thompson's construction, subset construction, minimization, visual state diagrams.
+- [x] **MCMC Visualizer** — Metropolis-Hastings, HMC, 2D target distributions, trace/density plots, diagnostics.
 
 ---
 

@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import TimestampConverter from "../../components/lab/timestamp/TimestampConverter.tsx";
+---
+
+<BaseLayout
+  title="Timestamp Converter — Lab — Artemio Padilla"
+  description="Convert between Unix timestamps and human-readable dates. Timezone support, date math, and multiple output formats."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Timestamp Converter</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">⏲</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Timestamp Converter
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Convert between Unix timestamps and human-readable dates. Timezone support, date math, and multiple output formats.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <TimestampConverter client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>All conversions run locally in your browser. Timezone conversions use the Intl.DateTimeFormat API.</p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

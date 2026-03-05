@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import RegexAutomaton from "../../components/lab/regex-automaton/RegexAutomaton.tsx";
+---
+
+<BaseLayout
+  title="Regex to Automaton — Lab — Artemio Padilla"
+  description="Convert regular expressions to NFA and DFA. Watch Thompson's construction and step through pattern matching visually."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Regex to Automaton</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">&oplus;</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Regex to Automaton
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          See how regular expressions become finite automata. Watch Thompson's construction build an NFA, convert it to a DFA via subset construction, and step through matching character by character.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <RegexAutomaton client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 space-y-2 text-xs text-[var(--color-text-muted)]">
+        <p>
+          Thompson's construction converts a regex into an NFA with &epsilon;-transitions.
+          Subset construction then determinizes it into a DFA. All computation runs entirely in your browser.
+        </p>
+        <p>
+          Looking to test regex patterns with JavaScript's native engine?
+          Try the <a href="/lab/regex-tester" class="text-[var(--color-primary)] hover:underline">Regex Tester</a>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
