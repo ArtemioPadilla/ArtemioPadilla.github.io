@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import ParticleLife from "../../components/lab/particle-life/ParticleLife.tsx";
+---
+
+<BaseLayout
+  title="Particle Life — Lab — Artemio Padilla"
+  description="Emergent artificial life from simple attraction and repulsion rules between colored particle species. Watch organisms self-organize."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Particle Life</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">&#10024;</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Particle Life
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Emergent artificial life from simple attraction and repulsion rules. Configure the interaction matrix, choose presets, and watch life-like behavior self-organize.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <ParticleLife client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>
+          Each cell in the matrix defines how one species reacts to another. Positive values attract, negative repel. Click matrix cells to cycle values, right-click to reverse. All simulation runs entirely in your browser.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -91,6 +91,22 @@
 - [x] **JSON Visualizer** — Collapsible tree view, searchable table, syntax-highlighted code view. JSONPath queries, structure statistics, format/minify.
 - [x] **Markdown Previewer** — Split-pane editor with live preview, from-scratch GFM parser, toolbar, sync scroll, table of contents, word count.
 - [x] **Mermaid Diagram Visualizer** — Live Mermaid editor, 10 diagram type presets (flowchart, sequence, class, state, ER, gantt, pie, git, mindmap, timeline). SVG/PNG export, pan/zoom.
+- [x] **Transformer Attention Visualizer** — Self-attention heatmaps, multi-head attention (4 heads), positional encoding visualization, token embeddings. From-scratch attention math.
+- [x] **Backpropagation Visualizer** — Step-by-step forward/backward pass on canvas network diagram. Gradient flow, chain rule, vanishing gradient demo, activation function selector.
+- [x] **GAN Playground** — Generator vs discriminator on 2D distributions. Decision boundary heatmap, loss curves, mode collapse detection. From-scratch backprop.
+- [x] **Word Embedding Trainer** — Skip-gram Word2Vec with negative sampling on small corpora. PCA 2D visualization, analogy solver, similarity search.
+- [x] **Fluid Simulation** — Jos Stam Stable Fluids 2D. Dye injection, velocity/pressure/arrow views, obstacles, 4 presets. ImageData rendering.
+- [x] **Particle Life** — Emergent artificial life from attraction/repulsion matrix between colored species. 5 presets, spatial hashing, trails.
+- [x] **Wave Simulation** — 2D wave equation with interference, diffraction, Doppler effect. Single/double slit presets, 3D perspective view, continuous sources.
+- [x] **Orbital Mechanics** — N-body gravity with Velocity Verlet. 6 presets (Earth-Moon, figure-8, Lagrange points). Orbital parameters, energy conservation plot.
+- [x] **Boids Flocking** — Reynolds separation/alignment/cohesion. Predators, obstacles, wind. 5 presets, speed coloring, wrap/bounce boundaries.
+- [x] **Epidemic Simulator** — SIR/SEIR/SIRD ODE (RK4) + spatial agent-based simulation. R_eff tracking, interventions (vaccination, quarantine, social distancing).
+- [x] **Strange Attractors** — Lorenz, Rossler, double pendulum, Henon map, logistic bifurcation. 3D rotation, RK4, Lyapunov exponent estimation.
+- [x] **Reaction-Diffusion** — Gray-Scott model with 7 presets (mitosis, coral, fingerprints, spirals). Paint chemicals, f-k parameter space navigator, 5 color maps.
+- [x] **Garbage Collector Visualizer** — Mark-and-sweep, reference counting, generational GC. Interactive object graph, circular reference demo, promotion animation.
+- [x] **CPU Pipeline Simulator** — 5-stage fetch-decode-execute-memory-writeback. Data hazards, forwarding, branch prediction, pipeline stalls. Code editor.
+- [x] **Database Index Visualizer** — B-Tree, B+ Tree, Hash Index with animated insert/delete/search. Node splits, leaf links, comparison mode.
+- [x] **Fractal Explorer** — GPU-accelerated Mandelbrot/Julia/Burning Ship/Tricorn via WebGL shaders. Infinite zoom, 5 color palettes, 9 zoom presets.
 
 ---
 

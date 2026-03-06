@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import BackpropViz from "../../components/lab/backprop-viz/BackpropViz.tsx";
+---
+
+<BaseLayout
+  title="Backpropagation Visualizer — Lab — Artemio Padilla"
+  description="Step through forward and backward passes in a neural network. See gradients flow, weights update, and the chain rule in action."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Backpropagation Visualizer</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">&#128300;</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Backpropagation Visualizer
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Step through forward and backward passes in a neural network. See gradients flow, weights update, and the chain rule in action.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <BackpropViz client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>
+          Neural network and backpropagation implemented from scratch — no ML libraries.
+          Uses MSE loss with sigmoid output. All computation runs entirely in your browser.
+          Try the "Vanishing Gradients" preset with the gradient magnitude chart enabled to see why deep sigmoid networks are hard to train.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

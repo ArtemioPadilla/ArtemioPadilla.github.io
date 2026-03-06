@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import FluidSim from "../../components/lab/fluid-sim/FluidSim.tsx";
+---
+
+<BaseLayout
+  title="Fluid Simulation — Lab — Artemio Padilla"
+  description="Interactive 2D fluid dynamics using Stable Fluids. Inject dye, create turbulence, and place obstacles. Real-time Navier-Stokes simulation."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Fluid Simulation</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">💧</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Fluid Simulation
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Interactive 2D fluid dynamics using Jos Stam's Stable Fluids algorithm. Click and drag to inject dye and velocity.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <FluidSim client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>Implements the Navier-Stokes equations via Stable Fluids (Jos Stam, 1999). The simulation is unconditionally stable at any timestep. Left-click drag to inject dye and velocity. Right-click drag to place obstacles. All computation runs in your browser on a 2D grid using Canvas ImageData for rendering.</p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

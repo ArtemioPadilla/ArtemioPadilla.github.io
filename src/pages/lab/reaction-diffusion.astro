@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import ReactionDiffusion from "../../components/lab/reaction-diffusion/ReactionDiffusion.tsx";
+---
+
+<BaseLayout
+  title="Reaction-Diffusion — Lab — Artemio Padilla"
+  description="Gray-Scott reaction-diffusion generating Turing patterns — spots, stripes, spirals, and coral. Paint chemicals and watch patterns self-organize."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Reaction-Diffusion</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">fingerprint</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Reaction-Diffusion
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Gray-Scott reaction-diffusion model producing Turing patterns. Paint chemical seeds, adjust feed and kill rates, and watch spots, stripes, spirals, and coral emerge.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <ReactionDiffusion client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>
+          Click to paint chemical B. Right-click to erase. Use presets or the f-k parameter space to explore different pattern regimes. All simulation runs entirely in your browser.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import CPUPipeline from "../../components/lab/cpu-pipeline/CPUPipeline.tsx";
+---
+
+<BaseLayout
+  title="CPU Pipeline Simulator — Lab — Artemio Padilla"
+  description="Visualize instruction pipelining with data hazards, forwarding, branch prediction, and pipeline stalls. Step through clock cycles."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">CPU Pipeline Simulator</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">🔲</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            CPU Pipeline Simulator
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Visualize a 5-stage CPU pipeline with data hazard detection, forwarding paths, branch prediction, and pipeline stalls. Step through clock cycles or auto-play.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <CPUPipeline client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>
+          Toggle forwarding on/off to see how stalls change. Compare CPI with and without data forwarding. Branch prediction uses always-not-taken strategy with pipeline flush on misprediction. All simulation runs entirely in your browser.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
