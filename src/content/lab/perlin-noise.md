@@ -4,7 +4,7 @@ description: "Generate and visualize Perlin and Simplex noise. Adjust octaves, p
 icon: "\uD83C\uDF2B"
 tags: ["generative", "noise", "procedural", "graphics", "math"]
 status: "beta"
-featured: true
+featured: false
 order: 45
 componentSlug: "perlin-noise"
 requiresCustomPage: true

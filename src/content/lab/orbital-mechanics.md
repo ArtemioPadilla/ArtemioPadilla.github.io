@@ -4,7 +4,7 @@ description: "N-body gravitational simulation with Kepler orbits, Lagrange point
 icon: "orbit"
 tags: ["orbital", "gravity", "physics", "simulation", "n-body"]
 status: "beta"
-featured: true
+featured: false
 order: 66
 componentSlug: "orbital-mechanics"
 requiresCustomPage: true

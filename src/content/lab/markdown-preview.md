@@ -4,7 +4,7 @@ description: "Live split-pane Markdown editor with from-scratch GFM parser. Head
 icon: "file-text"
 tags: ["markdown", "editor", "preview", "developer-tools", "writing"]
 status: "beta"
-featured: true
+featured: false
 order: 57
 componentSlug: "markdown-preview"
 requiresCustomPage: true

@@ -4,7 +4,7 @@ description: "Craig Reynolds' flocking simulation with separation, alignment, an
 icon: "bird"
 tags: ["boids", "flocking", "swarm", "simulation", "emergence"]
 status: "beta"
-featured: true
+featured: false
 order: 67
 componentSlug: "boids"
 requiresCustomPage: true

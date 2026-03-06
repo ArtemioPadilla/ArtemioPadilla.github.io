@@ -4,7 +4,7 @@ description: "Visualize instruction pipelining with data hazards, forwarding, br
 icon: "cpu"
 tags: ["cpu", "pipeline", "computer-architecture", "hazards", "visualization"]
 status: "beta"
-featured: true
+featured: false
 order: 72
 componentSlug: "cpu-pipeline"
 requiresCustomPage: true

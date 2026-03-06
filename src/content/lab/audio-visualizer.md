@@ -4,7 +4,7 @@ description: Real-time audio visualization with waveform, spectrum analyzer, and
 icon: "♫"
 tags: ["audio", "visualization", "web-audio", "fft", "signal-processing"]
 status: beta
-featured: true
+featured: false
 order: 32
 componentSlug: audio-visualizer
 requiresCustomPage: true

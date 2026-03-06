@@ -4,7 +4,7 @@ description: "Train Word2Vec skip-gram embeddings on small corpora. Visualize wo
 icon: "type"
 tags: ["word2vec", "embeddings", "nlp", "machine-learning", "skip-gram"]
 status: "beta"
-featured: true
+featured: false
 order: 62
 componentSlug: "word-embeddings"
 requiresCustomPage: true

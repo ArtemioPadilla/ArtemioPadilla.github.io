@@ -4,7 +4,7 @@ description: Generate accessible color palettes for data visualization. Contrast
 icon: "palette"
 tags: ["color", "accessibility", "design", "data-visualization"]
 status: beta
-featured: true
+featured: false
 order: 18
 componentSlug: color-palette
 requiresCustomPage: true

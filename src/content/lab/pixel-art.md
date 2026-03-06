@@ -4,7 +4,7 @@ description: "Create pixel art with pencil, fill, line, and shape tools. Layers,
 icon: "🎨"
 tags: ["creative", "pixel-art", "drawing", "editor"]
 status: "beta"
-featured: true
+featured: false
 order: 48
 componentSlug: "pixel-art"
 requiresCustomPage: true

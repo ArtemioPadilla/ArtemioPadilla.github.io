@@ -4,7 +4,7 @@ description: "Step through forward and backward passes in a neural network. See 
 icon: "git-branch"
 tags: ["backpropagation", "neural-network", "machine-learning", "gradient", "deep-learning"]
 status: "beta"
-featured: true
+featured: false
 order: 60
 componentSlug: "backprop-viz"
 requiresCustomPage: true

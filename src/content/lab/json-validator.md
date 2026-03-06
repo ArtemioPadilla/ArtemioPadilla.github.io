@@ -4,7 +4,7 @@ description: Validate JSON data against JSON Schema with detailed error reportin
 icon: "{}"
 tags: ["json", "schema", "validation", "developer-tools"]
 status: beta
-featured: true
+featured: false
 order: 4
 componentSlug: json-validator
 requiresCustomPage: true

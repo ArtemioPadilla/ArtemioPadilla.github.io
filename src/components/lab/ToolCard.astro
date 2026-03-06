@@ -6,9 +6,10 @@ interface Props {
   tags: string[];
   status: "alpha" | "beta" | "stable";
   href: string;
+  isNew?: boolean;
 }
 
-const { title, description, icon, tags, status, href } = Astro.props;
+const { title, description, icon, tags, status, href, isNew = false } = Astro.props;
 
 const statusColors = {
   alpha: "border-amber-500/30 text-amber-500",
@@ -26,10 +27,17 @@ const statusColors = {
   <div class="relative z-10 flex flex-1 flex-col">
     <!-- Icon + status -->
     <div class="flex items-start justify-between">
-      <span class="text-3xl" role="img">{icon}</span>
-      <span class={`rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${statusColors[status]}`}>
-        {status}
-      </span>
+      <span class="tool-icon text-3xl" aria-hidden="true">{icon}</span>
+      <div class="flex items-center gap-1.5">
+        {isNew && (
+          <span class="rounded-full border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+            New
+          </span>
+        )}
+        <span class={`rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${statusColors[status]}`}>
+          {status}
+        </span>
+      </div>
     </div>
 
     <!-- Title -->
@@ -38,13 +46,13 @@ const statusColors = {
     </h3>
 
     <!-- Description -->
-    <p class="mt-2 flex-1 text-sm leading-relaxed text-[var(--color-text-muted)]">
+    <p class="tool-card-desc mt-2 flex-1 text-sm leading-relaxed text-[var(--color-text-muted)]">
       {description}
     </p>
 
     <!-- Tags -->
     {tags.length > 0 && (
-      <div class="mt-4 flex flex-wrap gap-2">
+      <div class="tool-card-tags mt-4 flex flex-wrap gap-2">
         {tags.slice(0, 4).map((tag) => (
           <span class="rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-xs font-medium text-[var(--color-text-muted)] transition-all duration-300 group-hover:border-[var(--color-primary)]/20 group-hover:text-[var(--color-primary)]">
             {tag}

@@ -4,7 +4,7 @@ description: Drag control points to shape Bezier curves. Watch de Casteljau's al
 icon: "⌒"
 tags: ["bezier", "curves", "graphics", "math", "visualization"]
 status: beta
-featured: true
+featured: false
 order: 21
 componentSlug: bezier-editor
 requiresCustomPage: true

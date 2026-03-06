@@ -4,7 +4,7 @@ description: Explore probability distributions interactively. Adjust parameters,
 icon: "φ"
 tags: ["probability", "statistics", "distributions", "visualization", "math"]
 status: beta
-featured: true
+featured: false
 order: 13
 componentSlug: distributions
 requiresCustomPage: true

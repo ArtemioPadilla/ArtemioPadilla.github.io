@@ -4,7 +4,7 @@ description: Parse cron expressions with visual timeline, human-readable descrip
 icon: "⏱"
 tags: ["cron", "scheduling", "devops", "developer-tools"]
 status: beta
-featured: true
+featured: false
 order: 15
 componentSlug: cron-parser
 requiresCustomPage: true

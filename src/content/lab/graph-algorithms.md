@@ -4,7 +4,7 @@ description: Draw graphs and visualize BFS, DFS, Dijkstra, A*, and MST algorithm
 icon: "⬢"
 tags: ["graphs", "algorithms", "pathfinding", "computer-science", "visualization"]
 status: beta
-featured: true
+featured: false
 order: 24
 componentSlug: graph-algorithms
 requiresCustomPage: true

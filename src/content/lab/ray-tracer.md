@@ -4,7 +4,7 @@ description: "Real-time software ray tracer with reflections, refractions, and P
 icon: "💎"
 tags: ["graphics", "ray-tracing", "3d", "rendering", "math"]
 status: "beta"
-featured: true
+featured: false
 order: 47
 componentSlug: "ray-tracer"
 requiresCustomPage: true

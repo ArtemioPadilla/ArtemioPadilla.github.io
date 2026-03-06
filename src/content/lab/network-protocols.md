@@ -4,7 +4,7 @@ description: "Animated TCP handshakes, HTTP request flows, DNS resolution, and T
 icon: "🌐"
 tags: ["networking", "protocols", "tcp", "http", "education"]
 status: "beta"
-featured: true
+featured: false
 order: 53
 componentSlug: "network-protocols"
 requiresCustomPage: true

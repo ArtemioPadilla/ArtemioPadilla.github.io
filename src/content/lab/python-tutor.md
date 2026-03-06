@@ -4,7 +4,7 @@ description: Step-by-step Python execution visualizer. See stack frames, heap ob
 icon: "🔬"
 tags: ["python", "visualizer", "debugger", "education"]
 status: alpha
-featured: true
+featured: false
 order: 2
 componentSlug: python-tutor
 requiresCustomPage: true

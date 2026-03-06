@@ -4,7 +4,7 @@ description: Decode and inspect JSON Web Tokens. See header, payload, claims, an
 icon: "🔑"
 tags: ["jwt", "authentication", "security", "developer-tools"]
 status: beta
-featured: true
+featured: false
 order: 14
 componentSlug: jwt-decoder
 requiresCustomPage: true

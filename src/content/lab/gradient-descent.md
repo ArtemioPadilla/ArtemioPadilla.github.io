@@ -4,7 +4,7 @@ description: Visualize optimization algorithms racing across 2D loss landscapes.
 icon: "∇"
 tags: ["optimization", "machine-learning", "gradient-descent", "visualization"]
 status: beta
-featured: true
+featured: false
 order: 5
 componentSlug: gradient-descent
 requiresCustomPage: true

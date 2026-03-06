@@ -4,7 +4,7 @@ description: Convert regular expressions to NFA and DFA. Watch Thompson's constr
 icon: "\u2295"
 tags: ["regex", "automata", "nfa", "dfa", "computer-science", "visualization"]
 status: alpha
-featured: true
+featured: false
 order: 35
 componentSlug: regex-automaton
 requiresCustomPage: true

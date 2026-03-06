@@ -4,7 +4,7 @@ description: Compare two texts side by side with line-level and word-level diff 
 icon: "+/-"
 tags: ["diff", "comparison", "text", "developer-tools"]
 status: beta
-featured: true
+featured: false
 order: 16
 componentSlug: diff-viewer
 requiresCustomPage: true

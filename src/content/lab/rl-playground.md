@@ -4,7 +4,7 @@ description: "Train RL agents with Q-Learning, SARSA, Expected SARSA, and Monte 
 icon: "brain"
 tags: ["reinforcement-learning", "machine-learning", "q-learning", "sarsa", "monte-carlo"]
 status: "beta"
-featured: true
+featured: false
 order: 54
 componentSlug: "rl-playground"
 requiresCustomPage: true

@@ -4,7 +4,7 @@ description: "Emergent artificial life from simple attraction and repulsion rule
 icon: "sparkles"
 tags: ["particle", "artificial-life", "emergence", "simulation", "interactive"]
 status: "beta"
-featured: true
+featured: false
 order: 64
 componentSlug: "particle-life"
 requiresCustomPage: true

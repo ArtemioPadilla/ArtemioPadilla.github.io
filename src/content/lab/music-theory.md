@@ -4,7 +4,7 @@ description: "Interactive piano keyboard, circle of fifths, scales, and chord pr
 icon: "🎵"
 tags: ["music", "audio", "theory", "interactive"]
 status: "beta"
-featured: true
+featured: false
 order: 49
 componentSlug: "music-theory"
 requiresCustomPage: true

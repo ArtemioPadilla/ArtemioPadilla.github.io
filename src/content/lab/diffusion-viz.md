@@ -4,7 +4,7 @@ description: Watch forward and reverse diffusion processes on 2D point clouds. U
 icon: "◎"
 tags: ["diffusion", "generative-models", "deep-learning", "visualization"]
 status: alpha
-featured: true
+featured: false
 order: 11
 componentSlug: diffusion-viz
 requiresCustomPage: true

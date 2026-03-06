@@ -4,7 +4,7 @@ description: "Mine blocks, see hash chaining, and detect tampering. Interactive 
 icon: "⛓"
 tags: ["blockchain", "cryptography", "hashing", "distributed-systems"]
 status: "beta"
-featured: true
+featured: false
 order: 52
 componentSlug: "blockchain"
 requiresCustomPage: true

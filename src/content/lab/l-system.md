@@ -4,7 +4,7 @@ description: "Generate fractals with L-system rewrite rules and turtle graphics.
 icon: "🌿"
 tags: ["fractals", "generative", "l-system", "turtle-graphics", "math"]
 status: "beta"
-featured: true
+featured: false
 order: 44
 componentSlug: "l-system"
 requiresCustomPage: true

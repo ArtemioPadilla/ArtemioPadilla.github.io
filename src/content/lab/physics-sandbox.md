@@ -4,7 +4,7 @@ description: Simulate pendulums, springs, projectiles, collisions, and orbits. A
 icon: "⚛"
 tags: ["physics", "simulation", "mechanics", "pendulum", "visualization"]
 status: beta
-featured: true
+featured: false
 order: 33
 componentSlug: physics-sandbox
 requiresCustomPage: true

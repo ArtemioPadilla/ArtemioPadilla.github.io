@@ -4,7 +4,7 @@ description: "Calculate statistical significance for A/B tests. Z-test, Bayesian
 icon: "📊"
 tags: ["statistics", "ab-testing", "hypothesis-testing", "data-science"]
 status: "beta"
-featured: true
+featured: false
 order: 51
 componentSlug: "ab-test"
 requiresCustomPage: true

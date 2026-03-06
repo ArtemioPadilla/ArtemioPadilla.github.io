@@ -4,7 +4,7 @@ description: "Create Voronoi diagrams and Delaunay triangulations interactively.
 icon: "🔷"
 tags: ["computational-geometry", "voronoi", "delaunay", "algorithms"]
 status: "beta"
-featured: true
+featured: false
 order: 46
 componentSlug: "voronoi"
 requiresCustomPage: true

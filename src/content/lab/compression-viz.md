@@ -4,7 +4,7 @@ description: "Watch Huffman coding, LZW, and RLE compress data step by step. See
 icon: "🗜"
 tags: ["algorithms", "compression", "huffman", "information-theory"]
 status: "beta"
-featured: true
+featured: false
 order: 38
 componentSlug: "compression-viz"
 requiresCustomPage: true

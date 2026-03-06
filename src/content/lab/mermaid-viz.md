@@ -4,7 +4,7 @@ description: "Create flowcharts, sequence diagrams, class diagrams, and more wit
 icon: "diamond"
 tags: ["mermaid", "diagrams", "flowchart", "visualization", "developer-tools"]
 status: "beta"
-featured: true
+featured: false
 order: 58
 componentSlug: "mermaid-viz"
 requiresCustomPage: true

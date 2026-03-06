@@ -4,7 +4,7 @@ description: Convert between Unix timestamps and human-readable dates. Timezone 
 icon: "⏲"
 tags: ["timestamp", "unix", "date", "timezone", "developer-tools"]
 status: beta
-featured: true
+featured: false
 order: 29
 componentSlug: timestamp
 requiresCustomPage: true

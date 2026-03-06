@@ -4,7 +4,7 @@ description: Watch Metropolis-Hastings and HMC sample from 2D distributions. See
 icon: "⟳"
 tags: ["mcmc", "bayesian", "sampling", "metropolis-hastings", "hmc", "statistics"]
 status: alpha
-featured: true
+featured: false
 order: 36
 componentSlug: mcmc-visualizer
 requiresCustomPage: true

@@ -4,7 +4,7 @@ description: "Visualize self-attention, multi-head attention, and positional enc
 icon: "eye"
 tags: ["transformer", "attention", "machine-learning", "nlp", "deep-learning"]
 status: "beta"
-featured: true
+featured: false
 order: 59
 componentSlug: "attention-viz"
 requiresCustomPage: true

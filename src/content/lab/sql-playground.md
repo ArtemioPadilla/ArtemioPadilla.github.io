@@ -4,7 +4,7 @@ description: "Write and execute SQL queries in the browser. SQLite via WebAssemb
 icon: "database"
 tags: ["database", "sql", "sqlite", "developer-tools"]
 status: "beta"
-featured: true
+featured: false
 order: 50
 componentSlug: "sql-playground"
 requiresCustomPage: true

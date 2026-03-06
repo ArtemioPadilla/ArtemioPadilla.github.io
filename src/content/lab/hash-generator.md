@@ -4,7 +4,7 @@ description: Generate MD5, SHA-1, SHA-256, SHA-512, and CRC32 hashes for text or
 icon: "#"
 tags: ["hash", "crypto", "security", "developer-tools"]
 status: beta
-featured: true
+featured: false
 order: 28
 componentSlug: hash-generator
 requiresCustomPage: true

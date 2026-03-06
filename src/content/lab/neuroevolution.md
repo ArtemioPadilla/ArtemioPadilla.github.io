@@ -4,7 +4,7 @@ description: "Evolve neural networks using genetic algorithms to solve Cart-Pole
 icon: "dna"
 tags: ["neuroevolution", "genetic-algorithm", "neural-network", "machine-learning", "evolution"]
 status: "beta"
-featured: true
+featured: false
 order: 55
 componentSlug: "neuroevolution"
 requiresCustomPage: true

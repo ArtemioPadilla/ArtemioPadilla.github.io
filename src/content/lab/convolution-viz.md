@@ -4,7 +4,7 @@ description: Watch convolution kernels slide across images step by step. Underst
 icon: "▦"
 tags: ["convolution", "deep-learning", "cnn", "computer-vision", "visualization"]
 status: beta
-featured: true
+featured: false
 order: 8
 componentSlug: convolution-viz
 requiresCustomPage: true

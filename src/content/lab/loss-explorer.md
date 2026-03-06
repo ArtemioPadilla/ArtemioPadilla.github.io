@@ -4,7 +4,7 @@ description: Compare loss functions interactively. Drag predictions to see how M
 icon: "L"
 tags: ["loss-functions", "machine-learning", "optimization", "visualization"]
 status: beta
-featured: true
+featured: false
 order: 10
 componentSlug: loss-explorer
 requiresCustomPage: true

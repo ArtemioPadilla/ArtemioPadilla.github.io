@@ -4,7 +4,7 @@ description: Visualize how LLM tokenizers break text into tokens. See BPE merges
 icon: "🔤"
 tags: ["nlp", "tokenizer", "bpe", "llm", "machine-learning"]
 status: alpha
-featured: true
+featured: false
 order: 6
 componentSlug: tokenizer
 requiresCustomPage: true

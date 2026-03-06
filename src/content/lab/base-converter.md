@@ -4,7 +4,7 @@ description: Convert between binary, hex, decimal, and octal with bit visualizat
 icon: "01"
 tags: ["binary", "hex", "number-systems", "ieee754", "developer-tools"]
 status: beta
-featured: true
+featured: false
 order: 30
 componentSlug: base-converter
 requiresCustomPage: true

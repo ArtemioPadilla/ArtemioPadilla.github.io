@@ -4,7 +4,7 @@ description: "Train a generative adversarial network on 2D distributions. Watch 
 icon: "swords"
 tags: ["gan", "generative", "adversarial", "machine-learning", "deep-learning"]
 status: "beta"
-featured: true
+featured: false
 order: 61
 componentSlug: "gan-playground"
 requiresCustomPage: true

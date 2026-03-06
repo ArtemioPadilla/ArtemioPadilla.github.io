@@ -4,7 +4,7 @@ description: Live regex testing with match highlighting, group extraction, and r
 icon: ".*"
 tags: ["regex", "testing", "pattern-matching", "developer-tools"]
 status: beta
-featured: true
+featured: false
 order: 3
 componentSlug: regex-tester
 requiresCustomPage: true

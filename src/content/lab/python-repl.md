@@ -4,7 +4,7 @@ description: Run Python code directly in your browser. Powered by Pyodide with N
 icon: "🐍"
 tags: ["python", "repl", "pyodide", "wasm"]
 status: beta
-featured: true
+featured: false
 order: 1
 componentSlug: python-repl
 requiresCustomPage: true

@@ -4,7 +4,7 @@ description: Visualize high-dimensional embeddings in 2D/3D with PCA and t-SNE. 
 icon: "◉"
 tags: ["embeddings", "dimensionality-reduction", "pca", "tsne", "visualization"]
 status: alpha
-featured: true
+featured: false
 order: 19
 componentSlug: embedding-explorer
 requiresCustomPage: true

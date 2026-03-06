@@ -4,7 +4,7 @@ description: Conway's Game of Life and Wolfram's elementary rules. Draw patterns
 icon: "⬡"
 tags: ["cellular-automata", "game-of-life", "simulation", "emergence"]
 status: beta
-featured: true
+featured: false
 order: 22
 componentSlug: cellular-automata
 requiresCustomPage: true

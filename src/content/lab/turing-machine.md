@@ -4,7 +4,7 @@ description: "Simulate Turing machines with visual tape, head movement, and stat
 icon: "📼"
 tags: ["computer-science", "automata", "turing-machine", "computation"]
 status: "beta"
-featured: true
+featured: false
 order: 39
 componentSlug: "turing-machine"
 requiresCustomPage: true

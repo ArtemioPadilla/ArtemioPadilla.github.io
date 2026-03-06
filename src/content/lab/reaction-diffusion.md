@@ -4,7 +4,7 @@ description: "Gray-Scott reaction-diffusion generating Turing patterns — spots
 icon: "fingerprint"
 tags: ["reaction-diffusion", "turing-patterns", "simulation", "gray-scott", "emergence"]
 status: "beta"
-featured: true
+featured: false
 order: 70
 componentSlug: "reaction-diffusion"
 requiresCustomPage: true

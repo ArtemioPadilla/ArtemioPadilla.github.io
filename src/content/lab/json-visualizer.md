@@ -4,7 +4,7 @@ description: "Explore JSON data with collapsible tree view, searchable table, sy
 icon: "braces"
 tags: ["json", "data", "developer-tools", "visualization", "jsonpath"]
 status: "beta"
-featured: true
+featured: false
 order: 56
 componentSlug: "json-visualizer"
 requiresCustomPage: true

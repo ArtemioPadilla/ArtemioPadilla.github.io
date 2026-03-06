@@ -4,7 +4,7 @@ description: "Visualize B-Tree, B+ Tree, and Hash Index operations. Watch insert
 icon: "database"
 tags: ["database", "b-tree", "index", "data-structures", "visualization"]
 status: "beta"
-featured: true
+featured: false
 order: 73
 componentSlug: "db-index-viz"
 requiresCustomPage: true

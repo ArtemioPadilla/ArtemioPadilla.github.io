@@ -4,7 +4,7 @@ description: Interactive gallery of neural network activation functions. Compare
 icon: "σ"
 tags: ["activation-functions", "deep-learning", "neural-networks", "visualization"]
 status: beta
-featured: true
+featured: false
 order: 9
 componentSlug: activation-functions
 requiresCustomPage: true

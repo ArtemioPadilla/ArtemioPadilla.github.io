@@ -4,7 +4,7 @@ description: Build Markov chains, simulate random walks, and watch convergence t
 icon: "⇄"
 tags: ["markov", "probability", "stochastic", "simulation", "math"]
 status: beta
-featured: true
+featured: false
 order: 34
 componentSlug: markov-chain
 requiresCustomPage: true

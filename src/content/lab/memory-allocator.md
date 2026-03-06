@@ -4,7 +4,7 @@ description: "Visualize heap memory allocation with malloc/free operations. Comp
 icon: "🧱"
 tags: ["systems", "memory", "operating-systems", "algorithms"]
 status: "beta"
-featured: true
+featured: false
 order: 40
 componentSlug: "memory-allocator"
 requiresCustomPage: true

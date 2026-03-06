@@ -4,7 +4,7 @@ description: Visualize BST, AVL trees, heaps, hash tables, and linked lists with
 icon: "\U0001F333"
 tags: ["data-structures", "trees", "algorithms", "computer-science", "visualization"]
 status: beta
-featured: true
+featured: false
 order: 25
 componentSlug: data-structures
 requiresCustomPage: true

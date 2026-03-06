@@ -4,7 +4,7 @@ description: "Build classification and regression trees from data. Visualize spl
 icon: "🌳"
 tags: ["machine-learning", "classification", "decision-tree", "visualization"]
 status: "beta"
-featured: true
+featured: false
 order: 43
 componentSlug: "decision-tree"
 requiresCustomPage: true

@@ -4,7 +4,7 @@ description: Visualize 2D matrix transformations. See rotation, scaling, shearin
 icon: "⟦⟧"
 tags: ["linear-algebra", "matrices", "transformations", "math", "visualization"]
 status: beta
-featured: true
+featured: false
 order: 27
 componentSlug: linear-algebra
 requiresCustomPage: true

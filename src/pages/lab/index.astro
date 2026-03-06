@@ -4,6 +4,7 @@ import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
 import ToolCard from "../../components/lab/ToolCard.astro";
+import LabFilter from "../../components/lab/LabFilter.tsx";
 
 const allTools = await getCollection("lab", ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
@@ -139,6 +140,33 @@ for (const tool of tools) {
 }
 
 const totalCount = tools.length;
+const categoryCount = categories.length;
+
+// "New" badge: tools added in the last 30 days
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+const now = Date.now();
+const isNew = (tool: typeof tools[0]) => now - new Date(tool.data.createdDate).getTime() < THIRTY_DAYS_MS;
+
+// Curated picks (featured === true)
+const picks = tools.filter((t) => t.data.featured).slice(0, 6);
+
+// Serialized data for LabFilter island
+const filterTools = tools.map((t) => ({
+  title: t.data.title,
+  description: t.data.description,
+  tags: t.data.tags,
+  slug: t.data.componentSlug,
+  categoryKey: categoryMap[t.data.componentSlug] ?? "dev",
+  createdDate: t.data.createdDate instanceof Date
+    ? t.data.createdDate.toISOString()
+    : String(t.data.createdDate),
+}));
+
+const filterCategories = categories.map((c) => ({
+  key: c.key,
+  label: c.label,
+  count: grouped.get(c.key)?.length ?? 0,
+}));
 
 // SVG icon paths for categories
 const categoryIcons: Record<string, string> = {
@@ -156,7 +184,7 @@ const categoryIcons: Record<string, string> = {
 
 <BaseLayout
   title="Lab — Artemio Padilla"
-  description="Interactive browser-based tools and experiments. 53 tools across ML, algorithms, math, graphics, and developer utilities."
+  description={`Interactive browser-based tools and experiments. ${totalCount} tools across ML, algorithms, math, graphics, and developer utilities.`}
 >
   <Navigation currentPath="/lab" />
 
@@ -177,28 +205,64 @@ const categoryIcons: Record<string, string> = {
         {totalCount} interactive browser-based tools. Everything runs client-side — no server required.
       </p>
 
-      <!-- Category nav pills -->
-      <nav class="mt-8 flex flex-wrap gap-2" aria-label="Tool categories">
-        <a
-          href="#all"
-          class="cat-pill active rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-muted)] transition-all hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)]"
-          data-cat="all"
-        >
-          All ({totalCount})
-        </a>
-        {categories.map((cat) => {
-          const count = grouped.get(cat.key)?.length ?? 0;
-          return (
-            <a
-              href={`#${cat.key}`}
-              class="cat-pill rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-muted)] transition-all hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)]"
-              data-cat={cat.key}
-            >
-              {cat.label} ({count})
-            </a>
-          );
-        })}
-      </nav>
+      <!-- Stats + Search hint -->
+      <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-muted)]">
+        <span>{totalCount} tools</span>
+        <span class="text-[var(--color-border)]">·</span>
+        <span>{categoryCount} categories</span>
+        <span class="text-[var(--color-border)]">·</span>
+        <span>100% client-side</span>
+      </div>
+
+      <!-- Start Here — Curated Picks -->
+      {picks.length > 0 && (
+        <section class="mt-10 mb-2">
+          <div class="mb-5 flex items-center gap-3">
+            <span class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-accent)]">
+              Start Here
+            </span>
+            <div class="h-[1px] flex-1 bg-[var(--color-border)]"></div>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {picks.map((tool) => {
+              const href = tool.data.requiresCustomPage
+                ? `/lab/${tool.data.componentSlug}`
+                : `/lab/${tool.id}`;
+              return (
+                <a
+                  href={href}
+                  class="featured-card group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] border-l-2 border-l-[var(--color-primary)] bg-[var(--color-surface)] p-6 no-underline transition-all duration-500 hover:border-[var(--color-primary)]/30 sm:p-7"
+                >
+                  <div class="featured-card-glow"></div>
+                  <div class="relative z-10 flex flex-1 flex-col">
+                    <span class="text-4xl" aria-hidden="true">{tool.data.icon}</span>
+                    <h3 class="mt-4 font-heading text-xl font-bold uppercase tracking-wide text-[var(--color-heading)] transition-colors duration-300 group-hover:text-[var(--color-primary)]">
+                      {tool.data.title}
+                    </h3>
+                    <p class="mt-2 flex-1 text-sm leading-relaxed text-[var(--color-text-muted)]">
+                      {tool.data.description}
+                    </p>
+                    <div class="mt-4 flex items-center gap-1.5 text-xs text-[var(--color-primary)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <span>Explore</span>
+                      <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      <!-- Filter controls (search, category pills, sort, view toggle) -->
+      <LabFilter
+        client:load
+        tools={filterTools}
+        categories={filterCategories}
+        totalCount={totalCount}
+      />
 
       <!-- Categories -->
       <div class="mt-10 space-y-12" id="categories-container">
@@ -227,20 +291,33 @@ const categoryIcons: Record<string, string> = {
               </div>
 
               <!-- Tool grid -->
-              <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div class="tool-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {catTools.map((tool) => {
+                  const slug = tool.data.componentSlug;
                   const href = tool.data.requiresCustomPage
-                    ? `/lab/${tool.data.componentSlug}`
+                    ? `/lab/${slug}`
                     : `/lab/${tool.id}`;
+                  const catKey = categoryMap[slug] ?? "dev";
                   return (
-                    <ToolCard
-                      title={tool.data.title}
-                      description={tool.data.description}
-                      icon={tool.data.icon}
-                      tags={tool.data.tags}
-                      status={tool.data.status}
-                      href={href}
-                    />
+                    <div
+                      class="tool-card-wrapper"
+                      data-slug={slug}
+                      data-category={catKey}
+                      data-title={tool.data.title}
+                      data-created={tool.data.createdDate instanceof Date
+                        ? tool.data.createdDate.toISOString()
+                        : String(tool.data.createdDate)}
+                    >
+                      <ToolCard
+                        title={tool.data.title}
+                        description={tool.data.description}
+                        icon={tool.data.icon}
+                        tags={tool.data.tags}
+                        status={tool.data.status}
+                        href={href}
+                        isNew={isNew(tool)}
+                      />
+                    </div>
                   );
                 })}
               </div>
@@ -261,14 +338,33 @@ const categoryIcons: Record<string, string> = {
 </BaseLayout>
 
 <style>
-  .cat-pill.active {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    background: rgba(79, 143, 247, 0.08);
+  .featured-card-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background: radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      rgba(79, 143, 247, 0.08) 0%,
+      transparent 60%
+    );
   }
 
-  :global(html.light) .cat-pill.active {
-    background: rgba(37, 99, 235, 0.06);
+  .featured-card:hover .featured-card-glow {
+    opacity: 1;
+  }
+
+  :global(html.light) .featured-card-glow {
+    background: radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      rgba(37, 99, 235, 0.04) 0%,
+      transparent 60%
+    );
+  }
+
+  .featured-card {
+    animation: card-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .category-section {
@@ -283,37 +379,77 @@ const categoryIcons: Record<string, string> = {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  @keyframes card-enter {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Sticky filter bar */
+  :global(.lab-filter-sticky) {
+    position: sticky;
+    top: 64px;
+    z-index: 40;
+    background: var(--color-bg);
+    padding-block: 0.75rem;
+    margin-inline: -1.5rem;
+    padding-inline: 1.5rem;
+  }
+
+  /* Mobile horizontal pill scroll */
+  :global(.cat-scroll) {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  :global(.cat-scroll::-webkit-scrollbar) {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    :global(.cat-scroll) {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+    }
+  }
+
+  /* List view mode */
+  :global(.lab-list-mode) .tool-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  :global(.lab-list-mode) :global(.tool-card) {
+    flex-direction: row;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    gap: 1rem;
+  }
+
+  :global(.lab-list-mode) :global(.tool-card-desc) {
+    display: none;
+  }
+
+  :global(.lab-list-mode) :global(.tool-card-tags) {
+    display: none;
+  }
+
+  :global(.lab-list-mode) :global(.tool-card-glow) {
+    display: none;
+  }
+
+  :global(.lab-list-mode) :global(.tool-card) h3 {
+    font-size: 0.875rem;
+    margin-top: 0;
+  }
+
+  :global(.lab-list-mode) :global(.tool-icon) {
+    font-size: 1.25rem;
+  }
+
+  /* Hide the wrapper div border in list mode */
+  :global(.lab-list-mode) .tool-card-wrapper {
+    display: contents;
+  }
 </style>
 
-<script>
-  const pills = document.querySelectorAll<HTMLAnchorElement>(".cat-pill");
-  const sections = document.querySelectorAll<HTMLElement>(".category-section");
-
-  pills.forEach((pill) => {
-    pill.addEventListener("click", (e) => {
-      e.preventDefault();
-      const cat = pill.dataset.cat;
-
-      // Update active pill
-      pills.forEach((p) => p.classList.remove("active"));
-      pill.classList.add("active");
-
-      // Filter sections
-      sections.forEach((s) => {
-        if (cat === "all" || s.dataset.category === cat) {
-          s.classList.remove("hidden-cat");
-        } else {
-          s.classList.add("hidden-cat");
-        }
-      });
-
-      // Scroll to top of content if filtering
-      if (cat !== "all") {
-        const target = document.getElementById(cat!);
-        if (target) {
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }
-    });
-  });
-</script>

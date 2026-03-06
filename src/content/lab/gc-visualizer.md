@@ -4,7 +4,7 @@ description: "Visualize mark-and-sweep, reference counting, and generational gar
 icon: "trash-2"
 tags: ["garbage-collection", "memory", "computer-science", "algorithms", "visualization"]
 status: "beta"
-featured: true
+featured: false
 order: 71
 componentSlug: "gc-visualizer"
 requiresCustomPage: true

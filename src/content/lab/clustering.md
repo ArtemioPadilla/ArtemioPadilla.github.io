@@ -4,7 +4,7 @@ description: "Place points and watch K-Means, DBSCAN, and hierarchical clusterin
 icon: "\uD83E\uDEE7"
 tags: ["machine-learning", "clustering", "unsupervised", "visualization"]
 status: "beta"
-featured: true
+featured: false
 order: 42
 componentSlug: "clustering"
 requiresCustomPage: true

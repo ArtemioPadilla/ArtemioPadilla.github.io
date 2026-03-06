@@ -4,7 +4,7 @@ description: "Visualize chaotic systems: Lorenz attractor, Rossler, double pendu
 icon: "infinity"
 tags: ["chaos", "attractors", "lorenz", "dynamical-systems", "physics"]
 status: "beta"
-featured: true
+featured: false
 order: 69
 componentSlug: "strange-attractors"
 requiresCustomPage: true

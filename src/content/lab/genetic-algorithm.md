@@ -4,7 +4,7 @@ description: "Watch evolution solve optimization problems. TSP routes, function 
 icon: "\uD83E\uDDEC"
 tags: ["ai", "optimization", "evolutionary", "algorithms"]
 status: "beta"
-featured: true
+featured: false
 order: 41
 componentSlug: "genetic-algorithm"
 requiresCustomPage: true

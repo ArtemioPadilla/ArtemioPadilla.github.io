@@ -4,7 +4,7 @@ description: "2D wave equation simulation with interference, diffraction, Dopple
 icon: "waves"
 tags: ["waves", "physics", "simulation", "interference", "diffraction"]
 status: "beta"
-featured: true
+featured: false
 order: 65
 componentSlug: "wave-sim"
 requiresCustomPage: true

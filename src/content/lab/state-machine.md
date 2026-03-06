@@ -4,7 +4,7 @@ description: Draw finite automata, test input strings, and see DFA/NFA execution
 icon: "⊛"
 tags: ["automata", "state-machine", "dfa", "nfa", "computer-science"]
 status: beta
-featured: true
+featured: false
 order: 26
 componentSlug: state-machine
 requiresCustomPage: true

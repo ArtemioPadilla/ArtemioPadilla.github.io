@@ -4,7 +4,7 @@ description: Build confusion matrices from predictions. Get precision, recall, F
 icon: "▣"
 tags: ["classification", "metrics", "machine-learning", "evaluation"]
 status: beta
-featured: true
+featured: false
 order: 17
 componentSlug: confusion-matrix
 requiresCustomPage: true

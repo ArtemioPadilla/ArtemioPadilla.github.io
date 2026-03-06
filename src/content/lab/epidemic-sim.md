@@ -4,7 +4,7 @@ description: "SIR/SEIR epidemic modeling with both ODE and agent-based simulatio
 icon: "activity"
 tags: ["epidemic", "sir", "simulation", "public-health", "agent-based"]
 status: "beta"
-featured: true
+featured: false
 order: 68
 componentSlug: "epidemic-sim"
 requiresCustomPage: true

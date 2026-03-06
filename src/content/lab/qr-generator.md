@@ -4,7 +4,7 @@ description: Generate QR codes for text, URLs, WiFi, and vCards. Customize color
 icon: "⬚"
 tags: ["qr-code", "generator", "encoding", "developer-tools"]
 status: beta
-featured: true
+featured: false
 order: 31
 componentSlug: qr-generator
 requiresCustomPage: true
