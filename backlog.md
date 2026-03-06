@@ -86,6 +86,11 @@
 - [x] **A/B Test Calculator** — Z-test, Chi-squared, Bayesian posteriors, power analysis, sequential testing. Distribution curves, confidence intervals, sample size estimation. All math from scratch.
 - [x] **Blockchain Visualizer** — Mine blocks with proof-of-work (SHA-256 via Web Crypto), chain visualization, tamper detection cascade, Merkle trees, peer consensus simulation.
 - [x] **Network Protocol Visualizer** — Animated sequence diagrams for TCP handshake, HTTP flow, DNS resolution, TLS negotiation, UDP vs TCP. OSI layer sidebar, packet inspector.
+- [x] **Reinforcement Learning Playground** — Q-Learning, SARSA, Expected SARSA, Monte Carlo on grid worlds (Frozen Lake, Cliff Walking, mazes). Q-value heatmaps, policy arrows, episode replay.
+- [x] **Neuroevolution Playground** — Evolve neural networks via GA for Cart-Pole, Flappy Bird, Maze Runner. Population view, fitness charts, network weight visualization.
+- [x] **JSON Visualizer** — Collapsible tree view, searchable table, syntax-highlighted code view. JSONPath queries, structure statistics, format/minify.
+- [x] **Markdown Previewer** — Split-pane editor with live preview, from-scratch GFM parser, toolbar, sync scroll, table of contents, word count.
+- [x] **Mermaid Diagram Visualizer** — Live Mermaid editor, 10 diagram type presets (flowchart, sequence, class, state, ER, gantt, pie, git, mindmap, timeline). SVG/PNG export, pan/zoom.
 
 ---
 

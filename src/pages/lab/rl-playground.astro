@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import RLPlayground from "../../components/lab/rl-playground/RLPlayground.tsx";
+---
+
+<BaseLayout
+  title="Reinforcement Learning Playground — Lab — Artemio Padilla"
+  description="Train RL agents with Q-Learning, SARSA, Expected SARSA, and Monte Carlo on grid worlds."
+>
+  <Navigation currentPath="/lab" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">RL Playground</span>
+      </div>
+
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">&#129504;</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            RL Playground
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Train RL agents on grid worlds. Compare Q-Learning, SARSA, Expected SARSA, and Monte Carlo. Visualize Q-value heatmaps and policy arrows.
+        </p>
+      </div>
+
+      <RLPlayground client:visible />
+
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>All algorithms from scratch. Q-tables as Float64Arrays. 7 preset grid worlds including Frozen Lake and Cliff Walking.</p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
