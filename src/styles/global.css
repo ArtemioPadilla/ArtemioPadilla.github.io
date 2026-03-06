@@ -333,6 +333,11 @@ html.light .shiki span {
   min-height: 100vh;
 }
 
+.lab-main {
+  width: 100%;
+  min-width: 0;
+}
+
 .lab-sidebar {
   position: fixed;
   top: 64px;
