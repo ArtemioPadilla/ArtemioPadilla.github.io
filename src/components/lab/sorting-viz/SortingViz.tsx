@@ -1033,6 +1033,7 @@ export default function SortingViz(): preact.JSX.Element {
       audioRef.current = createAudioEngine();
     }
 
+    playStateRef.current = "running";
     setPlayState("running");
     lastStepTimeRef.current = now;
     animFrameRef.current = requestAnimationFrame(animationLoop);
@@ -1042,9 +1043,11 @@ export default function SortingViz(): preact.JSX.Element {
     if (playState === "idle") {
       startSorting();
     } else if (playState === "running") {
+      playStateRef.current = "paused";
       setPlayState("paused");
       stopAnimation();
     } else if (playState === "paused") {
+      playStateRef.current = "running";
       setPlayState("running");
       lastStepTimeRef.current = performance.now();
       animFrameRef.current = requestAnimationFrame(animationLoop);
