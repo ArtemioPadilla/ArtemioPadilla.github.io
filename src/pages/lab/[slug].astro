@@ -4,6 +4,7 @@ import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
 import ToolLoader from "../../components/lab/ToolLoader.tsx";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 
 export async function getStaticPaths() {
   const allTools = await getCollection("lab", ({ data }) => {
@@ -25,6 +26,7 @@ const { tool } = Astro.props;
 >
   <Navigation currentPath="/lab" />
 
+  <LabToolLayout currentSlug={tool.data.componentSlug}>
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-5xl">
       <!-- Breadcrumb -->
@@ -49,8 +51,24 @@ const { tool } = Astro.props;
 
       <!-- Tool -->
       <ToolLoader client:visible slug={tool.data.componentSlug} />
+
+      <!-- Feedback link -->
+      <div class="mt-12 border-t border-[var(--color-border)] pt-6 text-center">
+        <a
+          href={`https://github.com/ArtemioPadilla/ArtemioPadilla.github.io/issues/new?template=bug-report.yml&page=/lab/${tool.data.componentSlug}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] no-underline transition-colors hover:text-[var(--color-accent)]"
+        >
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+          </svg>
+          Found an issue? Let me know
+        </a>
+      </div>
     </div>
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>
