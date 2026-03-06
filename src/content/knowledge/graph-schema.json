@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://artemiopadilla.com/knowledge-graph-schema.json",
+  "title": "Knowledge Graph Schema",
+  "description": "Schema for the Brain knowledge graph data",
+  "type": "object",
+  "required": ["version", "lastUpdated", "nodes", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the graph data"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO date of last update"
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/node" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/edge" }
+    }
+  },
+  "definitions": {
+    "node": {
+      "type": "object",
+      "required": ["id", "label", "type", "tags"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+([/-][a-z0-9]+)*$",
+          "description": "Path-based ID using lowercase alphanumeric segments separated by slashes"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "type": {
+          "type": "string",
+          "enum": ["domain", "topic", "concept", "claim", "source"]
+        },
+        "content": {
+          "type": "string",
+          "description": "Full markdown content for the node"
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Brief summary displayed on hover or in preview"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "uniqueItems": true
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": "External reference URLs"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "added": {
+              "type": "string",
+              "format": "date"
+            },
+            "updated": {
+              "type": "string",
+              "format": "date"
+            },
+            "importance": {
+              "type": "integer",
+              "enum": [1, 2, 3],
+              "description": "1 = high, 2 = medium, 3 = low"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["seed", "growing", "mature"]
+            }
+          }
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["source", "target", "relation"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+([/-][a-z0-9]+)*$",
+          "description": "ID of the source node"
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+([/-][a-z0-9]+)*$",
+          "description": "ID of the target node"
+        },
+        "relation": {
+          "type": "string",
+          "enum": [
+            "is-part-of",
+            "relates-to",
+            "causes",
+            "contradicts",
+            "supports",
+            "inspired-by",
+            "applies-to",
+            "generalizes",
+            "specializes",
+            "analogous-to"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Human-readable description of the relationship"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Strength of the relationship (0-1)"
+        }
+      }
+    }
+  }
+}

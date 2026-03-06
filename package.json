@@ -5,20 +5,27 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "npm run validate:cv && astro build",
+    "build": "npm run validate:cv && npm run validate:graph && astro build",
     "preview": "astro preview",
     "validate:cv": "npx tsx scripts/validate-cv.ts --check",
     "format:cv": "npx prettier --write src/content/cv/cv-data.json",
     "prepare:cv-release": "npx tsx scripts/update-cv-metadata.ts",
+    "validate:graph": "npx tsx scripts/validate-graph.ts --check",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/preact": "^4.0.0",
     "@astrojs/rss": "^4.0.15",
     "@astrojs/sitemap": "^3.3.0",
+    "3d-force-graph": "^1.79.1",
     "astro": "^5.5.0",
+    "graphology": "^0.26.0",
+    "graphology-layout-force": "^0.2.4",
+    "graphology-layout-forceatlas2": "^0.10.1",
     "jspdf": "^2.5.2",
     "preact": "^10.25.0",
+    "sigma": "^3.0.2",
+    "three": "^0.183.2",
     "tsparticles-engine": "^2.12.0",
     "tsparticles-slim": "^2.12.0",
     "typed.js": "^3.0.0"

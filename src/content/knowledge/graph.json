@@ -1,0 +1,410 @@
+{
+  "version": "0.1.0",
+  "lastUpdated": "2026-03-06",
+  "nodes": [
+    {
+      "id": "science",
+      "label": "Science",
+      "type": "domain",
+      "summary": "The systematic pursuit of knowledge through observation and experiment.",
+      "tags": ["science", "empiricism", "method"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "science/physics",
+      "label": "Physics",
+      "type": "topic",
+      "summary": "The fundamental science of matter, energy, and their interactions.",
+      "tags": ["physics", "natural-science"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 2,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "science/physics/thermodynamics",
+      "label": "Thermodynamics",
+      "type": "topic",
+      "summary": "The study of heat, work, temperature, and their relation to energy and entropy.",
+      "tags": ["thermodynamics", "energy", "heat"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 2,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "science/physics/thermodynamics/entropy",
+      "label": "Entropy",
+      "type": "concept",
+      "summary": "A measure of disorder in a system; the arrow of time itself. Connects information theory to the fate of the universe.",
+      "content": "In thermodynamics, entropy quantifies the number of microscopic configurations consistent with a system's macroscopic state. Boltzmann's insight — S = k_B ln W — revealed that the Second Law is not a commandment but a statistical inevitability: systems evolve toward the most probable arrangements. This is the arrow of time. In statistical mechanics, entropy bridges the microscopic world of particle collisions with the macroscopic world of temperature and pressure. Shannon later discovered the same mathematical form in information theory, showing that physical entropy and informational uncertainty are two faces of the same coin. The implications reach from black hole thermodynamics to the heat death of the universe.",
+      "tags": ["entropy", "thermodynamics", "information", "time"],
+      "links": ["https://en.wikipedia.org/wiki/Entropy"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "science/physics/quantum-mechanics",
+      "label": "Quantum Mechanics",
+      "type": "topic",
+      "summary": "The physics of the very small — probabilities, superposition, and entanglement.",
+      "content": "Quantum mechanics replaced determinism with probability amplitudes. A particle does not have a definite position until measured; it exists in a superposition of states described by the wave function. Entanglement links distant particles so that measuring one instantly constrains the other — not by sending a signal, but by revealing a pre-existing correlation that defies classical explanation. The measurement problem remains open: does the wave function collapse, or do worlds branch?",
+      "tags": ["quantum", "physics", "superposition", "entanglement"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 2,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "philosophy",
+      "label": "Philosophy",
+      "type": "domain",
+      "summary": "The love of wisdom; questioning the nature of reality, knowledge, and existence.",
+      "tags": ["philosophy", "wisdom", "reasoning"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "philosophy/epistemology",
+      "label": "Epistemology",
+      "type": "topic",
+      "summary": "How do we know what we know? The study of knowledge itself.",
+      "tags": ["epistemology", "knowledge", "justification"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 2,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "philosophy/epistemology/knowledge-limits",
+      "label": "Limits of Knowledge",
+      "type": "concept",
+      "summary": "What can we know? Godel showed math is incomplete, Heisenberg showed measurement disturbs reality, and bounded rationality limits our decisions.",
+      "content": "Three pillars define the boundaries of human knowledge. Godel's incompleteness theorems prove that any sufficiently powerful formal system contains true statements it cannot prove — mathematics is forever incomplete from within. Heisenberg's uncertainty principle shows that certain pairs of physical properties (position and momentum) cannot both be known precisely — nature itself sets limits on observation. Herbert Simon's bounded rationality reveals that even with perfect information, our cognitive architecture forces us to satisfice rather than optimize. Together, these results humble any claim to omniscience and point toward epistemic humility as a foundational virtue.",
+      "tags": ["epistemology", "godel", "heisenberg", "bounded-rationality", "limits"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "philosophy/consciousness",
+      "label": "Consciousness",
+      "type": "topic",
+      "summary": "The hard problem: why is there subjective experience at all?",
+      "content": "David Chalmers distinguished the 'easy' problems of consciousness (explaining behavior, integration of information) from the 'hard' problem: why does subjective experience exist? Why does processing information feel like something? Physicalism says consciousness emerges from matter, but cannot explain the explanatory gap. Dualism preserves the intuition but creates the interaction problem. Integrated Information Theory (IIT) proposes that consciousness is identical to integrated information (phi), giving it a mathematical foundation. Panpsychism suggests experience is fundamental to matter itself. The debate remains one of the deepest open questions in philosophy and science.",
+      "tags": ["consciousness", "hard-problem", "qualia", "mind"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 2,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "technology",
+      "label": "Technology",
+      "type": "domain",
+      "summary": "Tools we build to extend human capability — from fire to neural networks.",
+      "tags": ["technology", "tools", "engineering"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "technology/ai",
+      "label": "Artificial Intelligence",
+      "type": "topic",
+      "summary": "Artificial intelligence: machines that learn, reason, and create.",
+      "tags": ["ai", "machine-learning", "intelligence"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 2,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "technology/ai/deep-learning",
+      "label": "Deep Learning",
+      "type": "topic",
+      "summary": "Neural networks with multiple layers that learn hierarchical representations.",
+      "content": "Deep learning stacks layers of artificial neurons to learn representations at increasing levels of abstraction — edges become textures become objects become scenes. The key insight is that features do not need to be hand-engineered; given enough data and compute, gradient descent discovers them. Backpropagation makes this tractable by efficiently computing gradients through the chain rule. The revolution began with convolutional networks for vision (AlexNet, 2012), expanded to sequence modeling with recurrent networks, and was transformed again by the attention mechanism.",
+      "tags": ["deep-learning", "neural-networks", "representation-learning"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 2,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "technology/ai/deep-learning/transformers",
+      "label": "Transformers",
+      "type": "concept",
+      "summary": "Attention is all you need. Self-attention lets models weigh the relevance of all parts of input simultaneously.",
+      "content": "The Transformer architecture (Vaswani et al., 2017) replaced recurrence with self-attention: instead of processing tokens sequentially, each token attends to every other token in parallel, computing relevance scores via queries, keys, and values. Positional encoding injects sequence order without sequential computation. Multi-head attention lets the model attend to different relationship types simultaneously. This unlocked massive parallelism during training, enabling scaling to billions of parameters. Transformers first conquered NLP (BERT, GPT), then vision (ViT), then protein folding (AlphaFold), then generative AI — proving that attention truly is all you need as a general-purpose computational primitive.",
+      "tags": ["transformers", "attention", "nlp", "scaling"],
+      "links": ["https://arxiv.org/abs/1706.03762"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "technology/ai/embeddings",
+      "label": "Embeddings",
+      "type": "concept",
+      "summary": "Dense vector representations that capture semantic meaning. The bridge between human language and machine understanding.",
+      "content": "Embeddings map discrete symbols (words, tokens, entities) into continuous vector spaces where geometric relationships encode semantic ones. Word2Vec showed that vector arithmetic captures analogies: king - man + woman = queen. Contextual embeddings (ELMo, BERT) go further — the same word gets different vectors depending on context, resolving polysemy. Embeddings are the foundation of modern NLP, recommendation systems, and retrieval-augmented generation. The remarkable fact is that meaning, which seems ineffable, can be approximated by position in a high-dimensional space. Similarity in vector space maps reliably to similarity in meaning.",
+      "tags": ["embeddings", "word2vec", "semantic-space", "representation"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "mathematics",
+      "label": "Mathematics",
+      "type": "domain",
+      "summary": "The language of patterns, structures, and logical reasoning.",
+      "tags": ["mathematics", "logic", "abstraction"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "mathematics/information-theory",
+      "label": "Information Theory",
+      "type": "topic",
+      "summary": "The mathematical study of information, communication, and encoding.",
+      "content": "Founded by Claude Shannon in 1948, information theory provides a rigorous framework for quantifying, storing, and communicating information. It answers fundamental questions: what is the maximum rate at which data can be transmitted over a noisy channel? How much can data be compressed without loss? The theory introduced entropy as a measure of uncertainty, mutual information as a measure of shared knowledge, and channel capacity as a hard physical limit.",
+      "tags": ["information-theory", "shannon", "communication", "encoding"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 2,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "mathematics/information-theory/shannons-entropy",
+      "label": "Shannon's Entropy",
+      "type": "concept",
+      "summary": "H(X) = -sum(p log p). Shannon showed that information has a precise mathematical quantity, bridging physics and communication.",
+      "content": "Shannon entropy H(X) = -sum(p(x) log p(x)) measures the average surprise or uncertainty of a random variable. A fair coin has H = 1 bit; a loaded coin has less. This elegant formula, independently discovered in the same mathematical form as Boltzmann's thermodynamic entropy, quantifies the fundamental limits of data compression (source coding theorem) and transmission (noisy channel coding theorem). Shannon entropy is the foundation of modern compression algorithms, error-correcting codes, and the theoretical underpinning of machine learning's cross-entropy loss. The deep connection between physical entropy and informational entropy suggests that information is not just abstract — it is physical.",
+      "tags": ["entropy", "shannon", "information", "compression"],
+      "links": ["https://en.wikipedia.org/wiki/Entropy_(information_theory)"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "society",
+      "label": "Society",
+      "type": "domain",
+      "summary": "How humans organize, cooperate, conflict, and evolve together.",
+      "tags": ["society", "culture", "cooperation"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "society/systems-thinking",
+      "label": "Systems Thinking",
+      "type": "topic",
+      "summary": "Seeing the world as interconnected systems rather than isolated parts.",
+      "content": "Systems thinking is the discipline of seeing wholes, understanding interrelationships rather than isolated events, and recognizing patterns of change rather than static snapshots. Pioneered by Jay Forrester and popularized by Donella Meadows and Peter Senge, it reveals how well-intentioned interventions can produce counterintuitive outcomes when feedback loops, delays, and nonlinearities are ignored. A systems thinker asks not 'who is to blame?' but 'what is the structure that produced this behavior?'",
+      "tags": ["systems-thinking", "complexity", "feedback", "emergence"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 2,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "society/systems-thinking/feedback-loops",
+      "label": "Feedback Loops",
+      "type": "concept",
+      "summary": "Positive feedback amplifies, negative feedback stabilizes. These loops govern everything from markets to climate to relationships.",
+      "content": "A feedback loop exists when the output of a system feeds back as input, modifying future behavior. Positive (reinforcing) loops amplify change: compound interest, viral growth, arms races, and self-fulfilling prophecies. Negative (balancing) loops resist change: thermostats, predator-prey dynamics, and market corrections. Most complex systems contain both types interacting. The key insight is that system behavior emerges from loop structure, not from individual components. Understanding feedback loops is the first step toward designing interventions that work with the system rather than against it — pulling leverage points rather than pushing against resistance.",
+      "tags": ["feedback", "reinforcing", "balancing", "systems"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "society/collective-intelligence",
+      "label": "Collective Intelligence",
+      "type": "concept",
+      "summary": "Groups can be smarter than individuals — if the conditions are right. Diversity of opinion, independence, and aggregation mechanisms matter.",
+      "content": "James Surowiecki's 'Wisdom of Crowds' identified four conditions for collective intelligence: diversity of opinion, independence of members, decentralization, and effective aggregation. When these hold, groups consistently outperform experts — from guessing the weight of an ox to predicting election outcomes. But collective intelligence is fragile. Information cascades, groupthink, and polarization can collapse a wise crowd into a foolish mob. The design of aggregation mechanisms — markets, voting systems, deliberation protocols — determines whether collective intelligence emerges or fails. Wikipedia, open-source software, and prediction markets are engineered systems that harness collective intelligence by design.",
+      "tags": ["collective-intelligence", "wisdom-of-crowds", "aggregation", "diversity"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "personal",
+      "label": "Personal",
+      "type": "domain",
+      "summary": "Lessons learned from living — the knowledge that shapes who I am.",
+      "tags": ["personal", "growth", "self"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "personal/learning",
+      "label": "Learning",
+      "type": "topic",
+      "summary": "How to learn effectively and continuously.",
+      "tags": ["learning", "education", "metacognition"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 2,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "personal/learning/deliberate-practice",
+      "label": "Deliberate Practice",
+      "type": "concept",
+      "summary": "Not just repetition — purposeful, systematic practice at the edge of your ability with immediate feedback.",
+      "content": "Anders Ericsson's research revealed that expertise does not come from passive experience or innate talent, but from deliberate practice: activities specifically designed to improve performance, conducted at the boundary of current ability, with immediate feedback and opportunities for repetition and refinement. The key distinction from mere practice is intentionality — each session targets a specific weakness, not just logs hours. A musician who plays through a piece is practicing; a musician who isolates the troublesome four bars and repeats them with variations until the fingers know the way — that is deliberate practice. It is uncomfortable by design, because comfort means you are not growing.",
+      "tags": ["deliberate-practice", "expertise", "learning", "feedback"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "personal/curiosity",
+      "label": "Curiosity",
+      "type": "concept",
+      "summary": "The fundamental drive to understand. Not a trait you have, but a practice you cultivate. The root of all the knowledge in this graph.",
+      "content": "Curiosity is the engine of this entire knowledge graph. It is the itch that makes you read one more paper, follow one more link, ask one more 'but why?' It is not a fixed trait — it is a practice that strengthens with use and atrophies with neglect. Epistemic curiosity (the desire to know) and diversive curiosity (the desire to explore) work in tandem: one drives depth, the other breadth. The most creative insights come from cultivating both — going deep enough to understand the structure, then wide enough to see unexpected connections. This graph itself is an artifact of curiosity: every node exists because something sparked the question 'what is this, really?' and the answer was worth remembering.",
+      "tags": ["curiosity", "motivation", "exploration", "creativity"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "mathematics/information-theory/shannons-entropy",
+      "target": "science/physics/thermodynamics/entropy",
+      "relation": "analogous-to",
+      "weight": 0.95,
+      "label": "Boltzmann and Shannon independently arrived at the same formula — S = k ln W and H = -sum(p log p) share identical mathematical form"
+    },
+    {
+      "source": "science/physics/thermodynamics/entropy",
+      "target": "philosophy/epistemology/knowledge-limits",
+      "relation": "relates-to",
+      "weight": 0.7,
+      "label": "Entropy bounds what can be known about a system — the second law sets fundamental limits on observation and prediction"
+    },
+    {
+      "source": "technology/ai/embeddings",
+      "target": "mathematics/information-theory/shannons-entropy",
+      "relation": "applies-to",
+      "weight": 0.8,
+      "label": "Embeddings compress information following information-theoretic principles — cross-entropy loss directly optimizes Shannon's measure"
+    },
+    {
+      "source": "philosophy/consciousness",
+      "target": "philosophy/epistemology/knowledge-limits",
+      "relation": "contradicts",
+      "weight": 0.6,
+      "label": "We experience consciousness directly yet cannot explain it — the hard problem is a limit of knowledge we live inside"
+    },
+    {
+      "source": "society/systems-thinking/feedback-loops",
+      "target": "personal/learning/deliberate-practice",
+      "relation": "applies-to",
+      "weight": 0.75,
+      "label": "Deliberate practice is a feedback loop: perform at your edge, measure the gap, adjust, repeat"
+    },
+    {
+      "source": "society/collective-intelligence",
+      "target": "technology/ai/deep-learning/transformers",
+      "relation": "relates-to",
+      "weight": 0.65,
+      "label": "Attention mechanisms route information like collective intelligence aggregates diverse perspectives — both are weighted voting systems"
+    },
+    {
+      "source": "personal/curiosity",
+      "target": "science",
+      "relation": "causes",
+      "weight": 0.9
+    },
+    {
+      "source": "personal/curiosity",
+      "target": "philosophy",
+      "relation": "causes",
+      "weight": 0.9
+    },
+    {
+      "source": "personal/curiosity",
+      "target": "technology",
+      "relation": "causes",
+      "weight": 0.85
+    },
+    {
+      "source": "personal/curiosity",
+      "target": "mathematics",
+      "relation": "causes",
+      "weight": 0.85
+    },
+    {
+      "source": "personal/curiosity",
+      "target": "society",
+      "relation": "causes",
+      "weight": 0.8
+    },
+    {
+      "source": "technology/ai/deep-learning/transformers",
+      "target": "technology/ai/deep-learning",
+      "relation": "specializes",
+      "weight": 0.9
+    },
+    {
+      "source": "science/physics/quantum-mechanics",
+      "target": "philosophy/consciousness",
+      "relation": "relates-to",
+      "weight": 0.5,
+      "label": "Quantum consciousness theories — speculative but fascinating, from Penrose-Hameroff to quantum cognition"
+    }
+  ]
+}
