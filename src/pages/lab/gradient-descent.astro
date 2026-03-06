@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import GradientDescent from "../../components/lab/gradient-descent/GradientDescent.tsx";
 ---
 
@@ -10,7 +11,7 @@ import GradientDescent from "../../components/lab/gradient-descent/GradientDesce
   description="Visualize optimization algorithms racing across 2D loss landscapes. Compare SGD, Adam, AdaGrad, RMSProp, and Momentum."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="gradient-descent">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-5xl">
       <!-- Breadcrumb -->
@@ -46,4 +47,5 @@ import GradientDescent from "../../components/lab/gradient-descent/GradientDesce
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

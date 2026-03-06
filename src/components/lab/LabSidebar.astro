@@ -1,0 +1,116 @@
+---
+interface Props {
+  tools: any[];
+  currentSlug: string;
+}
+
+import LabSidebarFilter from "./LabSidebarFilter.tsx";
+import { categoryMap, categories } from "../../data/lab-categories.ts";
+
+const { tools, currentSlug } = Astro.props;
+
+// Group tools by category
+const grouped = new Map<string, typeof tools>();
+for (const cat of categories) grouped.set(cat.key, []);
+for (const tool of tools) {
+  const catKey = categoryMap[tool.data.componentSlug] ?? "dev";
+  grouped.get(catKey)?.push(tool);
+}
+
+// Collect frequent tags (3+ occurrences)
+const tagCounts = new Map<string, number>();
+for (const tool of tools) {
+  for (const tag of tool.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  }
+}
+const frequentTags = [...tagCounts.entries()]
+  .filter(([, count]) => count >= 3)
+  .sort((a, b) => b[1] - a[1])
+  .map(([tag]) => tag);
+
+// Current tool's category (for auto-opening)
+const currentCatKey = currentSlug ? (categoryMap[currentSlug] ?? "dev") : "";
+
+// Serialized tool data for the filter island
+const filterData = tools.map((t: any) => ({
+  slug: t.data.componentSlug,
+  title: t.data.title,
+  tags: t.data.tags,
+  categoryKey: categoryMap[t.data.componentSlug] ?? "dev",
+}));
+---
+
+<div class="flex h-full flex-col">
+  <!-- Header -->
+  <div class="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
+    <a href="/lab" class="text-sm font-semibold text-[var(--color-heading)] no-underline hover:text-[var(--color-primary)]">
+      Lab Tools
+    </a>
+    <span class="rounded-full border border-[var(--color-border)] px-2 py-0.5 text-[10px] text-[var(--color-text-muted)]">
+      {tools.length}
+    </span>
+  </div>
+
+  <!-- Search + Tag filter (Preact island) -->
+  <LabSidebarFilter client:load tools={filterData} tags={frequentTags} />
+
+  <!-- Category tree -->
+  <nav class="flex-1 overflow-y-auto px-2 py-3" id="sidebar-nav" aria-label="Lab tools navigation">
+    {categories.map((cat) => {
+      const catTools = grouped.get(cat.key) ?? [];
+      if (catTools.length === 0) return null;
+      return (
+        <details
+          class="sidebar-category mb-1"
+          data-category={cat.key}
+          open={cat.key === currentCatKey}
+        >
+          <summary class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)] hover:bg-[var(--color-surface-light)] hover:text-[var(--color-heading)] select-none">
+            <svg class="sidebar-chevron h-3 w-3 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span class="flex-1">{cat.label}</span>
+            <span class="text-[10px] font-normal">{catTools.length}</span>
+          </summary>
+          <div class="ml-2 mt-0.5 space-y-0.5 border-l border-[var(--color-border)] pl-2">
+            {catTools.map((tool: any) => {
+              const slug = tool.data.componentSlug;
+              const href = `/lab/${slug}`;
+              const isCurrent = slug === currentSlug;
+              return (
+                <a
+                  href={href}
+                  class:list={[
+                    "sidebar-tool-link flex items-center gap-2 rounded-md px-2 py-1.5 text-xs no-underline transition-colors",
+                    isCurrent
+                      ? "sidebar-tool-active bg-[color:var(--color-primary)]/10 text-[var(--color-primary)] font-medium"
+                      : "text-[var(--color-text-muted)] hover:bg-[var(--color-surface-light)] hover:text-[var(--color-heading)]",
+                  ]}
+                  data-slug={slug}
+                  data-tags={tool.data.tags.join(",")}
+                  aria-current={isCurrent ? "page" : undefined}
+                >
+                  <span class="shrink-0 text-sm" aria-hidden="true">{tool.data.icon}</span>
+                  <span class="truncate">{tool.data.title}</span>
+                </a>
+              );
+            })}
+          </div>
+        </details>
+      );
+    })}
+  </nav>
+</div>
+
+<style>
+  details[open] > summary .sidebar-chevron {
+    transform: rotate(90deg);
+  }
+
+  .sidebar-tool-active {
+    border-left: 2px solid var(--color-primary);
+    margin-left: -9px;
+    padding-left: 9px;
+  }
+</style>

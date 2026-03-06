@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import CompressionViz from "../../components/lab/compression-viz/CompressionViz.tsx";
 ---
 
@@ -10,7 +11,7 @@ import CompressionViz from "../../components/lab/compression-viz/CompressionViz.
   description="Watch Huffman coding, LZW, and RLE compress data step by step. See tree construction, dictionary growth, and bit-level encoding."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="compression-viz">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-6xl">
       <!-- Breadcrumb -->
@@ -44,4 +45,5 @@ import CompressionViz from "../../components/lab/compression-viz/CompressionViz.
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

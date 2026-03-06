@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import RayTracer from "../../components/lab/ray-tracer/RayTracer.tsx";
 ---
 
@@ -10,7 +11,7 @@ import RayTracer from "../../components/lab/ray-tracer/RayTracer.tsx";
   description="Real-time software ray tracer with reflections, refractions, and Phong shading. Drag objects, adjust materials, and watch rays bounce."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="ray-tracer">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-5xl">
       <!-- Breadcrumb -->
@@ -44,4 +45,5 @@ import RayTracer from "../../components/lab/ray-tracer/RayTracer.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

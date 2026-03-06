@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import QrGenerator from "../../components/lab/qr-generator/QrGenerator.tsx";
 ---
 
@@ -10,7 +11,7 @@ import QrGenerator from "../../components/lab/qr-generator/QrGenerator.tsx";
   description="Generate QR codes for text, URLs, WiFi, and vCards. Customize colors, size, and error correction. Download as PNG or SVG."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="qr-generator">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-5xl">
       <!-- Breadcrumb -->
@@ -44,4 +45,5 @@ import QrGenerator from "../../components/lab/qr-generator/QrGenerator.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

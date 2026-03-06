@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import NetworkProtocols from "../../components/lab/network-protocols/NetworkProtocols.tsx";
 ---
 
@@ -10,7 +11,7 @@ import NetworkProtocols from "../../components/lab/network-protocols/NetworkProt
   description="Animated TCP handshakes, HTTP request flows, DNS resolution, and TLS negotiation. Step through network protocols visually."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="network-protocols">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-6xl">
       <!-- Breadcrumb -->
@@ -46,4 +47,5 @@ import NetworkProtocols from "../../components/lab/network-protocols/NetworkProt
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

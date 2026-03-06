@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import ShaderPlayground from "../../components/lab/shader-playground/ShaderPlayground.tsx";
 ---
 
@@ -10,7 +11,7 @@ import ShaderPlayground from "../../components/lab/shader-playground/ShaderPlayg
   description="Write GLSL fragment shaders with live WebGL preview. Create plasma, fire, fractals, and more with GPU-accelerated graphics."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="shader-playground">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-7xl">
       <!-- Breadcrumb -->
@@ -47,4 +48,5 @@ import ShaderPlayground from "../../components/lab/shader-playground/ShaderPlayg
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import ParticleLife from "../../components/lab/particle-life/ParticleLife.tsx";
 ---
 
@@ -10,7 +11,7 @@ import ParticleLife from "../../components/lab/particle-life/ParticleLife.tsx";
   description="Emergent artificial life from simple attraction and repulsion rules between colored particle species. Watch organisms self-organize."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="particle-life">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-6xl">
       <!-- Breadcrumb -->
@@ -46,4 +47,5 @@ import ParticleLife from "../../components/lab/particle-life/ParticleLife.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import HashGenerator from "../../components/lab/hash-generator/HashGenerator.tsx";
 ---
 
@@ -10,7 +11,7 @@ import HashGenerator from "../../components/lab/hash-generator/HashGenerator.tsx
   description="Generate MD5, SHA-1, SHA-256, SHA-512, and CRC32 hashes for text or files. Compare hashes and compute HMACs."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="hash-generator">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-5xl">
       <!-- Breadcrumb -->
@@ -44,4 +45,5 @@ import HashGenerator from "../../components/lab/hash-generator/HashGenerator.tsx
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

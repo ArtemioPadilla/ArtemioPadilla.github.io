@@ -1,0 +1,69 @@
+---
+interface Props {
+  currentSlug: string;
+}
+
+import { getCollection } from "astro:content";
+import LabSidebar from "./LabSidebar.astro";
+
+const { currentSlug } = Astro.props;
+
+const allTools = await getCollection("lab", ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+const tools = allTools.sort((a, b) => a.data.order - b.data.order);
+---
+
+<div class="lab-layout">
+  <!-- Mobile sidebar toggle -->
+  <button
+    id="lab-sidebar-toggle"
+    class="fixed left-4 bottom-6 z-40 flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-sm text-[var(--color-text-muted)] shadow-lg md:hidden"
+    aria-label="Browse tools"
+  >
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+    </svg>
+    Tools
+  </button>
+
+  <!-- Backdrop (mobile) -->
+  <div id="lab-sidebar-backdrop" class="fixed inset-0 z-40 hidden bg-black/50 md:hidden"></div>
+
+  <!-- Sidebar -->
+  <aside id="lab-sidebar" class="lab-sidebar">
+    <LabSidebar tools={tools} currentSlug={currentSlug} />
+  </aside>
+
+  <!-- Main content -->
+  <div class="lab-main">
+    <slot />
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById("lab-sidebar-toggle");
+  const sidebar = document.getElementById("lab-sidebar");
+  const backdrop = document.getElementById("lab-sidebar-backdrop");
+
+  function openSidebar() {
+    sidebar?.classList.add("open");
+    backdrop?.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeSidebar() {
+    sidebar?.classList.remove("open");
+    backdrop?.classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+
+  toggle?.addEventListener("click", openSidebar);
+  backdrop?.addEventListener("click", closeSidebar);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && sidebar?.classList.contains("open")) {
+      closeSidebar();
+    }
+  });
+</script>

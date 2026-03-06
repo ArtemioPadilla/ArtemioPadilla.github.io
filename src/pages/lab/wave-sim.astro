@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import WaveSim from "../../components/lab/wave-sim/WaveSim.tsx";
 ---
 
@@ -10,7 +11,7 @@ import WaveSim from "../../components/lab/wave-sim/WaveSim.tsx";
   description="2D wave equation simulation with interference, diffraction, Doppler effect, and Young's double slit experiment. Drop stones in a virtual ripple tank."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="wave-sim">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-6xl">
       <!-- Breadcrumb -->
@@ -44,4 +45,5 @@ import WaveSim from "../../components/lab/wave-sim/WaveSim.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

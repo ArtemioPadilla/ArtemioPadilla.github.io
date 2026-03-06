@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import DBIndexViz from "../../components/lab/db-index-viz/DBIndexViz.tsx";
 ---
 
@@ -10,7 +11,7 @@ import DBIndexViz from "../../components/lab/db-index-viz/DBIndexViz.tsx";
   description="Visualize B-Tree, B+ Tree, and Hash Index operations. Watch insertions split nodes, deletions merge them, and searches traverse the tree."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="db-index-viz">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-6xl">
       <!-- Breadcrumb -->
@@ -44,4 +45,5 @@ import DBIndexViz from "../../components/lab/db-index-viz/DBIndexViz.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

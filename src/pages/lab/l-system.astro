@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import LSystem from "../../components/lab/l-system/LSystem.tsx";
 ---
 
@@ -10,7 +11,7 @@ import LSystem from "../../components/lab/l-system/LSystem.tsx";
   description="Generate fractals with L-system rewrite rules and turtle graphics. Koch snowflakes, dragon curves, fractal trees, and custom patterns."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="l-system">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-6xl">
       <!-- Breadcrumb -->
@@ -46,4 +47,5 @@ import LSystem from "../../components/lab/l-system/LSystem.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import RegexTester from "../../components/lab/regex-tester/RegexTester.tsx";
 ---
 
@@ -10,7 +11,7 @@ import RegexTester from "../../components/lab/regex-tester/RegexTester.tsx";
   description="Live regex testing with match highlighting, group extraction, and replacement preview."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="regex-tester">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-5xl">
       <!-- Breadcrumb -->
@@ -46,4 +47,5 @@ import RegexTester from "../../components/lab/regex-tester/RegexTester.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

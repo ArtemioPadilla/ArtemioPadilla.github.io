@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import PythonRepl from "../../components/lab/PythonRepl.tsx";
 ---
 
@@ -10,7 +11,7 @@ import PythonRepl from "../../components/lab/PythonRepl.tsx";
   description="Run Python code directly in your browser. Powered by Pyodide with NumPy pre-loaded."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="python-repl">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-5xl">
       <!-- Breadcrumb -->
@@ -47,6 +48,7 @@ import PythonRepl from "../../components/lab/PythonRepl.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>
 
 <style>

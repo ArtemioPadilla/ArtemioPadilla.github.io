@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import GANPlayground from "../../components/lab/gan-playground/GANPlayground.tsx";
 ---
 
@@ -10,7 +11,7 @@ import GANPlayground from "../../components/lab/gan-playground/GANPlayground.tsx
   description="Train a generative adversarial network on 2D distributions. Watch generator and discriminator compete in real time with decision boundary visualization."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="gan-playground">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-5xl">
       <!-- Breadcrumb -->
@@ -47,4 +48,5 @@ import GANPlayground from "../../components/lab/gan-playground/GANPlayground.tsx
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

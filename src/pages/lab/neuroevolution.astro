@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import NeuroEvolution from "../../components/lab/neuroevolution/NeuroEvolution.tsx";
 ---
 
@@ -10,7 +11,7 @@ import NeuroEvolution from "../../components/lab/neuroevolution/NeuroEvolution.t
   description="Evolve neural networks using genetic algorithms to solve Cart-Pole, Flappy Bird, and Maze Runner tasks."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="neuroevolution">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-6xl">
       <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
@@ -40,4 +41,5 @@ import NeuroEvolution from "../../components/lab/neuroevolution/NeuroEvolution.t
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

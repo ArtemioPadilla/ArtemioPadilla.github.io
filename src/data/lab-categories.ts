@@ -1,0 +1,112 @@
+export const categoryMap: Record<string, string> = {
+  // Machine Learning & AI
+  "neural-network": "ml",
+  "gradient-descent": "ml",
+  "activation-functions": "ml",
+  "loss-explorer": "ml",
+  "convolution-viz": "ml",
+  "diffusion-viz": "ml",
+  "tokenizer": "ml",
+  "embedding-explorer": "ml",
+  "confusion-matrix": "ml",
+  "decision-tree": "ml",
+  "clustering": "ml",
+  "genetic-algorithm": "ml",
+  "mcmc-visualizer": "ml",
+  "neuroevolution": "ml",
+  "rl-playground": "ml",
+  "word-embeddings": "ml",
+  "attention-viz": "ml",
+  "gan-playground": "ml",
+  "backprop-viz": "ml",
+
+  // Mathematics & Statistics
+  "fourier-viz": "math",
+  "distributions": "math",
+  "linear-algebra": "math",
+  "bezier-editor": "math",
+  "ab-test": "math",
+  "markov-chain": "math",
+  "voronoi": "math",
+  "strange-attractors": "math",
+  "epidemic-sim": "math",
+
+  // Algorithms & Data Structures
+  "sorting-viz": "algo",
+  "graph-algorithms": "algo",
+  "data-structures": "algo",
+  "pathfinding": "algo",
+  "compression-viz": "algo",
+  "l-system": "algo",
+  "cellular-automata": "algo",
+
+  // Computer Science Theory
+  "turing-machine": "cs",
+  "state-machine": "cs",
+  "regex-automaton": "cs",
+  "memory-allocator": "cs",
+  "db-index-viz": "cs",
+  "gc-visualizer": "cs",
+  "cpu-pipeline": "cs",
+
+  // Graphics & Creative
+  "shader-playground": "gfx",
+  "ray-tracer": "gfx",
+  "pixel-art": "gfx",
+  "perlin-noise": "gfx",
+  "color-palette": "gfx",
+  "fractal-explorer": "gfx",
+
+  // Developer Tools
+  "regex-tester": "dev",
+  "json-validator": "dev",
+  "jwt-decoder": "dev",
+  "cron-parser": "dev",
+  "diff-viewer": "dev",
+  "hash-generator": "dev",
+  "timestamp": "dev",
+  "base-converter": "dev",
+  "qr-generator": "dev",
+  "sql-playground": "dev",
+  "mermaid-viz": "dev",
+  "markdown-preview": "dev",
+  "json-visualizer": "dev",
+
+  // Audio & Music
+  "audio-visualizer": "audio",
+  "music-theory": "audio",
+
+  // Python
+  "python-repl": "python",
+  "python-tutor": "python",
+
+  // Systems & Networking
+  "network-protocols": "systems",
+  "blockchain": "systems",
+  "physics-sandbox": "systems",
+  "fluid-sim": "systems",
+  "wave-sim": "systems",
+  "particle-life": "systems",
+  "boids": "systems",
+  "reaction-diffusion": "systems",
+  "orbital-mechanics": "systems",
+};
+
+export interface CategoryMeta {
+  key: string;
+  label: string;
+  icon: string;
+  description: string;
+}
+
+export const categories: CategoryMeta[] = [
+  { key: "ml", label: "Machine Learning & AI", icon: "brain", description: "Neural networks, optimization, embeddings, and generative models" },
+  { key: "math", label: "Mathematics & Statistics", icon: "sigma", description: "Fourier, probability, linear algebra, and statistical testing" },
+  { key: "algo", label: "Algorithms & Data Structures", icon: "flow", description: "Sorting, pathfinding, graphs, compression, and fractals" },
+  { key: "cs", label: "Computer Science Theory", icon: "cpu", description: "Turing machines, automata, state machines, and memory" },
+  { key: "gfx", label: "Graphics & Creative", icon: "palette", description: "Shaders, ray tracing, pixel art, and procedural generation" },
+  { key: "dev", label: "Developer Tools", icon: "wrench", description: "Regex, JSON, JWT, SQL, hashing, and encoding utilities" },
+  { key: "audio", label: "Audio & Music", icon: "music", description: "Audio analysis, music theory, and Web Audio experiments" },
+  { key: "python", label: "Python", icon: "python", description: "Browser-based Python REPL and code execution visualizer" },
+  { key: "systems", label: "Systems & Networking", icon: "globe", description: "Network protocols, blockchain, and physics simulation" },
+];

@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import EpidemicSim from "../../components/lab/epidemic-sim/EpidemicSim.tsx";
 ---
 
@@ -10,7 +11,7 @@ import EpidemicSim from "../../components/lab/epidemic-sim/EpidemicSim.tsx";
   description="SIR/SEIR epidemic modeling with both ODE and agent-based simulation. Adjust R0, vaccination, quarantine, and social distancing."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="epidemic-sim">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-6xl">
       <!-- Breadcrumb -->
@@ -45,4 +46,5 @@ import EpidemicSim from "../../components/lab/epidemic-sim/EpidemicSim.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

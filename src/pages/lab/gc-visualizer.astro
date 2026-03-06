@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import GCVisualizer from "../../components/lab/gc-visualizer/GCVisualizer.tsx";
 ---
 
@@ -10,7 +11,7 @@ import GCVisualizer from "../../components/lab/gc-visualizer/GCVisualizer.tsx";
   description="Visualize mark-and-sweep, reference counting, and generational garbage collection. Create object graphs and watch GC algorithms collect unreachable objects."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="gc-visualizer">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-6xl">
       <!-- Breadcrumb -->
@@ -44,4 +45,5 @@ import GCVisualizer from "../../components/lab/gc-visualizer/GCVisualizer.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>

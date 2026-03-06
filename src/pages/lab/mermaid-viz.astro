@@ -2,6 +2,7 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
 import MermaidViz from "../../components/lab/mermaid-viz/MermaidViz.tsx";
 ---
 
@@ -10,7 +11,7 @@ import MermaidViz from "../../components/lab/mermaid-viz/MermaidViz.tsx";
   description="Create flowcharts, sequence diagrams, class diagrams, and more with live Mermaid preview. 10 diagram types with preset examples."
 >
   <Navigation currentPath="/lab" />
-
+  <LabToolLayout currentSlug="mermaid-viz">
   <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
     <div class="mx-auto max-w-6xl">
       <!-- Breadcrumb -->
@@ -46,4 +47,5 @@ import MermaidViz from "../../components/lab/mermaid-viz/MermaidViz.tsx";
   </main>
 
   <Footer />
+  </LabToolLayout>
 </BaseLayout>
