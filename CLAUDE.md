@@ -53,10 +53,13 @@ Artemio Padilla's personal portfolio website built with **Astro 5 + TypeScript +
 - **Deployment**: GitHub Pages via GitHub Actions
 
 ### Pages
-- `/` — Home page with hero, about, featured projects, contact (content from `src/data/site-data.ts`)
-- `/cv` — Full CV rendered from JSON data at build time (12 Astro components, zero client JS for content)
-- `/links` — Link hub with particles background, typed.js tagline, social icons, external links
-- `/404` — Custom 404 page with glitch animation
+- `/` — Hub landing with animated card grid (content from `src/data/site-data.ts`)
+- `/cv` — Full CV rendered from JSON at build time (12 Astro components, zero client JS for content)
+- `/blog` — Blog with Fuse.js search, tag filtering, reading time, RSS feed
+- `/lab` — 53 interactive browser-based tools across 9 categories (ML, algorithms, graphics, dev tools, etc.)
+- `/projects` — Live GitHub activity chart + repo grid fetched from GitHub API (Preact CSR)
+- `/links` — Link hub with particles background, typed.js tagline, social icons
+- `/404` — Custom 404 with glitch animation
 
 ### CV Data Pipeline
 1. **Source of Truth**: `src/content/cv/cv-data.json`
@@ -69,16 +72,22 @@ Artemio Padilla's personal portfolio website built with **Astro 5 + TypeScript +
 ### Project Structure
 ```
 src/
-├── content/cv/           # CV JSON data + schema (source of truth)
+├── content/
+│   ├── cv/               # CV JSON data + schema (source of truth)
+│   ├── blog/             # Markdown blog posts
+│   └── lab/              # Markdown lab tool definitions (53 tools)
 ├── types/cv.ts           # TypeScript interfaces for all CV data
-├── utils/                # cv-loader, date-formatter, text-sanitizer, pdf-generator
+├── utils/                # cv-loader, pdf-generator, github, text-sanitizer, date-formatter
 ├── components/
 │   ├── layout/           # BaseLayout, Navigation, Footer, ThemeToggle
-│   ├── home/             # Hero, About, ProjectCard, Contact
+│   ├── home/             # IdentityStrip, HubCard variants
 │   ├── cv/               # 12 section components + CvLayout + SocialIcons
 │   ├── cv-interactive/   # Preact islands (PdfDownloader, CopyToClipboard, VCardDownload)
+│   ├── blog/             # PostCard, BlogSearch, PostHeader, TableOfContents
+│   ├── projects/         # RepoGrid (Preact, live GitHub API)
+│   ├── lab/              # 53 interactive Preact tool components
 │   └── links/            # ParticlesBackground.tsx, TypedTagline.tsx
-├── pages/                # index, cv, links, 404
+├── pages/                # index, cv, blog, lab, projects, links, 404, rss.xml
 ├── data/site-data.ts     # Home page content (separate from CV)
 └── styles/global.css     # Tailwind v4 @theme + dark/light mode + global styles
 scripts/
@@ -86,7 +95,8 @@ scripts/
 └── update-cv-metadata.ts # Version bumping for CV releases
 .github/workflows/
 ├── deploy.yml            # Build + deploy to GitHub Pages
-└── cv-data.yml           # Validate CV data on push/PR
+├── cv-data.yml           # Validate CV data on push/PR
+└── lighthouse.yml        # Lighthouse CI audit on push/PR
 ```
 
 ## Development Commands
