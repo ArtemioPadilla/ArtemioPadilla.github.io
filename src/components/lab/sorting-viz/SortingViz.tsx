@@ -782,7 +782,7 @@ function SortCanvas({
    ══════════════════════════════════════════════════════════ */
 
 const DEFAULT_SIZE = 50;
-const DEFAULT_SPEED = 25;
+const DEFAULT_SPEED = 250;
 const MIN_SIZE = 10;
 const MAX_SIZE = 200;
 const MIN_SPEED = 1;
