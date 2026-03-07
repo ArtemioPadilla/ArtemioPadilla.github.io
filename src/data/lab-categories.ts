@@ -19,6 +19,10 @@ export const categoryMap: Record<string, string> = {
   "attention-viz": "ml",
   "gan-playground": "ml",
   "backprop-viz": "ml",
+  "gradient-boosting": "ml",
+  "dim-reduction": "ml",
+  "loss-landscape": "ml",
+  "tokenizer-compare": "ml",
 
   // Mathematics & Statistics
   "fourier-viz": "math",
@@ -31,6 +35,16 @@ export const categoryMap: Record<string, string> = {
   "strange-attractors": "math",
   "epidemic-sim": "math",
   "mortgage-calc": "math",
+  "investment-sim": "math",
+  "compound-interest": "math",
+  "supply-demand": "math",
+  "amortization-race": "math",
+  "evolution-trust": "math",
+  "voting-systems": "math",
+  "bayesian-inference": "math",
+  "calculus-viz": "math",
+  "complex-numbers": "math",
+  "loopy": "math",
 
   // Algorithms & Data Structures
   "sorting-viz": "algo",
@@ -49,6 +63,10 @@ export const categoryMap: Record<string, string> = {
   "db-index-viz": "cs",
   "gc-visualizer": "cs",
   "cpu-pipeline": "cs",
+  "process-scheduler": "cs",
+  "page-replacement": "cs",
+  "compiler-pipeline": "cs",
+  "search-engine": "cs",
 
   // Graphics & Creative
   "shader-playground": "gfx",
@@ -57,6 +75,10 @@ export const categoryMap: Record<string, string> = {
   "perlin-noise": "gfx",
   "color-palette": "gfx",
   "fractal-explorer": "gfx",
+  "flow-field": "gfx",
+  "tessellation": "gfx",
+  "lissajous": "gfx",
+  "spirograph": "gfx",
 
   // Developer Tools
   "regex-tester": "dev",
@@ -72,6 +94,7 @@ export const categoryMap: Record<string, string> = {
   "mermaid-viz": "dev",
   "markdown-preview": "dev",
   "json-visualizer": "dev",
+  "git-viz": "dev",
 
   // Audio & Music
   "audio-visualizer": "audio",
@@ -91,6 +114,14 @@ export const categoryMap: Record<string, string> = {
   "boids": "systems",
   "reaction-diffusion": "systems",
   "orbital-mechanics": "systems",
+  "cloth-sim": "systems",
+  "em-field": "systems",
+  "optics-bench": "systems",
+  "entropy-demon": "systems",
+  "pendulum-lab": "systems",
+  "segregation-sim": "systems",
+  "dns-resolver": "systems",
+  "tcp-viz": "systems",
 };
 
 export interface CategoryMeta {
