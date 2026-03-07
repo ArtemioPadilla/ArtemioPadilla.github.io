@@ -46,6 +46,10 @@ const structuredData = jsonLd ?? defaultJsonLd;
     <meta name="description" content={description} />
     <meta name="author" content="Artemio Padilla" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="theme-color" content="#09090b" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180x180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="canonical" href={canonicalURL} />
     <link rel="alternate" type="application/rss+xml" title="Artemio Padilla — Blog" href="/rss.xml" />
 
@@ -63,17 +67,20 @@ const structuredData = jsonLd ?? defaultJsonLd;
       rel="preload"
       as="style"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Saira+Extra+Condensed:wght@500;700&display=swap"
+      crossorigin="anonymous"
     />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Saira+Extra+Condensed:wght@500;700&display=swap"
       rel="stylesheet"
       media="print"
       onload="this.media='all'"
+      crossorigin="anonymous"
     />
     <noscript>
       <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Saira+Extra+Condensed:wght@500;700&display=swap"
         rel="stylesheet"
+        crossorigin="anonymous"
       />
     </noscript>
 

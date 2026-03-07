@@ -1,6 +1,6 @@
 import { useState, useCallback } from "preact/hooks";
 import type { FunctionalComponent } from "preact";
-import type { KnowledgeNode, KnowledgeEdge } from "../../types/knowledge";
+import type { KnowledgeNode, KnowledgeEdge, LayoutMode, EdgeRelation } from "../../types/knowledge";
 import GraphCanvas from "./GraphCanvas";
 import DetailPanel from "./DetailPanel";
 import GraphControls from "./GraphControls";
@@ -8,6 +8,27 @@ import GraphControls from "./GraphControls";
 interface Props {
   nodes: KnowledgeNode[];
   edges: KnowledgeEdge[];
+}
+
+function readUrlParams() {
+  if (typeof window === "undefined") return {};
+  const params = new URLSearchParams(window.location.search);
+  return {
+    node: params.get("node"),
+    layout: params.get("layout") as LayoutMode | null,
+    relation: params.get("relation") as EdgeRelation | null,
+    center: params.get("center"),
+  };
+}
+
+function updateUrlParam(key: string, value: string | null) {
+  const url = new URL(window.location.href);
+  if (value) {
+    url.searchParams.set(key, value);
+  } else {
+    url.searchParams.delete(key);
+  }
+  window.history.replaceState({}, "", url.toString());
 }
 
 const BrainApp: FunctionalComponent<Props> = ({ nodes, edges }) => {
@@ -18,22 +39,21 @@ const BrainApp: FunctionalComponent<Props> = ({ nodes, edges }) => {
     domains: [],
     types: [],
   });
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>("force");
+  const [relationFilter, setRelationFilter] = useState<EdgeRelation | null>(null);
+  const [radialCenter, setRadialCenter] = useState<string>("personal/curiosity");
 
   const handleNodeSelect = useCallback(
     (node: KnowledgeNode | null) => {
       setSelectedNode(node);
-      // Update URL without navigation
-      if (node) {
-        const url = new URL(window.location.href);
-        url.searchParams.set("node", node.id);
-        window.history.replaceState({}, "", url.toString());
-      } else {
-        const url = new URL(window.location.href);
-        url.searchParams.delete("node");
-        window.history.replaceState({}, "", url.toString());
+      updateUrlParam("node", node?.id || null);
+      // In radial mode, clicking a node also updates the radial center
+      if (node && layoutMode === "radial") {
+        setRadialCenter(node.id);
+        updateUrlParam("center", node.id);
       }
     },
-    [],
+    [layoutMode],
   );
 
   const handleNavigate = useCallback(
@@ -52,15 +72,27 @@ const BrainApp: FunctionalComponent<Props> = ({ nodes, edges }) => {
     [handleNodeSelect],
   );
 
-  // Check URL for initial node selection
+  const handleLayoutChange = useCallback((mode: LayoutMode) => {
+    setLayoutMode(mode);
+    updateUrlParam("layout", mode === "force" ? null : mode);
+  }, []);
+
+  const handleRelationFilterChange = useCallback((relation: EdgeRelation | null) => {
+    setRelationFilter(relation);
+    updateUrlParam("relation", relation);
+  }, []);
+
+  // Check URL for initial state
   useState(() => {
     if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const nodeId = params.get("node");
-      if (nodeId) {
-        const node = nodes.find((n) => n.id === nodeId);
+      const params = readUrlParams();
+      if (params.node) {
+        const node = nodes.find((n) => n.id === params.node);
         if (node) setSelectedNode(node);
       }
+      if (params.layout) setLayoutMode(params.layout);
+      if (params.relation) setRelationFilter(params.relation);
+      if (params.center) setRadialCenter(params.center);
     }
   });
 
@@ -75,11 +107,15 @@ const BrainApp: FunctionalComponent<Props> = ({ nodes, edges }) => {
         searchQuery={searchQuery}
         viewMode={viewMode}
         filters={filters}
+        layoutMode={layoutMode}
+        relationFilter={relationFilter}
+        radialCenter={radialCenter}
       />
 
       {/* Floating controls */}
       <GraphControls
         nodes={nodes}
+        edges={edges}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         searchQuery={searchQuery}
@@ -87,6 +123,11 @@ const BrainApp: FunctionalComponent<Props> = ({ nodes, edges }) => {
         filters={filters}
         onFiltersChange={setFilters}
         onNodeSelect={handleSearchSelect}
+        layoutMode={layoutMode}
+        onLayoutChange={handleLayoutChange}
+        relationFilter={relationFilter}
+        onRelationFilterChange={handleRelationFilterChange}
+        radialCenter={radialCenter}
       />
 
       {/* Detail panel */}
