@@ -30,6 +30,7 @@ export const categoryMap: Record<string, string> = {
   "voronoi": "math",
   "strange-attractors": "math",
   "epidemic-sim": "math",
+  "mortgage-calc": "math",
 
   // Algorithms & Data Structures
   "sorting-viz": "algo",

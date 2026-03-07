@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
+import MortgageCalc from "../../components/lab/mortgage-calc/MortgageCalc.tsx";
+---
+
+<BaseLayout
+  title="Calculadora Hipotecaria — Lab — Artemio Padilla"
+  description="Simula tu credito hipotecario con enganche, tasa, amortizaciones anticipadas y graficas comparativas de escenarios."
+>
+  <Navigation currentPath="/lab" />
+  <LabToolLayout currentSlug="mortgage-calc">
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Calculadora Hipotecaria</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">🏠</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">
+            Calculadora Hipotecaria
+          </h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          Simula tu credito hipotecario con amortizaciones anticipadas. Compara reducir plazo vs reducir mensualidad y visualiza el impacto en intereses.
+        </p>
+      </div>
+
+      <!-- Tool -->
+      <MortgageCalc client:visible />
+
+      <!-- Info -->
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]">
+        <p>Todos los calculos se ejecutan en tu navegador. Ningun dato se envia a ningun servidor.</p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+  </LabToolLayout>
+</BaseLayout>
