@@ -34,4 +34,10 @@ export const toolRegistry: Record<string, ToolImport> = {
   "search-engine": () => import("./search-engine/SearchEngine.tsx"),
   "git-viz": () => import("./git-viz/GitViz.tsx"),
   "loopy": () => import("./loopy/Loopy.tsx"),
+  "dice-lab": () => import("./dice-lab/DiceLab.tsx"),
+  "central-limit": () => import("./central-limit/CentralLimit.tsx"),
+  "hypothesis-testing": () => import("./hypothesis-testing/HypothesisTesting.tsx"),
+  "bootstrap-resampling": () => import("./bootstrap-resampling/BootstrapResampling.tsx"),
+  "monte-carlo": () => import("./monte-carlo/MonteCarlo.tsx"),
+  "glm-explorer": () => import("./glm-explorer/GlmExplorer.tsx"),
 };

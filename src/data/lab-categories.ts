@@ -45,6 +45,12 @@ export const categoryMap: Record<string, string> = {
   "calculus-viz": "math",
   "complex-numbers": "math",
   "loopy": "math",
+  "dice-lab": "math",
+  "central-limit": "math",
+  "hypothesis-testing": "math",
+  "bootstrap-resampling": "math",
+  "monte-carlo": "math",
+  "glm-explorer": "math",
 
   // Algorithms & Data Structures
   "sorting-viz": "algo",
