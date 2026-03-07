@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "lastUpdated": "2026-03-06",
   "nodes": [
     {
@@ -66,11 +66,78 @@
       }
     },
     {
+      "id": "science/complexity",
+      "label": "Complexity Theory",
+      "type": "topic",
+      "summary": "The study of how simple rules produce complex behavior. Emergence, self-organization, and the edge of chaos.",
+      "content": "Complexity theory studies systems where simple components interact to produce behavior that cannot be predicted from the parts alone — emergence. A flock of birds follows three simple rules (separation, alignment, cohesion) yet produces mesmerizing collective motion no single bird intended. The Santa Fe Institute, founded in 1984, became the intellectual home of complexity science, bringing together physicists, biologists, economists, and computer scientists. Key concepts include: emergence (macro-level patterns from micro-level interactions), self-organization (order arising without central control), the edge of chaos (the phase transition between rigid order and random disorder where complex computation thrives), power laws (scale-free distributions that recur in earthquakes, cities, and networks), and attractors (states toward which systems evolve). Complexity theory reveals that reductionism — understanding the parts — is necessary but not sufficient. You also need to understand the relationships, the feedback loops, the network topology. This is why a brain is not just neurons, an economy is not just agents, and a society is not just individuals.",
+      "tags": ["complexity", "emergence", "self-organization", "edge-of-chaos", "santa-fe-institute"],
+      "links": ["https://en.wikipedia.org/wiki/Complexity_theory"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "science/complexity/emergence",
+      "label": "Emergence",
+      "type": "concept",
+      "summary": "When the whole is more than the sum of its parts. Wetness emerges from H2O molecules; consciousness emerges from neurons; markets emerge from traders.",
+      "content": "Emergence is the phenomenon where collective behavior exhibits properties that no individual component possesses. No single water molecule is wet, yet wetness emerges from their collective interaction. No single neuron is conscious, yet awareness arises from their network. There are two types: weak emergence (in principle deducible from the parts, just computationally hard — like weather from air molecules) and strong emergence (genuinely novel properties that cannot even in principle be reduced — consciousness may be an example). The concept challenges reductionism: even with perfect knowledge of components, you cannot always predict systemic behavior. This is why complex systems continually surprise us — financial crises, ecosystem collapses, viral phenomena. Emergence is also deeply related to information: emergent properties often involve new informational structures (patterns, memories, meanings) that exist only at the macro level.",
+      "tags": ["emergence", "reductionism", "complexity", "systems"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
       "id": "philosophy",
       "label": "Philosophy",
       "type": "domain",
       "summary": "The love of wisdom; questioning the nature of reality, knowledge, and existence.",
       "tags": ["philosophy", "wisdom", "reasoning"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "philosophy/aristotle",
+      "label": "Aristotle",
+      "type": "topic",
+      "summary": "The philosopher who systematized logic, ethics, politics, biology, and metaphysics. Perhaps the most influential thinker in Western history.",
+      "content": "Aristotle (384-322 BCE) was not just a philosopher but the first true systematizer of knowledge. Where Plato sought truth in abstract Forms, Aristotle insisted on empirical observation — he dissected animals, catalogued constitutions, analyzed plays. His logic (the syllogism) remained the foundation of rational thought for two millennia. His Nicomachean Ethics introduced eudaimonia (flourishing) as the goal of life, achieved through virtue as a mean between extremes. His Physics gave us teleological causation — every natural thing has a purpose (telos). His Metaphysics asked what it means for something to exist. His Categories gave us the first ontology — the classification of all that is. The breadth is staggering: logic, ethics, politics, poetics, physics, biology, metaphysics, rhetoric. Modern knowledge graphs owe something to his original impulse: to organize all of knowledge into a coherent system.",
+      "tags": ["aristotle", "greek-philosophy", "logic", "ethics", "metaphysics", "teleology"],
+      "links": ["https://plato.stanford.edu/entries/aristotle/"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "philosophy/aristotle/four-causes",
+      "label": "Four Causes",
+      "type": "concept",
+      "summary": "Aristotle's framework for explaining why anything exists: material, formal, efficient, and final causes. A complete explanation requires all four.",
+      "content": "Aristotle argued that to truly understand anything, you must answer four questions. The material cause: what is it made of? (A statue is made of bronze.) The formal cause: what is its form or pattern? (The statue has the shape of a human.) The efficient cause: what brought it into being? (The sculptor carved it.) The final cause: what is its purpose? (It was made to honor a hero.) Modern science largely abandoned final causes (teleology) after the Scientific Revolution, focusing on efficient and material causes. But teleological thinking persists in biology (what is the function of this organ?), in engineering (what is this system designed to do?), and in AI (what is the objective function?). Aristotle would recognize a neural network's loss function as a final cause — the telos toward which the system strains.",
+      "tags": ["four-causes", "teleology", "explanation", "aristotle"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "philosophy/aristotle/virtue-ethics",
+      "label": "Virtue Ethics",
+      "type": "concept",
+      "summary": "Morality is not about rules or consequences, but about character. Virtue is a habit — the golden mean between excess and deficiency.",
+      "content": "In the Nicomachean Ethics, Aristotle proposed that the good life (eudaimonia) is achieved not by following rules (deontology) or maximizing outcomes (consequentialism), but by cultivating virtuous character. Each virtue is a mean between two vices: courage lies between cowardice and recklessness; generosity between stinginess and wastefulness. Crucially, virtue is not a feeling or a belief but a hexis — a stable disposition formed through practice. You become courageous by repeatedly doing courageous things, just as you become a musician by playing music. This connects directly to deliberate practice: moral development, like skill development, requires intentional repetition at the edge of your comfort zone. Phronesis (practical wisdom) is the meta-virtue that tells you what the mean is in any particular situation — it cannot be reduced to an algorithm.",
+      "tags": ["virtue-ethics", "aristotle", "eudaimonia", "character", "phronesis"],
       "metadata": {
         "added": "2026-03-06",
         "importance": 1,
@@ -219,6 +286,34 @@
       }
     },
     {
+      "id": "mathematics/computation",
+      "label": "Computation Theory",
+      "type": "topic",
+      "summary": "What can be computed? Turing machines, decidability, computational complexity — the mathematical foundations of what computers can and cannot do.",
+      "content": "Computation theory asks the most fundamental question in computer science: what problems can be solved by an algorithm? Alan Turing (1936) and Alonzo Church independently showed that a surprisingly simple abstract machine — the Turing machine — can compute anything that is computable. This Church-Turing thesis remains unrefuted. But Turing also proved that some problems are undecidable: no algorithm can solve the halting problem (determining whether an arbitrary program terminates). This connects directly to Godel's incompleteness — both reveal fundamental limits of formal systems. Computational complexity theory then asks: among computable problems, which are tractable? The P vs NP question — whether problems whose solutions can be verified quickly can also be solved quickly — is one of the deepest open problems in mathematics, with a million-dollar prize. These results shape everything from cryptography (which relies on hard problems) to AI (which seeks efficient approximations to intractable problems).",
+      "tags": ["computation", "turing", "decidability", "complexity-classes", "halting-problem"],
+      "links": ["https://en.wikipedia.org/wiki/Theory_of_computation"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "mathematics/computation/turing-machines",
+      "label": "Turing Machines",
+      "type": "concept",
+      "summary": "The simplest possible model of computation that captures all of computation. A tape, a head, a state table — and that's enough to compute anything computable.",
+      "content": "In 1936, Alan Turing imagined the simplest machine that could perform any calculation: an infinite tape of cells, a read/write head, and a finite table of rules. Despite its simplicity, a Turing machine can compute anything that any computer can compute — from rendering 3D graphics to training neural networks. This universality is the Church-Turing thesis. The Universal Turing Machine takes this further: a single machine that can simulate any other Turing machine, given its description as input. This is the theoretical foundation of the stored-program computer — the idea that data and programs are the same kind of thing. Turing's proof that the halting problem is undecidable (you cannot write a program that determines whether any arbitrary program will halt) established the first fundamental limit of computation and connected directly to Godel's incompleteness theorems. Both reveal that formal systems cannot fully analyze themselves.",
+      "tags": ["turing-machine", "computability", "universality", "church-turing"],
+      "links": ["https://en.wikipedia.org/wiki/Turing_machine"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
       "id": "society",
       "label": "Society",
       "type": "domain",
@@ -250,6 +345,20 @@
       "summary": "Positive feedback amplifies, negative feedback stabilizes. These loops govern everything from markets to climate to relationships.",
       "content": "A feedback loop exists when the output of a system feeds back as input, modifying future behavior. Positive (reinforcing) loops amplify change: compound interest, viral growth, arms races, and self-fulfilling prophecies. Negative (balancing) loops resist change: thermostats, predator-prey dynamics, and market corrections. Most complex systems contain both types interacting. The key insight is that system behavior emerges from loop structure, not from individual components. Understanding feedback loops is the first step toward designing interventions that work with the system rather than against it — pulling leverage points rather than pushing against resistance.",
       "tags": ["feedback", "reinforcing", "balancing", "systems"],
+      "metadata": {
+        "added": "2026-03-06",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
+      "id": "society/systems-thinking/cybernetics",
+      "label": "Cybernetics",
+      "type": "concept",
+      "summary": "Norbert Wiener's science of control and communication in animals and machines. The intellectual ancestor of AI, systems theory, and information science.",
+      "content": "Norbert Wiener coined 'cybernetics' in 1948 from the Greek kybernetes (steersman), defining it as the study of control and communication in the animal and the machine. The core insight is that the same mathematical principles govern regulation in biological organisms, mechanical systems, and social organizations. A thermostat, a human reaching for a cup, and a market correcting a price bubble all operate via negative feedback: sense the gap between desired and actual state, act to reduce it, sense again. Wiener saw that information — not energy — is the fundamental currency of control. This was revolutionary: it unified engineering, biology, and social science under one framework. First-order cybernetics studied observed systems; second-order cybernetics (Heinz von Foerster) recognized that the observer is part of the system being observed. Cybernetics gave birth to artificial intelligence, control theory, robotics, and cognitive science. Its emphasis on circular causality and self-regulation anticipated modern complexity theory and laid the groundwork for understanding how autonomous systems — biological or artificial — maintain themselves in a changing world.",
+      "tags": ["cybernetics", "wiener", "control-theory", "feedback", "information", "self-regulation"],
+      "links": ["https://en.wikipedia.org/wiki/Cybernetics", "https://en.wikipedia.org/wiki/Norbert_Wiener"],
       "metadata": {
         "added": "2026-03-06",
         "importance": 1,
@@ -405,6 +514,90 @@
       "relation": "relates-to",
       "weight": 0.5,
       "label": "Quantum consciousness theories — speculative but fascinating, from Penrose-Hameroff to quantum cognition"
+    },
+    {
+      "source": "society/systems-thinking/cybernetics",
+      "target": "society/systems-thinking/feedback-loops",
+      "relation": "generalizes",
+      "weight": 0.9,
+      "label": "Cybernetics formalized feedback loops as the mathematical core of all control systems"
+    },
+    {
+      "source": "society/systems-thinking/cybernetics",
+      "target": "technology/ai",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "Wiener's cybernetics directly inspired the field of artificial intelligence — machines that sense, decide, and act"
+    },
+    {
+      "source": "society/systems-thinking/cybernetics",
+      "target": "mathematics/information-theory",
+      "relation": "relates-to",
+      "weight": 0.9,
+      "label": "Wiener and Shannon worked in parallel — cybernetics and information theory share the same intellectual roots at MIT"
+    },
+    {
+      "source": "science/complexity",
+      "target": "society/systems-thinking",
+      "relation": "generalizes",
+      "weight": 0.8,
+      "label": "Complexity theory provides the mathematical foundation for systems thinking — emergence, attractors, phase transitions"
+    },
+    {
+      "source": "science/complexity/emergence",
+      "target": "philosophy/consciousness",
+      "relation": "relates-to",
+      "weight": 0.7,
+      "label": "Consciousness may be the ultimate emergent property — arising from neural complexity in ways we cannot yet explain"
+    },
+    {
+      "source": "science/complexity/emergence",
+      "target": "society/collective-intelligence",
+      "relation": "causes",
+      "weight": 0.8,
+      "label": "Collective intelligence is an emergent property of interacting agents — no individual possesses the group's knowledge"
+    },
+    {
+      "source": "mathematics/computation/turing-machines",
+      "target": "philosophy/epistemology/knowledge-limits",
+      "relation": "supports",
+      "weight": 0.85,
+      "label": "The halting problem proves fundamental limits on what can be known through computation — echoing Godel's incompleteness"
+    },
+    {
+      "source": "mathematics/computation",
+      "target": "technology/ai",
+      "relation": "applies-to",
+      "weight": 0.8,
+      "label": "Computation theory defines the landscape of what AI can and cannot solve — tractability bounds shape algorithm design"
+    },
+    {
+      "source": "philosophy/aristotle/four-causes",
+      "target": "science/complexity",
+      "relation": "relates-to",
+      "weight": 0.6,
+      "label": "Aristotle's formal and final causes anticipate emergence and teleology in complex systems"
+    },
+    {
+      "source": "philosophy/aristotle/virtue-ethics",
+      "target": "personal/learning/deliberate-practice",
+      "relation": "supports",
+      "weight": 0.85,
+      "label": "Aristotle's hexis (virtue as practiced habit) is the philosophical foundation of deliberate practice — excellence as repeated action"
+    },
+    {
+      "source": "philosophy/aristotle",
+      "target": "philosophy/epistemology",
+      "relation": "inspired-by",
+      "weight": 0.8,
+      "label": "Aristotle's Posterior Analytics founded epistemology as a systematic discipline — knowledge through demonstration from first principles"
+    },
+    {
+      "source": "society/systems-thinking/cybernetics",
+      "target": "science/complexity",
+      "relation": "inspired-by",
+      "weight": 0.75,
+      "label": "Cybernetics was a direct intellectual precursor to complexity science — both study self-organizing systems"
     }
   ]
 }

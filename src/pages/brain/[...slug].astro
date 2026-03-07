@@ -1,0 +1,277 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import { loadAndValidateGraph } from "../../utils/graph-loader";
+import { DOMAIN_COLORS, getNodeDomain, getParentId } from "../../types/knowledge";
+import type { KnowledgeNode, KnowledgeEdge } from "../../types/knowledge";
+
+export async function getStaticPaths() {
+  const graph = loadAndValidateGraph();
+  return graph.nodes.map((node) => ({
+    params: { slug: node.id },
+    props: { node },
+  }));
+}
+
+interface Props {
+  node: KnowledgeNode;
+}
+
+const { node } = Astro.props;
+const graph = loadAndValidateGraph();
+
+// Get connections
+const connectedEdges = graph.edges.filter(
+  (e) => e.source === node.id || e.target === node.id,
+);
+
+const connections = connectedEdges.map((edge) => {
+  const isSource = edge.source === node.id;
+  const otherId = isSource ? edge.target : edge.source;
+  const otherNode = graph.nodes.find((n) => n.id === otherId);
+  return { edge, otherId, otherNode, direction: isSource ? "outgoing" : "incoming" };
+});
+
+// Group connections by relation
+const grouped: Record<string, typeof connections> = {};
+for (const conn of connections) {
+  const key = conn.edge.relation;
+  if (!grouped[key]) grouped[key] = [];
+  grouped[key].push(conn);
+}
+
+// Breadcrumb
+const pathParts = node.id.split("/");
+const breadcrumb = pathParts.map((part, i) => ({
+  label: part.replace(/-/g, " "),
+  id: pathParts.slice(0, i + 1).join("/"),
+}));
+
+const domain = getNodeDomain(node.id);
+const domainColor = DOMAIN_COLORS[domain] || "#888888";
+
+// Children (nodes whose parent path matches this node)
+const children = graph.nodes.filter((n) => {
+  const parent = getParentId(n.id);
+  return parent === node.id;
+});
+
+const RELATION_LABELS: Record<string, string> = {
+  "is-part-of": "Part of",
+  "relates-to": "Related to",
+  causes: "Causes",
+  contradicts: "Contradicts",
+  supports: "Supports",
+  "inspired-by": "Inspired by",
+  "applies-to": "Applies to",
+  generalizes: "Generalizes",
+  specializes: "Specializes",
+  "analogous-to": "Analogous to",
+};
+---
+
+<BaseLayout
+  title={`${node.label} — Brain — Artemio Padilla`}
+  description={node.summary || `Knowledge node: ${node.label}`}
+>
+  <Navigation currentPath="/brain" />
+
+  <main class="mx-auto max-w-4xl px-6 pt-28 pb-20">
+    <!-- Breadcrumb -->
+    <nav class="mb-6 flex items-center gap-1 text-sm text-[var(--color-text-muted)]">
+      <a href="/brain" class="hover:text-[var(--color-primary)] transition-colors no-underline">
+        Brain
+      </a>
+      {breadcrumb.map((crumb, i) => (
+        <span class="flex items-center gap-1">
+          <span class="opacity-40">/</span>
+          {i < breadcrumb.length - 1 ? (
+            <a
+              href={`/brain/${crumb.id}`}
+              class="capitalize hover:text-[var(--color-primary)] transition-colors no-underline"
+            >
+              {crumb.label}
+            </a>
+          ) : (
+            <span class="capitalize text-[var(--color-heading)]">{crumb.label}</span>
+          )}
+        </span>
+      ))}
+    </nav>
+
+    <!-- Header -->
+    <header class="mb-10">
+      <div class="mb-3 flex flex-wrap items-center gap-3">
+        <span
+          class="rounded-md border px-2 py-0.5 text-xs font-semibold uppercase tracking-wide"
+          style={`border-color: ${domainColor}; color: ${domainColor}`}
+        >
+          {node.type}
+        </span>
+        <span
+          class="rounded-md border border-[var(--color-border)] px-2 py-0.5 text-xs text-[var(--color-text-muted)] capitalize"
+        >
+          {domain}
+        </span>
+        {node.metadata?.importance && (
+          <span class="text-xs text-[var(--color-text-muted)]">
+            {"★".repeat(node.metadata.importance)}
+          </span>
+        )}
+        {node.metadata?.status && (
+          <span class="rounded-md border border-[var(--color-border)] px-2 py-0.5 text-xs text-[var(--color-text-muted)]">
+            {node.metadata.status}
+          </span>
+        )}
+      </div>
+
+      <h1
+        class="font-heading text-5xl font-bold leading-tight md:text-6xl"
+        style={`color: ${domainColor}`}
+      >
+        {node.label}
+      </h1>
+
+      {node.summary && (
+        <p class="mt-4 text-lg leading-relaxed text-[var(--color-text)]">
+          {node.summary}
+        </p>
+      )}
+    </header>
+
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_280px]">
+      <!-- Main content -->
+      <div>
+        {node.content && (
+          <div class="prose-node mb-10">
+            {node.content.split("\n\n").map((p) => (
+              <p class="mb-4 text-base leading-relaxed text-[var(--color-text-muted)]">{p}</p>
+            ))}
+          </div>
+        )}
+
+        <!-- Tags -->
+        {node.tags.length > 0 && (
+          <div class="mb-8 flex flex-wrap gap-2">
+            {node.tags.map((tag) => (
+              <span class="rounded-md bg-[rgba(79,143,247,0.08)] px-3 py-1 text-xs font-medium text-[var(--color-primary)]">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <!-- External links -->
+        {node.links && node.links.length > 0 && (
+          <div class="mb-8">
+            <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+              References
+            </h2>
+            <div class="flex flex-col gap-2">
+              {node.links.map((link) => (
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-2 text-sm text-[var(--color-primary)] no-underline hover:underline"
+                >
+                  <svg class="h-3 w-3 flex-shrink-0 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  {new URL(link).hostname}{new URL(link).pathname !== "/" ? new URL(link).pathname : ""}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Children (sub-nodes) -->
+        {children.length > 0 && (
+          <div class="mb-8">
+            <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+              Sub-topics
+            </h2>
+            <div class="grid gap-3">
+              {children.map((child) => (
+                <a
+                  href={`/brain/${child.id}`}
+                  class="group rounded-lg border border-[var(--color-border)] p-4 no-underline transition-all hover:border-[var(--color-primary)] hover:bg-[rgba(79,143,247,0.04)]"
+                >
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="h-2 w-2 rounded-full"
+                      style={`background-color: ${DOMAIN_COLORS[getNodeDomain(child.id)] || "#888"}`}
+                    />
+                    <span class="font-medium text-[var(--color-heading)] group-hover:text-[var(--color-primary)]">
+                      {child.label}
+                    </span>
+                    <span class="text-xs text-[var(--color-text-muted)]">{child.type}</span>
+                  </div>
+                  {child.summary && (
+                    <p class="mt-1.5 text-sm text-[var(--color-text-muted)] line-clamp-2">
+                      {child.summary}
+                    </p>
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <!-- Sidebar: connections -->
+      <aside>
+        {Object.keys(grouped).length > 0 && (
+          <div class="rounded-lg border border-[var(--color-border)] p-5">
+            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+              Connections
+            </h2>
+            {Object.entries(grouped).map(([relation, conns]) => (
+              <div class="mb-4">
+                <span class="mb-2 block text-xs text-[var(--color-text-muted)] opacity-70 capitalize">
+                  {RELATION_LABELS[relation] || relation}
+                </span>
+                {conns.map((conn) => (
+                  <a
+                    href={`/brain/${conn.otherId}`}
+                    class="group mb-1.5 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-[rgba(79,143,247,0.08)]"
+                  >
+                    <span
+                      class="h-1.5 w-1.5 rounded-full flex-shrink-0"
+                      style={`background-color: ${conn.otherNode ? DOMAIN_COLORS[getNodeDomain(conn.otherId)] || "#888" : "#888"}`}
+                    />
+                    <span class="text-[var(--color-heading)] group-hover:text-[var(--color-primary)]">
+                      {conn.otherNode?.label || conn.otherId}
+                    </span>
+                    <span class="ml-auto text-xs text-[var(--color-text-muted)] opacity-50">
+                      {conn.direction === "outgoing" ? "→" : "←"}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            ))}
+
+            <a
+              href={`/brain?node=${node.id}`}
+              class="mt-4 block rounded-md border border-[var(--color-border)] p-2.5 text-center text-xs font-medium text-[var(--color-heading)] no-underline transition-all hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+            >
+              View in graph →
+            </a>
+          </div>
+        )}
+
+        <!-- Metadata -->
+        {node.metadata && (
+          <div class="mt-4 rounded-lg border border-[var(--color-border)] p-4 text-xs text-[var(--color-text-muted)]">
+            {node.metadata.added && <p>Added: {node.metadata.added}</p>}
+            {node.metadata.updated && <p>Updated: {node.metadata.updated}</p>}
+            <p class="mt-2 opacity-60">ID: {node.id}</p>
+          </div>
+        )}
+      </aside>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
