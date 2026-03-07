@@ -7,6 +7,8 @@ import {
   computeHierarchyLayout,
   computeRadialLayout,
   computeClusterLayout,
+  buildSubgraph,
+  placeDisconnectedNodes,
 } from "./layouts";
 import type { Positions } from "./layouts";
 
@@ -103,6 +105,7 @@ const GraphCanvas: FunctionalComponent<Props> = ({
   // Track current layout to detect changes for animation
   const currentLayoutRef = useRef<LayoutMode>("force");
   const currentRadialCenterRef = useRef<string>(radialCenter);
+  const currentRelationFilterRef = useRef<EdgeRelation | null>(relationFilter);
 
   useEffect(() => {
     setIsLight(document.documentElement.classList.contains("light"));
@@ -138,19 +141,48 @@ const GraphCanvas: FunctionalComponent<Props> = ({
     }
   }, []);
 
-  /** Compute positions for the given layout mode on a graphology graph */
-  async function computePositions(graph: any, mode: LayoutMode): Promise<Positions> {
+  /** Compute positions for the given layout mode, optionally on a relation subgraph */
+  async function computePositions(
+    graph: any,
+    mode: LayoutMode,
+    activeRelationFilter: EdgeRelation | null = null,
+  ): Promise<Positions> {
+    // When a relation filter is active, build a subgraph with only those edges
+    // so the layout structure reflects the selected relationship pattern
+    let layoutGraph = graph;
+    let connectedNodes: Set<string> | null = null;
+
+    if (activeRelationFilter) {
+      const result = await buildSubgraph(graph, edges, activeRelationFilter);
+      layoutGraph = result.subgraph;
+      connectedNodes = result.connectedNodes;
+    }
+
+    let positions: Positions;
     switch (mode) {
       case "hierarchy":
-        return computeHierarchyLayout(graph, nodes);
+        positions = computeHierarchyLayout(layoutGraph, nodes);
+        break;
       case "radial":
-        return computeRadialLayout(graph, radialCenter);
+        positions = computeRadialLayout(layoutGraph, radialCenter);
+        break;
       case "cluster":
-        return computeClusterLayout(graph, nodes);
+        positions = computeClusterLayout(layoutGraph, nodes);
+        break;
       case "force":
       default:
-        return computeForceLayout(graph);
+        positions = await computeForceLayout(layoutGraph);
+        break;
     }
+
+    // Place disconnected nodes on the periphery when filtering by relation
+    if (connectedNodes) {
+      const allNodeIds: string[] = [];
+      graph.forEachNode((id: string) => allNodeIds.push(id));
+      positions = placeDisconnectedNodes(positions, allNodeIds, connectedNodes);
+    }
+
+    return positions;
   }
 
   // 2D Sigma.js renderer — rebuilds on viewMode/filter/theme changes
@@ -203,7 +235,7 @@ const GraphCanvas: FunctionalComponent<Props> = ({
       }
 
       // Compute initial layout positions
-      const positions = await computePositions(graph, layoutMode);
+      const positions = await computePositions(graph, layoutMode, relationFilter);
       if (destroyed) return;
 
       // Apply positions to graph
@@ -323,6 +355,7 @@ const GraphCanvas: FunctionalComponent<Props> = ({
       graphRef.current = graph;
       currentLayoutRef.current = layoutMode;
       currentRadialCenterRef.current = radialCenter;
+      currentRelationFilterRef.current = relationFilter;
 
       // Set background
       containerRef.current!.style.backgroundColor = bgColor;
@@ -336,7 +369,7 @@ const GraphCanvas: FunctionalComponent<Props> = ({
     };
   }, [viewMode, isLight, visibleNodes.size, filters.domains.join(","), filters.types.join(",")]);
 
-  // Animate to new layout when layoutMode or radialCenter changes (2D only)
+  // Animate to new layout when layoutMode, radialCenter, or relationFilter changes (2D only)
   useEffect(() => {
     if (viewMode !== "2d") return;
     const graph = graphRef.current;
@@ -346,16 +379,18 @@ const GraphCanvas: FunctionalComponent<Props> = ({
     // Skip on initial render (already laid out in main effect)
     if (
       currentLayoutRef.current === layoutMode &&
-      currentRadialCenterRef.current === radialCenter
+      currentRadialCenterRef.current === radialCenter &&
+      currentRelationFilterRef.current === relationFilter
     ) {
       return;
     }
 
     currentLayoutRef.current = layoutMode;
     currentRadialCenterRef.current = radialCenter;
+    currentRelationFilterRef.current = relationFilter;
 
     const animate = async () => {
-      const positions = await computePositions(graph, layoutMode);
+      const positions = await computePositions(graph, layoutMode, relationFilter);
 
       // Build targets for animateNodes
       const targets: Record<string, { x: number; y: number }> = {};
@@ -380,7 +415,7 @@ const GraphCanvas: FunctionalComponent<Props> = ({
     };
 
     animate();
-  }, [layoutMode, radialCenter, viewMode]);
+  }, [layoutMode, radialCenter, relationFilter, viewMode]);
 
   // Update node highlights reactively
   useEffect(() => {

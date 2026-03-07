@@ -1,7 +1,94 @@
-import type { KnowledgeNode, KnowledgeEdge } from "../../types/knowledge";
+import type { KnowledgeNode, KnowledgeEdge, EdgeRelation } from "../../types/knowledge";
 import { getNodeDomain, getNodeDepth, getParentId } from "../../types/knowledge";
 
 export type Positions = Record<string, { x: number; y: number }>;
+
+/**
+ * Build a temporary graphology graph containing only edges of a specific relation.
+ * All visible nodes are kept; only edge connectivity changes.
+ * Returns the subgraph and the set of nodes connected by the filtered edges.
+ */
+export async function buildSubgraph(
+  fullGraph: any,
+  edges: KnowledgeEdge[],
+  relation: EdgeRelation,
+): Promise<{ subgraph: any; connectedNodes: Set<string> }> {
+  const { default: Graph } = await import("graphology");
+  const subgraph = new Graph();
+  const connectedNodes = new Set<string>();
+
+  // Copy all nodes with their current attributes
+  fullGraph.forEachNode((id: string, attrs: any) => {
+    subgraph.addNode(id, { ...attrs });
+  });
+
+  // Add only edges matching the relation
+  for (const edge of edges) {
+    if (edge.relation !== relation) continue;
+    if (!subgraph.hasNode(edge.source) || !subgraph.hasNode(edge.target)) continue;
+    try {
+      subgraph.addEdge(edge.source, edge.target, {
+        relation: edge.relation,
+        weight: edge.weight || 0.5,
+      });
+      connectedNodes.add(edge.source);
+      connectedNodes.add(edge.target);
+    } catch {
+      // skip duplicates
+    }
+  }
+
+  return { subgraph, connectedNodes };
+}
+
+/**
+ * Place disconnected nodes in a ring around the periphery of the connected layout.
+ * Connected positions are used to compute the bounding box, then disconnected
+ * nodes are arranged in an arc below/around the main layout.
+ */
+export function placeDisconnectedNodes(
+  positions: Positions,
+  allNodeIds: string[],
+  connectedNodes: Set<string>,
+): Positions {
+  const disconnected = allNodeIds.filter(
+    (id) => !connectedNodes.has(id) && !positions[id],
+  );
+  if (disconnected.length === 0) return positions;
+
+  // Find bounding box of connected positions
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const pos of Object.values(positions)) {
+    if (pos.x < minX) minX = pos.x;
+    if (pos.x > maxX) maxX = pos.x;
+    if (pos.y < minY) minY = pos.y;
+    if (pos.y > maxY) maxY = pos.y;
+  }
+
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  const extent = Math.max(maxX - minX, maxY - minY, 200);
+  const peripheryRadius = extent * 0.8;
+
+  // Spread disconnected nodes in an arc at the bottom
+  const arcStart = Math.PI * 0.3;  // ~55 degrees from bottom-left
+  const arcEnd = Math.PI * 0.7;    // ~125 degrees to bottom-right
+  const arcRange = arcEnd - arcStart;
+
+  // Sort by domain for visual grouping
+  disconnected.sort((a, b) => getNodeDomain(a).localeCompare(getNodeDomain(b)));
+
+  for (let i = 0; i < disconnected.length; i++) {
+    const t = disconnected.length === 1 ? 0.5 : i / (disconnected.length - 1);
+    const angle = arcStart + t * arcRange + Math.PI / 2; // offset so arc is at bottom
+    positions[disconnected[i]] = {
+      x: cx + Math.cos(angle) * peripheryRadius,
+      y: cy + Math.sin(angle) * peripheryRadius,
+    };
+  }
+
+  return positions;
+}
 
 /**
  * Compute force-directed layout using ForceAtlas2.
