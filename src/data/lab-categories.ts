@@ -51,6 +51,7 @@ export const categoryMap: Record<string, string> = {
   "bootstrap-resampling": "math",
   "monte-carlo": "math",
   "glm-explorer": "math",
+  "finance-sim": "math",
 
   // Algorithms & Data Structures
   "sorting-viz": "algo",

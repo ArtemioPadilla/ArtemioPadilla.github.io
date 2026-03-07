@@ -1,0 +1,1743 @@
+import { useState, useEffect, useRef, useMemo, useCallback } from "preact/hooks";
+import {
+  Chart,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  LineController,
+  Filler,
+  Legend,
+  Tooltip,
+} from "chart.js";
+
+Chart.register(
+  CategoryScale, LinearScale, PointElement, LineElement,
+  LineController, Filler, Legend, Tooltip
+);
+
+// ─── Types ────────────────────────────────────────────────────────────
+
+type AccountType = "checking" | "savings" | "investment" | "retirement";
+type CompoundInterval = "daily" | "monthly" | "quarterly" | "annually";
+type LoanType = "mortgage" | "auto" | "personal" | "credit-card";
+
+interface Account {
+  id: number; name: string; type: AccountType;
+  balance: number; annualRate: number; compoundInterval: CompoundInterval;
+}
+
+interface Loan {
+  id: number; name: string; type: LoanType;
+  principal: number; currentBalance: number; annualRate: number;
+  termMonths: number; paymentInterval: "monthly" | "biweekly"; startMonth: number;
+}
+
+interface Income {
+  id: number; name: string; amount: number;
+  periodicity: "weekly" | "biweekly" | "monthly";
+  growthRate: number; bonusMonth: number; bonusAmount: number;
+  startMonth: number; endMonth: number;
+}
+
+interface Expense {
+  id: number; name: string; amount: number;
+  frequency: "monthly" | "quarterly" | "annually" | "one-time";
+  category: string; inflationAdjusted: boolean;
+  startMonth: number; endMonth: number;
+}
+
+interface SimConfig { horizonYears: number; inflationRate: number; }
+
+interface FinanceState {
+  accounts: Account[]; loans: Loan[]; incomes: Income[]; expenses: Expense[];
+  config: SimConfig; nextId: number;
+}
+
+interface MonthRow {
+  month: number; year: number;
+  totalIncome: number; totalExpenses: number;
+  totalLoanPayments: number; totalInterestPaid: number; totalPrincipalPaid: number;
+  totalInterestEarned: number; netCashflow: number;
+  accountBalances: Record<number, number>; loanBalances: Record<number, number>;
+  totalAssets: number; totalDebt: number; netWorth: number;
+}
+
+interface YearSummary {
+  year: number; totalIncome: number; totalExpenses: number;
+  totalLoanPayments: number; interestEarned: number; interestPaid: number;
+  netCashflow: number; endAssets: number; endDebt: number; endNetWorth: number;
+}
+
+interface SimulationResult {
+  months: MonthRow[]; yearSummaries: YearSummary[];
+  finalNetWorth: number; finalAssets: number; finalDebt: number;
+  totalInterestEarned: number; totalInterestPaid: number;
+  avgMonthlyCashflow: number; debtFreeMonth: number;
+  alerts: string[];
+}
+
+// ─── Colors ───────────────────────────────────────────────────────────
+
+const C = {
+  gold: "#d4a843",
+  goldLight: "#f0c96a",
+  goldDim: "rgba(212,168,67,0.15)",
+  goldBorder: "rgba(212,168,67,0.25)",
+  blue: "#4a9eff",
+  blueDim: "rgba(74,158,255,0.15)",
+  blueBorder: "rgba(74,158,255,0.25)",
+  green: "#3fb68a",
+  greenDim: "rgba(63,182,138,0.15)",
+  greenBorder: "rgba(63,182,138,0.25)",
+  red: "#e05c6a",
+  redDim: "rgba(224,92,106,0.15)",
+  purple: "#a855f7",
+  orange: "#f59e0b",
+  cyan: "#06b6d4",
+  muted: "#7d8590",
+  gridDark: "rgba(48,54,61,0.5)",
+  gridLight: "rgba(0,0,0,0.06)",
+  palette: ["#4a9eff", "#3fb68a", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899"],
+};
+
+// ─── Formatters ───────────────────────────────────────────────────────
+
+const fmt = (n: number, dec = 0) =>
+  new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: dec,
+    maximumFractionDigits: dec,
+  }).format(n);
+
+const fmtM = (n: number) => "$" + fmt(n);
+
+const fmtShort = (n: number) => {
+  const abs = Math.abs(n);
+  const sign = n < 0 ? "-" : "";
+  if (abs >= 1e6) return sign + "$" + (abs / 1e6).toFixed(1) + "M";
+  if (abs >= 1e3) return sign + "$" + (abs / 1e3).toFixed(0) + "K";
+  return sign + "$" + abs.toFixed(0);
+};
+
+const fmtPct = (n: number) => n.toFixed(2) + "%";
+
+// ─── Category colors ──────────────────────────────────────────────────
+
+const CATEGORY_COLORS: Record<string, { color: string; bg: string; border: string }> = {
+  housing:        { color: C.blue,    bg: C.blueDim,    border: C.blueBorder },
+  transport:      { color: C.orange,  bg: "rgba(245,158,11,0.15)", border: "rgba(245,158,11,0.25)" },
+  food:           { color: C.green,   bg: C.greenDim,   border: C.greenBorder },
+  utilities:      { color: C.cyan,    bg: "rgba(6,182,212,0.15)",  border: "rgba(6,182,212,0.25)" },
+  insurance:      { color: C.purple,  bg: "rgba(168,85,247,0.15)", border: "rgba(168,85,247,0.25)" },
+  entertainment:  { color: "#ec4899", bg: "rgba(236,72,153,0.15)", border: "rgba(236,72,153,0.25)" },
+  education:      { color: C.blue,    bg: C.blueDim,    border: C.blueBorder },
+  health:         { color: C.red,     bg: C.redDim,     border: "rgba(224,92,106,0.25)" },
+  subscriptions:  { color: C.gold,    bg: C.goldDim,    border: C.goldBorder },
+  other:          { color: C.muted,   bg: "rgba(125,133,144,0.15)", border: "rgba(125,133,144,0.25)" },
+};
+
+const ACCOUNT_TYPE_COLORS: Record<AccountType, { color: string; bg: string; border: string }> = {
+  checking:   { color: C.blue,    bg: C.blueDim,    border: C.blueBorder },
+  savings:    { color: C.green,   bg: C.greenDim,   border: C.greenBorder },
+  investment: { color: C.purple,  bg: "rgba(168,85,247,0.15)", border: "rgba(168,85,247,0.25)" },
+  retirement: { color: C.orange,  bg: "rgba(245,158,11,0.15)", border: "rgba(245,158,11,0.25)" },
+};
+
+const LOAN_TYPE_COLORS: Record<LoanType, { color: string; bg: string; border: string }> = {
+  mortgage:      { color: C.blue,    bg: C.blueDim,    border: C.blueBorder },
+  auto:          { color: C.orange,  bg: "rgba(245,158,11,0.15)", border: "rgba(245,158,11,0.25)" },
+  personal:      { color: C.purple,  bg: "rgba(168,85,247,0.15)", border: "rgba(168,85,247,0.25)" },
+  "credit-card": { color: C.red,     bg: C.redDim,     border: "rgba(224,92,106,0.25)" },
+};
+
+const MONTH_NAMES = ["None","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+// ─── Calculation Engine ───────────────────────────────────────────────
+
+function calcLoanPayment(balance: number, monthlyRate: number, remainingMonths: number): number {
+  if (monthlyRate === 0) return remainingMonths > 0 ? balance / remainingMonths : 0;
+  if (remainingMonths <= 0) return 0;
+  const r = monthlyRate;
+  const n = remainingMonths;
+  return (balance * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+}
+
+function simulate(state: FinanceState): SimulationResult {
+  const totalMonths = state.config.horizonYears * 12;
+  const inflRate = state.config.inflationRate / 100;
+  const months: MonthRow[] = [];
+  const alerts: string[] = [];
+
+  const accBals: Record<number, number> = {};
+  for (const a of state.accounts) accBals[a.id] = a.balance;
+
+  const loanBals: Record<number, number> = {};
+  for (const l of state.loans) loanBals[l.id] = l.currentBalance;
+
+  let cumulativeInterestEarned = 0;
+  let cumulativeInterestPaid = 0;
+  let debtFreeMonth = 0;
+  let negCashflowCount = 0;
+
+  for (let m = 1; m <= totalMonths; m++) {
+    const yearIdx = Math.floor((m - 1) / 12);
+    const monthInYear = ((m - 1) % 12) + 1;
+
+    // 1. Income
+    let totalIncome = 0;
+    for (const inc of state.incomes) {
+      if (inc.startMonth > m) continue;
+      if (inc.endMonth > 0 && inc.endMonth < m) continue;
+      const growthFactor = Math.pow(1 + inc.growthRate / 100, Math.floor((m - 1) / 12));
+      let monthlyAmt = inc.amount;
+      if (inc.periodicity === "weekly") monthlyAmt = inc.amount * 52 / 12;
+      else if (inc.periodicity === "biweekly") monthlyAmt = inc.amount * 26 / 12;
+      totalIncome += monthlyAmt * growthFactor;
+      if (inc.bonusMonth > 0 && monthInYear === inc.bonusMonth) {
+        totalIncome += inc.bonusAmount * growthFactor;
+      }
+    }
+
+    // 2. Expenses
+    let totalExpenses = 0;
+    for (const exp of state.expenses) {
+      if (exp.startMonth > m) continue;
+      if (exp.endMonth > 0 && exp.endMonth < m) continue;
+
+      let applies = false;
+      if (exp.frequency === "monthly") applies = true;
+      else if (exp.frequency === "quarterly") applies = m % 3 === 1;
+      else if (exp.frequency === "annually") applies = m % 12 === 1;
+      else if (exp.frequency === "one-time") applies = m === exp.startMonth;
+
+      if (applies) {
+        let amount = exp.amount;
+        if (exp.inflationAdjusted) {
+          amount *= Math.pow(1 + inflRate, (m - 1) / 12);
+        }
+        totalExpenses += amount;
+      }
+    }
+
+    // 3. Loan payments
+    let totalLoanPayments = 0;
+    let totalInterestPaid = 0;
+    let totalPrincipalPaid = 0;
+    for (const loan of state.loans) {
+      if (loan.startMonth > m) continue;
+      const bal = loanBals[loan.id];
+      if (bal <= 0.01) continue;
+
+      const r = loan.annualRate / 100 / 12;
+      const monthsElapsed = m - loan.startMonth;
+      const remainingMonths = Math.max(0, loan.termMonths - monthsElapsed);
+      if (remainingMonths <= 0 && bal > 0.01) {
+        // Past term, pay remaining balance
+        const interest = bal * r;
+        totalInterestPaid += interest;
+        totalLoanPayments += bal + interest;
+        totalPrincipalPaid += bal;
+        loanBals[loan.id] = 0;
+        continue;
+      }
+
+      let payment = calcLoanPayment(bal, r, remainingMonths);
+      if (loan.paymentInterval === "biweekly") {
+        payment = calcLoanPayment(bal, r, remainingMonths) * 26 / 12;
+      }
+
+      const interest = bal * r;
+      const principal = Math.min(payment - interest, bal);
+      const actualPayment = interest + Math.max(0, principal);
+
+      totalInterestPaid += interest;
+      totalPrincipalPaid += Math.max(0, principal);
+      totalLoanPayments += actualPayment;
+      loanBals[loan.id] = Math.max(0, bal - Math.max(0, principal));
+    }
+
+    // 4. Net cashflow
+    const netCashflow = totalIncome - totalExpenses - totalLoanPayments;
+
+    // 5. Account interest
+    let totalInterestEarned = 0;
+    for (const acc of state.accounts) {
+      const bal = accBals[acc.id];
+      if (bal <= 0 || acc.annualRate <= 0) continue;
+      const r = acc.annualRate / 100;
+      let interest = 0;
+      if (acc.compoundInterval === "daily") {
+        interest = bal * (Math.pow(1 + r / 365, 30.44) - 1);
+      } else if (acc.compoundInterval === "monthly") {
+        interest = bal * r / 12;
+      } else if (acc.compoundInterval === "quarterly") {
+        interest = bal * (Math.pow(1 + r / 4, 1 / 3) - 1);
+      } else {
+        interest = bal * (Math.pow(1 + r, 1 / 12) - 1);
+      }
+      totalInterestEarned += interest;
+      accBals[acc.id] += interest;
+    }
+
+    cumulativeInterestEarned += totalInterestEarned;
+    cumulativeInterestPaid += totalInterestPaid;
+
+    // 6. Distribute cashflow
+    if (netCashflow >= 0) {
+      const checkingAcc = state.accounts.find(a => a.type === "checking") || state.accounts[0];
+      if (checkingAcc) accBals[checkingAcc.id] += netCashflow;
+    } else {
+      let deficit = Math.abs(netCashflow);
+      const checkingFirst = state.accounts.filter(a => a.type === "checking");
+      const savingsNext = state.accounts.filter(a => a.type === "savings");
+      const rest = state.accounts.filter(a => a.type !== "checking" && a.type !== "savings");
+      const deductOrder = [...checkingFirst, ...savingsNext, ...rest];
+      for (const acc of deductOrder) {
+        if (deficit <= 0) break;
+        const deduct = Math.min(deficit, accBals[acc.id]);
+        accBals[acc.id] -= deduct;
+        deficit -= deduct;
+      }
+      if (deficit > 0.01) {
+        const firstAcc = state.accounts[0];
+        if (firstAcc) accBals[firstAcc.id] -= deficit;
+      }
+    }
+
+    if (netCashflow < 0) negCashflowCount++;
+
+    // 7. Record month data
+    const totalAssets = state.accounts.reduce((sum, a) => sum + Math.max(0, accBals[a.id]), 0);
+    const totalDebt = state.loans.reduce((sum, l) => sum + Math.max(0, loanBals[l.id]), 0);
+
+    if (debtFreeMonth === 0 && totalDebt <= 0.01 && state.loans.length > 0) {
+      debtFreeMonth = m;
+    }
+
+    months.push({
+      month: m,
+      year: Math.ceil(m / 12),
+      totalIncome,
+      totalExpenses,
+      totalLoanPayments,
+      totalInterestPaid,
+      totalPrincipalPaid,
+      totalInterestEarned,
+      netCashflow,
+      accountBalances: { ...accBals },
+      loanBalances: { ...loanBals },
+      totalAssets,
+      totalDebt,
+      netWorth: totalAssets - totalDebt,
+    });
+  }
+
+  // Build year summaries
+  const yearSummaries: YearSummary[] = [];
+  for (let y = 1; y <= state.config.horizonYears; y++) {
+    const yearMonths = months.filter(r => r.year === y);
+    if (yearMonths.length === 0) continue;
+    const last = yearMonths[yearMonths.length - 1];
+    yearSummaries.push({
+      year: y,
+      totalIncome: yearMonths.reduce((s, r) => s + r.totalIncome, 0),
+      totalExpenses: yearMonths.reduce((s, r) => s + r.totalExpenses, 0),
+      totalLoanPayments: yearMonths.reduce((s, r) => s + r.totalLoanPayments, 0),
+      interestEarned: yearMonths.reduce((s, r) => s + r.totalInterestEarned, 0),
+      interestPaid: yearMonths.reduce((s, r) => s + r.totalInterestPaid, 0),
+      netCashflow: yearMonths.reduce((s, r) => s + r.netCashflow, 0),
+      endAssets: last.totalAssets,
+      endDebt: last.totalDebt,
+      endNetWorth: last.netWorth,
+    });
+  }
+
+  const lastMonth = months.length > 0 ? months[months.length - 1] : null;
+
+  // Alerts
+  if (negCashflowCount > 3) {
+    alerts.push(`Negative cashflow in ${negCashflowCount} of ${totalMonths} months.`);
+  }
+  if (lastMonth && lastMonth.netWorth < 0) {
+    alerts.push("Net worth is negative at the end of the projection.");
+  }
+  const totalMonthlyDebt = state.loans.reduce((s, l) => {
+    if (l.currentBalance <= 0.01) return s;
+    const r = l.annualRate / 100 / 12;
+    return s + calcLoanPayment(l.currentBalance, r, l.termMonths);
+  }, 0);
+  const totalMonthlyIncome = state.incomes.reduce((s, i) => {
+    let amt = i.amount;
+    if (i.periodicity === "weekly") amt = i.amount * 52 / 12;
+    else if (i.periodicity === "biweekly") amt = i.amount * 26 / 12;
+    return s + amt;
+  }, 0);
+  if (totalMonthlyIncome > 0) {
+    const dti = (totalMonthlyDebt / totalMonthlyIncome) * 100;
+    if (dti > 50) {
+      alerts.push(`High debt-to-income ratio: ${dti.toFixed(1)}%. Consider reducing debt.`);
+    }
+  }
+  const anyNegAccount = months.some(r =>
+    state.accounts.some(a => (r.accountBalances[a.id] ?? 0) < -100)
+  );
+  if (anyNegAccount) {
+    alerts.push("One or more accounts go negative during the projection.");
+  }
+
+  return {
+    months,
+    yearSummaries,
+    finalNetWorth: lastMonth?.netWorth ?? 0,
+    finalAssets: lastMonth?.totalAssets ?? 0,
+    finalDebt: lastMonth?.totalDebt ?? 0,
+    totalInterestEarned: cumulativeInterestEarned,
+    totalInterestPaid: cumulativeInterestPaid,
+    avgMonthlyCashflow: months.length > 0
+      ? months.reduce((s, r) => s + r.netCashflow, 0) / months.length
+      : 0,
+    debtFreeMonth,
+    alerts,
+  };
+}
+
+// ─── Subcomponents ────────────────────────────────────────────────────
+
+function CardTitle({ children }: { children: string }) {
+  return (
+    <div
+      class="mb-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.15em]"
+      style={{ color: C.gold }}
+    >
+      <span
+        class="inline-block h-1.5 w-1.5 rounded-full"
+        style={{ background: C.gold }}
+      />
+      {children}
+    </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  sub,
+  color,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  color?: string;
+}) {
+  return (
+    <div class="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-3 transition-colors hover:border-[var(--color-primary)]">
+      <div class="mb-1 font-mono text-[9px] uppercase tracking-[0.1em] text-[var(--color-text-muted)]">
+        {label}
+      </div>
+      <div
+        class="break-all font-mono text-base font-medium"
+        style={{ color: color || "var(--color-text)" }}
+      >
+        {value}
+      </div>
+      {sub && (
+        <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
+          {sub}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Default data ─────────────────────────────────────────────────────
+
+function defaultState(): FinanceState {
+  return {
+    accounts: [
+      { id: 1, name: "Checking", type: "checking", balance: 15000, annualRate: 0, compoundInterval: "monthly" },
+      { id: 2, name: "Savings", type: "savings", balance: 50000, annualRate: 4, compoundInterval: "monthly" },
+      { id: 3, name: "Investment", type: "investment", balance: 100000, annualRate: 8, compoundInterval: "monthly" },
+    ],
+    loans: [
+      { id: 4, name: "Mortgage", type: "mortgage", principal: 2400000, currentBalance: 2200000, annualRate: 10.5, termMonths: 240, paymentInterval: "monthly", startMonth: 1 },
+      { id: 5, name: "Auto Loan", type: "auto", principal: 350000, currentBalance: 280000, annualRate: 12, termMonths: 48, paymentInterval: "monthly", startMonth: 1 },
+    ],
+    incomes: [
+      { id: 6, name: "Salary", amount: 45000, periodicity: "monthly", growthRate: 5, bonusMonth: 12, bonusAmount: 45000, startMonth: 1, endMonth: 0 },
+    ],
+    expenses: [
+      { id: 7, name: "Groceries", amount: 6000, frequency: "monthly", category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+      { id: 8, name: "Utilities", amount: 3000, frequency: "monthly", category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+      { id: 9, name: "Insurance", amount: 4500, frequency: "monthly", category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
+      { id: 10, name: "Entertainment", amount: 3000, frequency: "monthly", category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+    ],
+    config: { horizonYears: 10, inflationRate: 4 },
+    nextId: 11,
+  };
+}
+
+// ─── Main Component ───────────────────────────────────────────────────
+
+export default function FinanceSim() {
+  const [state, setState] = useState<FinanceState>(defaultState);
+  const [tab, setTab] = useState<"dashboard" | "accounts" | "loans" | "income" | "expenses">("dashboard");
+  const [chartMode, setChartMode] = useState<"networth" | "cashflow" | "balances" | "debt">("networth");
+  const [tableOpen, setTableOpen] = useState(false);
+
+  // Account form
+  const [accName, setAccName] = useState("New Account");
+  const [accType, setAccType] = useState<AccountType>("savings");
+  const [accBalance, setAccBalance] = useState(10000);
+  const [accRate, setAccRate] = useState(3);
+  const [accCompound, setAccCompound] = useState<CompoundInterval>("monthly");
+
+  // Loan form
+  const [loanName, setLoanName] = useState("New Loan");
+  const [loanType, setLoanType] = useState<LoanType>("personal");
+  const [loanPrincipal, setLoanPrincipal] = useState(100000);
+  const [loanBalance, setLoanBalance] = useState(100000);
+  const [loanRate, setLoanRate] = useState(12);
+  const [loanTerm, setLoanTerm] = useState(60);
+  const [loanInterval, setLoanInterval] = useState<"monthly" | "biweekly">("monthly");
+  const [loanStart, setLoanStart] = useState(1);
+
+  // Income form
+  const [incName, setIncName] = useState("New Income");
+  const [incAmount, setIncAmount] = useState(10000);
+  const [incPeriodicity, setIncPeriodicity] = useState<"weekly" | "biweekly" | "monthly">("monthly");
+  const [incGrowth, setIncGrowth] = useState(3);
+  const [incBonusMonth, setIncBonusMonth] = useState(0);
+  const [incBonusAmount, setIncBonusAmount] = useState(0);
+  const [incStart, setIncStart] = useState(1);
+  const [incEnd, setIncEnd] = useState(0);
+
+  // Expense form
+  const [expName, setExpName] = useState("New Expense");
+  const [expAmount, setExpAmount] = useState(1000);
+  const [expFreq, setExpFreq] = useState<"monthly" | "quarterly" | "annually" | "one-time">("monthly");
+  const [expCategory, setExpCategory] = useState("other");
+  const [expInflation, setExpInflation] = useState(true);
+  const [expStart, setExpStart] = useState(1);
+  const [expEnd, setExpEnd] = useState(0);
+
+  // Refs
+  const chartRef = useRef<HTMLCanvasElement>(null);
+  const chartInstanceRef = useRef<Chart | null>(null);
+
+  // Simulation
+  const sim = useMemo(() => simulate(state), [state]);
+
+  // ── Input helpers ──
+  const numInput = useCallback((
+    value: number,
+    onChange: (v: number) => void,
+    opts?: {
+      prefix?: string;
+      suffix?: string;
+      min?: number;
+      max?: number;
+      step?: number;
+    }
+  ) => (
+    <div class="relative flex items-center">
+      {opts?.prefix && (
+        <span
+          class="pointer-events-none absolute left-3 z-[1] font-mono text-sm"
+          style={{ color: C.gold }}
+        >
+          {opts.prefix}
+        </span>
+      )}
+      <input
+        type="number"
+        value={value}
+        min={opts?.min}
+        max={opts?.max}
+        step={opts?.step}
+        onInput={(e) =>
+          onChange(Number((e.target as HTMLInputElement).value) || 0)
+        }
+        class={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-light)] py-2 font-mono text-sm text-[var(--color-text)] outline-none transition-colors focus:border-[var(--color-primary)] ${opts?.prefix ? "pl-7" : "px-3"} ${opts?.suffix ? "pr-10" : "pr-3"}`}
+        style={{
+          MozAppearance: "textfield",
+          WebkitAppearance: "none",
+        }}
+      />
+      {opts?.suffix && (
+        <span class="pointer-events-none absolute right-3 font-mono text-xs text-[var(--color-text-muted)]">
+          {opts.suffix}
+        </span>
+      )}
+    </div>
+  ), []);
+
+  const selectInput = useCallback((
+    value: string,
+    onChange: (v: string) => void,
+    options: { value: string; label: string }[]
+  ) => (
+    <select
+      value={value}
+      onChange={(e) => onChange((e.target as HTMLSelectElement).value)}
+      class="w-full cursor-pointer appearance-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-light)] px-3 py-2 pr-8 font-mono text-sm text-[var(--color-text)] outline-none transition-colors focus:border-[var(--color-primary)]"
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237d8590' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "right 12px center",
+      }}
+    >
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>
+          {o.label}
+        </option>
+      ))}
+    </select>
+  ), []);
+
+  const textInput = useCallback((
+    value: string,
+    onChange: (v: string) => void,
+  ) => (
+    <input
+      type="text"
+      value={value}
+      onInput={(e) => onChange((e.target as HTMLInputElement).value)}
+      class="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-light)] px-3 py-2 font-mono text-sm text-[var(--color-text)] outline-none transition-colors focus:border-[var(--color-primary)]"
+    />
+  ), []);
+
+  const label = useCallback((text: string) => (
+    <div class="mb-1 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+      {text}
+    </div>
+  ), []);
+
+  // ── State updaters ──
+  const setConfig = useCallback((patch: Partial<SimConfig>) => {
+    setState(s => ({ ...s, config: { ...s.config, ...patch } }));
+  }, []);
+
+  const addAccount = useCallback(() => {
+    if (!accName.trim()) return;
+    setState(s => ({
+      ...s,
+      accounts: [...s.accounts, {
+        id: s.nextId, name: accName, type: accType,
+        balance: accBalance, annualRate: accRate, compoundInterval: accCompound,
+      }],
+      nextId: s.nextId + 1,
+    }));
+  }, [accName, accType, accBalance, accRate, accCompound]);
+
+  const removeAccount = useCallback((id: number) => {
+    setState(s => ({ ...s, accounts: s.accounts.filter(a => a.id !== id) }));
+  }, []);
+
+  const addLoan = useCallback(() => {
+    if (!loanName.trim()) return;
+    setState(s => ({
+      ...s,
+      loans: [...s.loans, {
+        id: s.nextId, name: loanName, type: loanType,
+        principal: loanPrincipal, currentBalance: loanBalance,
+        annualRate: loanRate, termMonths: loanTerm,
+        paymentInterval: loanInterval, startMonth: loanStart,
+      }],
+      nextId: s.nextId + 1,
+    }));
+  }, [loanName, loanType, loanPrincipal, loanBalance, loanRate, loanTerm, loanInterval, loanStart]);
+
+  const removeLoan = useCallback((id: number) => {
+    setState(s => ({ ...s, loans: s.loans.filter(l => l.id !== id) }));
+  }, []);
+
+  const addIncome = useCallback(() => {
+    if (!incName.trim()) return;
+    setState(s => ({
+      ...s,
+      incomes: [...s.incomes, {
+        id: s.nextId, name: incName, amount: incAmount,
+        periodicity: incPeriodicity, growthRate: incGrowth,
+        bonusMonth: incBonusMonth, bonusAmount: incBonusAmount,
+        startMonth: incStart, endMonth: incEnd,
+      }],
+      nextId: s.nextId + 1,
+    }));
+  }, [incName, incAmount, incPeriodicity, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd]);
+
+  const removeIncome = useCallback((id: number) => {
+    setState(s => ({ ...s, incomes: s.incomes.filter(i => i.id !== id) }));
+  }, []);
+
+  const addExpense = useCallback(() => {
+    if (!expName.trim()) return;
+    setState(s => ({
+      ...s,
+      expenses: [...s.expenses, {
+        id: s.nextId, name: expName, amount: expAmount,
+        frequency: expFreq, category: expCategory,
+        inflationAdjusted: expInflation,
+        startMonth: expStart, endMonth: expEnd,
+      }],
+      nextId: s.nextId + 1,
+    }));
+  }, [expName, expAmount, expFreq, expCategory, expInflation, expStart, expEnd]);
+
+  const removeExpense = useCallback((id: number) => {
+    setState(s => ({ ...s, expenses: s.expenses.filter(e => e.id !== id) }));
+  }, []);
+
+  // ── Computed summaries ──
+  const totalMonthlyIncome = useMemo(() => {
+    return state.incomes.reduce((s, i) => {
+      let amt = i.amount;
+      if (i.periodicity === "weekly") amt = i.amount * 52 / 12;
+      else if (i.periodicity === "biweekly") amt = i.amount * 26 / 12;
+      return s + amt;
+    }, 0);
+  }, [state.incomes]);
+
+  const annualGrossIncome = useMemo(() => {
+    return state.incomes.reduce((s, i) => {
+      let annual = i.amount;
+      if (i.periodicity === "weekly") annual = i.amount * 52;
+      else if (i.periodicity === "biweekly") annual = i.amount * 26;
+      else annual = i.amount * 12;
+      if (i.bonusMonth > 0) annual += i.bonusAmount;
+      return s + annual;
+    }, 0);
+  }, [state.incomes]);
+
+  const totalMonthlyExpenses = useMemo(() => {
+    return state.expenses.reduce((s, e) => {
+      if (e.frequency === "monthly") return s + e.amount;
+      if (e.frequency === "quarterly") return s + e.amount / 3;
+      if (e.frequency === "annually") return s + e.amount / 12;
+      return s;
+    }, 0);
+  }, [state.expenses]);
+
+  const expensesByCategory = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const e of state.expenses) {
+      let monthly = e.amount;
+      if (e.frequency === "quarterly") monthly = e.amount / 3;
+      else if (e.frequency === "annually") monthly = e.amount / 12;
+      else if (e.frequency === "one-time") monthly = 0;
+      map[e.category] = (map[e.category] || 0) + monthly;
+    }
+    return Object.entries(map).sort((a, b) => b[1] - a[1]);
+  }, [state.expenses]);
+
+  const totalAccountBalance = useMemo(() => {
+    return state.accounts.reduce((s, a) => s + a.balance, 0);
+  }, [state.accounts]);
+
+  const monthlyInterestFromAccounts = useMemo(() => {
+    return state.accounts.reduce((s, a) => {
+      if (a.annualRate <= 0) return s;
+      return s + a.balance * a.annualRate / 100 / 12;
+    }, 0);
+  }, [state.accounts]);
+
+  const totalDebt = useMemo(() => {
+    return state.loans.reduce((s, l) => s + l.currentBalance, 0);
+  }, [state.loans]);
+
+  const totalMonthlyLoanPayments = useMemo(() => {
+    return state.loans.reduce((s, l) => {
+      if (l.currentBalance <= 0.01) return s;
+      const r = l.annualRate / 100 / 12;
+      let pmt = calcLoanPayment(l.currentBalance, r, l.termMonths);
+      if (l.paymentInterval === "biweekly") pmt = pmt * 26 / 12;
+      return s + pmt;
+    }, 0);
+  }, [state.loans]);
+
+  const totalInterestOverLife = useMemo(() => {
+    return state.loans.reduce((s, l) => {
+      if (l.currentBalance <= 0.01) return s;
+      const r = l.annualRate / 100 / 12;
+      const pmt = calcLoanPayment(l.currentBalance, r, l.termMonths);
+      return s + (pmt * l.termMonths - l.currentBalance);
+    }, 0);
+  }, [state.loans]);
+
+  // ── Chart rendering ──
+  useEffect(() => {
+    if (!chartRef.current || tab !== "dashboard") return;
+    if (chartInstanceRef.current) chartInstanceRef.current.destroy();
+
+    const isLight = document.documentElement.classList.contains("light");
+    const gridColor = isLight ? C.gridLight : C.gridDark;
+    const textColor = isLight ? "#71717a" : C.muted;
+
+    const totalMonths = sim.months.length;
+    if (totalMonths === 0) return;
+
+    // Sample every 12 months for labels
+    const labels: string[] = [];
+    const dataIndices: number[] = [];
+    for (let i = 0; i < totalMonths; i += 12) {
+      dataIndices.push(i);
+      labels.push(`Yr ${Math.floor(i / 12) + 1}`);
+    }
+
+    const sampleData = (accessor: (r: MonthRow) => number) =>
+      dataIndices.map(i => accessor(sim.months[i]));
+
+    let datasets: any[] = [];
+    let yAxisTitle = "Amount ($)";
+
+    const ctx = chartRef.current.getContext("2d");
+    if (!ctx) return;
+
+    if (chartMode === "networth") {
+      const grad = ctx.createLinearGradient(0, 0, 0, 340);
+      grad.addColorStop(0, "rgba(212,168,67,0.35)");
+      grad.addColorStop(1, "rgba(212,168,67,0.02)");
+      datasets = [{
+        label: "Net Worth",
+        data: sampleData(r => r.netWorth),
+        borderColor: C.gold,
+        backgroundColor: grad,
+        fill: true, tension: 0.3, borderWidth: 2.5, pointRadius: 3,
+        pointBackgroundColor: C.gold, pointBorderColor: C.gold,
+      }];
+      yAxisTitle = "Net Worth ($)";
+    } else if (chartMode === "cashflow") {
+      const incomeData = sampleData(r => r.totalIncome);
+      const expenseData = sampleData(r => -(r.totalExpenses + r.totalLoanPayments));
+      const netData = sampleData(r => r.netCashflow);
+      const greenGrad = ctx.createLinearGradient(0, 0, 0, 340);
+      greenGrad.addColorStop(0, "rgba(63,182,138,0.3)");
+      greenGrad.addColorStop(1, "rgba(63,182,138,0.02)");
+      const redGrad = ctx.createLinearGradient(0, 0, 0, 340);
+      redGrad.addColorStop(0, "rgba(224,92,106,0.02)");
+      redGrad.addColorStop(1, "rgba(224,92,106,0.3)");
+      datasets = [
+        {
+          label: "Income",
+          data: incomeData,
+          borderColor: C.green,
+          backgroundColor: greenGrad,
+          fill: true, tension: 0.3, borderWidth: 1.5, pointRadius: 0,
+        },
+        {
+          label: "Outflows",
+          data: expenseData,
+          borderColor: C.red,
+          backgroundColor: redGrad,
+          fill: true, tension: 0.3, borderWidth: 1.5, pointRadius: 0,
+        },
+        {
+          label: "Net Cashflow",
+          data: netData,
+          borderColor: C.goldLight,
+          backgroundColor: "transparent",
+          fill: false, tension: 0.3, borderWidth: 2, pointRadius: 2,
+          pointBackgroundColor: C.goldLight,
+          borderDash: [6, 3],
+        },
+      ];
+      yAxisTitle = "Monthly Cashflow ($)";
+    } else if (chartMode === "balances") {
+      datasets = state.accounts.map((acc, i) => ({
+        label: acc.name,
+        data: sampleData(r => r.accountBalances[acc.id] ?? 0),
+        borderColor: C.palette[i % C.palette.length],
+        backgroundColor: "transparent",
+        fill: false, tension: 0.3, borderWidth: 2, pointRadius: 2,
+        pointBackgroundColor: C.palette[i % C.palette.length],
+      }));
+      yAxisTitle = "Account Balance ($)";
+    } else {
+      datasets = state.loans.map((loan, i) => {
+        const color = C.palette[i % C.palette.length];
+        return {
+          label: loan.name,
+          data: sampleData(r => r.loanBalances[loan.id] ?? 0),
+          borderColor: color,
+          backgroundColor: "transparent",
+          fill: false, tension: 0.3, borderWidth: 2, pointRadius: 2,
+          pointBackgroundColor: color,
+        };
+      });
+      yAxisTitle = "Remaining Balance ($)";
+    }
+
+    chartInstanceRef.current = new Chart(chartRef.current, {
+      type: "line",
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            labels: {
+              color: textColor,
+              font: { family: "monospace", size: 10 },
+              boxWidth: 12,
+              padding: 16,
+            },
+          },
+          tooltip: {
+            backgroundColor: isLight ? "#fff" : "#1c2330",
+            borderColor: isLight ? "#e4e4e7" : "#30363d",
+            borderWidth: 1,
+            titleColor: isLight ? "#18181b" : "#e6edf3",
+            bodyColor: textColor,
+            titleFont: { family: "monospace", size: 11 },
+            bodyFont: { family: "monospace", size: 11 },
+            callbacks: {
+              label: (ctx: any) =>
+                ` ${ctx.dataset.label}: ${fmtShort(ctx.parsed.y ?? 0)}`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Time",
+              color: textColor,
+              font: { family: "monospace", size: 10 },
+              padding: { top: 8 },
+            },
+            grid: { color: gridColor, drawTicks: false },
+            ticks: {
+              color: textColor,
+              font: { family: "monospace", size: 9 },
+              maxRotation: 0,
+              autoSkip: true,
+              maxTicksLimit: 15,
+            },
+            border: { color: gridColor },
+          },
+          y: {
+            title: {
+              display: true,
+              text: yAxisTitle,
+              color: textColor,
+              font: { family: "monospace", size: 10 },
+              padding: { bottom: 8 },
+            },
+            grid: { color: gridColor },
+            ticks: {
+              color: textColor,
+              font: { family: "monospace", size: 9 },
+              callback: (v: any) => fmtShort(Number(v)),
+            },
+            border: { color: gridColor },
+          },
+        },
+      },
+    });
+
+    return () => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+        chartInstanceRef.current = null;
+      }
+    };
+  }, [sim, chartMode, tab, state.accounts, state.loans]);
+
+  // ── Pill button helper ──
+  const pillBtn = (
+    active: boolean,
+    onClick: () => void,
+    text: string
+  ) => (
+    <button
+      onClick={onClick}
+      class="rounded-md px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider transition-colors"
+      style={{
+        background: active ? C.goldDim : "transparent",
+        color: active ? C.goldLight : "var(--color-text-muted)",
+        border: active ? `1px solid ${C.goldBorder}` : "1px solid transparent",
+      }}
+    >
+      {text}
+    </button>
+  );
+
+  // ── Gold button ──
+  const goldButton = (onClick: () => void, text: string) => (
+    <button
+      onClick={onClick}
+      class="w-full rounded-lg border border-dashed border-[var(--color-border)] px-3 py-2.5 font-mono text-xs uppercase tracking-wider transition-colors hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/5"
+      style={{ color: C.gold }}
+    >
+      + {text}
+    </button>
+  );
+
+  // ── Delete button ──
+  const deleteBtn = (onClick: () => void) => (
+    <button
+      onClick={onClick}
+      class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[var(--color-border)] text-sm text-[var(--color-text-muted)] transition-colors hover:border-red-500 hover:text-red-400"
+    >
+      x
+    </button>
+  );
+
+  // ── Badge ──
+  const badge = (text: string, colors: { color: string; bg: string; border: string }) => (
+    <span
+      class="shrink-0 rounded px-2 py-0.5 font-mono text-[10px]"
+      style={{
+        color: colors.color,
+        background: colors.bg,
+        border: `1px solid ${colors.border}`,
+      }}
+    >
+      {text}
+    </span>
+  );
+
+  // ── Render Tabs ──
+  const TABS = [
+    { key: "dashboard", label: "Dashboard" },
+    { key: "accounts", label: "Accounts" },
+    { key: "loans", label: "Loans" },
+    { key: "income", label: "Income" },
+    { key: "expenses", label: "Expenses" },
+  ] as const;
+
+  const renderConfigBar = () => (
+    <div
+      class="mb-4 flex flex-wrap items-center gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-3"
+    >
+      <div class="flex items-center gap-2">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+          Horizon
+        </span>
+        <input
+          type="range"
+          min={1}
+          max={30}
+          value={state.config.horizonYears}
+          onInput={(e) => setConfig({ horizonYears: Number((e.target as HTMLInputElement).value) })}
+          class="h-1.5 w-28 cursor-pointer accent-[#d4a843]"
+        />
+        <span class="font-mono text-sm" style={{ color: C.goldLight }}>
+          {state.config.horizonYears}yr
+        </span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+          Inflation
+        </span>
+        <div class="w-20">
+          {numInput(state.config.inflationRate, (v) => setConfig({ inflationRate: v }), {
+            suffix: "%",
+            min: 0,
+            max: 20,
+            step: 0.5,
+          })}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderTabs = () => (
+    <div class="mb-4 flex gap-1 rounded-lg bg-[var(--color-bg)] p-0.5 overflow-x-auto">
+      {TABS.map((t) => (
+        <button
+          key={t.key}
+          onClick={() => setTab(t.key)}
+          class={`flex-1 min-w-[80px] rounded-md px-3 py-2 font-mono text-[11px] uppercase tracking-wider transition-colors ${
+            tab === t.key
+              ? "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)]"
+              : "border border-transparent text-[var(--color-text-muted)]"
+          }`}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  );
+
+  // ════════════════════════════════════════════════════════════════════
+  // Dashboard Tab
+  // ════════════════════════════════════════════════════════════════════
+
+  const renderDashboard = () => (
+    <div class="space-y-4">
+      {/* KPIs */}
+      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <CardTitle>Financial Overview</CardTitle>
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          <StatCard
+            label="Final Net Worth"
+            value={fmtShort(sim.finalNetWorth)}
+            sub={`in ${state.config.horizonYears} years`}
+            color={sim.finalNetWorth >= 0 ? C.goldLight : C.red}
+          />
+          <StatCard
+            label="Avg Monthly Cashflow"
+            value={fmtShort(sim.avgMonthlyCashflow)}
+            sub={sim.avgMonthlyCashflow >= 0 ? "surplus" : "deficit"}
+            color={sim.avgMonthlyCashflow >= 0 ? C.green : C.red}
+          />
+          <StatCard
+            label="Total Assets"
+            value={fmtShort(sim.finalAssets)}
+            sub="end of horizon"
+            color={C.blue}
+          />
+          <StatCard
+            label="Total Debt"
+            value={fmtShort(sim.finalDebt)}
+            sub="remaining"
+            color={sim.finalDebt > 0 ? C.red : C.green}
+          />
+          <StatCard
+            label="Debt-Free Month"
+            value={sim.debtFreeMonth > 0 ? `Month ${sim.debtFreeMonth}` : "N/A"}
+            sub={sim.debtFreeMonth > 0 ? `Yr ${Math.ceil(sim.debtFreeMonth / 12)}` : state.loans.length === 0 ? "no loans" : "beyond horizon"}
+            color={sim.debtFreeMonth > 0 ? C.green : C.muted}
+          />
+          <StatCard
+            label="Interest Earned vs Paid"
+            value={fmtShort(sim.totalInterestEarned)}
+            sub={`paid: ${fmtShort(sim.totalInterestPaid)}`}
+            color={sim.totalInterestEarned > sim.totalInterestPaid ? C.green : C.red}
+          />
+        </div>
+      </div>
+
+      {/* Chart */}
+      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <CardTitle>Projection</CardTitle>
+        <div class="mb-4 flex flex-wrap gap-1">
+          {pillBtn(chartMode === "networth", () => setChartMode("networth"), "Net Worth")}
+          {pillBtn(chartMode === "cashflow", () => setChartMode("cashflow"), "Cashflow")}
+          {pillBtn(chartMode === "balances", () => setChartMode("balances"), "Balances")}
+          {pillBtn(chartMode === "debt", () => setChartMode("debt"), "Debt Paydown")}
+        </div>
+        <div style={{ height: "360px", position: "relative" }}>
+          <canvas ref={chartRef} />
+        </div>
+      </div>
+
+      {/* Annual Summary */}
+      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <div class="flex items-center justify-between">
+          <CardTitle>Annual Summary</CardTitle>
+          <button
+            onClick={() => setTableOpen(!tableOpen)}
+            class="font-mono text-[10px] uppercase tracking-wider transition-colors"
+            style={{ color: C.gold }}
+          >
+            {tableOpen ? "Collapse" : "Expand"}
+          </button>
+        </div>
+        {tableOpen && (
+          <div class="overflow-x-auto">
+            <table class="w-full font-mono text-xs">
+              <thead>
+                <tr style={{ borderBottom: `1px solid var(--color-border)` }}>
+                  {["Year", "Income", "Expenses", "Loan Pmts", "Int. Earned", "Int. Paid", "Assets", "Debt", "Net Worth"].map(h => (
+                    <th
+                      key={h}
+                      class="px-2 py-2 text-left font-mono text-[9px] uppercase tracking-wider text-[var(--color-text-muted)]"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sim.yearSummaries.map((ys) => (
+                  <tr
+                    key={ys.year}
+                    class="border-b border-[var(--color-border)] transition-colors hover:bg-[var(--color-bg)]"
+                  >
+                    <td class="px-2 py-1.5" style={{ color: C.goldLight }}>Yr {ys.year}</td>
+                    <td class="px-2 py-1.5" style={{ color: C.green }}>{fmtShort(ys.totalIncome)}</td>
+                    <td class="px-2 py-1.5" style={{ color: C.red }}>{fmtShort(ys.totalExpenses)}</td>
+                    <td class="px-2 py-1.5">{fmtShort(ys.totalLoanPayments)}</td>
+                    <td class="px-2 py-1.5" style={{ color: C.green }}>{fmtShort(ys.interestEarned)}</td>
+                    <td class="px-2 py-1.5" style={{ color: C.red }}>{fmtShort(ys.interestPaid)}</td>
+                    <td class="px-2 py-1.5" style={{ color: C.blue }}>{fmtShort(ys.endAssets)}</td>
+                    <td class="px-2 py-1.5" style={{ color: ys.endDebt > 0 ? C.red : C.green }}>{fmtShort(ys.endDebt)}</td>
+                    <td class="px-2 py-1.5 font-medium" style={{ color: ys.endNetWorth >= 0 ? C.goldLight : C.red }}>{fmtShort(ys.endNetWorth)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {!tableOpen && sim.yearSummaries.length > 0 && (
+          <div class="font-mono text-[10px] text-[var(--color-text-muted)]">
+            {sim.yearSummaries.length} years of data. Click expand to view.
+          </div>
+        )}
+      </div>
+
+      {/* Alerts */}
+      {sim.alerts.length > 0 && (
+        <div
+          class="rounded-xl border p-4"
+          style={{ borderColor: "rgba(224,92,106,0.3)", background: "rgba(224,92,106,0.06)" }}
+        >
+          <div
+            class="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.15em]"
+            style={{ color: C.red }}
+          >
+            <span class="inline-block h-1.5 w-1.5 rounded-full" style={{ background: C.red }} />
+            Alerts
+          </div>
+          <ul class="space-y-1">
+            {sim.alerts.map((a, i) => (
+              <li key={i} class="font-mono text-xs text-[var(--color-text-muted)]">
+                {a}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+
+  // ════════════════════════════════════════════════════════════════════
+  // Accounts Tab
+  // ════════════════════════════════════════════════════════════════════
+
+  const renderAccounts = () => (
+    <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[380px_1fr]">
+      {/* Left: form + list */}
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Add Account</CardTitle>
+          <div class="mb-3">
+            {label("Account Name")}
+            {textInput(accName, setAccName)}
+          </div>
+          <div class="mb-3">
+            {label("Type")}
+            {selectInput(accType, (v) => setAccType(v as AccountType), [
+              { value: "checking", label: "Checking" },
+              { value: "savings", label: "Savings" },
+              { value: "investment", label: "Investment" },
+              { value: "retirement", label: "Retirement" },
+            ])}
+          </div>
+          <div class="mb-3 grid grid-cols-2 gap-3">
+            <div>
+              {label("Initial Balance")}
+              {numInput(accBalance, setAccBalance, { prefix: "$", min: 0, step: 1000 })}
+            </div>
+            <div>
+              {label("Annual Rate")}
+              {numInput(accRate, setAccRate, { suffix: "%", min: 0, max: 50, step: 0.25 })}
+            </div>
+          </div>
+          <div class="mb-4">
+            {label("Compound Interval")}
+            {selectInput(accCompound, (v) => setAccCompound(v as CompoundInterval), [
+              { value: "daily", label: "Daily" },
+              { value: "monthly", label: "Monthly" },
+              { value: "quarterly", label: "Quarterly" },
+              { value: "annually", label: "Annually" },
+            ])}
+          </div>
+          {goldButton(addAccount, "Add Account")}
+        </div>
+
+        {/* Account list */}
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Your Accounts</CardTitle>
+          <div class="flex max-h-80 flex-col gap-2 overflow-y-auto">
+            {state.accounts.length === 0 ? (
+              <p class="py-3 text-center font-mono text-xs text-[var(--color-text-muted)]">
+                No accounts yet. Add one above.
+              </p>
+            ) : (
+              state.accounts.map((a) => {
+                const tc = ACCOUNT_TYPE_COLORS[a.type];
+                return (
+                  <div
+                    key={a.id}
+                    class="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
+                  >
+                    <div class="min-w-0 flex-1">
+                      <div class="flex items-center gap-2">
+                        <span class="truncate font-mono text-sm text-[var(--color-text)]">
+                          {a.name}
+                        </span>
+                        {badge(a.type, tc)}
+                      </div>
+                      <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
+                        {fmtM(a.balance)} | {fmtPct(a.annualRate)} | {a.compoundInterval}
+                      </div>
+                    </div>
+                    {deleteBtn(() => removeAccount(a.id))}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Right: summary */}
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Account Summary</CardTitle>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <StatCard
+              label="Total Balance"
+              value={fmtM(totalAccountBalance)}
+              color={C.goldLight}
+            />
+            <StatCard
+              label="Monthly Interest"
+              value={fmtM(monthlyInterestFromAccounts)}
+              sub="estimated"
+              color={C.green}
+            />
+            <StatCard
+              label="Accounts"
+              value={String(state.accounts.length)}
+              sub={`${state.accounts.filter(a => a.type === "checking").length} checking, ${state.accounts.filter(a => a.type === "savings").length} savings, ${state.accounts.filter(a => a.type === "investment").length} invest., ${state.accounts.filter(a => a.type === "retirement").length} retire.`}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ════════════════════════════════════════════════════════════════════
+  // Loans Tab
+  // ════════════════════════════════════════════════════════════════════
+
+  const renderLoans = () => (
+    <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[380px_1fr]">
+      {/* Left: form + list */}
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Add Loan</CardTitle>
+          <div class="mb-3">
+            {label("Loan Name")}
+            {textInput(loanName, setLoanName)}
+          </div>
+          <div class="mb-3">
+            {label("Type")}
+            {selectInput(loanType, (v) => setLoanType(v as LoanType), [
+              { value: "mortgage", label: "Mortgage" },
+              { value: "auto", label: "Auto" },
+              { value: "personal", label: "Personal" },
+              { value: "credit-card", label: "Credit Card" },
+            ])}
+          </div>
+          <div class="mb-3 grid grid-cols-2 gap-3">
+            <div>
+              {label("Original Principal")}
+              {numInput(loanPrincipal, setLoanPrincipal, { prefix: "$", min: 0, step: 10000 })}
+            </div>
+            <div>
+              {label("Current Balance")}
+              {numInput(loanBalance, setLoanBalance, { prefix: "$", min: 0, step: 10000 })}
+            </div>
+          </div>
+          <div class="mb-3 grid grid-cols-2 gap-3">
+            <div>
+              {label("Annual Rate")}
+              {numInput(loanRate, setLoanRate, { suffix: "%", min: 0, max: 100, step: 0.25 })}
+            </div>
+            <div>
+              {label("Term (months)")}
+              {numInput(loanTerm, setLoanTerm, { suffix: "mo", min: 1, max: 600, step: 1 })}
+            </div>
+          </div>
+          <div class="mb-3 grid grid-cols-2 gap-3">
+            <div>
+              {label("Payment Interval")}
+              {selectInput(loanInterval, (v) => setLoanInterval(v as "monthly" | "biweekly"), [
+                { value: "monthly", label: "Monthly" },
+                { value: "biweekly", label: "Biweekly" },
+              ])}
+            </div>
+            <div>
+              {label("Start Month")}
+              {numInput(loanStart, setLoanStart, { min: 1, max: 360, step: 1 })}
+            </div>
+          </div>
+          {goldButton(addLoan, "Add Loan")}
+        </div>
+
+        {/* Loan list */}
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Your Loans</CardTitle>
+          <div class="flex max-h-80 flex-col gap-2 overflow-y-auto">
+            {state.loans.length === 0 ? (
+              <p class="py-3 text-center font-mono text-xs text-[var(--color-text-muted)]">
+                No loans yet. Add one above.
+              </p>
+            ) : (
+              state.loans.map((l) => {
+                const tc = LOAN_TYPE_COLORS[l.type];
+                const r = l.annualRate / 100 / 12;
+                const pmt = calcLoanPayment(l.currentBalance, r, l.termMonths);
+                return (
+                  <div
+                    key={l.id}
+                    class="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
+                  >
+                    <div class="min-w-0 flex-1">
+                      <div class="flex items-center gap-2">
+                        <span class="truncate font-mono text-sm text-[var(--color-text)]">
+                          {l.name}
+                        </span>
+                        {badge(l.type, tc)}
+                      </div>
+                      <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
+                        Bal: {fmtM(l.currentBalance)} | {fmtPct(l.annualRate)} | Pmt: {fmtM(pmt)} | {l.termMonths}mo | {l.paymentInterval}
+                      </div>
+                    </div>
+                    {deleteBtn(() => removeLoan(l.id))}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Right: summary */}
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Loan Summary</CardTitle>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <StatCard
+              label="Total Debt"
+              value={fmtM(totalDebt)}
+              color={totalDebt > 0 ? C.red : C.green}
+            />
+            <StatCard
+              label="Monthly Payments"
+              value={fmtM(totalMonthlyLoanPayments)}
+              sub="all loans combined"
+              color={C.goldLight}
+            />
+            <StatCard
+              label="Total Interest Over Life"
+              value={fmtM(totalInterestOverLife)}
+              sub="if paid to term"
+              color={C.red}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ════════════════════════════════════════════════════════════════════
+  // Income Tab
+  // ════════════════════════════════════════════════════════════════════
+
+  const renderIncome = () => (
+    <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[380px_1fr]">
+      {/* Left: form + list */}
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Add Income</CardTitle>
+          <div class="mb-3">
+            {label("Source Name")}
+            {textInput(incName, setIncName)}
+          </div>
+          <div class="mb-3 grid grid-cols-2 gap-3">
+            <div>
+              {label("Amount")}
+              {numInput(incAmount, setIncAmount, { prefix: "$", min: 0, step: 500 })}
+            </div>
+            <div>
+              {label("Periodicity")}
+              {selectInput(incPeriodicity, (v) => setIncPeriodicity(v as Income["periodicity"]), [
+                { value: "weekly", label: "Weekly" },
+                { value: "biweekly", label: "Biweekly" },
+                { value: "monthly", label: "Monthly" },
+              ])}
+            </div>
+          </div>
+          <div class="mb-3">
+            {label("Annual Growth Rate")}
+            {numInput(incGrowth, setIncGrowth, { suffix: "%", min: 0, max: 50, step: 0.5 })}
+          </div>
+          <div class="mb-3 grid grid-cols-2 gap-3">
+            <div>
+              {label("Bonus Month")}
+              {selectInput(String(incBonusMonth), (v) => setIncBonusMonth(Number(v)),
+                MONTH_NAMES.map((m, i) => ({ value: String(i), label: m }))
+              )}
+            </div>
+            <div>
+              {label("Bonus Amount")}
+              {numInput(incBonusAmount, setIncBonusAmount, { prefix: "$", min: 0, step: 1000 })}
+            </div>
+          </div>
+          <div class="mb-4 grid grid-cols-2 gap-3">
+            <div>
+              {label("Start Month")}
+              {numInput(incStart, setIncStart, { min: 1, max: 360, step: 1 })}
+            </div>
+            <div>
+              {label("End Month (0 = indefinite)")}
+              {numInput(incEnd, setIncEnd, { min: 0, max: 360, step: 1 })}
+            </div>
+          </div>
+          {goldButton(addIncome, "Add Income")}
+        </div>
+
+        {/* Income list */}
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Your Income Sources</CardTitle>
+          <div class="flex max-h-80 flex-col gap-2 overflow-y-auto">
+            {state.incomes.length === 0 ? (
+              <p class="py-3 text-center font-mono text-xs text-[var(--color-text-muted)]">
+                No income sources yet. Add one above.
+              </p>
+            ) : (
+              state.incomes.map((inc) => (
+                <div
+                  key={inc.id}
+                  class="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
+                >
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2">
+                      <span class="truncate font-mono text-sm text-[var(--color-text)]">
+                        {inc.name}
+                      </span>
+                      {badge(inc.periodicity, { color: C.green, bg: C.greenDim, border: C.greenBorder })}
+                    </div>
+                    <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
+                      {fmtM(inc.amount)}/{inc.periodicity} | Growth: {fmtPct(inc.growthRate)}
+                      {inc.bonusMonth > 0 ? ` | Bonus: ${fmtM(inc.bonusAmount)} in ${MONTH_NAMES[inc.bonusMonth]}` : ""}
+                      {inc.endMonth > 0 ? ` | Ends month ${inc.endMonth}` : ""}
+                    </div>
+                  </div>
+                  {deleteBtn(() => removeIncome(inc.id))}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Right: summary */}
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Income Summary</CardTitle>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <StatCard
+              label="Total Monthly Income"
+              value={fmtM(totalMonthlyIncome)}
+              sub="before growth"
+              color={C.green}
+            />
+            <StatCard
+              label="Annual Gross Income"
+              value={fmtM(annualGrossIncome)}
+              sub="including bonuses"
+              color={C.goldLight}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ════════════════════════════════════════════════════════════════════
+  // Expenses Tab
+  // ════════════════════════════════════════════════════════════════════
+
+  const renderExpenses = () => (
+    <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[380px_1fr]">
+      {/* Left: form + list */}
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Add Expense</CardTitle>
+          <div class="mb-3">
+            {label("Expense Name")}
+            {textInput(expName, setExpName)}
+          </div>
+          <div class="mb-3 grid grid-cols-2 gap-3">
+            <div>
+              {label("Amount")}
+              {numInput(expAmount, setExpAmount, { prefix: "$", min: 0, step: 100 })}
+            </div>
+            <div>
+              {label("Frequency")}
+              {selectInput(expFreq, (v) => setExpFreq(v as Expense["frequency"]), [
+                { value: "monthly", label: "Monthly" },
+                { value: "quarterly", label: "Quarterly" },
+                { value: "annually", label: "Annually" },
+                { value: "one-time", label: "One-time" },
+              ])}
+            </div>
+          </div>
+          <div class="mb-3">
+            {label("Category")}
+            {selectInput(expCategory, setExpCategory, [
+              { value: "housing", label: "Housing" },
+              { value: "transport", label: "Transport" },
+              { value: "food", label: "Food" },
+              { value: "utilities", label: "Utilities" },
+              { value: "insurance", label: "Insurance" },
+              { value: "entertainment", label: "Entertainment" },
+              { value: "education", label: "Education" },
+              { value: "health", label: "Health" },
+              { value: "subscriptions", label: "Subscriptions" },
+              { value: "other", label: "Other" },
+            ])}
+          </div>
+          <div class="mb-3 flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={expInflation}
+              onInput={(e) => setExpInflation((e.target as HTMLInputElement).checked)}
+              class="h-4 w-4 rounded border-[var(--color-border)] accent-[#d4a843]"
+            />
+            <span class="font-mono text-xs text-[var(--color-text-muted)]">
+              Inflation-adjusted
+            </span>
+          </div>
+          <div class="mb-4 grid grid-cols-2 gap-3">
+            <div>
+              {label("Start Month")}
+              {numInput(expStart, setExpStart, { min: 1, max: 360, step: 1 })}
+            </div>
+            <div>
+              {label("End Month (0 = indefinite)")}
+              {numInput(expEnd, setExpEnd, { min: 0, max: 360, step: 1 })}
+            </div>
+          </div>
+          {goldButton(addExpense, "Add Expense")}
+        </div>
+
+        {/* Expense list */}
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Your Expenses</CardTitle>
+          <div class="flex max-h-80 flex-col gap-2 overflow-y-auto">
+            {state.expenses.length === 0 ? (
+              <p class="py-3 text-center font-mono text-xs text-[var(--color-text-muted)]">
+                No expenses yet. Add one above.
+              </p>
+            ) : (
+              state.expenses.map((exp) => {
+                const cc = CATEGORY_COLORS[exp.category] || CATEGORY_COLORS.other;
+                return (
+                  <div
+                    key={exp.id}
+                    class="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
+                  >
+                    <div class="min-w-0 flex-1">
+                      <div class="flex items-center gap-2">
+                        <span class="truncate font-mono text-sm text-[var(--color-text)]">
+                          {exp.name}
+                        </span>
+                        {badge(exp.category, cc)}
+                        {exp.inflationAdjusted && (
+                          <span class="font-mono text-[9px] text-[var(--color-text-muted)]" title="Inflation-adjusted">
+                            INF
+                          </span>
+                        )}
+                      </div>
+                      <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
+                        {fmtM(exp.amount)} / {exp.frequency}
+                        {exp.endMonth > 0 ? ` | Ends month ${exp.endMonth}` : ""}
+                      </div>
+                    </div>
+                    {deleteBtn(() => removeExpense(exp.id))}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Right: summary */}
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Expense Summary</CardTitle>
+          <div class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <StatCard
+              label="Total Monthly Expenses"
+              value={fmtM(totalMonthlyExpenses)}
+              sub="recurring only"
+              color={C.red}
+            />
+            <StatCard
+              label="Annual Expenses"
+              value={fmtM(totalMonthlyExpenses * 12)}
+              sub="estimated"
+              color={C.goldLight}
+            />
+          </div>
+
+          {/* Category breakdown */}
+          {expensesByCategory.length > 0 && (
+            <>
+              <CardTitle>Breakdown by Category</CardTitle>
+              <div class="space-y-2">
+                {expensesByCategory.map(([cat, amt]) => {
+                  const cc = CATEGORY_COLORS[cat] || CATEGORY_COLORS.other;
+                  const pct = totalMonthlyExpenses > 0 ? (amt / totalMonthlyExpenses) * 100 : 0;
+                  return (
+                    <div key={cat} class="flex items-center gap-3">
+                      <div class="w-20">
+                        {badge(cat, cc)}
+                      </div>
+                      <div class="flex-1">
+                        <div
+                          class="h-2 rounded-full"
+                          style={{ background: "var(--color-bg)" }}
+                        >
+                          <div
+                            class="h-2 rounded-full transition-all"
+                            style={{
+                              width: `${Math.min(pct, 100)}%`,
+                              background: cc.color,
+                              opacity: 0.7,
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <span class="w-16 text-right font-mono text-xs text-[var(--color-text)]">
+                        {fmtM(amt)}
+                      </span>
+                      <span class="w-10 text-right font-mono text-[10px] text-[var(--color-text-muted)]">
+                        {pct.toFixed(0)}%
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  // ════════════════════════════════════════════════════════════════════
+  // Main Render
+  // ════════════════════════════════════════════════════════════════════
+
+  return (
+    <div class="space-y-0">
+      {renderConfigBar()}
+      {renderTabs()}
+      {tab === "dashboard" && renderDashboard()}
+      {tab === "accounts" && renderAccounts()}
+      {tab === "loans" && renderLoans()}
+      {tab === "income" && renderIncome()}
+      {tab === "expenses" && renderExpenses()}
+    </div>
+  );
+}
