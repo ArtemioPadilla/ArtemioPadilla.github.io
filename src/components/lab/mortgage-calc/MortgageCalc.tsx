@@ -352,7 +352,9 @@ export default function MortgageCalc() {
 
     const labels = Array.from({ length: maxMeses }, (_, i) => {
       const m = i + 1;
-      return m % 12 === 0 ? `Ano ${m / 12}` : m === 1 ? "Mes 1" : "";
+      if (m % 12 === 0) return `Ano ${m / 12}`;
+      if (m % 6 === 0) return `Mes ${m}`;
+      return "";
     });
 
     let datasets: any[] = [];
@@ -452,7 +454,9 @@ export default function MortgageCalc() {
       chartTab === "desglose"
         ? base.rows.map((_, i) => {
             const m = i + 1;
-            return m % 12 === 0 ? `Ano ${m / 12}` : "";
+            if (m % 12 === 0) return `Ano ${m / 12}`;
+            if (m % 6 === 0) return `Mes ${m}`;
+            return "";
           })
         : labels;
 
@@ -488,6 +492,13 @@ export default function MortgageCalc() {
         },
         scales: {
           x: {
+            title: {
+              display: true,
+              text: "Tiempo",
+              color: textColor,
+              font: { family: "monospace", size: 10 },
+              padding: { top: 8 },
+            },
             grid: { color: gridColor, drawTicks: false },
             ticks: {
               color: textColor,
@@ -500,6 +511,13 @@ export default function MortgageCalc() {
           },
           y: {
             stacked,
+            title: {
+              display: true,
+              text: chartTab === "desglose" ? "Monto mensual (MXN)" : "Monto (MXN)",
+              color: textColor,
+              font: { family: "monospace", size: 10 },
+              padding: { bottom: 8 },
+            },
             grid: { color: gridColor },
             ticks: {
               color: textColor,
