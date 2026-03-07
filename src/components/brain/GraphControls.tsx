@@ -182,7 +182,7 @@ const GraphControls: FunctionalComponent<Props> = ({
   // Find radial center label
   const radialCenterLabel = nodes.find((n) => n.id === radialCenter)?.label || radialCenter.split("/").pop();
 
-  return (
+  return (<>
     <div class="graph-controls">
       {/* Search */}
       <div class="graph-search-container">
@@ -364,28 +364,29 @@ const GraphControls: FunctionalComponent<Props> = ({
           Center: {radialCenterLabel}
         </div>
       )}
-
-      {/* Domain legend */}
-      <div class="graph-legend">
-        {domains.map((domain) => (
-          <div key={domain} class="graph-legend-item">
-            <span
-              class="graph-legend-dot"
-              style={{ backgroundColor: DOMAIN_COLORS[domain] || "#888" }}
-            />
-            <span class="graph-legend-label">{domain}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Keyboard hints */}
-      <div class="graph-hints">
-        <span><kbd>/</kbd> search</span>
-        <span><kbd>2</kbd>/<kbd>3</kbd> view</span>
-        <span><kbd>L</kbd> layout</span>
-        <span><kbd>Esc</kbd> close</span>
-      </div>
     </div>
+
+    {/* Domain legend — outside .graph-controls so it positions relative to .brain-container */}
+    <div class="graph-legend">
+      {domains.map((domain) => (
+        <div key={domain} class="graph-legend-item">
+          <span
+            class="graph-legend-dot"
+            style={{ backgroundColor: DOMAIN_COLORS[domain] || "#888" }}
+          />
+          <span class="graph-legend-label">{domain}</span>
+        </div>
+      ))}
+    </div>
+
+    {/* Keyboard hints */}
+    <div class="graph-hints">
+      <span><kbd>/</kbd> search</span>
+      <span><kbd>2</kbd>/<kbd>3</kbd> view</span>
+      <span><kbd>L</kbd> layout</span>
+      <span><kbd>Esc</kbd> close</span>
+    </div>
+  </>
   );
 };
 
