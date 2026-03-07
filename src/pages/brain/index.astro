@@ -196,6 +196,73 @@ const graph = loadAndValidateGraph();
     letter-spacing: 0.05em;
   }
 
+  /* Layout selector */
+  .graph-layout-selector {
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    backdrop-filter: blur(12px);
+  }
+
+  html:not(.light) .graph-layout-selector {
+    background: rgba(17, 17, 17, 0.85);
+  }
+
+  .graph-layout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 12px;
+    border: none;
+    background: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .graph-layout-btn.active {
+    color: var(--color-heading);
+    background: rgba(79, 143, 247, 0.15);
+  }
+
+  .graph-layout-btn:hover:not(.active) {
+    color: var(--color-heading);
+  }
+
+  .graph-layout-btn svg {
+    display: block;
+  }
+
+  /* Radial center badge */
+  .graph-radial-badge {
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    backdrop-filter: blur(12px);
+    font-size: 11px;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  html:not(.light) .graph-radial-badge {
+    background: rgba(17, 17, 17, 0.85);
+  }
+
+  /* Relation filter count */
+  .graph-filter-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--color-text-muted);
+    opacity: 0.6;
+  }
+
+  .graph-filter-option input[type="radio"] {
+    accent-color: var(--color-primary);
+  }
+
   /* View toggle */
   .graph-view-toggle {
     display: flex;
@@ -704,12 +771,21 @@ const graph = loadAndValidateGraph();
       flex-basis: 100%;
     }
 
-    .graph-view-toggle {
+    .graph-layout-selector {
       order: 2;
     }
 
-    .graph-filter-container {
+    .graph-view-toggle {
       order: 3;
+    }
+
+    .graph-filter-container {
+      order: 4;
+    }
+
+    .graph-radial-badge {
+      order: 5;
+      font-size: 10px;
     }
 
     .brain-stats {

@@ -1,5 +1,7 @@
 export type NodeType = "domain" | "topic" | "concept" | "claim" | "source";
 
+export type LayoutMode = "force" | "hierarchy" | "radial" | "cluster";
+
 export type EdgeRelation =
   | "is-part-of"
   | "relates-to"
