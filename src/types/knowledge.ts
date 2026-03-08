@@ -22,6 +22,7 @@ export interface KnowledgeNode {
   summary?: string;
   tags: string[];
   links?: string[];
+  subgraph?: string;
   metadata?: {
     added: string;
     updated?: string;
@@ -53,6 +54,27 @@ export const DOMAIN_COLORS: Record<string, string> = {
   "art-culture": "#ec4899",
   personal: "#f97316",
   mathematics: "#06b6d4",
+};
+
+export interface SubgraphConfig {
+  domainColors: Record<string, string>;
+  defaultLayout?: LayoutMode;
+}
+
+export const SUBGRAPH_CONFIGS: Record<string, SubgraphConfig> = {
+  "world-religions.json": {
+    domainColors: {
+      "middle-east": "#f59e0b",
+      "south-asia": "#34d399",
+      "east-asia": "#4f8ff7",
+      "europe": "#a78bfa",
+      "africa": "#ec4899",
+      "americas": "#f97316",
+      "global": "#06b6d4",
+      "iran": "#f43f5e",
+    },
+    defaultLayout: "hierarchy",
+  },
 };
 
 export function getNodeDomain(id: string): string {

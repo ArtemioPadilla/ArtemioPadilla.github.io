@@ -1,0 +1,1024 @@
+{
+  "version": "0.1.0",
+  "lastUpdated": "2026-03-08",
+  "nodes": [
+    {
+      "id": "middle-east",
+      "label": "Middle East",
+      "type": "domain",
+      "summary": "The cradle of Abrahamic religions — Judaism, Christianity, and Islam all emerged here.",
+      "tags": ["region", "abrahamic", "monotheism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "south-asia",
+      "label": "South Asia",
+      "type": "domain",
+      "summary": "Birthplace of Dharmic religions — Hinduism, Buddhism, Jainism, and Sikhism.",
+      "tags": ["region", "dharmic", "india"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "east-asia",
+      "label": "East Asia",
+      "type": "domain",
+      "summary": "Home to Confucianism, Taoism, Shinto, and unique Buddhist traditions.",
+      "tags": ["region", "chinese", "japanese"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "europe",
+      "label": "Europe",
+      "type": "domain",
+      "summary": "Where Christianity split, reformed, and diversified into hundreds of denominations.",
+      "tags": ["region", "christianity", "reformation"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "africa",
+      "label": "Africa",
+      "type": "domain",
+      "summary": "Ancient traditional religions and rich syncretic traditions born from the diaspora.",
+      "tags": ["region", "traditional", "syncretic"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "americas",
+      "label": "Americas",
+      "type": "domain",
+      "summary": "New World religious movements — from Pentecostalism to Mormonism, Santeria to Candomble.",
+      "tags": ["region", "new-world", "revivalism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "global",
+      "label": "Global / Cross-Regional",
+      "type": "domain",
+      "summary": "Ancient religions, new religious movements, and traditions that transcend geographic boundaries.",
+      "tags": ["region", "ancient", "modern"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "iran",
+      "label": "Iran / Persia",
+      "type": "domain",
+      "summary": "Iranian religions — Zoroastrianism, Manichaeism, and Yazidism shaped monotheism and dualism worldwide.",
+      "tags": ["region", "persian", "dualism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "iran/zoroastrianism",
+      "label": "Zoroastrianism",
+      "type": "topic",
+      "summary": "Founded by Zoroaster ~1500-500 BCE in Persia. First major monotheistic religion — introduced heaven, hell, angels, final judgment, and cosmic dualism between good (Ahura Mazda) and evil (Angra Mainyu).",
+      "tags": ["zoroastrianism", "monotheism", "dualism", "persia", "ancient"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "iran/manichaeism",
+      "label": "Manichaeism",
+      "type": "concept",
+      "summary": "Founded by Mani in 3rd century CE Persia. Syncretic religion blending Zoroastrian dualism, Christian theology, and Buddhist cosmology. Once spread from Rome to China.",
+      "tags": ["manichaeism", "dualism", "syncretic", "persia"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "iran/yazidism",
+      "label": "Yazidism",
+      "type": "concept",
+      "summary": "Ancient Kurdish religion centered on Melek Taus (Peacock Angel). Blends elements of Zoroastrianism, Islam, and local traditions. Primarily in Kurdistan, ~12th century formalization.",
+      "tags": ["yazidism", "kurdish", "peacock-angel"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "middle-east/judaism",
+      "label": "Judaism",
+      "type": "topic",
+      "summary": "The oldest Abrahamic religion, ~2000 BCE in Canaan. Covenant between God and Abraham's descendants. Torah as foundational text. Monotheism, ethical law, and peoplehood.",
+      "tags": ["judaism", "monotheism", "torah", "covenant"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "middle-east/judaism/orthodox",
+      "label": "Orthodox Judaism",
+      "type": "concept",
+      "summary": "Traditional Judaism maintaining halakha (Jewish law) as divinely authored and binding. Includes Modern Orthodox and Haredi (ultra-Orthodox) streams.",
+      "tags": ["orthodox", "halakha", "tradition"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/judaism/hasidic",
+      "label": "Hasidic Judaism",
+      "type": "concept",
+      "summary": "Founded by Baal Shem Tov in 1740s Ukraine. Mystical, joyful approach to God through prayer, song, and devotion. Organized into dynastic courts (Chabad, Satmar, Breslov, etc.).",
+      "tags": ["hasidic", "mysticism", "baal-shem-tov", "kabbalah"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/judaism/conservative",
+      "label": "Conservative Judaism",
+      "type": "concept",
+      "summary": "Middle path between Orthodox and Reform. Maintains halakha as binding but subject to historical evolution. Founded 1880s in Germany/USA by Zacharias Frankel.",
+      "tags": ["conservative", "halakha", "historical"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/judaism/reform",
+      "label": "Reform Judaism",
+      "type": "concept",
+      "summary": "Founded 1810s in Germany. Torah as God-inspired but not literal divine dictation. Halakha is non-binding; emphasis on ethical monotheism and social justice.",
+      "tags": ["reform", "liberal", "progressive"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/judaism/reconstructionist",
+      "label": "Reconstructionist Judaism",
+      "type": "concept",
+      "summary": "Founded by Mordecai Kaplan in 1920s USA. Judaism as an evolving civilization rather than a religion. God as process, not person.",
+      "tags": ["reconstructionist", "civilization", "kaplan"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "middle-east/judaism/karaite",
+      "label": "Karaite Judaism",
+      "type": "concept",
+      "summary": "8th century CE, Mesopotamia. Rejects the Oral Torah (Talmud), relying solely on the written Hebrew Bible. Pre-dates the Orthodox/Reform split by a millennium.",
+      "tags": ["karaite", "sola-scriptura", "talmud"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "middle-east/samaritanism",
+      "label": "Samaritanism",
+      "type": "concept",
+      "summary": "Ancient Israelite religion, ~6th century BCE. Accepts only the Torah (Pentateuch), worships on Mount Gerizim. Fewer than 1000 adherents remain today.",
+      "tags": ["samaritan", "torah", "gerizim", "ancient"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "middle-east/christianity",
+      "label": "Christianity",
+      "type": "topic",
+      "summary": "Founded ~33 CE in Roman Judea by followers of Jesus of Nazareth. World's largest religion (~2.4 billion). Central beliefs: incarnation, crucifixion, resurrection, and salvation through grace.",
+      "tags": ["christianity", "jesus", "salvation", "trinity"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "middle-east/christianity/church-of-the-east",
+      "label": "Church of the East",
+      "type": "concept",
+      "summary": "Split after Council of Ephesus (431 CE). Nestorian theology — Christ has two natures and two persons. Spread along Silk Road to China and India. Also called Assyrian Church.",
+      "tags": ["nestorian", "assyrian", "silk-road", "ephesus"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/oriental-orthodox",
+      "label": "Oriental Orthodoxy",
+      "type": "topic",
+      "summary": "Split after Council of Chalcedon (451 CE) over Christ's nature. Miaphysite theology — one united divine-human nature. Includes Coptic, Armenian, Ethiopian, and Syriac churches.",
+      "tags": ["oriental-orthodox", "miaphysite", "chalcedon"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/oriental-orthodox/coptic",
+      "label": "Coptic Orthodox",
+      "type": "concept",
+      "summary": "Egyptian Christianity tracing to Mark the Evangelist (~42 CE). Largest Christian community in the Middle East. Rich monastic tradition — Anthony the Great founded Christian monasticism here.",
+      "tags": ["coptic", "egypt", "monasticism"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/oriental-orthodox/armenian",
+      "label": "Armenian Apostolic",
+      "type": "concept",
+      "summary": "Armenia became the first Christian nation in 301 CE under King Tiridates III. Apostolic tradition from Bartholomew and Thaddeus. Unique liturgy and alphabet created for Scripture.",
+      "tags": ["armenian", "apostolic", "first-christian-nation"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/oriental-orthodox/ethiopian",
+      "label": "Ethiopian Orthodox Tewahedo",
+      "type": "concept",
+      "summary": "One of the oldest Christian churches, 4th century CE. Unique canon including Book of Enoch. Claims the Ark of the Covenant. Deeply intertwined with Ethiopian national identity.",
+      "tags": ["ethiopian", "tewahedo", "enoch", "ark"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/eastern-orthodox",
+      "label": "Eastern Orthodoxy",
+      "type": "topic",
+      "summary": "Split from Rome in the Great Schism of 1054 CE. Disputes over papal authority, the Filioque clause, and liturgical practices. Organized as autocephalous national churches.",
+      "tags": ["eastern-orthodox", "great-schism", "filioque", "autocephalous"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/eastern-orthodox/greek",
+      "label": "Greek Orthodox",
+      "type": "concept",
+      "summary": "The Ecumenical Patriarchate of Constantinople — 'first among equals' in Eastern Orthodoxy. Greek theological and liturgical tradition, Byzantine chant, and iconography.",
+      "tags": ["greek-orthodox", "constantinople", "byzantine"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/eastern-orthodox/russian",
+      "label": "Russian Orthodox",
+      "type": "concept",
+      "summary": "Christianity adopted by Prince Vladimir of Kyiv in 988 CE. Largest Eastern Orthodox church. Deep connection to Russian national identity, art, and literature.",
+      "tags": ["russian-orthodox", "vladimir", "moscow"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/catholicism",
+      "label": "Roman Catholicism",
+      "type": "topic",
+      "summary": "World's largest Christian church (~1.4 billion). Led by the Pope in Rome. Claims apostolic succession from Peter. Defined by sacramental theology, papal authority, and Sacred Tradition alongside Scripture.",
+      "tags": ["catholic", "pope", "sacraments", "rome"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/catholicism/old-catholic",
+      "label": "Old Catholic Church",
+      "type": "concept",
+      "summary": "Split from Rome in 1870 after rejecting papal infallibility (First Vatican Council). Maintains Catholic liturgy and sacraments but rejects papal supremacy.",
+      "tags": ["old-catholic", "papal-infallibility", "vatican-i"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism",
+      "label": "Protestantism",
+      "type": "topic",
+      "summary": "Born from Martin Luther's 95 Theses (1517). Core principles: sola scriptura (Scripture alone), sola fide (faith alone), priesthood of all believers. Fragmented into thousands of denominations.",
+      "tags": ["protestantism", "reformation", "luther", "sola-scriptura"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism/lutheranism",
+      "label": "Lutheranism",
+      "type": "concept",
+      "summary": "Founded by Martin Luther in 1517, Germany. Justification by faith alone. Retained liturgical worship and sacraments while rejecting papal authority. ~80 million adherents.",
+      "tags": ["lutheranism", "luther", "justification", "germany"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism/reformed",
+      "label": "Reformed / Calvinist",
+      "type": "concept",
+      "summary": "Founded by Zwingli and Calvin in 1520s Switzerland. Predestination, sovereignty of God, TULIP theology. Influenced Puritans, Huguenots, and Presbyterian traditions.",
+      "tags": ["reformed", "calvinist", "predestination", "tulip"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism/anglicanism",
+      "label": "Anglicanism",
+      "type": "concept",
+      "summary": "Established 1534 by Henry VIII's break with Rome. Via media (middle way) between Catholicism and Protestantism. Book of Common Prayer. ~85 million in the Anglican Communion.",
+      "tags": ["anglicanism", "church-of-england", "via-media"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism/anabaptism",
+      "label": "Anabaptism",
+      "type": "concept",
+      "summary": "Radical Reformation, 1525 Switzerland. Adult baptism, pacifism, separation of church and state. Persecuted by both Catholics and Protestants. Parent of Mennonites, Amish, Hutterites.",
+      "tags": ["anabaptism", "radical-reformation", "pacifism", "adult-baptism"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism/anabaptism/mennonites",
+      "label": "Mennonites",
+      "type": "concept",
+      "summary": "Founded by Menno Simons in 1536, Netherlands. Pacifist, community-oriented, simple living. Range from traditional to progressive congregations worldwide.",
+      "tags": ["mennonites", "pacifism", "menno-simons"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism/anabaptism/amish",
+      "label": "Amish",
+      "type": "concept",
+      "summary": "Split from Mennonites in 1693, led by Jakob Ammann. Known for plain dress, horse-and-buggy, and Ordnung (community rules). Reject most modern technology.",
+      "tags": ["amish", "plain", "ordnung", "ammann"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism/baptist",
+      "label": "Baptist",
+      "type": "concept",
+      "summary": "Founded 1609 in Amsterdam by John Smyth. Believer's baptism by immersion, congregational governance, religious liberty. ~100 million worldwide; Southern Baptist Convention is the largest Protestant body in the USA.",
+      "tags": ["baptist", "believer-baptism", "immersion", "congregational"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism/methodism",
+      "label": "Methodism",
+      "type": "concept",
+      "summary": "Founded by John Wesley in 1730s England. Emphasis on personal holiness, social justice, and methodical devotion. Gave rise to the Holiness movement and influenced Pentecostalism.",
+      "tags": ["methodism", "wesley", "holiness", "social-justice"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism/quakers",
+      "label": "Quakers (Society of Friends)",
+      "type": "concept",
+      "summary": "Founded by George Fox in 1650s England. Inner Light — direct experience of God without clergy, sacraments, or creeds. Pioneered abolition, women's rights, and pacifism.",
+      "tags": ["quakers", "inner-light", "pacifism", "fox"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "europe/christianity/protestantism/presbyterianism",
+      "label": "Presbyterianism",
+      "type": "concept",
+      "summary": "Founded by John Knox in 1560s Scotland, rooted in Calvinist theology. Governed by elders (presbyters) rather than bishops. Strong emphasis on education and intellectual rigor.",
+      "tags": ["presbyterian", "knox", "calvinist", "elders"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "americas/christianity/pentecostalism",
+      "label": "Pentecostalism",
+      "type": "topic",
+      "summary": "Born from the Azusa Street Revival (1906, Los Angeles). Emphasis on baptism of the Holy Spirit, speaking in tongues, faith healing, and direct spiritual experience. ~600 million globally — fastest-growing Christian movement.",
+      "tags": ["pentecostalism", "azusa-street", "tongues", "holy-spirit"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "americas/christianity/adventism",
+      "label": "Adventism",
+      "type": "concept",
+      "summary": "Emerged from the Millerite movement in 1860s USA after the Great Disappointment (1844). Seventh-day Adventists emphasize Saturday Sabbath, health reform, and Christ's imminent return.",
+      "tags": ["adventism", "sabbath", "millerite", "second-coming"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "americas/christianity/mormonism",
+      "label": "Mormonism (LDS)",
+      "type": "concept",
+      "summary": "Founded by Joseph Smith in 1830, New York. Book of Mormon as additional scripture. Latter-day Saints emphasize continuing revelation, temple ordinances, and family. ~17 million members.",
+      "tags": ["mormonism", "lds", "book-of-mormon", "joseph-smith"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "americas/christianity/jehovahs-witnesses",
+      "label": "Jehovah's Witnesses",
+      "type": "concept",
+      "summary": "Founded by Charles Taze Russell in 1870s USA. Non-trinitarian, reject blood transfusions, refuse military service. Door-to-door evangelism. ~8.7 million active members.",
+      "tags": ["jehovahs-witnesses", "watchtower", "non-trinitarian"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "middle-east/islam",
+      "label": "Islam",
+      "type": "topic",
+      "summary": "Founded by Prophet Muhammad in 622 CE, Arabia. Submission to the will of God (Allah). Five Pillars: shahada, prayer, charity, fasting, pilgrimage. ~1.9 billion adherents worldwide.",
+      "tags": ["islam", "muhammad", "quran", "five-pillars"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/sunni",
+      "label": "Sunni Islam",
+      "type": "topic",
+      "summary": "The majority branch (~85-90% of Muslims). Follows the Sunnah of Muhammad and accepts Abu Bakr as first rightful caliph. Four major schools of jurisprudence (madhabs).",
+      "tags": ["sunni", "sunnah", "caliphate", "majority"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/sunni/hanafi",
+      "label": "Hanafi School",
+      "type": "concept",
+      "summary": "Founded by Abu Hanifa in 8th century Iraq. Most liberal of the four madhabs, emphasizing reason (ra'y) and analogy (qiyas). Dominant in Turkey, South Asia, Central Asia.",
+      "tags": ["hanafi", "jurisprudence", "reason", "abu-hanifa"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/sunni/maliki",
+      "label": "Maliki School",
+      "type": "concept",
+      "summary": "Founded by Malik ibn Anas in 8th century Medina. Emphasizes the practice of the people of Medina as a source of law. Dominant in North and West Africa.",
+      "tags": ["maliki", "jurisprudence", "medina", "malik"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/sunni/shafii",
+      "label": "Shafi'i School",
+      "type": "concept",
+      "summary": "Founded by al-Shafi'i in 9th century Egypt. Systematized Islamic jurisprudence (usul al-fiqh). Dominant in East Africa, Southeast Asia, and Yemen.",
+      "tags": ["shafii", "jurisprudence", "usul-al-fiqh"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/sunni/hanbali",
+      "label": "Hanbali School",
+      "type": "concept",
+      "summary": "Founded by Ahmad ibn Hanbal in 9th century Baghdad. Most conservative madhab — strict adherence to Quran and hadith, minimal use of reason. Dominant in Saudi Arabia.",
+      "tags": ["hanbali", "jurisprudence", "conservative", "ibn-hanbal"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/sunni/salafism",
+      "label": "Salafism / Wahhabism",
+      "type": "concept",
+      "summary": "Founded by Muhammad ibn Abd al-Wahhab in 18th century Arabia. Return to the practices of the salaf (early Muslims). Puritanical, anti-innovation (bid'ah). Alliance with House of Saud.",
+      "tags": ["salafism", "wahhabism", "puritanical", "saudi"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/shia",
+      "label": "Shia Islam",
+      "type": "topic",
+      "summary": "~10-15% of Muslims. Believe Ali ibn Abi Talib was Muhammad's rightful successor. Emphasis on the Imamate — divinely guided leaders from Muhammad's family (Ahl al-Bayt).",
+      "tags": ["shia", "ali", "imamate", "ahl-al-bayt"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/shia/twelver",
+      "label": "Twelver Shia",
+      "type": "concept",
+      "summary": "Largest Shia branch. Follows twelve Imams descended from Ali, the twelfth (Mahdi) in occultation since 874 CE. Dominant in Iran, Iraq, Lebanon, Bahrain.",
+      "tags": ["twelver", "mahdi", "occultation", "iran"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/shia/ismaili",
+      "label": "Ismaili Shia",
+      "type": "concept",
+      "summary": "Split from Twelvers over the seventh Imam. Led by the Aga Khan. Emphasize esoteric (batini) interpretation of the Quran. Nizari branch is the largest today.",
+      "tags": ["ismaili", "aga-khan", "batini", "esoteric"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/shia/zaydi",
+      "label": "Zaydi Shia",
+      "type": "concept",
+      "summary": "Closest Shia branch to Sunni Islam. Named after Zayd ibn Ali. Reject divine right of Imams — any descendant of Ali can lead if qualified. Dominant in Yemen.",
+      "tags": ["zaydi", "yemen", "moderate"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/shia/alawite",
+      "label": "Alawites",
+      "type": "concept",
+      "summary": "Syncretic sect from 9th century Syria. Deify Ali, incorporate Christian and pre-Islamic elements. Secretive theology. Ruling elite of modern Syria (Assad family).",
+      "tags": ["alawite", "syria", "syncretic", "ali"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/sufism",
+      "label": "Sufism",
+      "type": "concept",
+      "summary": "Islamic mysticism, 8th-9th century. Direct experience of God through dhikr (remembrance), poetry, music, and ecstatic practice. Cross-cuts Sunni and Shia. Rumi, Al-Ghazali, Ibn Arabi.",
+      "tags": ["sufism", "mysticism", "dhikr", "rumi"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/ibadi",
+      "label": "Ibadi Islam",
+      "type": "concept",
+      "summary": "7th century, Oman. Pre-dates the Sunni-Shia split — neither Sunni nor Shia. Moderate, emphasizes community consensus. Dominant in Oman, pockets in North Africa.",
+      "tags": ["ibadi", "oman", "kharijite", "moderate"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "middle-east/islam/ahmadiyya",
+      "label": "Ahmadiyya",
+      "type": "concept",
+      "summary": "Founded by Mirza Ghulam Ahmad in 1889, Punjab. Claims to be the promised Messiah and Mahdi. Emphasizes peaceful propagation. Persecuted as heretical by mainstream Islam.",
+      "tags": ["ahmadiyya", "messiah", "peaceful", "punjab"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/bahai",
+      "label": "Baha'i Faith",
+      "type": "concept",
+      "summary": "Founded by Baha'u'llah in 1863, Persia. Emerged from Shia Islam via the Bab movement. Progressive revelation — all major religions are stages of one unfolding truth. Unity of humanity.",
+      "tags": ["bahai", "unity", "progressive-revelation", "bahaullah"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/druze",
+      "label": "Druze",
+      "type": "concept",
+      "summary": "Founded 1017 CE in Fatimid Egypt. Esoteric offshoot of Ismaili Islam blending Neoplatonism, Gnosticism, and Zoroastrian elements. Closed community — no conversion in or out. ~1 million in Lebanon, Syria, Israel.",
+      "tags": ["druze", "esoteric", "ismaili", "neoplatonism"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "middle-east/mandaeism",
+      "label": "Mandaeism",
+      "type": "concept",
+      "summary": "Ancient Gnostic religion, 1st-2nd century CE Mesopotamia. Reveres John the Baptist, rejects Abraham, Moses, Jesus, and Muhammad. Ritual water baptism (masbuta) central to worship.",
+      "tags": ["mandaeism", "gnostic", "john-baptist", "baptism"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "south-asia/hinduism",
+      "label": "Hinduism",
+      "type": "topic",
+      "summary": "World's oldest living religion, ~1500 BCE in the Indus Valley. No single founder — a vast family of traditions united by concepts of dharma, karma, samsara, and moksha. ~1.2 billion adherents.",
+      "tags": ["hinduism", "dharma", "karma", "vedas", "ancient"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "south-asia/hinduism/vaishnavism",
+      "label": "Vaishnavism",
+      "type": "concept",
+      "summary": "Worship of Vishnu and his avatars (Rama, Krishna). Largest Hindu denomination. Bhakti (devotion) as the primary path to God. Includes ISKCON (Hare Krishna).",
+      "tags": ["vaishnavism", "vishnu", "krishna", "bhakti"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/hinduism/shaivism",
+      "label": "Shaivism",
+      "type": "concept",
+      "summary": "Worship of Shiva as the supreme deity. Rich philosophical tradition including Kashmir Shaivism (non-dual). Emphasizes yoga, meditation, and asceticism.",
+      "tags": ["shaivism", "shiva", "kashmir", "yoga"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/hinduism/shaktism",
+      "label": "Shaktism",
+      "type": "concept",
+      "summary": "Worship of Shakti — the divine feminine, manifested as Durga, Kali, Parvati, Lakshmi. Tantric practices. Particularly strong in Bengal and Assam.",
+      "tags": ["shaktism", "shakti", "divine-feminine", "tantra"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/hinduism/smartism",
+      "label": "Smartism",
+      "type": "concept",
+      "summary": "Founded by Adi Shankara (~8th century CE). Advaita Vedanta — non-dualism, all deities are manifestations of one Brahman. Worships five deities equally (Panchayatana).",
+      "tags": ["smartism", "advaita", "shankara", "non-dualism"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/hinduism/vedanta",
+      "label": "Vedanta",
+      "type": "concept",
+      "summary": "The culmination of Vedic philosophy (Upanishads). Three major schools: Advaita (non-dual), Vishishtadvaita (qualified non-dual), Dvaita (dual). Most influential Hindu philosophical tradition.",
+      "tags": ["vedanta", "upanishads", "advaita", "brahman"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/hinduism/yoga",
+      "label": "Yoga (Philosophical School)",
+      "type": "concept",
+      "summary": "One of six orthodox Hindu schools. Patanjali's Yoga Sutras (~2nd century BCE) — eight-limbed path to liberation through ethical conduct, posture, breath control, and meditation.",
+      "tags": ["yoga", "patanjali", "meditation", "eight-limbs"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "south-asia/buddhism",
+      "label": "Buddhism",
+      "type": "topic",
+      "summary": "Founded by Siddhartha Gautama (the Buddha) ~5th century BCE in India. Four Noble Truths and the Eightfold Path to end suffering (dukkha). ~500 million adherents worldwide.",
+      "tags": ["buddhism", "buddha", "four-noble-truths", "enlightenment"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "south-asia/buddhism/theravada",
+      "label": "Theravada Buddhism",
+      "type": "concept",
+      "summary": "The 'School of the Elders' — oldest surviving Buddhist school, ~3rd century BCE. Pali Canon as authoritative text. Emphasis on individual enlightenment (arahant). Dominant in Sri Lanka, Thailand, Myanmar, Cambodia, Laos.",
+      "tags": ["theravada", "pali-canon", "arahant", "southeast-asia"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "south-asia/buddhism/mahayana",
+      "label": "Mahayana Buddhism",
+      "type": "topic",
+      "summary": "The 'Great Vehicle' — emerged ~1st century CE. Bodhisattva ideal: delay your own enlightenment to help all sentient beings. Expanded canon with new sutras. Dominant in East Asia.",
+      "tags": ["mahayana", "bodhisattva", "compassion", "east-asia"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "south-asia/buddhism/mahayana/pure-land",
+      "label": "Pure Land Buddhism",
+      "type": "concept",
+      "summary": "Devotion to Amitabha Buddha for rebirth in the Western Pure Land. Most popular Mahayana school in East Asia. Salvation through faith and recitation of Amitabha's name (nembutsu/nianfo).",
+      "tags": ["pure-land", "amitabha", "nembutsu", "devotion"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/buddhism/mahayana/zen",
+      "label": "Zen / Chan Buddhism",
+      "type": "concept",
+      "summary": "Originated as Chan in 6th century China, transmitted to Japan as Zen. Direct pointing to the mind, seeing one's true nature. Zazen (sitting meditation), koans, and minimalist aesthetics.",
+      "tags": ["zen", "chan", "meditation", "koans", "bodhidharma"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "south-asia/buddhism/mahayana/nichiren",
+      "label": "Nichiren Buddhism",
+      "type": "concept",
+      "summary": "Founded by Nichiren in 1253, Japan. Devotion to the Lotus Sutra as the supreme teaching. Chanting Nam-myoho-renge-kyo. Includes modern Soka Gakkai International (~12 million members).",
+      "tags": ["nichiren", "lotus-sutra", "chanting", "soka-gakkai"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/buddhism/mahayana/tendai",
+      "label": "Tendai / Tiantai",
+      "type": "concept",
+      "summary": "Founded by Zhiyi in 6th century China, brought to Japan by Saicho in 805. Lotus Sutra as supreme. Comprehensive system integrating all Buddhist teachings. Mother of Japanese Buddhism — Zen, Pure Land, and Nichiren all emerged from Tendai.",
+      "tags": ["tendai", "tiantai", "lotus-sutra", "comprehensive"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/buddhism/vajrayana",
+      "label": "Vajrayana Buddhism",
+      "type": "topic",
+      "summary": "The 'Diamond Vehicle' — esoteric Buddhism emphasizing tantric practices, mantras, mudras, mandalas, and guru-disciple transmission. Emerged ~7th century CE in India, flourished in Tibet and Mongolia.",
+      "tags": ["vajrayana", "tantric", "tibetan", "esoteric"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "south-asia/buddhism/vajrayana/gelug",
+      "label": "Gelug School",
+      "type": "concept",
+      "summary": "Founded by Tsongkhapa in 1409, Tibet. 'Yellow Hat' school — emphasis on monastic discipline, logic, and graduated path (lamrim). The Dalai Lama tradition belongs to this school.",
+      "tags": ["gelug", "dalai-lama", "tsongkhapa", "yellow-hat"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/buddhism/vajrayana/kagyu",
+      "label": "Kagyu School",
+      "type": "concept",
+      "summary": "Founded 11th century, Tibet. 'Oral Lineage' — emphasis on meditation practice and direct guru transmission. Milarepa the famous yogi. Karmapa as head lama.",
+      "tags": ["kagyu", "milarepa", "karmapa", "oral-lineage"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/buddhism/vajrayana/nyingma",
+      "label": "Nyingma School",
+      "type": "concept",
+      "summary": "Oldest Tibetan Buddhist school, 8th century. Founded by Padmasambhava (Guru Rinpoche). Dzogchen (Great Perfection) as the highest teaching. 'Red Hat' tradition.",
+      "tags": ["nyingma", "padmasambhava", "dzogchen", "oldest"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "south-asia/jainism",
+      "label": "Jainism",
+      "type": "topic",
+      "summary": "Founded by Mahavira ~6th century BCE in India. Radical non-violence (ahimsa), asceticism, and karma as material substance. Two main sects: Digambara (sky-clad) and Svetambara (white-clad). ~4-5 million adherents.",
+      "tags": ["jainism", "mahavira", "ahimsa", "non-violence", "asceticism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "south-asia/sikhism",
+      "label": "Sikhism",
+      "type": "topic",
+      "summary": "Founded by Guru Nanak in 1499, Punjab. Monotheism, equality, service, and honest living. Synthesizes Hindu devotionalism and Islamic monotheism while rejecting caste and idol worship. ~30 million adherents.",
+      "tags": ["sikhism", "guru-nanak", "punjab", "equality"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "east-asia/confucianism",
+      "label": "Confucianism",
+      "type": "topic",
+      "summary": "Founded by Confucius ~500 BCE, China. Ethical philosophy emphasizing ren (benevolence), li (ritual propriety), filial piety, and social harmony. Shaped East Asian civilization for 2500 years.",
+      "tags": ["confucianism", "confucius", "ren", "li", "ethics"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "east-asia/confucianism/neo-confucianism",
+      "label": "Neo-Confucianism",
+      "type": "concept",
+      "summary": "Revival movement from 11th century Song Dynasty. Zhu Xi synthesized Confucian ethics with Buddhist and Taoist metaphysics. Li (principle) and qi (vital force) as cosmic framework. Dominated Chinese thought for 700 years.",
+      "tags": ["neo-confucianism", "zhu-xi", "song-dynasty", "li-qi"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "east-asia/taoism",
+      "label": "Taoism",
+      "type": "topic",
+      "summary": "Philosophical and religious tradition, ~4th century BCE China. The Tao (Way) that cannot be named. Wu wei (non-action), yin-yang, naturalness. Laozi's Tao Te Ching and Zhuangzi's parables.",
+      "tags": ["taoism", "tao", "wu-wei", "yin-yang", "laozi"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "east-asia/shinto",
+      "label": "Shinto",
+      "type": "topic",
+      "summary": "Indigenous religion of Japan, prehistoric origins. Kami (spirits/gods) inhabit nature, ancestors, and sacred places. Ritual purity, shrine worship, and seasonal festivals. No founder or central scripture.",
+      "tags": ["shinto", "kami", "japan", "nature", "indigenous"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "east-asia/chinese-folk-religion",
+      "label": "Chinese Folk Religion",
+      "type": "concept",
+      "summary": "Syncretic blend of Confucian ethics, Taoist cosmology, Buddhist karmic beliefs, and ancestor worship. Practiced by hundreds of millions. No formal organization — embedded in daily life and festivals.",
+      "tags": ["chinese-folk", "syncretic", "ancestor-worship", "festivals"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "east-asia/cao-dai",
+      "label": "Cao Dai",
+      "type": "concept",
+      "summary": "Founded 1926, Vietnam. Explicitly syncretic — unifies Buddhism, Taoism, Confucianism, Christianity, and Spiritism. Saints include Victor Hugo, Sun Yat-sen, and Joan of Arc. ~5 million adherents.",
+      "tags": ["cao-dai", "vietnam", "syncretic", "universal"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "east-asia/korean-shamanism",
+      "label": "Korean Shamanism (Muism)",
+      "type": "concept",
+      "summary": "Prehistoric Korean indigenous religion. Female shamans (mudang) mediate between human and spirit worlds through ecstatic rituals (gut). Persists alongside Buddhism and Christianity.",
+      "tags": ["muism", "shamanism", "korea", "mudang"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "africa/yoruba",
+      "label": "Yoruba Religion",
+      "type": "topic",
+      "summary": "Ancient West African religion (Nigeria, Benin). Supreme deity Olodumare and pantheon of orishas (Shango, Oshun, Ogun, Yemoja). Ifa divination system. Ancestor of diaspora religions.",
+      "tags": ["yoruba", "orishas", "ifa", "nigeria"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "africa/vodun",
+      "label": "West African Vodun",
+      "type": "concept",
+      "summary": "Ancient religion of the Fon and Ewe peoples (Benin, Togo). Spirits (loa/vodun) mediate between humans and the supreme creator. Rituals, possession, herbalism. Source tradition for diaspora Vodou.",
+      "tags": ["vodun", "benin", "loa", "spirits"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "africa/akan",
+      "label": "Akan Religion",
+      "type": "concept",
+      "summary": "Traditional religion of the Akan people (Ghana, Ivory Coast). Supreme God (Nyame), lesser deities (abosom), ancestor spirits. Adinkra symbols encode philosophical concepts.",
+      "tags": ["akan", "ghana", "nyame", "adinkra"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "americas/santeria",
+      "label": "Santeria (Regla de Ocha)",
+      "type": "concept",
+      "summary": "Afro-Cuban syncretic religion, 16th-19th century. Yoruba orishas mapped to Catholic saints by enslaved Africans. Animal sacrifice, divination, drumming. ~100 million practitioners across the Americas.",
+      "tags": ["santeria", "cuba", "orishas", "syncretic"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "americas/candomble",
+      "label": "Candomble",
+      "type": "concept",
+      "summary": "Afro-Brazilian religion, 16th-19th century. Yoruba, Fon, and Bantu traditions blended with Catholicism. Orixas (spirits), terreiros (temples), and ecstatic dance ceremonies.",
+      "tags": ["candomble", "brazil", "orixas", "afro-brazilian"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "americas/haitian-vodou",
+      "label": "Haitian Vodou",
+      "type": "concept",
+      "summary": "Syncretic religion combining West African Vodun with Catholicism, born in Haiti during slavery. Lwa (spirits), possession rituals, and Veve symbols. Deeply tied to Haitian identity and revolution.",
+      "tags": ["vodou", "haiti", "lwa", "revolution"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "americas/rastafari",
+      "label": "Rastafari",
+      "type": "concept",
+      "summary": "Emerged in 1930s Jamaica. Haile Selassie I of Ethiopia as God incarnate (Jah). African repatriation, rejection of Babylon (Western society), cannabis as sacrament. Reggae as spiritual expression.",
+      "tags": ["rastafari", "haile-selassie", "jamaica", "reggae"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "global/gnosticism",
+      "label": "Gnosticism",
+      "type": "concept",
+      "summary": "Diverse set of ancient religions (1st-3rd century CE). Salvation through gnosis (secret knowledge). Material world created by a flawed demiurge. Nag Hammadi library rediscovered in 1945.",
+      "tags": ["gnosticism", "gnosis", "demiurge", "nag-hammadi"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "global/wicca",
+      "label": "Wicca",
+      "type": "concept",
+      "summary": "Founded by Gerald Gardner in 1940s England. Modern pagan witchcraft honoring the Goddess and the Horned God. Wheel of the Year, ritual magic, and the Wiccan Rede ('harm none').",
+      "tags": ["wicca", "pagan", "witchcraft", "goddess"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "global/scientology",
+      "label": "Scientology",
+      "type": "concept",
+      "summary": "Founded by L. Ron Hubbard in 1954, USA. Spiritual technology (Dianetics) to clear engrams and reach the state of 'Clear'. Controversial — classified as religion in some countries, cult in others.",
+      "tags": ["scientology", "hubbard", "dianetics", "controversial"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "global/unitarian-universalism",
+      "label": "Unitarian Universalism",
+      "type": "concept",
+      "summary": "Merger of Unitarianism and Universalism in 1961, USA. No creed — draws from all world religions, humanism, and reason. Seven Principles emphasizing inherent worth and dignity.",
+      "tags": ["unitarian", "universalism", "liberal", "interfaith"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "global/spiritism",
+      "label": "Spiritism",
+      "type": "concept",
+      "summary": "Codified by Allan Kardec in 1857, France. Communication with spirits of the dead, reincarnation, moral evolution. ~15 million practitioners, primarily in Brazil.",
+      "tags": ["spiritism", "kardec", "reincarnation", "mediumship"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "global/tenrikyo",
+      "label": "Tenrikyo",
+      "type": "concept",
+      "summary": "Founded by Nakayama Miki in 1838, Japan. Joyous life through returning to the mind of God the Parent. One of Japan's largest new religious movements (~2 million adherents).",
+      "tags": ["tenrikyo", "japan", "joyous-life", "new-religion"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "global/ancient-egyptian",
+      "label": "Ancient Egyptian Religion",
+      "type": "concept",
+      "summary": "~3000 BCE to 4th century CE. Polytheistic — Ra, Osiris, Isis, Horus, Anubis. Afterlife central — Book of the Dead, mummification, judgment by Maat. One of the oldest documented religions.",
+      "tags": ["egyptian", "ancient", "afterlife", "pharaoh"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "global/ancient-greek",
+      "label": "Ancient Greek Religion",
+      "type": "concept",
+      "summary": "~800 BCE to 4th century CE. Olympian gods (Zeus, Athena, Apollo), mystery cults (Eleusinian, Dionysian), oracles, and philosophical theology. Profoundly influenced Christianity and Western thought.",
+      "tags": ["greek", "ancient", "olympian", "mystery-cults"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    }
+  ],
+  "edges": [
+    { "source": "middle-east/judaism", "target": "middle-east", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "middle-east/christianity", "target": "middle-east", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "middle-east/islam", "target": "middle-east", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "middle-east/bahai", "target": "middle-east", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "middle-east/druze", "target": "middle-east", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "middle-east/mandaeism", "target": "middle-east", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "middle-east/samaritanism", "target": "middle-east", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "iran/zoroastrianism", "target": "iran", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "iran/manichaeism", "target": "iran", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "iran/yazidism", "target": "iran", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "south-asia/hinduism", "target": "south-asia", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "south-asia/buddhism", "target": "south-asia", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "south-asia/jainism", "target": "south-asia", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "south-asia/sikhism", "target": "south-asia", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "east-asia/confucianism", "target": "east-asia", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "east-asia/taoism", "target": "east-asia", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "east-asia/shinto", "target": "east-asia", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "east-asia/chinese-folk-religion", "target": "east-asia", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "east-asia/cao-dai", "target": "east-asia", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "east-asia/korean-shamanism", "target": "east-asia", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "africa/yoruba", "target": "africa", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "africa/vodun", "target": "africa", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "africa/akan", "target": "africa", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "americas/santeria", "target": "americas", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "americas/candomble", "target": "americas", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "americas/haitian-vodou", "target": "americas", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "americas/rastafari", "target": "americas", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "americas/christianity/pentecostalism", "target": "americas", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "americas/christianity/adventism", "target": "americas", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "americas/christianity/mormonism", "target": "americas", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "americas/christianity/jehovahs-witnesses", "target": "americas", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "global/gnosticism", "target": "global", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "global/wicca", "target": "global", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "global/scientology", "target": "global", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "global/unitarian-universalism", "target": "global", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "global/spiritism", "target": "global", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "global/tenrikyo", "target": "global", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "global/ancient-egyptian", "target": "global", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "global/ancient-greek", "target": "global", "relation": "is-part-of", "weight": 0.9 },
+
+    { "source": "middle-east/judaism/orthodox", "target": "middle-east/judaism", "relation": "specializes", "weight": 0.9 },
+    { "source": "middle-east/judaism/hasidic", "target": "middle-east/judaism/orthodox", "relation": "specializes", "weight": 0.85 },
+    { "source": "middle-east/judaism/conservative", "target": "middle-east/judaism", "relation": "specializes", "weight": 0.9 },
+    { "source": "middle-east/judaism/reform", "target": "middle-east/judaism", "relation": "specializes", "weight": 0.9 },
+    { "source": "middle-east/judaism/reconstructionist", "target": "middle-east/judaism/reform", "relation": "specializes", "weight": 0.8 },
+    { "source": "middle-east/judaism/karaite", "target": "middle-east/judaism", "relation": "specializes", "weight": 0.8 },
+    { "source": "middle-east/samaritanism", "target": "middle-east/judaism", "relation": "relates-to", "weight": 0.7, "label": "Shared Israelite roots — diverged over which temple and which scriptures" },
+
+    { "source": "middle-east/christianity", "target": "middle-east/judaism", "relation": "specializes", "weight": 0.9, "label": "Christianity emerged from Second Temple Judaism as a messianic movement" },
+    { "source": "middle-east/christianity/church-of-the-east", "target": "middle-east/christianity", "relation": "specializes", "weight": 0.85, "label": "Split after Council of Ephesus 431 CE — Nestorian Christology" },
+    { "source": "europe/christianity/oriental-orthodox", "target": "middle-east/christianity", "relation": "specializes", "weight": 0.85, "label": "Split after Council of Chalcedon 451 CE — Miaphysite Christology" },
+    { "source": "europe/christianity/oriental-orthodox/coptic", "target": "europe/christianity/oriental-orthodox", "relation": "specializes", "weight": 0.9 },
+    { "source": "europe/christianity/oriental-orthodox/armenian", "target": "europe/christianity/oriental-orthodox", "relation": "specializes", "weight": 0.9 },
+    { "source": "europe/christianity/oriental-orthodox/ethiopian", "target": "europe/christianity/oriental-orthodox", "relation": "specializes", "weight": 0.9 },
+    { "source": "europe/christianity/eastern-orthodox", "target": "middle-east/christianity", "relation": "specializes", "weight": 0.9, "label": "Great Schism of 1054 — split from Rome over Filioque and papal authority" },
+    { "source": "europe/christianity/eastern-orthodox/greek", "target": "europe/christianity/eastern-orthodox", "relation": "specializes", "weight": 0.9 },
+    { "source": "europe/christianity/eastern-orthodox/russian", "target": "europe/christianity/eastern-orthodox", "relation": "specializes", "weight": 0.9 },
+    { "source": "europe/christianity/catholicism", "target": "middle-east/christianity", "relation": "specializes", "weight": 0.9, "label": "Claims continuity from Peter — Great Schism of 1054 formalized the split" },
+    { "source": "europe/christianity/catholicism/old-catholic", "target": "europe/christianity/catholicism", "relation": "specializes", "weight": 0.8, "label": "Rejected papal infallibility at Vatican I, 1870" },
+
+    { "source": "europe/christianity/protestantism", "target": "europe/christianity/catholicism", "relation": "specializes", "weight": 0.85, "label": "Protestant Reformation 1517 — broke from Rome over justification and authority" },
+    { "source": "europe/christianity/protestantism/lutheranism", "target": "europe/christianity/protestantism", "relation": "specializes", "weight": 0.9 },
+    { "source": "europe/christianity/protestantism/reformed", "target": "europe/christianity/protestantism", "relation": "specializes", "weight": 0.9 },
+    { "source": "europe/christianity/protestantism/anglicanism", "target": "europe/christianity/protestantism", "relation": "specializes", "weight": 0.85, "label": "Political break from Rome 1534, theological reformation followed gradually" },
+    { "source": "europe/christianity/protestantism/anabaptism", "target": "europe/christianity/protestantism", "relation": "specializes", "weight": 0.85, "label": "Radical Reformation — went further than Luther and Calvin" },
+    { "source": "europe/christianity/protestantism/anabaptism/mennonites", "target": "europe/christianity/protestantism/anabaptism", "relation": "specializes", "weight": 0.9 },
+    { "source": "europe/christianity/protestantism/anabaptism/amish", "target": "europe/christianity/protestantism/anabaptism/mennonites", "relation": "specializes", "weight": 0.85, "label": "Split from Mennonites in 1693 over stricter discipline (Meidung)" },
+    { "source": "europe/christianity/protestantism/baptist", "target": "europe/christianity/protestantism", "relation": "specializes", "weight": 0.9 },
+    { "source": "europe/christianity/protestantism/methodism", "target": "europe/christianity/protestantism/anglicanism", "relation": "specializes", "weight": 0.85, "label": "John Wesley began as Anglican revival, became separate denomination" },
+    { "source": "europe/christianity/protestantism/quakers", "target": "europe/christianity/protestantism", "relation": "specializes", "weight": 0.8 },
+    { "source": "europe/christianity/protestantism/presbyterianism", "target": "europe/christianity/protestantism/reformed", "relation": "specializes", "weight": 0.9, "label": "John Knox brought Calvinist theology to Scotland with presbyterian governance" },
+
+    { "source": "americas/christianity/pentecostalism", "target": "europe/christianity/protestantism/methodism", "relation": "specializes", "weight": 0.8, "label": "Grew from Holiness movement rooted in Methodism, Azusa Street Revival 1906" },
+    { "source": "americas/christianity/adventism", "target": "europe/christianity/protestantism", "relation": "specializes", "weight": 0.8, "label": "Millerite movement after Great Disappointment of 1844" },
+    { "source": "americas/christianity/mormonism", "target": "middle-east/christianity", "relation": "specializes", "weight": 0.7, "label": "Restorationist — claims to restore original Christianity via new revelation" },
+    { "source": "americas/christianity/jehovahs-witnesses", "target": "middle-east/christianity", "relation": "specializes", "weight": 0.7, "label": "Restorationist — rejects Trinity, emphasizes eschatology" },
+
+    { "source": "middle-east/islam", "target": "middle-east/judaism", "relation": "inspired-by", "weight": 0.85, "label": "Islam acknowledges Abraham, Moses, and Jewish prophets; shares monotheism and dietary laws" },
+    { "source": "middle-east/islam", "target": "middle-east/christianity", "relation": "inspired-by", "weight": 0.8, "label": "Islam reveres Jesus (Isa) as a prophet; Mary (Maryam) has her own surah" },
+    { "source": "middle-east/islam/sunni", "target": "middle-east/islam", "relation": "specializes", "weight": 0.95 },
+    { "source": "middle-east/islam/shia", "target": "middle-east/islam", "relation": "specializes", "weight": 0.95 },
+    { "source": "middle-east/islam/sunni/hanafi", "target": "middle-east/islam/sunni", "relation": "specializes", "weight": 0.9 },
+    { "source": "middle-east/islam/sunni/maliki", "target": "middle-east/islam/sunni", "relation": "specializes", "weight": 0.9 },
+    { "source": "middle-east/islam/sunni/shafii", "target": "middle-east/islam/sunni", "relation": "specializes", "weight": 0.9 },
+    { "source": "middle-east/islam/sunni/hanbali", "target": "middle-east/islam/sunni", "relation": "specializes", "weight": 0.9 },
+    { "source": "middle-east/islam/sunni/salafism", "target": "middle-east/islam/sunni/hanbali", "relation": "specializes", "weight": 0.85, "label": "Puritanical movement rooted in Hanbali jurisprudence" },
+    { "source": "middle-east/islam/shia/twelver", "target": "middle-east/islam/shia", "relation": "specializes", "weight": 0.9 },
+    { "source": "middle-east/islam/shia/ismaili", "target": "middle-east/islam/shia", "relation": "specializes", "weight": 0.85, "label": "Split over the seventh Imam — followed Ismail instead of Musa" },
+    { "source": "middle-east/islam/shia/zaydi", "target": "middle-east/islam/shia", "relation": "specializes", "weight": 0.85 },
+    { "source": "middle-east/islam/shia/alawite", "target": "middle-east/islam/shia", "relation": "specializes", "weight": 0.7, "label": "Highly syncretic — deifies Ali, incorporates pre-Islamic elements" },
+    { "source": "middle-east/islam/sufism", "target": "middle-east/islam", "relation": "specializes", "weight": 0.8, "label": "Mystical dimension — crosses Sunni/Shia boundaries" },
+    { "source": "middle-east/islam/ibadi", "target": "middle-east/islam", "relation": "specializes", "weight": 0.8, "label": "Pre-dates the Sunni-Shia split — neither Sunni nor Shia" },
+    { "source": "middle-east/islam/ahmadiyya", "target": "middle-east/islam", "relation": "specializes", "weight": 0.7, "label": "Claims messianic fulfillment within Islam — considered heretical by mainstream" },
+
+    { "source": "middle-east/bahai", "target": "middle-east/islam/shia", "relation": "inspired-by", "weight": 0.8, "label": "Emerged from Shia Islam via the Bab movement in 19th century Persia" },
+    { "source": "middle-east/druze", "target": "middle-east/islam/shia/ismaili", "relation": "inspired-by", "weight": 0.7, "label": "Originated as an Ismaili sect, then diverged radically" },
+    { "source": "middle-east/druze", "target": "global/gnosticism", "relation": "inspired-by", "weight": 0.5, "label": "Incorporates Neoplatonic and Gnostic elements" },
+
+    { "source": "south-asia/hinduism/vaishnavism", "target": "south-asia/hinduism", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/hinduism/shaivism", "target": "south-asia/hinduism", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/hinduism/shaktism", "target": "south-asia/hinduism", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/hinduism/smartism", "target": "south-asia/hinduism", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/hinduism/vedanta", "target": "south-asia/hinduism", "relation": "specializes", "weight": 0.85 },
+    { "source": "south-asia/hinduism/yoga", "target": "south-asia/hinduism", "relation": "specializes", "weight": 0.85 },
+
+    { "source": "south-asia/buddhism", "target": "south-asia/hinduism", "relation": "inspired-by", "weight": 0.85, "label": "Buddha born Hindu — adopted karma, samsara, meditation but rejected caste, Vedic authority, and atman" },
+    { "source": "south-asia/buddhism/theravada", "target": "south-asia/buddhism", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/buddhism/mahayana", "target": "south-asia/buddhism", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/buddhism/mahayana/pure-land", "target": "south-asia/buddhism/mahayana", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/buddhism/mahayana/zen", "target": "south-asia/buddhism/mahayana", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/buddhism/mahayana/nichiren", "target": "south-asia/buddhism/mahayana", "relation": "specializes", "weight": 0.85 },
+    { "source": "south-asia/buddhism/mahayana/tendai", "target": "south-asia/buddhism/mahayana", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/buddhism/vajrayana", "target": "south-asia/buddhism/mahayana", "relation": "specializes", "weight": 0.85 },
+    { "source": "south-asia/buddhism/vajrayana/gelug", "target": "south-asia/buddhism/vajrayana", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/buddhism/vajrayana/kagyu", "target": "south-asia/buddhism/vajrayana", "relation": "specializes", "weight": 0.9 },
+    { "source": "south-asia/buddhism/vajrayana/nyingma", "target": "south-asia/buddhism/vajrayana", "relation": "specializes", "weight": 0.9 },
+
+    { "source": "south-asia/jainism", "target": "south-asia/hinduism", "relation": "relates-to", "weight": 0.7, "label": "Contemporary with Buddhism — shares karma and moksha concepts but radicalizes ahimsa" },
+    { "source": "south-asia/sikhism", "target": "south-asia/hinduism/vaishnavism", "relation": "inspired-by", "weight": 0.7, "label": "Guru Nanak drew from Hindu Bhakti devotional tradition" },
+    { "source": "south-asia/sikhism", "target": "middle-east/islam/sufism", "relation": "inspired-by", "weight": 0.7, "label": "Guru Nanak drew from Sufi mystical monotheism and egalitarianism" },
+
+    { "source": "east-asia/confucianism/neo-confucianism", "target": "east-asia/confucianism", "relation": "specializes", "weight": 0.9 },
+    { "source": "east-asia/confucianism/neo-confucianism", "target": "south-asia/buddhism/mahayana", "relation": "inspired-by", "weight": 0.6, "label": "Absorbed Buddhist metaphysics while reasserting Confucian ethics" },
+    { "source": "south-asia/buddhism/mahayana/zen", "target": "east-asia/taoism", "relation": "inspired-by", "weight": 0.7, "label": "Chan/Zen is a Buddhist-Taoist synthesis — naturalness, spontaneity, and wordless transmission" },
+    { "source": "east-asia/chinese-folk-religion", "target": "east-asia/confucianism", "relation": "inspired-by", "weight": 0.7, "label": "Confucian ethics embedded in folk practice — filial piety, ancestor worship" },
+    { "source": "east-asia/chinese-folk-religion", "target": "east-asia/taoism", "relation": "inspired-by", "weight": 0.7, "label": "Taoist cosmology, deities, and practices woven into folk religion" },
+    { "source": "east-asia/chinese-folk-religion", "target": "south-asia/buddhism/mahayana", "relation": "inspired-by", "weight": 0.6, "label": "Buddhist karma and bodhisattvas absorbed into Chinese folk practice" },
+    { "source": "east-asia/cao-dai", "target": "south-asia/buddhism", "relation": "inspired-by", "weight": 0.6 },
+    { "source": "east-asia/cao-dai", "target": "east-asia/taoism", "relation": "inspired-by", "weight": 0.6 },
+    { "source": "east-asia/cao-dai", "target": "east-asia/confucianism", "relation": "inspired-by", "weight": 0.6 },
+    { "source": "east-asia/cao-dai", "target": "europe/christianity/catholicism", "relation": "inspired-by", "weight": 0.5 },
+    { "source": "east-asia/cao-dai", "target": "global/spiritism", "relation": "inspired-by", "weight": 0.5 },
+
+    { "source": "iran/zoroastrianism", "target": "middle-east/judaism", "relation": "inspired-by", "weight": 0.7, "label": "After Babylonian Exile, Zoroastrian concepts of heaven/hell, angels, resurrection, and cosmic dualism entered Judaism" },
+    { "source": "iran/manichaeism", "target": "iran/zoroastrianism", "relation": "inspired-by", "weight": 0.8, "label": "Mani synthesized Zoroastrian dualism with Christian and Buddhist elements" },
+    { "source": "iran/manichaeism", "target": "middle-east/christianity", "relation": "inspired-by", "weight": 0.6 },
+    { "source": "iran/manichaeism", "target": "south-asia/buddhism", "relation": "inspired-by", "weight": 0.5 },
+    { "source": "iran/yazidism", "target": "iran/zoroastrianism", "relation": "inspired-by", "weight": 0.6, "label": "Incorporates Zoroastrian dualistic concepts and reverence for fire/sun" },
+    { "source": "iran/yazidism", "target": "middle-east/islam/sufism", "relation": "inspired-by", "weight": 0.5, "label": "Sheikh Adi ibn Musafir, a Sufi mystic, formalized Yazidi theology" },
+
+    { "source": "americas/santeria", "target": "africa/yoruba", "relation": "inspired-by", "weight": 0.9, "label": "Yoruba orishas mapped to Catholic saints by enslaved Africans in Cuba" },
+    { "source": "americas/santeria", "target": "europe/christianity/catholicism", "relation": "inspired-by", "weight": 0.6, "label": "Catholic saints and liturgical calendar syncretized with Yoruba practice" },
+    { "source": "americas/candomble", "target": "africa/yoruba", "relation": "inspired-by", "weight": 0.85, "label": "Brazilian continuation of Yoruba religion, blended with Catholic elements" },
+    { "source": "americas/candomble", "target": "europe/christianity/catholicism", "relation": "inspired-by", "weight": 0.5 },
+    { "source": "americas/haitian-vodou", "target": "africa/vodun", "relation": "inspired-by", "weight": 0.9, "label": "West African Vodun transplanted to Haiti and syncretized with Catholicism" },
+    { "source": "americas/haitian-vodou", "target": "europe/christianity/catholicism", "relation": "inspired-by", "weight": 0.5 },
+    { "source": "americas/rastafari", "target": "middle-east/christianity", "relation": "inspired-by", "weight": 0.6, "label": "Draws from the Bible, especially Old Testament and Revelation" },
+    { "source": "americas/rastafari", "target": "europe/christianity/oriental-orthodox/ethiopian", "relation": "inspired-by", "weight": 0.5, "label": "Ethiopian Christianity and the Solomonic dynasty inform Rastafari theology" },
+
+    { "source": "global/gnosticism", "target": "middle-east/christianity", "relation": "relates-to", "weight": 0.7, "label": "Early Christian Gnostic sects — provoked orthodoxy to define itself in opposition" },
+    { "source": "global/gnosticism", "target": "iran/manichaeism", "relation": "inspired-by", "weight": 0.6, "label": "Gnostic cosmology of trapped light-sparks directly influenced Mani" },
+    { "source": "global/ancient-greek", "target": "middle-east/christianity", "relation": "inspired-by", "weight": 0.7, "label": "Greek Logos concept adopted in Gospel of John; Neoplatonism shaped Augustine and medieval theology" },
+    { "source": "global/ancient-egyptian", "target": "middle-east/judaism", "relation": "relates-to", "weight": 0.5, "label": "Moses narrative, Exodus, possible monotheistic influence from Akhenaten" },
+
+    { "source": "europe/christianity/eastern-orthodox", "target": "europe/christianity/catholicism", "relation": "contradicts", "weight": 0.7, "label": "Great Schism — Filioque clause, papal supremacy, leavened vs unleavened bread" },
+    { "source": "europe/christianity/catholicism", "target": "europe/christianity/protestantism", "relation": "contradicts", "weight": 0.75, "label": "Sola scriptura vs Scripture+Tradition; sola fide vs faith+works; papal authority vs priesthood of all believers" },
+    { "source": "middle-east/islam/sunni", "target": "middle-east/islam/shia", "relation": "contradicts", "weight": 0.7, "label": "Succession crisis — Abu Bakr vs Ali; nature of the Imamate; different hadith collections" },
+    { "source": "south-asia/buddhism/theravada", "target": "south-asia/buddhism/mahayana", "relation": "contradicts", "weight": 0.5, "label": "Arahantship vs bodhisattva ideal; Pali Canon vs expanded sutras; individual vs universal liberation" },
+    { "source": "middle-east/judaism/orthodox", "target": "middle-east/judaism/reform", "relation": "contradicts", "weight": 0.6, "label": "Torah as divine vs God-inspired; halakha binding vs non-binding; tradition fixed vs evolving" },
+
+    { "source": "europe/christianity/protestantism", "target": "europe/christianity/protestantism/lutheranism", "relation": "causes", "weight": 0.9, "label": "Luther's 95 Theses (1517) launched the Reformation" },
+    { "source": "europe/christianity/protestantism", "target": "europe/christianity/protestantism/reformed", "relation": "causes", "weight": 0.85 },
+    { "source": "europe/christianity/protestantism", "target": "europe/christianity/protestantism/anabaptism", "relation": "causes", "weight": 0.8, "label": "Radical Reformation — went beyond Luther's reforms" },
+    { "source": "europe/christianity/protestantism/methodism", "target": "americas/christianity/pentecostalism", "relation": "causes", "weight": 0.8, "label": "Holiness movement from Methodism directly birthed Pentecostalism at Azusa Street" },
+
+    { "source": "south-asia/buddhism", "target": "south-asia/hinduism", "relation": "contradicts", "weight": 0.5, "label": "Rejected caste system, Vedic authority, atman (soul), and creator God" },
+    { "source": "south-asia/jainism", "target": "south-asia/buddhism", "relation": "relates-to", "weight": 0.6, "label": "Contemporary movements — both rejected Vedic authority, share karma/moksha but differ on self and asceticism" }
+  ]
+}

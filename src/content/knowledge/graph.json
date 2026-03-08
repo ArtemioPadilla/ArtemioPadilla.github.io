@@ -379,6 +379,19 @@
       }
     },
     {
+      "id": "society/world-religions",
+      "label": "World Religions",
+      "type": "topic",
+      "summary": "How the world's religions evolved, branched, and spread across civilizations — from ancient Mesopotamia to modern movements.",
+      "tags": ["religion", "history", "civilization", "culture"],
+      "subgraph": "world-religions.json",
+      "metadata": {
+        "added": "2026-03-08",
+        "importance": 1,
+        "status": "seed"
+      }
+    },
+    {
       "id": "personal",
       "label": "Personal",
       "type": "domain",
@@ -598,6 +611,19 @@
       "relation": "inspired-by",
       "weight": 0.75,
       "label": "Cybernetics was a direct intellectual precursor to complexity science — both study self-organizing systems"
+    },
+    {
+      "source": "society/world-religions",
+      "target": "society",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "society/world-religions",
+      "target": "philosophy",
+      "relation": "relates-to",
+      "weight": 0.8,
+      "label": "Religions are philosophical systems — cosmology, ethics, metaphysics, and epistemology all intertwined"
     }
   ]
 }

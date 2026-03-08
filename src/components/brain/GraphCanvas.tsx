@@ -23,6 +23,7 @@ interface Props {
   layoutMode: LayoutMode;
   relationFilter: EdgeRelation | null;
   radialCenter: string;
+  domainColors?: Record<string, string>;
 }
 
 const NODE_SIZE_MAP: Record<string, number> = {
@@ -46,9 +47,10 @@ const EDGE_COLORS: Record<string, string> = {
   "analogous-to": "#ec4899",
 };
 
-function getNodeColor(node: KnowledgeNode): string {
+function getNodeColor(node: KnowledgeNode, customColors?: Record<string, string>): string {
   const domain = getNodeDomain(node.id);
-  return DOMAIN_COLORS[domain] || "#888888";
+  const colors = customColors || DOMAIN_COLORS;
+  return colors[domain] || "#888888";
 }
 
 function getNodeSize(node: KnowledgeNode): number {
@@ -96,6 +98,7 @@ const GraphCanvas: FunctionalComponent<Props> = ({
   layoutMode,
   relationFilter,
   radialCenter,
+  domainColors,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sigmaRef = useRef<any>(null);
@@ -211,7 +214,7 @@ const GraphCanvas: FunctionalComponent<Props> = ({
           x: Math.cos(angle) * radius,
           y: Math.sin(angle) * radius,
           size: getNodeSize(node),
-          color: getNodeColor(node),
+          color: getNodeColor(node, domainColors),
           type: "circle",
           _nodeData: node,
         });
@@ -446,7 +449,7 @@ const GraphCanvas: FunctionalComponent<Props> = ({
         .map((n) => ({
           id: n.id,
           label: n.label,
-          color: getNodeColor(n),
+          color: getNodeColor(n, domainColors),
           size: getNodeSize(n),
           _nodeData: n,
         }));

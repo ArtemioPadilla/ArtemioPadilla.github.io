@@ -72,6 +72,11 @@
           },
           "description": "External reference URLs"
         },
+        "subgraph": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+\\.json$",
+          "description": "Filename of a sub-graph in src/content/knowledge/subgraphs/"
+        },
         "metadata": {
           "type": "object",
           "additionalProperties": false,

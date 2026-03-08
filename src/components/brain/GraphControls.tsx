@@ -39,6 +39,13 @@ const LAYOUT_MODES: { mode: LayoutMode; label: string; icon: string }[] = [
   },
 ];
 
+interface GraphLevel {
+  nodes: KnowledgeNode[];
+  edges: KnowledgeEdge[];
+  label: string;
+  subgraphKey: string | null;
+}
+
 interface Props {
   nodes: KnowledgeNode[];
   edges: KnowledgeEdge[];
@@ -54,6 +61,9 @@ interface Props {
   relationFilter: EdgeRelation | null;
   onRelationFilterChange: (relation: EdgeRelation | null) => void;
   radialCenter: string;
+  graphStack?: GraphLevel[];
+  onNavigateToLevel?: (index: number) => void;
+  domainColors?: Record<string, string>;
 }
 
 const GraphControls: FunctionalComponent<Props> = ({
@@ -71,6 +81,9 @@ const GraphControls: FunctionalComponent<Props> = ({
   relationFilter,
   onRelationFilterChange,
   radialCenter,
+  graphStack,
+  onNavigateToLevel,
+  domainColors,
 }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -182,7 +195,31 @@ const GraphControls: FunctionalComponent<Props> = ({
   // Find radial center label
   const radialCenterLabel = nodes.find((n) => n.id === radialCenter)?.label || radialCenter.split("/").pop();
 
+  const legendColors = domainColors || DOMAIN_COLORS;
+  const isInSubgraph = graphStack && graphStack.length > 1;
+
   return (<>
+    {/* Breadcrumb bar when in sub-graph */}
+    {isInSubgraph && graphStack && onNavigateToLevel && (
+      <div class="graph-breadcrumb">
+        {graphStack.map((level, i) => (
+          <span key={i}>
+            {i > 0 && <span class="graph-breadcrumb-sep">&rsaquo;</span>}
+            {i < graphStack.length - 1 ? (
+              <button
+                onClick={() => onNavigateToLevel(i)}
+                class="graph-breadcrumb-link"
+              >
+                {level.label}
+              </button>
+            ) : (
+              <span class="graph-breadcrumb-current">{level.label}</span>
+            )}
+          </span>
+        ))}
+      </div>
+    )}
+
     <div class="graph-controls">
       {/* Search */}
       <div class="graph-search-container">
@@ -232,7 +269,7 @@ const GraphControls: FunctionalComponent<Props> = ({
               >
                 <span
                   class="graph-search-result-dot"
-                  style={{ backgroundColor: DOMAIN_COLORS[getNodeDomain(node.id)] || "#888" }}
+                  style={{ backgroundColor: legendColors[getNodeDomain(node.id)] || "#888" }}
                 />
                 <div class="graph-search-result-text">
                   <span class="graph-search-result-label">{node.label}</span>
@@ -308,7 +345,7 @@ const GraphControls: FunctionalComponent<Props> = ({
                   />
                   <span
                     class="graph-filter-dot"
-                    style={{ backgroundColor: DOMAIN_COLORS[domain] || "#888" }}
+                    style={{ backgroundColor: legendColors[domain] || "#888" }}
                   />
                   <span class="graph-filter-label">{domain}</span>
                 </label>
@@ -372,7 +409,7 @@ const GraphControls: FunctionalComponent<Props> = ({
         <div key={domain} class="graph-legend-item">
           <span
             class="graph-legend-dot"
-            style={{ backgroundColor: DOMAIN_COLORS[domain] || "#888" }}
+            style={{ backgroundColor: legendColors[domain] || "#888" }}
           />
           <span class="graph-legend-label">{domain}</span>
         </div>

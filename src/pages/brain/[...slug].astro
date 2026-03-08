@@ -2,34 +2,67 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import Navigation from "../../components/layout/Navigation.astro";
 import Footer from "../../components/layout/Footer.astro";
-import { loadAndValidateGraph } from "../../utils/graph-loader";
-import { DOMAIN_COLORS, getNodeDomain, getParentId } from "../../types/knowledge";
+import { loadAndValidateGraph, loadAndValidateSubgraphs } from "../../utils/graph-loader";
+import { DOMAIN_COLORS, SUBGRAPH_CONFIGS, getNodeDomain, getParentId } from "../../types/knowledge";
 import type { KnowledgeNode, KnowledgeEdge } from "../../types/knowledge";
 
 export async function getStaticPaths() {
   const graph = loadAndValidateGraph();
-  return graph.nodes.map((node) => ({
+  const subgraphs = loadAndValidateSubgraphs();
+
+  const paths = graph.nodes.map((node) => ({
     params: { slug: node.id },
-    props: { node },
+    props: { node, isSubgraph: false, parentNodeId: null as string | null, subgraphKey: null as string | null },
   }));
+
+  // Add subgraph node pages
+  for (const mainNode of graph.nodes) {
+    if (!mainNode.subgraph) continue;
+    const sg = subgraphs[mainNode.subgraph];
+    if (!sg) continue;
+    for (const sgNode of sg.nodes) {
+      paths.push({
+        params: { slug: `${mainNode.id}/${sgNode.id}` },
+        props: { node: sgNode, isSubgraph: true, parentNodeId: mainNode.id, subgraphKey: mainNode.subgraph },
+      });
+    }
+  }
+
+  return paths;
 }
 
 interface Props {
   node: KnowledgeNode;
+  isSubgraph: boolean;
+  parentNodeId: string | null;
+  subgraphKey: string | null;
 }
 
-const { node } = Astro.props;
+const { node, isSubgraph, parentNodeId, subgraphKey } = Astro.props;
 const graph = loadAndValidateGraph();
+const subgraphs = loadAndValidateSubgraphs();
+
+// Determine which graph data to use
+const activeGraph = isSubgraph && subgraphKey
+  ? subgraphs[subgraphKey]
+  : graph;
+
+const activeNodes = activeGraph.nodes;
+const activeEdges = activeGraph.edges;
+
+// Determine colors
+const config = subgraphKey ? SUBGRAPH_CONFIGS[subgraphKey] : null;
+const activeColors = config?.domainColors || DOMAIN_COLORS;
 
 // Get connections
-const connectedEdges = graph.edges.filter(
+const connectedEdges = activeEdges.filter(
   (e) => e.source === node.id || e.target === node.id,
 );
 
 const connections = connectedEdges.map((edge) => {
   const isSource = edge.source === node.id;
   const otherId = isSource ? edge.target : edge.source;
-  const otherNode = graph.nodes.find((n) => n.id === otherId);
+  const otherNode = activeNodes.find((n) => n.id === otherId);
   return { edge, otherId, otherNode, direction: isSource ? "outgoing" : "incoming" };
 });
 
@@ -48,14 +81,20 @@ const breadcrumb = pathParts.map((part, i) => ({
   id: pathParts.slice(0, i + 1).join("/"),
 }));
 
+// Parent node info for subgraph breadcrumb
+const parentNode = parentNodeId ? graph.nodes.find((n) => n.id === parentNodeId) : null;
+
 const domain = getNodeDomain(node.id);
-const domainColor = DOMAIN_COLORS[domain] || "#888888";
+const domainColor = activeColors[domain] || "#888888";
 
 // Children (nodes whose parent path matches this node)
-const children = graph.nodes.filter((n) => {
+const children = activeNodes.filter((n) => {
   const parent = getParentId(n.id);
   return parent === node.id;
 });
+
+// Base path for links within this graph
+const basePath = isSubgraph && parentNodeId ? `/brain/${parentNodeId}` : "/brain";
 
 const RELATION_LABELS: Record<string, string> = {
   "is-part-of": "Part of",
@@ -83,12 +122,23 @@ const RELATION_LABELS: Record<string, string> = {
       <a href="/brain" class="hover:text-[var(--color-primary)] transition-colors no-underline">
         Brain
       </a>
+      {isSubgraph && parentNode && (
+        <span class="flex items-center gap-1">
+          <span class="opacity-40">/</span>
+          <a
+            href={`/brain/${parentNodeId}`}
+            class="hover:text-[var(--color-primary)] transition-colors no-underline"
+          >
+            {parentNode.label}
+          </a>
+        </span>
+      )}
       {breadcrumb.map((crumb, i) => (
         <span class="flex items-center gap-1">
           <span class="opacity-40">/</span>
           {i < breadcrumb.length - 1 ? (
             <a
-              href={`/brain/${crumb.id}`}
+              href={`${basePath}/${crumb.id}`}
               class="capitalize hover:text-[var(--color-primary)] transition-colors no-underline"
             >
               {crumb.label}
@@ -195,13 +245,13 @@ const RELATION_LABELS: Record<string, string> = {
             <div class="grid gap-3">
               {children.map((child) => (
                 <a
-                  href={`/brain/${child.id}`}
+                  href={`${basePath}/${child.id}`}
                   class="group rounded-lg border border-[var(--color-border)] p-4 no-underline transition-all hover:border-[var(--color-primary)] hover:bg-[rgba(79,143,247,0.04)]"
                 >
                   <div class="flex items-center gap-2">
                     <span
                       class="h-2 w-2 rounded-full"
-                      style={`background-color: ${DOMAIN_COLORS[getNodeDomain(child.id)] || "#888"}`}
+                      style={`background-color: ${activeColors[getNodeDomain(child.id)] || "#888"}`}
                     />
                     <span class="font-medium text-[var(--color-heading)] group-hover:text-[var(--color-primary)]">
                       {child.label}
@@ -234,12 +284,12 @@ const RELATION_LABELS: Record<string, string> = {
                 </span>
                 {conns.map((conn) => (
                   <a
-                    href={`/brain/${conn.otherId}`}
+                    href={`${basePath}/${conn.otherId}`}
                     class="group mb-1.5 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-[rgba(79,143,247,0.08)]"
                   >
                     <span
                       class="h-1.5 w-1.5 rounded-full flex-shrink-0"
-                      style={`background-color: ${conn.otherNode ? DOMAIN_COLORS[getNodeDomain(conn.otherId)] || "#888" : "#888"}`}
+                      style={`background-color: ${conn.otherNode ? activeColors[getNodeDomain(conn.otherId)] || "#888" : "#888"}`}
                     />
                     <span class="text-[var(--color-heading)] group-hover:text-[var(--color-primary)]">
                       {conn.otherNode?.label || conn.otherId}
@@ -253,7 +303,9 @@ const RELATION_LABELS: Record<string, string> = {
             ))}
 
             <a
-              href={`/brain?node=${node.id}`}
+              href={isSubgraph && subgraphKey
+                ? `/brain?subgraph=${subgraphKey}&node=${node.id}`
+                : `/brain?node=${node.id}`}
               class="mt-4 block rounded-md border border-[var(--color-border)] p-2.5 text-center text-xs font-medium text-[var(--color-heading)] no-underline transition-all hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
             >
               View in graph →

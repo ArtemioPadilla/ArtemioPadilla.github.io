@@ -9,6 +9,8 @@ interface Props {
   nodes: KnowledgeNode[];
   onClose: () => void;
   onNavigate: (nodeId: string) => void;
+  onDrillDown?: (subgraphKey: string) => void;
+  domainColors?: Record<string, string>;
 }
 
 const TYPE_BADGES: Record<string, string> = {
@@ -38,6 +40,8 @@ const DetailPanel: FunctionalComponent<Props> = ({
   nodes,
   onClose,
   onNavigate,
+  onDrillDown,
+  domainColors,
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +56,8 @@ const DetailPanel: FunctionalComponent<Props> = ({
   if (!node) return null;
 
   const domain = getNodeDomain(node.id);
-  const domainColor = DOMAIN_COLORS[domain] || "#888888";
+  const colors = domainColors || DOMAIN_COLORS;
+  const domainColor = colors[domain] || "#888888";
 
   // Find connected edges and nodes
   const connectedEdges = edges.filter(
@@ -150,6 +155,28 @@ const DetailPanel: FunctionalComponent<Props> = ({
         <p class="detail-summary">{node.summary}</p>
       )}
 
+      {/* Explore sub-graph button */}
+      {node.subgraph && onDrillDown && (
+        <button
+          onClick={() => onDrillDown(node.subgraph!)}
+          class="detail-subgraph-btn"
+          style={{ "--domain-color": domainColor }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <circle cx="5" cy="5" r="2" />
+            <circle cx="19" cy="5" r="2" />
+            <circle cx="5" cy="19" r="2" />
+            <circle cx="19" cy="19" r="2" />
+            <line x1="7" y1="7" x2="10" y2="10" />
+            <line x1="14" y1="10" x2="17" y2="7" />
+            <line x1="10" y1="14" x2="7" y2="17" />
+            <line x1="14" y1="14" x2="17" y2="17" />
+          </svg>
+          Explore: {node.label}
+        </button>
+      )}
+
       {/* Content */}
       {node.content && (
         <div class="detail-content">
@@ -189,7 +216,7 @@ const DetailPanel: FunctionalComponent<Props> = ({
                     class="detail-connection-dot"
                     style={{
                       backgroundColor: conn.otherNode
-                        ? DOMAIN_COLORS[getNodeDomain(conn.otherId)] || "#888"
+                        ? colors[getNodeDomain(conn.otherId)] || "#888"
                         : "#888",
                     }}
                   />
