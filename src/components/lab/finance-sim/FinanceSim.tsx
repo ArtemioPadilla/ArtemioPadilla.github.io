@@ -59,10 +59,11 @@ interface Expense {
   split?: ExpenseSplit;
 }
 
-interface SimConfig { horizonYears: number; inflationRate: number; startDate: string; }
+interface SimConfig { horizonYears: number; inflationRate: number; startDate: string; umaAnnual?: number; art185AnnualCap?: number; }
 
 interface FinanceState {
   accounts: Account[]; loans: Loan[]; incomes: Income[]; expenses: Expense[];
+  pprs: PPR[];
   config: SimConfig; nextId: number;
   participants?: Participant[];
 }
@@ -80,6 +81,13 @@ interface MonthRow {
   expenseByParticipant?: Record<number, number>;
   loanPaymentByParticipant?: Record<number, number>;
   contributionByParticipant?: Record<number, number>;
+  pprBalances?: Record<number, { art151: number; art185: number }>;
+  pprContributions?: Record<number, number>;
+  pprRefunds?: Record<number, number>;
+  pprInterestEarned?: Record<number, number>;
+  totalPPRBalance?: number;
+  totalPPRContributions?: number;
+  totalPPRRefunds?: number;
 }
 
 interface YearSummary {
@@ -108,6 +116,23 @@ interface ExpenseSplit {
   mode: SplitMode;
   participantIds: number[];
   customShares?: Record<number, number>;
+}
+
+interface PPR {
+  id: number;
+  name: string;
+  ownerId?: number;
+  monthlyArt151: number;
+  monthlyArt185: number;
+  annualReturnRate: number;
+  compoundInterval: CompoundInterval;
+  isrRate: number;
+  otherArt151Deductions: number;
+  startMonth: number;
+  endMonth: number;
+  refundMonth: number;
+  initialBalance151: number;
+  initialBalance185: number;
 }
 
 interface ComparisonScenario {
@@ -295,6 +320,16 @@ function simulate(state: FinanceState): SimulationResult {
     loanFixedPmt[l.id] = calcLoanPayment(l.currentBalance, r, l.termMonths);
   }
 
+  // PPR runtime state
+  const pprBals: Record<number, { art151: number; art185: number }> = {};
+  const pprPrevYearContrib: Record<number, { art151: number; art185: number }> = {};
+  const pprYtd: Record<number, { contrib151: number; contrib185: number }> = {};
+  for (const ppr of state.pprs) {
+    pprBals[ppr.id] = { art151: ppr.initialBalance151, art185: ppr.initialBalance185 };
+    pprPrevYearContrib[ppr.id] = { art151: 0, art185: 0 };
+    pprYtd[ppr.id] = { contrib151: 0, contrib185: 0 };
+  }
+
   let cumulativeInterestEarned = 0;
   let cumulativeInterestPaid = 0;
   let debtFreeMonth = 0;
@@ -476,8 +511,97 @@ function simulate(state: FinanceState): SimulationResult {
       }
     }
 
+    // 3.5 PPR contributions
+    let totalPPRContributions = 0;
+    let totalPPRRefunds = 0;
+    let totalPPRInterestEarned = 0;
+    const pprContributions: Record<number, number> = {};
+    const pprRefunds: Record<number, number> = {};
+    const pprInterestByPpr: Record<number, number> = {};
+
+    for (const ppr of state.pprs) {
+      if (m < ppr.startMonth) continue;
+      if (ppr.endMonth > 0 && m > ppr.endMonth) continue;
+
+      // Year boundary: save last year's YTD, reset
+      if (monthInYear === 1 && m > 1) {
+        pprPrevYearContrib[ppr.id] = {
+          art151: pprYtd[ppr.id]?.contrib151 ?? 0,
+          art185: pprYtd[ppr.id]?.contrib185 ?? 0,
+        };
+        pprYtd[ppr.id] = { contrib151: 0, contrib185: 0 };
+      }
+
+      // Compute owner's projected annual income for Art.151 cap
+      const ownerPid = ppr.ownerId ?? 0;
+      let ownerMonthlyIncome = 0;
+      for (const inc of state.incomes) {
+        const incOwner = inc.ownerId ?? 0;
+        if (incOwner === ownerPid || ownerPid === 0) {
+          ownerMonthlyIncome += incomeBySource[inc.id] ?? 0;
+        }
+      }
+      const projectedAnnualIncome = ownerMonthlyIncome * 12;
+
+      // Art.151 cap: min(10% income, UMA annual) - other deductions
+      const umaAnnual = state.config.umaAnnual ?? 206368;
+      const art151AnnualCap = Math.max(0, Math.min(projectedAnnualIncome * 0.1, umaAnnual) - ppr.otherArt151Deductions);
+      const remainingMonthsInYear = Math.max(1, 13 - monthInYear);
+      const art151MonthlyRemaining = Math.max(0, (art151AnnualCap - (pprYtd[ppr.id]?.contrib151 ?? 0)) / remainingMonthsInYear);
+      const actual151 = Math.min(ppr.monthlyArt151, art151MonthlyRemaining);
+
+      // Art.185 cap
+      const art185AnnualCap = state.config.art185AnnualCap ?? 152000;
+      const art185MonthlyRemaining = Math.max(0, (art185AnnualCap - (pprYtd[ppr.id]?.contrib185 ?? 0)) / remainingMonthsInYear);
+      const actual185 = Math.min(ppr.monthlyArt185, art185MonthlyRemaining);
+
+      const totalContrib = actual151 + actual185;
+      totalPPRContributions += totalContrib;
+      pprContributions[ppr.id] = totalContrib;
+
+      // Credit to PPR balances
+      pprBals[ppr.id].art151 += actual151;
+      pprBals[ppr.id].art185 += actual185;
+      pprYtd[ppr.id].contrib151 += actual151;
+      pprYtd[ppr.id].contrib185 += actual185;
+
+      // PPR investment returns
+      const rPpr = ppr.annualReturnRate / 100;
+      let interest151 = 0, interest185 = 0;
+      if (ppr.compoundInterval === "daily") {
+        interest151 = pprBals[ppr.id].art151 * (Math.pow(1 + rPpr / 365, 30.44) - 1);
+        interest185 = pprBals[ppr.id].art185 * (Math.pow(1 + rPpr / 365, 30.44) - 1);
+      } else if (ppr.compoundInterval === "monthly") {
+        interest151 = pprBals[ppr.id].art151 * rPpr / 12;
+        interest185 = pprBals[ppr.id].art185 * rPpr / 12;
+      } else if (ppr.compoundInterval === "quarterly") {
+        interest151 = pprBals[ppr.id].art151 * (Math.pow(1 + rPpr / 4, 1 / 3) - 1);
+        interest185 = pprBals[ppr.id].art185 * (Math.pow(1 + rPpr / 4, 1 / 3) - 1);
+      } else {
+        interest151 = pprBals[ppr.id].art151 * (Math.pow(1 + rPpr, 1 / 12) - 1);
+        interest185 = pprBals[ppr.id].art185 * (Math.pow(1 + rPpr, 1 / 12) - 1);
+      }
+      pprBals[ppr.id].art151 += interest151;
+      pprBals[ppr.id].art185 += interest185;
+      const pprInterest = interest151 + interest185;
+      totalPPRInterestEarned += pprInterest;
+      pprInterestByPpr[ppr.id] = pprInterest;
+
+      // PPR tax refunds (arrives in refundMonth based on previous year contributions)
+      if (monthInYear === ppr.refundMonth) {
+        const prevContrib = pprPrevYearContrib[ppr.id];
+        if (prevContrib) {
+          const deductible = prevContrib.art151 + prevContrib.art185;
+          const refund = deductible * (ppr.isrRate / 100);
+          totalPPRRefunds += refund;
+          pprRefunds[ppr.id] = refund;
+          totalIncome += refund;
+        }
+      }
+    }
+
     // 4. Net cashflow
-    const netCashflow = totalIncome - totalExpenses - totalLoanPayments;
+    const netCashflow = totalIncome - totalExpenses - totalLoanPayments - totalPPRContributions;
 
     // 5. Account interest
     let totalInterestEarned = 0;
@@ -527,7 +651,9 @@ function simulate(state: FinanceState): SimulationResult {
     if (netCashflow < 0) negCashflowCount++;
 
     // 7. Record month data
-    const totalAssets = state.accounts.reduce((sum, a) => sum + Math.max(0, accBals[a.id]), 0);
+    const accountBalSum = state.accounts.reduce((sum, a) => sum + Math.max(0, accBals[a.id]), 0);
+    const totalPPRBal = Object.values(pprBals).reduce((s, b) => s + b.art151 + b.art185, 0);
+    const totalAssets = accountBalSum + totalPPRBal;
     const totalDebt = state.loans.reduce((sum, l) => sum + Math.max(0, loanBals[l.id]), 0);
 
     if (debtFreeMonth === 0 && totalDebt <= 0.01 && state.loans.length > 0) {
@@ -559,6 +685,15 @@ function simulate(state: FinanceState): SimulationResult {
         contributionByParticipant: Object.fromEntries(
           participants.map(p => [p.id, (incomeByParticipant[p.id] ?? 0) - (expenseByParticipant[p.id] ?? 0) - (loanPaymentByParticipant[p.id] ?? 0)])
         ),
+      } : {}),
+      ...(state.pprs.length > 0 ? {
+        pprBalances: Object.fromEntries(Object.entries(pprBals).map(([k, v]) => [k, { ...v }])),
+        pprContributions: { ...pprContributions },
+        pprRefunds: { ...pprRefunds },
+        pprInterestEarned: { ...pprInterestByPpr },
+        totalPPRBalance: totalPPRBal,
+        totalPPRContributions,
+        totalPPRRefunds,
       } : {}),
     });
   }
@@ -705,6 +840,7 @@ function defaultState(): FinanceState {
       { id: 9, name: "Insurance", amount: 4500, frequency: "monthly", frequencyMonths: 0, category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
       { id: 10, name: "Entertainment", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
     ],
+    pprs: [],
     config: { horizonYears: 10, inflationRate: 4, startDate: "" },
     nextId: 11,
   };
@@ -734,6 +870,7 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 7, name: "Transport", amount: 2000, frequency: "monthly", frequencyMonths: 0, category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
         { id: 8, name: "Subscriptions", amount: 800, frequency: "monthly", frequencyMonths: 0, category: "subscriptions", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
       ],
+      pprs: [],
       config: { horizonYears: 10, inflationRate: 4, startDate: "" },
       nextId: 9,
     },
@@ -768,6 +905,7 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 13, name: "Entertainment", amount: 5000, frequency: "monthly", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0, split: { mode: "equal", participantIds: [100, 101] } },
         { id: 14, name: "Health", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "health", inflationAdjusted: true, startMonth: 1, endMonth: 0, split: { mode: "equal", participantIds: [100, 101] } },
       ],
+      pprs: [],
       config: { horizonYears: 15, inflationRate: 4, startDate: "" },
       nextId: 102,
     },
@@ -797,6 +935,7 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 8, name: "Utilities", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
         { id: 9, name: "Transport", amount: 2500, frequency: "monthly", frequencyMonths: 0, category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
       ],
+      pprs: [],
       config: { horizonYears: 8, inflationRate: 4, startDate: "" },
       nextId: 10,
     },
@@ -823,8 +962,40 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 10, name: "Living Expenses", amount: 15000, frequency: "monthly", frequencyMonths: 0, category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
         { id: 11, name: "Travel", amount: 60000, frequency: "annually", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
       ],
+      pprs: [],
       config: { horizonYears: 20, inflationRate: 3.5, startDate: "" },
       nextId: 12,
+    },
+  },
+  {
+    key: "ppr-retirement",
+    label: "PPR Retirement Planning",
+    state: {
+      accounts: [
+        { id: 1, name: "Checking", type: "checking", balance: 50000, annualRate: 0, compoundInterval: "monthly" },
+        { id: 2, name: "Savings", type: "savings", balance: 100000, annualRate: 4.5, compoundInterval: "monthly" },
+      ],
+      loans: [],
+      incomes: [
+        { id: 3, name: "Salary", amount: 60000, periodicity: "monthly", frequencyMonths: 0, growthRate: 5, bonusMonth: 12, bonusAmount: 60000, startMonth: 1, endMonth: 0 },
+      ],
+      expenses: [
+        { id: 4, name: "Living Expenses", amount: 25000, frequency: "monthly", frequencyMonths: 0, category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 5, name: "Utilities", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 6, name: "Insurance", amount: 4000, frequency: "monthly", frequencyMonths: 0, category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
+      ],
+      pprs: [
+        {
+          id: 7, name: "PPR Principal", ownerId: undefined,
+          monthlyArt151: 9000, monthlyArt185: 12700,
+          annualReturnRate: 8, compoundInterval: "monthly",
+          isrRate: 30, otherArt151Deductions: 0,
+          startMonth: 1, endMonth: 0, refundMonth: 4,
+          initialBalance151: 0, initialBalance185: 0,
+        },
+      ],
+      config: { horizonYears: 20, inflationRate: 4, startDate: "" },
+      nextId: 8,
     },
   },
   {
@@ -835,6 +1006,7 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
       loans: [],
       incomes: [],
       expenses: [],
+      pprs: [],
       config: { horizonYears: 10, inflationRate: 4, startDate: "" },
       nextId: 1,
     },
@@ -888,6 +1060,7 @@ function importJSON(file: File): Promise<FinanceState | null> {
           resolve(null);
           return;
         }
+        if (!data.pprs) data.pprs = [];
         resolve(data);
       } catch {
         resolve(null);
@@ -902,8 +1075,8 @@ function importJSON(file: File): Promise<FinanceState | null> {
 
 export default function FinanceSim() {
   const [state, setState] = useState<FinanceState>(defaultState);
-  const [tab, setTab] = useState<"dashboard" | "accounts" | "loans" | "income" | "expenses">("dashboard");
-  const [chartMode, setChartMode] = useState<"networth" | "cashflow" | "balances" | "debt">("networth");
+  const [tab, setTab] = useState<"dashboard" | "accounts" | "loans" | "income" | "expenses" | "ppr">("dashboard");
+  const [chartMode, setChartMode] = useState<"networth" | "cashflow" | "balances" | "debt" | "ppr">("networth");
   const [tableOpen, setTableOpen] = useState(false);
   const [granularity, setGranularity] = useState<"monthly" | "quarterly" | "yearly">("yearly");
   const [timelineOpen, setTimelineOpen] = useState(true);
@@ -968,11 +1141,27 @@ export default function FinanceSim() {
   const [expSplitParticipants, setExpSplitParticipants] = useState<number[]>([]);
   const [expCustomShares, setExpCustomShares] = useState<Record<number, number>>({});
 
+  // PPR form
+  const [pprName, setPprName] = useState("My PPR");
+  const [pprMonthly151, setPprMonthly151] = useState(9000);
+  const [pprMonthly185, setPprMonthly185] = useState(12700);
+  const [pprReturnRate, setPprReturnRate] = useState(8);
+  const [pprCompound, setPprCompound] = useState<CompoundInterval>("monthly");
+  const [pprIsrRate, setPprIsrRate] = useState(30);
+  const [pprOtherArt151, setPprOtherArt151] = useState(0);
+  const [pprRefundMonth, setPprRefundMonth] = useState(4);
+  const [pprStart, setPprStart] = useState(1);
+  const [pprEnd, setPprEnd] = useState(0);
+  const [pprInitBal151, setPprInitBal151] = useState(0);
+  const [pprInitBal185, setPprInitBal185] = useState(0);
+  const [pprOwner, setPprOwner] = useState(0);
+
   // Editing state (null = adding new, number = editing that ID)
   const [editingAccountId, setEditingAccountId] = useState<number | null>(null);
   const [editingLoanId, setEditingLoanId] = useState<number | null>(null);
   const [editingIncomeId, setEditingIncomeId] = useState<number | null>(null);
   const [editingExpenseId, setEditingExpenseId] = useState<number | null>(null);
+  const [editingPprId, setEditingPprId] = useState<number | null>(null);
 
   // Refs
   const chartRef = useRef<HTMLCanvasElement>(null);
@@ -1023,6 +1212,7 @@ export default function FinanceSim() {
           accounts: s.accounts.map(a => ({ ...a, ownerId: undefined })),
           loans: s.loans.map(l => ({ ...l, ownerId: undefined })),
           expenses: s.expenses.map(e => ({ ...e, split: undefined })),
+          pprs: s.pprs.map(p => ({ ...p, ownerId: undefined })),
         };
       }
       const firstId = parts[0].id;
@@ -1040,6 +1230,7 @@ export default function FinanceSim() {
             : undefined;
           return { ...e, split: { ...e.split, participantIds: newIds, customShares: newShares } };
         }),
+        pprs: s.pprs.map(p => p.ownerId === pid ? { ...p, ownerId: 0 } : p),
       };
     });
   }, []);
@@ -1255,6 +1446,24 @@ export default function FinanceSim() {
     setExpSplitMode("equal"); setExpSplitParticipants([]); setExpCustomShares({});
   }, []);
 
+  const startEditPpr = useCallback((ppr: PPR) => {
+    setEditingPprId(ppr.id);
+    setPprName(ppr.name); setPprMonthly151(ppr.monthlyArt151); setPprMonthly185(ppr.monthlyArt185);
+    setPprReturnRate(ppr.annualReturnRate); setPprCompound(ppr.compoundInterval);
+    setPprIsrRate(ppr.isrRate); setPprOtherArt151(ppr.otherArt151Deductions);
+    setPprRefundMonth(ppr.refundMonth); setPprStart(ppr.startMonth); setPprEnd(ppr.endMonth);
+    setPprInitBal151(ppr.initialBalance151); setPprInitBal185(ppr.initialBalance185);
+    setPprOwner(ppr.ownerId ?? 0);
+  }, []);
+
+  const cancelEditPpr = useCallback(() => {
+    setEditingPprId(null);
+    setPprName("My PPR"); setPprMonthly151(9000); setPprMonthly185(12700);
+    setPprReturnRate(8); setPprCompound("monthly"); setPprIsrRate(30);
+    setPprOtherArt151(0); setPprRefundMonth(4); setPprStart(1); setPprEnd(0);
+    setPprInitBal151(0); setPprInitBal185(0); setPprOwner(0);
+  }, []);
+
   // ── Add / Save handlers ──
   const saveAccount = useCallback(() => {
     if (!accName.trim()) return;
@@ -1386,6 +1595,37 @@ export default function FinanceSim() {
     setState(s => ({ ...s, expenses: s.expenses.filter(e => e.id !== id) }));
     if (editingExpenseId === id) cancelEditExpense();
   }, [editingExpenseId, cancelEditExpense]);
+
+  const savePpr = useCallback(() => {
+    if (!pprName.trim()) return;
+    const ownerData = participants.length > 1 ? { ownerId: pprOwner } : {};
+    const pprData: Omit<PPR, "id"> = {
+      name: pprName, monthlyArt151: pprMonthly151, monthlyArt185: pprMonthly185,
+      annualReturnRate: pprReturnRate, compoundInterval: pprCompound,
+      isrRate: pprIsrRate, otherArt151Deductions: pprOtherArt151,
+      startMonth: pprStart, endMonth: pprEnd, refundMonth: pprRefundMonth,
+      initialBalance151: pprInitBal151, initialBalance185: pprInitBal185,
+      ...ownerData,
+    };
+    if (editingPprId !== null) {
+      setState(s => ({
+        ...s,
+        pprs: s.pprs.map(p => p.id === editingPprId ? { ...p, ...pprData } : p),
+      }));
+      cancelEditPpr();
+    } else {
+      setState(s => ({
+        ...s,
+        pprs: [...s.pprs, { id: s.nextId, ...pprData }],
+        nextId: s.nextId + 1,
+      }));
+    }
+  }, [pprName, pprMonthly151, pprMonthly185, pprReturnRate, pprCompound, pprIsrRate, pprOtherArt151, pprStart, pprEnd, pprRefundMonth, pprInitBal151, pprInitBal185, pprOwner, participants.length, editingPprId, cancelEditPpr]);
+
+  const removePpr = useCallback((id: number) => {
+    setState(s => ({ ...s, pprs: s.pprs.filter(p => p.id !== id) }));
+    if (editingPprId === id) cancelEditPpr();
+  }, [editingPprId, cancelEditPpr]);
 
   const addAmortization = useCallback(() => {
     const targetLoan = amortLoanId > 0 ? amortLoanId : state.loans[0]?.id;
@@ -1611,6 +1851,42 @@ export default function FinanceSim() {
         pointBackgroundColor: C.palette[i % C.palette.length],
       }));
       yAxisTitle = "Account Balance ($)";
+    } else if (chartMode === "ppr") {
+      // PPR balance growth chart
+      const cyanGrad = ctx.createLinearGradient(0, 0, 0, 340);
+      cyanGrad.addColorStop(0, "rgba(6,182,212,0.25)");
+      cyanGrad.addColorStop(1, "rgba(6,182,212,0.02)");
+      // Total PPR balance line
+      datasets.push({
+        label: "Total PPR Balance",
+        data: sampleData(r => r.totalPPRBalance ?? 0),
+        borderColor: C.cyan,
+        backgroundColor: cyanGrad,
+        fill: true, tension: 0.3, borderWidth: 2.5, pointRadius: ptRadius,
+        pointBackgroundColor: C.cyan,
+      });
+      // Per-PPR lines
+      for (let pi = 0; pi < state.pprs.length; pi++) {
+        const ppr = state.pprs[pi];
+        const color = C.palette[(pi + 1) % C.palette.length];
+        datasets.push({
+          label: `${ppr.name} Art.151`,
+          data: sampleData(r => r.pprBalances?.[ppr.id]?.art151 ?? 0),
+          borderColor: color,
+          backgroundColor: "transparent",
+          fill: false, tension: 0.3, borderWidth: 1.5, pointRadius: 0,
+          borderDash: [6, 3],
+        });
+        datasets.push({
+          label: `${ppr.name} Art.185`,
+          data: sampleData(r => r.pprBalances?.[ppr.id]?.art185 ?? 0),
+          borderColor: `${color}99`,
+          backgroundColor: "transparent",
+          fill: false, tension: 0.3, borderWidth: 1.5, pointRadius: 0,
+          borderDash: [3, 3],
+        });
+      }
+      yAxisTitle = "PPR Balance ($)";
     } else {
       datasets = state.loans.map((loan, i) => {
         const color = C.palette[i % C.palette.length];
@@ -1761,6 +2037,16 @@ export default function FinanceSim() {
                     lines.push(`  ${p.name}: ${v >= 0 ? "+" : ""}${fmtShort(v)}`);
                   }
                 }
+                if (row.totalPPRBalance != null && row.totalPPRBalance > 0) {
+                  lines.push("── PPR ──");
+                  lines.push(`  Balance: ${fmtShort(row.totalPPRBalance)}`);
+                  if ((row.totalPPRContributions ?? 0) > 0) {
+                    lines.push(`  Contributions: ${fmtShort(row.totalPPRContributions ?? 0)}`);
+                  }
+                  if ((row.totalPPRRefunds ?? 0) > 0) {
+                    lines.push(`  Tax Refund: +${fmtShort(row.totalPPRRefunds ?? 0)}`);
+                  }
+                }
                 return lines;
               },
             },
@@ -1811,7 +2097,7 @@ export default function FinanceSim() {
         chartInstanceRef.current = null;
       }
     };
-  }, [sim, chartMode, tab, state.accounts, state.loans, state.config.startDate, granularity, getChartSamples, comparisonScenarios]);
+  }, [sim, chartMode, tab, state.accounts, state.loans, state.pprs, state.config.startDate, granularity, getChartSamples, comparisonScenarios]);
 
   // ── Entity tab charts ──
   useEffect(() => {
@@ -1900,6 +2186,32 @@ export default function FinanceSim() {
         borderDash: [6, 3],
       });
       yAxisTitle = "Monthly Expenses ($)";
+    } else if (tab === "ppr") {
+      // PPR balance growth per PPR
+      const cyanGrad = ctx.createLinearGradient(0, 0, 0, 260);
+      cyanGrad.addColorStop(0, "rgba(6,182,212,0.2)");
+      cyanGrad.addColorStop(1, "rgba(6,182,212,0.02)");
+      datasets.push({
+        label: "Total PPR",
+        data: sampleData(r => r.totalPPRBalance ?? 0),
+        borderColor: C.cyan,
+        backgroundColor: cyanGrad,
+        fill: true, tension: 0.3, borderWidth: 2.5, pointRadius: 0,
+        borderDash: [6, 3],
+      });
+      for (let pi = 0; pi < state.pprs.length; pi++) {
+        const ppr = state.pprs[pi];
+        const color = C.palette[pi % C.palette.length];
+        datasets.push({
+          label: ppr.name,
+          data: sampleData(r => (r.pprBalances?.[ppr.id]?.art151 ?? 0) + (r.pprBalances?.[ppr.id]?.art185 ?? 0)),
+          borderColor: color,
+          backgroundColor: "transparent",
+          fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
+          pointBackgroundColor: color,
+        });
+      }
+      yAxisTitle = "PPR Balance ($)";
     }
 
     if (datasets.length === 0) return;
@@ -1967,7 +2279,7 @@ export default function FinanceSim() {
         tabChartInstanceRef.current = null;
       }
     };
-  }, [sim, tab, state.accounts, state.loans, state.incomes, state.expenses, state.config.startDate, granularity, getChartSamples]);
+  }, [sim, tab, state.accounts, state.loans, state.incomes, state.expenses, state.pprs, state.config.startDate, granularity, getChartSamples]);
 
   // ── Gantt ResizeObserver ──
   useEffect(() => {
@@ -2030,6 +2342,18 @@ export default function FinanceSim() {
       rows.push({ name: loan.name, start: loan.startMonth, end, color: C.blue, section: "LOANS", amortMonths });
     }
 
+    // PPR section
+    for (const ppr of state.pprs) {
+      const end = ppr.endMonth > 0 ? Math.min(ppr.endMonth, totalMonths) : totalMonths;
+      // Collect refund months
+      const refundMonths: number[] = [];
+      for (let yr = 1; yr <= Math.ceil(totalMonths / 12); yr++) {
+        const refM = (yr - 1) * 12 + ppr.refundMonth;
+        if (refM >= ppr.startMonth && refM <= end) refundMonths.push(refM);
+      }
+      rows.push({ name: ppr.name, start: ppr.startMonth, end, color: C.cyan, section: "PPR", amortMonths: refundMonths });
+    }
+
     if (rows.length === 0) return;
 
     // Layout: align with Chart.js chart area if available
@@ -2086,7 +2410,7 @@ export default function FinanceSim() {
 
     // Draw sections and bars
     let y = topPad;
-    const sectionColors: Record<string, string> = { INCOME: C.green, EXPENSES: C.red, LOANS: C.blue };
+    const sectionColors: Record<string, string> = { INCOME: C.green, EXPENSES: C.red, LOANS: C.blue, PPR: C.cyan };
 
     for (const section of sections) {
       const sectionRows = rows.filter(r => r.section === section);
@@ -2168,7 +2492,7 @@ export default function FinanceSim() {
       const lbl = sd ? monthToShortDate(m + 1, sd) : `Mo ${m + 1}`;
       ctx.fillText(lbl, x, y + 14);
     }
-  }, [sim, tab, timelineOpen, state.incomes, state.expenses, state.loans, state.config.startDate, ganttWidth]);
+  }, [sim, tab, timelineOpen, state.incomes, state.expenses, state.loans, state.pprs, state.config.startDate, ganttWidth]);
 
   // ── Pill button helper ──
   const pillBtn = (
@@ -2246,6 +2570,7 @@ export default function FinanceSim() {
     { key: "loans", label: "Loans" },
     { key: "income", label: "Income" },
     { key: "expenses", label: "Expenses" },
+    { key: "ppr", label: "PPR" },
   ] as const;
 
   const renderConfigBar = () => (
@@ -2506,6 +2831,50 @@ export default function FinanceSim() {
         </div>
       </div>
 
+      {/* PPR Summary KPIs */}
+      {state.pprs.length > 0 && sim.months.length > 0 && (() => {
+        const lastRow = sim.months[sim.months.length - 1];
+        const pprBal = lastRow.totalPPRBalance ?? 0;
+        // Estimate annual refund from last year contributions
+        let annualContrib = 0;
+        const lastYearStart = Math.max(0, sim.months.length - 12);
+        for (let i = lastYearStart; i < sim.months.length; i++) {
+          annualContrib += sim.months[i].totalPPRContributions ?? 0;
+        }
+        const avgIsrRate = state.pprs.length > 0 ? state.pprs.reduce((s, p) => s + p.isrRate, 0) / state.pprs.length : 30;
+        const estRefund = annualContrib * (avgIsrRate / 100);
+        return (
+          <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <CardTitle>PPR Overview</CardTitle>
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <StatCard
+                label="PPR Balance"
+                value={fmtShort(pprBal)}
+                sub="end of horizon"
+                color={C.cyan}
+              />
+              <StatCard
+                label="Est. Annual Refund"
+                value={fmtShort(estRefund)}
+                sub={`~${avgIsrRate.toFixed(0)}% ISR rate`}
+                color={C.green}
+              />
+              <StatCard
+                label="Monthly Contributions"
+                value={fmtShort(state.pprs.reduce((s, p) => s + p.monthlyArt151 + p.monthlyArt185, 0))}
+                sub="Art.151 + Art.185"
+                color={C.cyan}
+              />
+              <StatCard
+                label="PPR Plans"
+                value={String(state.pprs.length)}
+                sub={`avg ${state.pprs.length > 0 ? fmtPct(state.pprs.reduce((s, p) => s + p.annualReturnRate, 0) / state.pprs.length) : "0%"} return`}
+              />
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Participant Breakdown */}
       {participants.length > 1 && sim.months.length > 0 && (
         <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
@@ -2651,6 +3020,7 @@ export default function FinanceSim() {
           {pillBtn(chartMode === "cashflow", () => setChartMode("cashflow"), "Cashflow")}
           {pillBtn(chartMode === "balances", () => setChartMode("balances"), "Balances")}
           {pillBtn(chartMode === "debt", () => setChartMode("debt"), "Debt Paydown")}
+          {state.pprs.length > 0 && pillBtn(chartMode === "ppr", () => setChartMode("ppr"), "PPR Growth")}
           <div class="mx-2 h-5 w-px bg-[var(--color-border)]" />
           {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
           {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
@@ -3635,6 +4005,225 @@ export default function FinanceSim() {
   );
 
   // ════════════════════════════════════════════════════════════════════
+  // PPR Tab
+  // ════════════════════════════════════════════════════════════════════
+
+  const renderPpr = () => {
+    // Compute PPR summary stats
+    const lastRow = sim.months.length > 0 ? sim.months[sim.months.length - 1] : null;
+    const totalPprBalance = lastRow?.totalPPRBalance ?? 0;
+    const totalArt151 = state.pprs.reduce((s, p) => s + p.monthlyArt151, 0);
+    const totalArt185 = state.pprs.reduce((s, p) => s + p.monthlyArt185, 0);
+    const avgReturn = state.pprs.length > 0 ? state.pprs.reduce((s, p) => s + p.annualReturnRate, 0) / state.pprs.length : 0;
+    // Estimate tax benefit
+    let annualContrib = 0;
+    const startIdx = Math.max(0, sim.months.length - 12);
+    for (let i = startIdx; i < sim.months.length; i++) {
+      annualContrib += sim.months[i]?.totalPPRContributions ?? 0;
+    }
+    const avgIsrRate = state.pprs.length > 0 ? state.pprs.reduce((s, p) => s + p.isrRate, 0) / state.pprs.length : 30;
+    const estAnnualRefund = annualContrib * (avgIsrRate / 100);
+    // Total interest earned from PPR
+    let totalPprInterest = 0;
+    for (const row of sim.months) {
+      if (row.pprInterestEarned) {
+        for (const v of Object.values(row.pprInterestEarned)) totalPprInterest += v;
+      }
+    }
+
+    return (
+      <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[380px_1fr]">
+        {/* Left: form + list */}
+        <div class="space-y-4">
+          <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <CardTitle>{editingPprId !== null ? "Edit PPR" : "Add PPR Plan"}</CardTitle>
+            <div class="mb-3">
+              {label("Plan Name")}
+              {textInput(pprName, setPprName)}
+            </div>
+            {participants.length > 1 && (
+              <div class="mb-3">
+                {label("Owner")}
+                {selectInput(String(pprOwner), (v) => setPprOwner(Number(v)),
+                  [{ value: "0", label: "Joint" }, ...participants.map(p => ({ value: String(p.id), label: p.name }))]
+                )}
+              </div>
+            )}
+            <div class="mb-3 grid grid-cols-2 gap-3">
+              <div>
+                {label("Monthly Art.151")}
+                {numInput(pprMonthly151, setPprMonthly151, { prefix: "$", min: 0, step: 500 })}
+              </div>
+              <div>
+                {label("Monthly Art.185")}
+                {numInput(pprMonthly185, setPprMonthly185, { prefix: "$", min: 0, step: 500 })}
+              </div>
+            </div>
+            <div class="mb-3 grid grid-cols-2 gap-3">
+              <div>
+                {label("Annual Return Rate")}
+                {numInput(pprReturnRate, setPprReturnRate, { suffix: "%", min: 0, max: 30, step: 0.5 })}
+              </div>
+              <div>
+                {label("Compound Interval")}
+                {selectInput(pprCompound, (v) => setPprCompound(v as CompoundInterval), [
+                  { value: "daily", label: "Daily" },
+                  { value: "monthly", label: "Monthly" },
+                  { value: "quarterly", label: "Quarterly" },
+                  { value: "annually", label: "Annually" },
+                ])}
+              </div>
+            </div>
+            <div class="mb-3 grid grid-cols-2 gap-3">
+              <div>
+                {label("ISR Rate")}
+                {numInput(pprIsrRate, setPprIsrRate, { suffix: "%", min: 0, max: 50, step: 1 })}
+              </div>
+              <div>
+                {label("Refund Month")}
+                {selectInput(String(pprRefundMonth), (v) => setPprRefundMonth(Number(v)),
+                  MONTH_NAMES.slice(1).map((m, i) => ({ value: String(i + 1), label: m }))
+                )}
+              </div>
+            </div>
+            <div class="mb-3">
+              {label("Other Art.151 Deductions (annual)")}
+              {numInput(pprOtherArt151, setPprOtherArt151, { prefix: "$", min: 0, step: 1000 })}
+            </div>
+            <div class="mb-3 grid grid-cols-2 gap-3">
+              <div>
+                {label("Start Month")}
+                {numInput(pprStart, setPprStart, { min: 1, step: 1 })}
+              </div>
+              <div>
+                {label("End Month (0 = never)")}
+                {numInput(pprEnd, setPprEnd, { min: 0, step: 1 })}
+              </div>
+            </div>
+            <div class="mb-4 grid grid-cols-2 gap-3">
+              <div>
+                {label("Initial Balance Art.151")}
+                {numInput(pprInitBal151, setPprInitBal151, { prefix: "$", min: 0, step: 1000 })}
+              </div>
+              <div>
+                {label("Initial Balance Art.185")}
+                {numInput(pprInitBal185, setPprInitBal185, { prefix: "$", min: 0, step: 1000 })}
+              </div>
+            </div>
+            {editingPprId !== null ? (
+              <div class="flex gap-2">
+                {goldButton(savePpr, "Save Changes")}
+                <button onClick={cancelEditPpr} class="w-full rounded-lg border border-[var(--color-border)] px-3 py-2.5 font-mono text-xs uppercase tracking-wider text-[var(--color-text-muted)] transition-colors hover:border-red-500 hover:text-red-400">
+                  Cancel
+                </button>
+              </div>
+            ) : goldButton(savePpr, "Add PPR Plan")}
+          </div>
+
+          {/* PPR list */}
+          <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <CardTitle>Your PPR Plans</CardTitle>
+            <div class="flex max-h-80 flex-col gap-2 overflow-y-auto">
+              {state.pprs.length === 0 ? (
+                <p class="py-3 text-center font-mono text-xs text-[var(--color-text-muted)]">
+                  No PPR plans yet. Add one above.
+                </p>
+              ) : (
+                state.pprs.map((p) => (
+                  <div
+                    key={p.id}
+                    class="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
+                  >
+                    <div class="min-w-0 flex-1">
+                      <div class="flex items-center gap-2">
+                        <span class="truncate font-mono text-sm text-[var(--color-text)]">
+                          {p.name}
+                        </span>
+                        {badge("PPR", { color: C.cyan, bg: "rgba(6,182,212,0.15)", border: "rgba(6,182,212,0.25)" })}
+                        {participants.length > 1 && (() => {
+                          if (!p.ownerId || p.ownerId === 0) return <span class="font-mono text-[9px] text-[var(--color-text-muted)]">Joint</span>;
+                          const owner = participants.find(pt => pt.id === p.ownerId);
+                          return owner ? <span class="font-mono text-[9px]" style={{ color: owner.color }}>{owner.name}</span> : null;
+                        })()}
+                      </div>
+                      <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
+                        Art.151: {fmtM(p.monthlyArt151)}/mo | Art.185: {fmtM(p.monthlyArt185)}/mo | {fmtPct(p.annualReturnRate)} return
+                      </div>
+                    </div>
+                    {editBtn(() => startEditPpr(p), editingPprId === p.id)}
+                    {deleteBtn(() => removePpr(p.id))}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: summary + charts */}
+        <div class="space-y-4">
+          <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <CardTitle>PPR Summary</CardTitle>
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <StatCard
+                label="Total PPR Balance"
+                value={fmtShort(totalPprBalance)}
+                sub="end of projection"
+                color={C.cyan}
+              />
+              <StatCard
+                label="Monthly Contributions"
+                value={fmtM(totalArt151 + totalArt185)}
+                sub={`Art.151: ${fmtM(totalArt151)} | Art.185: ${fmtM(totalArt185)}`}
+                color={C.cyan}
+              />
+              <StatCard
+                label="Avg Return Rate"
+                value={fmtPct(avgReturn)}
+                sub={`${state.pprs.length} plan${state.pprs.length !== 1 ? "s" : ""}`}
+              />
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <CardTitle>Tax Benefit Breakdown</CardTitle>
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <StatCard
+                label="Est. Annual Tax Refund"
+                value={fmtShort(estAnnualRefund)}
+                sub={`at ~${avgIsrRate.toFixed(0)}% ISR`}
+                color={C.green}
+              />
+              <StatCard
+                label="Total Interest Earned"
+                value={fmtShort(totalPprInterest)}
+                sub="over projection"
+                color={C.green}
+              />
+              <StatCard
+                label="Art.151 Annual Cap"
+                value={fmtM(state.config.umaAnnual ?? 206368)}
+                sub={`Art.185 cap: ${fmtM(state.config.art185AnnualCap ?? 152000)}`}
+              />
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <CardTitle>Balance Projection</CardTitle>
+            <div class="mb-3 flex flex-wrap gap-1">
+              {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
+              {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
+              {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
+            </div>
+            <div style={{ height: "280px", position: "relative" }}>
+              <canvas ref={tabChartRef} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ════════════════════════════════════════════════════════════════════
   // Main Render
   // ════════════════════════════════════════════════════════════════════
 
@@ -3648,6 +4237,7 @@ export default function FinanceSim() {
       {tab === "loans" && renderLoans()}
       {tab === "income" && renderIncome()}
       {tab === "expenses" && renderExpenses()}
+      {tab === "ppr" && renderPpr()}
     </div>
   );
 }

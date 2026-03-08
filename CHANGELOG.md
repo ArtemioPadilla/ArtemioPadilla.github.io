@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Finance Simulator: PPR Support** — Plan Personal de Retiro (PPR) with Art.151/Art.185 contribution tracking, annual caps (UMA-based), compound interest, ISR tax refund simulation, dedicated PPR tab with full CRUD, dashboard integration (PPR Growth chart mode, KPI cards, tooltip breakdown), Gantt timeline rows, and a "PPR Retirement Planning" scenario
+
 - **Database Index Visualizer** (`/lab/db-index-viz`) — B-Tree, B+ Tree, Hash Index with animated insert/delete/search, node splits, comparison mode
 - **Strange Attractors** (`/lab/strange-attractors`) — Lorenz, Rossler, double pendulum, Henon map, logistic bifurcation with 3D rotation and Lyapunov exponent estimation
 - **Backpropagation Visualizer** (`/lab/backprop-viz`) — step-by-step forward/backward pass, gradient flow, chain rule, vanishing gradient demo
