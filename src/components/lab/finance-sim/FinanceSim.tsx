@@ -763,6 +763,12 @@ export default function FinanceSim() {
   const [expStart, setExpStart] = useState(1);
   const [expEnd, setExpEnd] = useState(0);
 
+  // Editing state (null = adding new, number = editing that ID)
+  const [editingAccountId, setEditingAccountId] = useState<number | null>(null);
+  const [editingLoanId, setEditingLoanId] = useState<number | null>(null);
+  const [editingIncomeId, setEditingIncomeId] = useState<number | null>(null);
+  const [editingExpenseId, setEditingExpenseId] = useState<number | null>(null);
+
   // Refs
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstanceRef = useRef<Chart | null>(null);
@@ -879,76 +885,175 @@ export default function FinanceSim() {
     setState(s => ({ ...s, config: { ...s.config, ...patch } }));
   }, []);
 
-  const addAccount = useCallback(() => {
+  // ── Edit helpers: populate form from existing item ──
+  const startEditAccount = useCallback((a: Account) => {
+    setEditingAccountId(a.id);
+    setAccName(a.name); setAccType(a.type); setAccBalance(a.balance);
+    setAccRate(a.annualRate); setAccCompound(a.compoundInterval);
+  }, []);
+
+  const cancelEditAccount = useCallback(() => {
+    setEditingAccountId(null);
+    setAccName("New Account"); setAccType("savings"); setAccBalance(10000);
+    setAccRate(3); setAccCompound("monthly");
+  }, []);
+
+  const startEditLoan = useCallback((l: Loan) => {
+    setEditingLoanId(l.id);
+    setLoanName(l.name); setLoanType(l.type); setLoanPrincipal(l.principal);
+    setLoanBalance(l.currentBalance); setLoanRate(l.annualRate);
+    setLoanTerm(l.termMonths); setLoanInterval(l.paymentInterval); setLoanStart(l.startMonth);
+  }, []);
+
+  const cancelEditLoan = useCallback(() => {
+    setEditingLoanId(null);
+    setLoanName("New Loan"); setLoanType("personal"); setLoanPrincipal(100000);
+    setLoanBalance(100000); setLoanRate(12); setLoanTerm(60);
+    setLoanInterval("monthly"); setLoanStart(1);
+  }, []);
+
+  const startEditIncome = useCallback((inc: Income) => {
+    setEditingIncomeId(inc.id);
+    setIncName(inc.name); setIncAmount(inc.amount); setIncPeriodicity(inc.periodicity);
+    setIncGrowth(inc.growthRate); setIncBonusMonth(inc.bonusMonth);
+    setIncBonusAmount(inc.bonusAmount); setIncStart(inc.startMonth); setIncEnd(inc.endMonth);
+  }, []);
+
+  const cancelEditIncome = useCallback(() => {
+    setEditingIncomeId(null);
+    setIncName("New Income"); setIncAmount(10000); setIncPeriodicity("monthly");
+    setIncGrowth(3); setIncBonusMonth(0); setIncBonusAmount(0);
+    setIncStart(1); setIncEnd(0);
+  }, []);
+
+  const startEditExpense = useCallback((exp: Expense) => {
+    setEditingExpenseId(exp.id);
+    setExpName(exp.name); setExpAmount(exp.amount); setExpFreq(exp.frequency);
+    setExpCategory(exp.category); setExpInflation(exp.inflationAdjusted);
+    setExpStart(exp.startMonth); setExpEnd(exp.endMonth);
+  }, []);
+
+  const cancelEditExpense = useCallback(() => {
+    setEditingExpenseId(null);
+    setExpName("New Expense"); setExpAmount(1000); setExpFreq("monthly");
+    setExpCategory("other"); setExpInflation(true); setExpStart(1); setExpEnd(0);
+  }, []);
+
+  // ── Add / Save handlers ──
+  const saveAccount = useCallback(() => {
     if (!accName.trim()) return;
-    setState(s => ({
-      ...s,
-      accounts: [...s.accounts, {
-        id: s.nextId, name: accName, type: accType,
-        balance: accBalance, annualRate: accRate, compoundInterval: accCompound,
-      }],
-      nextId: s.nextId + 1,
-    }));
-  }, [accName, accType, accBalance, accRate, accCompound]);
+    if (editingAccountId !== null) {
+      setState(s => ({
+        ...s,
+        accounts: s.accounts.map(a => a.id === editingAccountId
+          ? { ...a, name: accName, type: accType, balance: accBalance, annualRate: accRate, compoundInterval: accCompound }
+          : a),
+      }));
+      cancelEditAccount();
+    } else {
+      setState(s => ({
+        ...s,
+        accounts: [...s.accounts, {
+          id: s.nextId, name: accName, type: accType,
+          balance: accBalance, annualRate: accRate, compoundInterval: accCompound,
+        }],
+        nextId: s.nextId + 1,
+      }));
+    }
+  }, [accName, accType, accBalance, accRate, accCompound, editingAccountId, cancelEditAccount]);
 
   const removeAccount = useCallback((id: number) => {
     setState(s => ({ ...s, accounts: s.accounts.filter(a => a.id !== id) }));
-  }, []);
+    if (editingAccountId === id) cancelEditAccount();
+  }, [editingAccountId, cancelEditAccount]);
 
-  const addLoan = useCallback(() => {
+  const saveLoan = useCallback(() => {
     if (!loanName.trim()) return;
-    setState(s => ({
-      ...s,
-      loans: [...s.loans, {
-        id: s.nextId, name: loanName, type: loanType,
-        principal: loanPrincipal, currentBalance: loanBalance,
-        annualRate: loanRate, termMonths: loanTerm,
-        paymentInterval: loanInterval, startMonth: loanStart,
-        amortizations: [],
-      }],
-      nextId: s.nextId + 1,
-    }));
-  }, [loanName, loanType, loanPrincipal, loanBalance, loanRate, loanTerm, loanInterval, loanStart]);
+    if (editingLoanId !== null) {
+      setState(s => ({
+        ...s,
+        loans: s.loans.map(l => l.id === editingLoanId
+          ? { ...l, name: loanName, type: loanType, principal: loanPrincipal, currentBalance: loanBalance, annualRate: loanRate, termMonths: loanTerm, paymentInterval: loanInterval, startMonth: loanStart }
+          : l),
+      }));
+      cancelEditLoan();
+    } else {
+      setState(s => ({
+        ...s,
+        loans: [...s.loans, {
+          id: s.nextId, name: loanName, type: loanType,
+          principal: loanPrincipal, currentBalance: loanBalance,
+          annualRate: loanRate, termMonths: loanTerm,
+          paymentInterval: loanInterval, startMonth: loanStart,
+          amortizations: [],
+        }],
+        nextId: s.nextId + 1,
+      }));
+    }
+  }, [loanName, loanType, loanPrincipal, loanBalance, loanRate, loanTerm, loanInterval, loanStart, editingLoanId, cancelEditLoan]);
 
   const removeLoan = useCallback((id: number) => {
     setState(s => ({ ...s, loans: s.loans.filter(l => l.id !== id) }));
-  }, []);
+    if (editingLoanId === id) cancelEditLoan();
+  }, [editingLoanId, cancelEditLoan]);
 
-  const addIncome = useCallback(() => {
+  const saveIncome = useCallback(() => {
     if (!incName.trim()) return;
-    setState(s => ({
-      ...s,
-      incomes: [...s.incomes, {
-        id: s.nextId, name: incName, amount: incAmount,
-        periodicity: incPeriodicity, growthRate: incGrowth,
-        bonusMonth: incBonusMonth, bonusAmount: incBonusAmount,
-        startMonth: incStart, endMonth: incEnd,
-      }],
-      nextId: s.nextId + 1,
-    }));
-  }, [incName, incAmount, incPeriodicity, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd]);
+    if (editingIncomeId !== null) {
+      setState(s => ({
+        ...s,
+        incomes: s.incomes.map(i => i.id === editingIncomeId
+          ? { ...i, name: incName, amount: incAmount, periodicity: incPeriodicity, growthRate: incGrowth, bonusMonth: incBonusMonth, bonusAmount: incBonusAmount, startMonth: incStart, endMonth: incEnd }
+          : i),
+      }));
+      cancelEditIncome();
+    } else {
+      setState(s => ({
+        ...s,
+        incomes: [...s.incomes, {
+          id: s.nextId, name: incName, amount: incAmount,
+          periodicity: incPeriodicity, growthRate: incGrowth,
+          bonusMonth: incBonusMonth, bonusAmount: incBonusAmount,
+          startMonth: incStart, endMonth: incEnd,
+        }],
+        nextId: s.nextId + 1,
+      }));
+    }
+  }, [incName, incAmount, incPeriodicity, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd, editingIncomeId, cancelEditIncome]);
 
   const removeIncome = useCallback((id: number) => {
     setState(s => ({ ...s, incomes: s.incomes.filter(i => i.id !== id) }));
-  }, []);
+    if (editingIncomeId === id) cancelEditIncome();
+  }, [editingIncomeId, cancelEditIncome]);
 
-  const addExpense = useCallback(() => {
+  const saveExpense = useCallback(() => {
     if (!expName.trim()) return;
-    setState(s => ({
-      ...s,
-      expenses: [...s.expenses, {
-        id: s.nextId, name: expName, amount: expAmount,
-        frequency: expFreq, category: expCategory,
-        inflationAdjusted: expInflation,
-        startMonth: expStart, endMonth: expEnd,
-      }],
-      nextId: s.nextId + 1,
-    }));
-  }, [expName, expAmount, expFreq, expCategory, expInflation, expStart, expEnd]);
+    if (editingExpenseId !== null) {
+      setState(s => ({
+        ...s,
+        expenses: s.expenses.map(e => e.id === editingExpenseId
+          ? { ...e, name: expName, amount: expAmount, frequency: expFreq, category: expCategory, inflationAdjusted: expInflation, startMonth: expStart, endMonth: expEnd }
+          : e),
+      }));
+      cancelEditExpense();
+    } else {
+      setState(s => ({
+        ...s,
+        expenses: [...s.expenses, {
+          id: s.nextId, name: expName, amount: expAmount,
+          frequency: expFreq, category: expCategory,
+          inflationAdjusted: expInflation,
+          startMonth: expStart, endMonth: expEnd,
+        }],
+        nextId: s.nextId + 1,
+      }));
+    }
+  }, [expName, expAmount, expFreq, expCategory, expInflation, expStart, expEnd, editingExpenseId, cancelEditExpense]);
 
   const removeExpense = useCallback((id: number) => {
     setState(s => ({ ...s, expenses: s.expenses.filter(e => e.id !== id) }));
-  }, []);
+    if (editingExpenseId === id) cancelEditExpense();
+  }, [editingExpenseId, cancelEditExpense]);
 
   const addAmortization = useCallback(() => {
     const targetLoan = amortLoanId > 0 ? amortLoanId : state.loans[0]?.id;
@@ -1273,6 +1378,21 @@ export default function FinanceSim() {
     </button>
   );
 
+  // ── Edit button ──
+  const editBtn = (onClick: () => void, isActive: boolean = false) => (
+    <button
+      onClick={onClick}
+      class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[11px] transition-colors"
+      style={{
+        borderColor: isActive ? C.gold : "var(--color-border)",
+        color: isActive ? C.gold : "var(--color-text-muted)",
+      }}
+      title="Edit"
+    >
+      {"\u270E"}
+    </button>
+  );
+
   // ── Delete button ──
   const deleteBtn = (onClick: () => void) => (
     <button
@@ -1593,7 +1713,7 @@ export default function FinanceSim() {
       {/* Left: form + list */}
       <div class="space-y-4">
         <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-          <CardTitle>Add Account</CardTitle>
+          <CardTitle>{editingAccountId !== null ? "Edit Account" : "Add Account"}</CardTitle>
           <div class="mb-3">
             {label("Account Name")}
             {textInput(accName, setAccName)}
@@ -1626,7 +1746,14 @@ export default function FinanceSim() {
               { value: "annually", label: "Annually" },
             ])}
           </div>
-          {goldButton(addAccount, "Add Account")}
+          {editingAccountId !== null ? (
+            <div class="flex gap-2">
+              {goldButton(saveAccount, "Save Changes")}
+              <button onClick={cancelEditAccount} class="w-full rounded-lg border border-[var(--color-border)] px-3 py-2.5 font-mono text-xs uppercase tracking-wider text-[var(--color-text-muted)] transition-colors hover:border-red-500 hover:text-red-400">
+                Cancel
+              </button>
+            </div>
+          ) : goldButton(saveAccount, "Add Account")}
         </div>
 
         {/* Account list */}
@@ -1656,6 +1783,7 @@ export default function FinanceSim() {
                         {fmtM(a.balance)} | {fmtPct(a.annualRate)} | {a.compoundInterval}
                       </div>
                     </div>
+                    {editBtn(() => startEditAccount(a), editingAccountId === a.id)}
                     {deleteBtn(() => removeAccount(a.id))}
                   </div>
                 );
@@ -1701,7 +1829,7 @@ export default function FinanceSim() {
       {/* Left: form + list */}
       <div class="space-y-4">
         <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-          <CardTitle>Add Loan</CardTitle>
+          <CardTitle>{editingLoanId !== null ? "Edit Loan" : "Add Loan"}</CardTitle>
           <div class="mb-3">
             {label("Loan Name")}
             {textInput(loanName, setLoanName)}
@@ -1748,7 +1876,14 @@ export default function FinanceSim() {
               {numInput(loanStart, setLoanStart, { min: 1, max: 360, step: 1 })}
             </div>
           </div>
-          {goldButton(addLoan, "Add Loan")}
+          {editingLoanId !== null ? (
+            <div class="flex gap-2">
+              {goldButton(saveLoan, "Save Changes")}
+              <button onClick={cancelEditLoan} class="w-full rounded-lg border border-[var(--color-border)] px-3 py-2.5 font-mono text-xs uppercase tracking-wider text-[var(--color-text-muted)] transition-colors hover:border-red-500 hover:text-red-400">
+                Cancel
+              </button>
+            </div>
+          ) : goldButton(saveLoan, "Add Loan")}
         </div>
 
         {/* Loan list */}
@@ -1778,6 +1913,7 @@ export default function FinanceSim() {
                           Bal: {fmtM(l.currentBalance)} | {fmtPct(l.annualRate)} | Pmt: {fmtM(pmt)} | {l.termMonths}mo | {l.paymentInterval}
                         </div>
                       </div>
+                      {editBtn(() => startEditLoan(l), editingLoanId === l.id)}
                       {deleteBtn(() => removeLoan(l.id))}
                     </div>
                     {/* Amortizations for this loan */}
@@ -1931,7 +2067,7 @@ export default function FinanceSim() {
       {/* Left: form + list */}
       <div class="space-y-4">
         <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-          <CardTitle>Add Income</CardTitle>
+          <CardTitle>{editingIncomeId !== null ? "Edit Income" : "Add Income"}</CardTitle>
           <div class="mb-3">
             {label("Source Name")}
             {textInput(incName, setIncName)}
@@ -1984,7 +2120,14 @@ export default function FinanceSim() {
               </div>
             )}
           </div>
-          {goldButton(addIncome, "Add Income")}
+          {editingIncomeId !== null ? (
+            <div class="flex gap-2">
+              {goldButton(saveIncome, "Save Changes")}
+              <button onClick={cancelEditIncome} class="w-full rounded-lg border border-[var(--color-border)] px-3 py-2.5 font-mono text-xs uppercase tracking-wider text-[var(--color-text-muted)] transition-colors hover:border-red-500 hover:text-red-400">
+                Cancel
+              </button>
+            </div>
+          ) : goldButton(saveIncome, "Add Income")}
         </div>
 
         {/* Income list */}
@@ -2016,6 +2159,7 @@ export default function FinanceSim() {
                       {inc.periodicity !== "one-time" && inc.endMonth > 0 ? ` | Ends mo ${inc.endMonth}` : ""}
                     </div>
                   </div>
+                  {editBtn(() => startEditIncome(inc), editingIncomeId === inc.id)}
                   {deleteBtn(() => removeIncome(inc.id))}
                 </div>
               ))
@@ -2056,7 +2200,7 @@ export default function FinanceSim() {
       {/* Left: form + list */}
       <div class="space-y-4">
         <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-          <CardTitle>Add Expense</CardTitle>
+          <CardTitle>{editingExpenseId !== null ? "Edit Expense" : "Add Expense"}</CardTitle>
           <div class="mb-3">
             {label("Expense Name")}
             {textInput(expName, setExpName)}
@@ -2112,7 +2256,14 @@ export default function FinanceSim() {
               {numInput(expEnd, setExpEnd, { min: 0, max: 360, step: 1 })}
             </div>
           </div>
-          {goldButton(addExpense, "Add Expense")}
+          {editingExpenseId !== null ? (
+            <div class="flex gap-2">
+              {goldButton(saveExpense, "Save Changes")}
+              <button onClick={cancelEditExpense} class="w-full rounded-lg border border-[var(--color-border)] px-3 py-2.5 font-mono text-xs uppercase tracking-wider text-[var(--color-text-muted)] transition-colors hover:border-red-500 hover:text-red-400">
+                Cancel
+              </button>
+            </div>
+          ) : goldButton(saveExpense, "Add Expense")}
         </div>
 
         {/* Expense list */}
@@ -2148,6 +2299,7 @@ export default function FinanceSim() {
                         {exp.endMonth > 0 ? ` | Ends month ${exp.endMonth}` : ""}
                       </div>
                     </div>
+                    {editBtn(() => startEditExpense(exp), editingExpenseId === exp.id)}
                     {deleteBtn(() => removeExpense(exp.id))}
                   </div>
                 );
