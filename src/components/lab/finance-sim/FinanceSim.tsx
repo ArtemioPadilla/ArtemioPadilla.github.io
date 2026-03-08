@@ -26,7 +26,8 @@ Chart.register(
 type AccountType = "checking" | "savings" | "investment" | "retirement";
 type CompoundInterval = "daily" | "monthly" | "quarterly" | "annually";
 type LoanType = "mortgage" | "auto" | "personal" | "credit-card";
-type IncomePeriodicity = "weekly" | "biweekly" | "monthly" | "annually" | "one-time";
+type IncomePeriodicity = "weekly" | "biweekly" | "monthly" | "annually" | "one-time" | "every-n-months";
+type ExpenseFrequency = "monthly" | "quarterly" | "annually" | "one-time" | "every-n-months";
 
 interface Account {
   id: number; name: string; type: AccountType;
@@ -42,14 +43,14 @@ interface Loan {
 
 interface Income {
   id: number; name: string; amount: number;
-  periodicity: IncomePeriodicity;
+  periodicity: IncomePeriodicity; frequencyMonths: number;
   growthRate: number; bonusMonth: number; bonusAmount: number;
   startMonth: number; endMonth: number;
 }
 
 interface Expense {
   id: number; name: string; amount: number;
-  frequency: "monthly" | "quarterly" | "annually" | "one-time";
+  frequency: ExpenseFrequency; frequencyMonths: number;
   category: string; inflationAdjusted: boolean;
   startMonth: number; endMonth: number;
 }
@@ -218,6 +219,13 @@ function simulate(state: FinanceState): SimulationResult {
         }
         continue;
       }
+      if (inc.periodicity === "every-n-months") {
+        const n = inc.frequencyMonths || 3;
+        if ((m - inc.startMonth) % n === 0) {
+          totalIncome += inc.amount * growthFactor;
+        }
+        continue;
+      }
 
       let monthlyAmt = inc.amount;
       if (inc.periodicity === "weekly") monthlyAmt = inc.amount * 52 / 12;
@@ -236,9 +244,10 @@ function simulate(state: FinanceState): SimulationResult {
 
       let applies = false;
       if (exp.frequency === "monthly") applies = true;
-      else if (exp.frequency === "quarterly") applies = m % 3 === 1;
-      else if (exp.frequency === "annually") applies = m % 12 === 1;
+      else if (exp.frequency === "quarterly") applies = (m - exp.startMonth) % 3 === 0;
+      else if (exp.frequency === "annually") applies = (m - exp.startMonth) % 12 === 0;
       else if (exp.frequency === "one-time") applies = m === exp.startMonth;
+      else if (exp.frequency === "every-n-months") applies = (m - exp.startMonth) % (exp.frequencyMonths || 3) === 0;
 
       if (applies) {
         let amount = exp.amount;
@@ -416,6 +425,7 @@ function simulate(state: FinanceState): SimulationResult {
   const totalMonthlyIncome = state.incomes.reduce((s, i) => {
     if (i.periodicity === "one-time") return s;
     if (i.periodicity === "annually") return s + i.amount / 12;
+    if (i.periodicity === "every-n-months") return s + i.amount / (i.frequencyMonths || 3);
     let amt = i.amount;
     if (i.periodicity === "weekly") amt = i.amount * 52 / 12;
     else if (i.periodicity === "biweekly") amt = i.amount * 26 / 12;
@@ -512,13 +522,13 @@ function defaultState(): FinanceState {
       { id: 5, name: "Auto Loan", type: "auto", principal: 350000, currentBalance: 280000, annualRate: 12, termMonths: 48, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
     ],
     incomes: [
-      { id: 6, name: "Salary", amount: 45000, periodicity: "monthly", growthRate: 5, bonusMonth: 12, bonusAmount: 45000, startMonth: 1, endMonth: 0 },
+      { id: 6, name: "Salary", amount: 45000, periodicity: "monthly", frequencyMonths: 0, growthRate: 5, bonusMonth: 12, bonusAmount: 45000, startMonth: 1, endMonth: 0 },
     ],
     expenses: [
-      { id: 7, name: "Groceries", amount: 6000, frequency: "monthly", category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-      { id: 8, name: "Utilities", amount: 3000, frequency: "monthly", category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-      { id: 9, name: "Insurance", amount: 4500, frequency: "monthly", category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
-      { id: 10, name: "Entertainment", amount: 3000, frequency: "monthly", category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+      { id: 7, name: "Groceries", amount: 6000, frequency: "monthly", frequencyMonths: 0, category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+      { id: 8, name: "Utilities", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+      { id: 9, name: "Insurance", amount: 4500, frequency: "monthly", frequencyMonths: 0, category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
+      { id: 10, name: "Entertainment", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
     ],
     config: { horizonYears: 10, inflationRate: 4, startDate: "" },
     nextId: 11,
@@ -541,13 +551,13 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 3, name: "Student Loan", type: "personal", principal: 250000, currentBalance: 250000, annualRate: 8, termMonths: 120, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
       ],
       incomes: [
-        { id: 4, name: "First Job", amount: 22000, periodicity: "monthly", growthRate: 8, bonusMonth: 12, bonusAmount: 22000, startMonth: 1, endMonth: 0 },
+        { id: 4, name: "First Job", amount: 22000, periodicity: "monthly", frequencyMonths: 0, growthRate: 8, bonusMonth: 12, bonusAmount: 22000, startMonth: 1, endMonth: 0 },
       ],
       expenses: [
-        { id: 5, name: "Rent", amount: 7000, frequency: "monthly", category: "housing", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 6, name: "Food", amount: 3500, frequency: "monthly", category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 7, name: "Transport", amount: 2000, frequency: "monthly", category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 8, name: "Subscriptions", amount: 800, frequency: "monthly", category: "subscriptions", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
+        { id: 5, name: "Rent", amount: 7000, frequency: "monthly", frequencyMonths: 0, category: "housing", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 6, name: "Food", amount: 3500, frequency: "monthly", frequencyMonths: 0, category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 7, name: "Transport", amount: 2000, frequency: "monthly", frequencyMonths: 0, category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 8, name: "Subscriptions", amount: 800, frequency: "monthly", frequencyMonths: 0, category: "subscriptions", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
       ],
       config: { horizonYears: 10, inflationRate: 4, startDate: "" },
       nextId: 9,
@@ -568,16 +578,16 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 6, name: "Car Loan", type: "auto", principal: 400000, currentBalance: 320000, annualRate: 11, termMonths: 48, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
       ],
       incomes: [
-        { id: 7, name: "Salary - Partner A", amount: 55000, periodicity: "monthly", growthRate: 5, bonusMonth: 12, bonusAmount: 55000, startMonth: 1, endMonth: 0 },
-        { id: 8, name: "Salary - Partner B", amount: 40000, periodicity: "monthly", growthRate: 4, bonusMonth: 12, bonusAmount: 40000, startMonth: 1, endMonth: 0 },
+        { id: 7, name: "Salary - Partner A", amount: 55000, periodicity: "monthly", frequencyMonths: 0, growthRate: 5, bonusMonth: 12, bonusAmount: 55000, startMonth: 1, endMonth: 0 },
+        { id: 8, name: "Salary - Partner B", amount: 40000, periodicity: "monthly", frequencyMonths: 0, growthRate: 4, bonusMonth: 12, bonusAmount: 40000, startMonth: 1, endMonth: 0 },
       ],
       expenses: [
-        { id: 9, name: "Groceries", amount: 10000, frequency: "monthly", category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 10, name: "Utilities", amount: 4000, frequency: "monthly", category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 11, name: "Insurance", amount: 6000, frequency: "monthly", category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
-        { id: 12, name: "Kids School", amount: 12000, frequency: "monthly", category: "education", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 13, name: "Entertainment", amount: 5000, frequency: "monthly", category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 14, name: "Health", amount: 3000, frequency: "monthly", category: "health", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 9, name: "Groceries", amount: 10000, frequency: "monthly", frequencyMonths: 0, category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 10, name: "Utilities", amount: 4000, frequency: "monthly", frequencyMonths: 0, category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 11, name: "Insurance", amount: 6000, frequency: "monthly", frequencyMonths: 0, category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
+        { id: 12, name: "Kids School", amount: 12000, frequency: "monthly", frequencyMonths: 0, category: "education", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 13, name: "Entertainment", amount: 5000, frequency: "monthly", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 14, name: "Health", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "health", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
       ],
       config: { horizonYears: 15, inflationRate: 4, startDate: "" },
       nextId: 15,
@@ -601,12 +611,12 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 5, name: "Personal Loan", type: "personal", principal: 150000, currentBalance: 120000, annualRate: 15, termMonths: 36, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
       ],
       incomes: [
-        { id: 6, name: "Salary", amount: 50000, periodicity: "monthly", growthRate: 4, bonusMonth: 12, bonusAmount: 100000, startMonth: 1, endMonth: 0 },
+        { id: 6, name: "Salary", amount: 50000, periodicity: "monthly", frequencyMonths: 0, growthRate: 4, bonusMonth: 12, bonusAmount: 100000, startMonth: 1, endMonth: 0 },
       ],
       expenses: [
-        { id: 7, name: "Essentials", amount: 12000, frequency: "monthly", category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 8, name: "Utilities", amount: 3000, frequency: "monthly", category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 9, name: "Transport", amount: 2500, frequency: "monthly", category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 7, name: "Essentials", amount: 12000, frequency: "monthly", frequencyMonths: 0, category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 8, name: "Utilities", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 9, name: "Transport", amount: 2500, frequency: "monthly", frequencyMonths: 0, category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
       ],
       config: { horizonYears: 8, inflationRate: 4, startDate: "" },
       nextId: 10,
@@ -625,14 +635,14 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
       ],
       loans: [],
       incomes: [
-        { id: 6, name: "Salary", amount: 80000, periodicity: "monthly", growthRate: 3, bonusMonth: 6, bonusAmount: 80000, startMonth: 1, endMonth: 0 },
-        { id: 7, name: "Dividends", amount: 60000, periodicity: "annually", growthRate: 5, bonusMonth: 0, bonusAmount: 0, startMonth: 1, endMonth: 0 },
-        { id: 8, name: "Freelance", amount: 15000, periodicity: "monthly", growthRate: 0, bonusMonth: 0, bonusAmount: 0, startMonth: 1, endMonth: 0 },
+        { id: 6, name: "Salary", amount: 80000, periodicity: "monthly", frequencyMonths: 0, growthRate: 3, bonusMonth: 6, bonusAmount: 80000, startMonth: 1, endMonth: 0 },
+        { id: 7, name: "Dividends", amount: 60000, periodicity: "annually", frequencyMonths: 0, growthRate: 5, bonusMonth: 0, bonusAmount: 0, startMonth: 1, endMonth: 0 },
+        { id: 8, name: "Freelance", amount: 15000, periodicity: "monthly", frequencyMonths: 0, growthRate: 0, bonusMonth: 0, bonusAmount: 0, startMonth: 1, endMonth: 0 },
       ],
       expenses: [
-        { id: 9, name: "Rent", amount: 18000, frequency: "monthly", category: "housing", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 10, name: "Living Expenses", amount: 15000, frequency: "monthly", category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 11, name: "Travel", amount: 60000, frequency: "annually", category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 9, name: "Rent", amount: 18000, frequency: "monthly", frequencyMonths: 0, category: "housing", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 10, name: "Living Expenses", amount: 15000, frequency: "monthly", frequencyMonths: 0, category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 11, name: "Travel", amount: 60000, frequency: "annually", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
       ],
       config: { horizonYears: 20, inflationRate: 3.5, startDate: "" },
       nextId: 12,
@@ -738,6 +748,7 @@ export default function FinanceSim() {
   const [incName, setIncName] = useState("New Income");
   const [incAmount, setIncAmount] = useState(10000);
   const [incPeriodicity, setIncPeriodicity] = useState<IncomePeriodicity>("monthly");
+  const [incFreqMonths, setIncFreqMonths] = useState(3);
   const [incGrowth, setIncGrowth] = useState(3);
   const [incBonusMonth, setIncBonusMonth] = useState(0);
   const [incBonusAmount, setIncBonusAmount] = useState(0);
@@ -757,7 +768,8 @@ export default function FinanceSim() {
   // Expense form
   const [expName, setExpName] = useState("New Expense");
   const [expAmount, setExpAmount] = useState(1000);
-  const [expFreq, setExpFreq] = useState<"monthly" | "quarterly" | "annually" | "one-time">("monthly");
+  const [expFreq, setExpFreq] = useState<ExpenseFrequency>("monthly");
+  const [expFreqMonths, setExpFreqMonths] = useState(3);
   const [expCategory, setExpCategory] = useState("other");
   const [expInflation, setExpInflation] = useState(true);
   const [expStart, setExpStart] = useState(1);
@@ -915,6 +927,7 @@ export default function FinanceSim() {
   const startEditIncome = useCallback((inc: Income) => {
     setEditingIncomeId(inc.id);
     setIncName(inc.name); setIncAmount(inc.amount); setIncPeriodicity(inc.periodicity);
+    setIncFreqMonths(inc.frequencyMonths || 3);
     setIncGrowth(inc.growthRate); setIncBonusMonth(inc.bonusMonth);
     setIncBonusAmount(inc.bonusAmount); setIncStart(inc.startMonth); setIncEnd(inc.endMonth);
   }, []);
@@ -922,13 +935,14 @@ export default function FinanceSim() {
   const cancelEditIncome = useCallback(() => {
     setEditingIncomeId(null);
     setIncName("New Income"); setIncAmount(10000); setIncPeriodicity("monthly");
-    setIncGrowth(3); setIncBonusMonth(0); setIncBonusAmount(0);
+    setIncFreqMonths(3); setIncGrowth(3); setIncBonusMonth(0); setIncBonusAmount(0);
     setIncStart(1); setIncEnd(0);
   }, []);
 
   const startEditExpense = useCallback((exp: Expense) => {
     setEditingExpenseId(exp.id);
     setExpName(exp.name); setExpAmount(exp.amount); setExpFreq(exp.frequency);
+    setExpFreqMonths(exp.frequencyMonths || 3);
     setExpCategory(exp.category); setExpInflation(exp.inflationAdjusted);
     setExpStart(exp.startMonth); setExpEnd(exp.endMonth);
   }, []);
@@ -936,7 +950,7 @@ export default function FinanceSim() {
   const cancelEditExpense = useCallback(() => {
     setEditingExpenseId(null);
     setExpName("New Expense"); setExpAmount(1000); setExpFreq("monthly");
-    setExpCategory("other"); setExpInflation(true); setExpStart(1); setExpEnd(0);
+    setExpFreqMonths(3); setExpCategory("other"); setExpInflation(true); setExpStart(1); setExpEnd(0);
   }, []);
 
   // ── Add / Save handlers ──
@@ -1003,7 +1017,7 @@ export default function FinanceSim() {
       setState(s => ({
         ...s,
         incomes: s.incomes.map(i => i.id === editingIncomeId
-          ? { ...i, name: incName, amount: incAmount, periodicity: incPeriodicity, growthRate: incGrowth, bonusMonth: incBonusMonth, bonusAmount: incBonusAmount, startMonth: incStart, endMonth: incEnd }
+          ? { ...i, name: incName, amount: incAmount, periodicity: incPeriodicity, frequencyMonths: incFreqMonths, growthRate: incGrowth, bonusMonth: incBonusMonth, bonusAmount: incBonusAmount, startMonth: incStart, endMonth: incEnd }
           : i),
       }));
       cancelEditIncome();
@@ -1012,14 +1026,15 @@ export default function FinanceSim() {
         ...s,
         incomes: [...s.incomes, {
           id: s.nextId, name: incName, amount: incAmount,
-          periodicity: incPeriodicity, growthRate: incGrowth,
+          periodicity: incPeriodicity, frequencyMonths: incFreqMonths,
+          growthRate: incGrowth,
           bonusMonth: incBonusMonth, bonusAmount: incBonusAmount,
           startMonth: incStart, endMonth: incEnd,
         }],
         nextId: s.nextId + 1,
       }));
     }
-  }, [incName, incAmount, incPeriodicity, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd, editingIncomeId, cancelEditIncome]);
+  }, [incName, incAmount, incPeriodicity, incFreqMonths, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd, editingIncomeId, cancelEditIncome]);
 
   const removeIncome = useCallback((id: number) => {
     setState(s => ({ ...s, incomes: s.incomes.filter(i => i.id !== id) }));
@@ -1032,7 +1047,7 @@ export default function FinanceSim() {
       setState(s => ({
         ...s,
         expenses: s.expenses.map(e => e.id === editingExpenseId
-          ? { ...e, name: expName, amount: expAmount, frequency: expFreq, category: expCategory, inflationAdjusted: expInflation, startMonth: expStart, endMonth: expEnd }
+          ? { ...e, name: expName, amount: expAmount, frequency: expFreq, frequencyMonths: expFreqMonths, category: expCategory, inflationAdjusted: expInflation, startMonth: expStart, endMonth: expEnd }
           : e),
       }));
       cancelEditExpense();
@@ -1041,14 +1056,15 @@ export default function FinanceSim() {
         ...s,
         expenses: [...s.expenses, {
           id: s.nextId, name: expName, amount: expAmount,
-          frequency: expFreq, category: expCategory,
+          frequency: expFreq, frequencyMonths: expFreqMonths,
+          category: expCategory,
           inflationAdjusted: expInflation,
           startMonth: expStart, endMonth: expEnd,
         }],
         nextId: s.nextId + 1,
       }));
     }
-  }, [expName, expAmount, expFreq, expCategory, expInflation, expStart, expEnd, editingExpenseId, cancelEditExpense]);
+  }, [expName, expAmount, expFreq, expFreqMonths, expCategory, expInflation, expStart, expEnd, editingExpenseId, cancelEditExpense]);
 
   const removeExpense = useCallback((id: number) => {
     setState(s => ({ ...s, expenses: s.expenses.filter(e => e.id !== id) }));
@@ -1092,6 +1108,7 @@ export default function FinanceSim() {
     return state.incomes.reduce((s, i) => {
       if (i.periodicity === "one-time") return s;
       if (i.periodicity === "annually") return s + i.amount / 12;
+      if (i.periodicity === "every-n-months") return s + i.amount / (i.frequencyMonths || 3);
       let amt = i.amount;
       if (i.periodicity === "weekly") amt = i.amount * 52 / 12;
       else if (i.periodicity === "biweekly") amt = i.amount * 26 / 12;
@@ -1103,6 +1120,7 @@ export default function FinanceSim() {
     return state.incomes.reduce((s, i) => {
       if (i.periodicity === "one-time") return s + i.amount;
       if (i.periodicity === "annually") return s + i.amount;
+      if (i.periodicity === "every-n-months") return s + i.amount * (12 / (i.frequencyMonths || 3));
       let annual = i.amount;
       if (i.periodicity === "weekly") annual = i.amount * 52;
       else if (i.periodicity === "biweekly") annual = i.amount * 26;
@@ -1117,6 +1135,7 @@ export default function FinanceSim() {
       if (e.frequency === "monthly") return s + e.amount;
       if (e.frequency === "quarterly") return s + e.amount / 3;
       if (e.frequency === "annually") return s + e.amount / 12;
+      if (e.frequency === "every-n-months") return s + e.amount / (e.frequencyMonths || 3);
       return s;
     }, 0);
   }, [state.expenses]);
@@ -1127,6 +1146,7 @@ export default function FinanceSim() {
       let monthly = e.amount;
       if (e.frequency === "quarterly") monthly = e.amount / 3;
       else if (e.frequency === "annually") monthly = e.amount / 12;
+      else if (e.frequency === "every-n-months") monthly = e.amount / (e.frequencyMonths || 3);
       else if (e.frequency === "one-time") monthly = 0;
       map[e.category] = (map[e.category] || 0) + monthly;
     }
@@ -2084,10 +2104,17 @@ export default function FinanceSim() {
                 { value: "biweekly", label: "Biweekly" },
                 { value: "weekly", label: "Weekly" },
                 { value: "annually", label: "Annually" },
+                { value: "every-n-months", label: "Every N months" },
                 { value: "one-time", label: "One-time" },
               ])}
             </div>
           </div>
+          {incPeriodicity === "every-n-months" && (
+            <div class="mb-3">
+              {label("Every N months")}
+              {numInput(incFreqMonths, setIncFreqMonths, { suffix: "mo", min: 2, max: 60, step: 1 })}
+            </div>
+          )}
           {incPeriodicity !== "one-time" && (
             <div class="mb-3">
               {label("Annual Growth Rate")}
@@ -2149,10 +2176,13 @@ export default function FinanceSim() {
                       <span class="truncate font-mono text-sm text-[var(--color-text)]">
                         {inc.name}
                       </span>
-                      {badge(inc.periodicity, { color: C.green, bg: C.greenDim, border: C.greenBorder })}
+                      {badge(
+                        inc.periodicity === "every-n-months" ? `every ${inc.frequencyMonths || 3}mo` : inc.periodicity,
+                        { color: C.green, bg: C.greenDim, border: C.greenBorder }
+                      )}
                     </div>
                     <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
-                      {fmtM(inc.amount)}/{inc.periodicity}
+                      {fmtM(inc.amount)}/{inc.periodicity === "every-n-months" ? `${inc.frequencyMonths || 3}mo` : inc.periodicity}
                       {inc.periodicity === "one-time" ? ` at month ${inc.startMonth}` : ""}
                       {inc.periodicity !== "one-time" && inc.growthRate > 0 ? ` | Growth: ${fmtPct(inc.growthRate)}` : ""}
                       {inc.bonusMonth > 0 ? ` | Bonus: ${fmtM(inc.bonusAmount)} in ${MONTH_NAMES[inc.bonusMonth]}` : ""}
@@ -2215,11 +2245,18 @@ export default function FinanceSim() {
               {selectInput(expFreq, (v) => setExpFreq(v as Expense["frequency"]), [
                 { value: "monthly", label: "Monthly" },
                 { value: "quarterly", label: "Quarterly" },
+                { value: "every-n-months", label: "Every N months" },
                 { value: "annually", label: "Annually" },
                 { value: "one-time", label: "One-time" },
               ])}
             </div>
           </div>
+          {expFreq === "every-n-months" && (
+            <div class="mb-3">
+              {label("Every N months")}
+              {numInput(expFreqMonths, setExpFreqMonths, { suffix: "mo", min: 2, max: 60, step: 1 })}
+            </div>
+          )}
           <div class="mb-3">
             {label("Category")}
             {selectInput(expCategory, setExpCategory, [
@@ -2295,7 +2332,7 @@ export default function FinanceSim() {
                         )}
                       </div>
                       <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
-                        {fmtM(exp.amount)} / {exp.frequency}
+                        {fmtM(exp.amount)} / {exp.frequency === "every-n-months" ? `every ${exp.frequencyMonths || 3}mo` : exp.frequency}
                         {exp.endMonth > 0 ? ` | Ends month ${exp.endMonth}` : ""}
                       </div>
                     </div>
