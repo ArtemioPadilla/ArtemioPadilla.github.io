@@ -10,6 +10,7 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
+import { calcLoanPayment } from "../shared/amortization";
 
 Chart.register(
   CategoryScale, LinearScale, PointElement, LineElement,
@@ -82,10 +83,7 @@ const fmtPct = (n: number) => n.toFixed(2) + "%";
 
 // ─── Calculation engine ───────────────────────────────────────────────
 
-function calcMensualidad(saldo: number, r: number, n: number): number {
-  if (r === 0) return saldo / n;
-  return (saldo * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-}
+const calcMensualidad = calcLoanPayment;
 
 function simular(
   credito: number,

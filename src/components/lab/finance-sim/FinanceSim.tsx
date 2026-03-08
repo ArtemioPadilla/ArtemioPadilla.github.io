@@ -10,6 +10,11 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
+import {
+  calcLoanPayment,
+  getAmortizationForMonth,
+  type LoanAmortization,
+} from "../shared/amortization";
 
 Chart.register(
   CategoryScale, LinearScale, PointElement, LineElement,
@@ -21,6 +26,7 @@ Chart.register(
 type AccountType = "checking" | "savings" | "investment" | "retirement";
 type CompoundInterval = "daily" | "monthly" | "quarterly" | "annually";
 type LoanType = "mortgage" | "auto" | "personal" | "credit-card";
+type IncomePeriodicity = "weekly" | "biweekly" | "monthly" | "annually" | "one-time";
 
 interface Account {
   id: number; name: string; type: AccountType;
@@ -31,11 +37,12 @@ interface Loan {
   id: number; name: string; type: LoanType;
   principal: number; currentBalance: number; annualRate: number;
   termMonths: number; paymentInterval: "monthly" | "biweekly"; startMonth: number;
+  amortizations: LoanAmortization[];
 }
 
 interface Income {
   id: number; name: string; amount: number;
-  periodicity: "weekly" | "biweekly" | "monthly";
+  periodicity: IncomePeriodicity;
   growthRate: number; bonusMonth: number; bonusAmount: number;
   startMonth: number; endMonth: number;
 }
@@ -47,7 +54,7 @@ interface Expense {
   startMonth: number; endMonth: number;
 }
 
-interface SimConfig { horizonYears: number; inflationRate: number; }
+interface SimConfig { horizonYears: number; inflationRate: number; startDate: string; }
 
 interface FinanceState {
   accounts: Account[]; loans: Loan[]; incomes: Income[]; expenses: Expense[];
@@ -151,16 +158,23 @@ const LOAN_TYPE_COLORS: Record<LoanType, { color: string; bg: string; border: st
 };
 
 const MONTH_NAMES = ["None","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MONTH_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function monthToDate(monthIndex: number, startDate: string): string {
+  if (!startDate) return `Mo ${monthIndex}`;
+  const d = new Date(startDate + "T00:00:00");
+  d.setMonth(d.getMonth() + monthIndex - 1);
+  return MONTH_SHORT[d.getMonth()] + " " + d.getFullYear();
+}
+
+function monthToShortDate(monthIndex: number, startDate: string): string {
+  if (!startDate) return `Mo ${monthIndex}`;
+  const d = new Date(startDate + "T00:00:00");
+  d.setMonth(d.getMonth() + monthIndex - 1);
+  return MONTH_SHORT[d.getMonth()] + " '" + String(d.getFullYear()).slice(2);
+}
 
 // ─── Calculation Engine ───────────────────────────────────────────────
-
-function calcLoanPayment(balance: number, monthlyRate: number, remainingMonths: number): number {
-  if (monthlyRate === 0) return remainingMonths > 0 ? balance / remainingMonths : 0;
-  if (remainingMonths <= 0) return 0;
-  const r = monthlyRate;
-  const n = remainingMonths;
-  return (balance * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-}
 
 function simulate(state: FinanceState): SimulationResult {
   const totalMonths = state.config.horizonYears * 12;
@@ -172,7 +186,12 @@ function simulate(state: FinanceState): SimulationResult {
   for (const a of state.accounts) accBals[a.id] = a.balance;
 
   const loanBals: Record<number, number> = {};
-  for (const l of state.loans) loanBals[l.id] = l.currentBalance;
+  const loanFixedPmt: Record<number, number> = {};
+  for (const l of state.loans) {
+    loanBals[l.id] = l.currentBalance;
+    const r = l.annualRate / 100 / 12;
+    loanFixedPmt[l.id] = calcLoanPayment(l.currentBalance, r, l.termMonths);
+  }
 
   let cumulativeInterestEarned = 0;
   let cumulativeInterestPaid = 0;
@@ -180,7 +199,6 @@ function simulate(state: FinanceState): SimulationResult {
   let negCashflowCount = 0;
 
   for (let m = 1; m <= totalMonths; m++) {
-    const yearIdx = Math.floor((m - 1) / 12);
     const monthInYear = ((m - 1) % 12) + 1;
 
     // 1. Income
@@ -189,6 +207,18 @@ function simulate(state: FinanceState): SimulationResult {
       if (inc.startMonth > m) continue;
       if (inc.endMonth > 0 && inc.endMonth < m) continue;
       const growthFactor = Math.pow(1 + inc.growthRate / 100, Math.floor((m - 1) / 12));
+
+      if (inc.periodicity === "one-time") {
+        if (m === inc.startMonth) totalIncome += inc.amount;
+        continue;
+      }
+      if (inc.periodicity === "annually") {
+        if (monthInYear === (inc.startMonth > 0 ? ((inc.startMonth - 1) % 12) + 1 : 1)) {
+          totalIncome += inc.amount * growthFactor;
+        }
+        continue;
+      }
+
       let monthlyAmt = inc.amount;
       if (inc.periodicity === "weekly") monthlyAmt = inc.amount * 52 / 12;
       else if (inc.periodicity === "biweekly") monthlyAmt = inc.amount * 26 / 12;
@@ -219,7 +249,7 @@ function simulate(state: FinanceState): SimulationResult {
       }
     }
 
-    // 3. Loan payments
+    // 3. Loan payments (with amortization support)
     let totalLoanPayments = 0;
     let totalInterestPaid = 0;
     let totalPrincipalPaid = 0;
@@ -232,7 +262,6 @@ function simulate(state: FinanceState): SimulationResult {
       const monthsElapsed = m - loan.startMonth;
       const remainingMonths = Math.max(0, loan.termMonths - monthsElapsed);
       if (remainingMonths <= 0 && bal > 0.01) {
-        // Past term, pay remaining balance
         const interest = bal * r;
         totalInterestPaid += interest;
         totalLoanPayments += bal + interest;
@@ -241,10 +270,11 @@ function simulate(state: FinanceState): SimulationResult {
         continue;
       }
 
-      let payment = calcLoanPayment(bal, r, remainingMonths);
+      let payment = loanFixedPmt[loan.id];
       if (loan.paymentInterval === "biweekly") {
-        payment = calcLoanPayment(bal, r, remainingMonths) * 26 / 12;
+        payment = payment * 26 / 12;
       }
+      payment = Math.min(payment, bal + bal * r);
 
       const interest = bal * r;
       const principal = Math.min(payment - interest, bal);
@@ -253,7 +283,24 @@ function simulate(state: FinanceState): SimulationResult {
       totalInterestPaid += interest;
       totalPrincipalPaid += Math.max(0, principal);
       totalLoanPayments += actualPayment;
-      loanBals[loan.id] = Math.max(0, bal - Math.max(0, principal));
+      let newBal = Math.max(0, bal - Math.max(0, principal));
+
+      // Extra payments / amortizations
+      const amort = getAmortizationForMonth(loan.amortizations, m, totalMonths);
+      if (amort && newBal > 0.01) {
+        const amortReal = Math.min(amort.amount, newBal);
+        newBal -= amortReal;
+        totalPrincipalPaid += amortReal;
+        totalLoanPayments += amortReal;
+
+        if (amort.effect === "reduce-payment" && newBal > 0.01) {
+          const mRemaining = Math.max(1, loan.termMonths - monthsElapsed);
+          loanFixedPmt[loan.id] = calcLoanPayment(newBal, r, mRemaining);
+        }
+        // "reduce-term": keep the same fixed payment — loan ends sooner
+      }
+
+      loanBals[loan.id] = newBal;
     }
 
     // 4. Net cashflow
@@ -367,6 +414,8 @@ function simulate(state: FinanceState): SimulationResult {
     return s + calcLoanPayment(l.currentBalance, r, l.termMonths);
   }, 0);
   const totalMonthlyIncome = state.incomes.reduce((s, i) => {
+    if (i.periodicity === "one-time") return s;
+    if (i.periodicity === "annually") return s + i.amount / 12;
     let amt = i.amount;
     if (i.periodicity === "weekly") amt = i.amount * 52 / 12;
     else if (i.periodicity === "biweekly") amt = i.amount * 26 / 12;
@@ -459,8 +508,8 @@ function defaultState(): FinanceState {
       { id: 3, name: "Investment", type: "investment", balance: 100000, annualRate: 8, compoundInterval: "monthly" },
     ],
     loans: [
-      { id: 4, name: "Mortgage", type: "mortgage", principal: 2400000, currentBalance: 2200000, annualRate: 10.5, termMonths: 240, paymentInterval: "monthly", startMonth: 1 },
-      { id: 5, name: "Auto Loan", type: "auto", principal: 350000, currentBalance: 280000, annualRate: 12, termMonths: 48, paymentInterval: "monthly", startMonth: 1 },
+      { id: 4, name: "Mortgage", type: "mortgage", principal: 2400000, currentBalance: 2200000, annualRate: 10.5, termMonths: 240, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
+      { id: 5, name: "Auto Loan", type: "auto", principal: 350000, currentBalance: 280000, annualRate: 12, termMonths: 48, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
     ],
     incomes: [
       { id: 6, name: "Salary", amount: 45000, periodicity: "monthly", growthRate: 5, bonusMonth: 12, bonusAmount: 45000, startMonth: 1, endMonth: 0 },
@@ -471,9 +520,193 @@ function defaultState(): FinanceState {
       { id: 9, name: "Insurance", amount: 4500, frequency: "monthly", category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
       { id: 10, name: "Entertainment", amount: 3000, frequency: "monthly", category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
     ],
-    config: { horizonYears: 10, inflationRate: 4 },
+    config: { horizonYears: 10, inflationRate: 4, startDate: "" },
     nextId: 11,
   };
+}
+
+// ─── Predefined Scenarios ─────────────────────────────────────────────
+
+const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
+  { key: "default", label: "Default Demo", state: defaultState() },
+  {
+    key: "fresh-grad",
+    label: "Fresh Graduate",
+    state: {
+      accounts: [
+        { id: 1, name: "Checking", type: "checking", balance: 8000, annualRate: 0, compoundInterval: "monthly" },
+        { id: 2, name: "Savings", type: "savings", balance: 15000, annualRate: 3.5, compoundInterval: "monthly" },
+      ],
+      loans: [
+        { id: 3, name: "Student Loan", type: "personal", principal: 250000, currentBalance: 250000, annualRate: 8, termMonths: 120, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
+      ],
+      incomes: [
+        { id: 4, name: "First Job", amount: 22000, periodicity: "monthly", growthRate: 8, bonusMonth: 12, bonusAmount: 22000, startMonth: 1, endMonth: 0 },
+      ],
+      expenses: [
+        { id: 5, name: "Rent", amount: 7000, frequency: "monthly", category: "housing", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 6, name: "Food", amount: 3500, frequency: "monthly", category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 7, name: "Transport", amount: 2000, frequency: "monthly", category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 8, name: "Subscriptions", amount: 800, frequency: "monthly", category: "subscriptions", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
+      ],
+      config: { horizonYears: 10, inflationRate: 4, startDate: "" },
+      nextId: 9,
+    },
+  },
+  {
+    key: "dual-income",
+    label: "Dual Income Family",
+    state: {
+      accounts: [
+        { id: 1, name: "Joint Checking", type: "checking", balance: 40000, annualRate: 0, compoundInterval: "monthly" },
+        { id: 2, name: "Emergency Fund", type: "savings", balance: 120000, annualRate: 4.5, compoundInterval: "monthly" },
+        { id: 3, name: "Investment Portfolio", type: "investment", balance: 300000, annualRate: 9, compoundInterval: "quarterly" },
+        { id: 4, name: "Retirement 401k", type: "retirement", balance: 200000, annualRate: 7, compoundInterval: "monthly" },
+      ],
+      loans: [
+        { id: 5, name: "Mortgage", type: "mortgage", principal: 3500000, currentBalance: 3000000, annualRate: 9.5, termMonths: 240, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
+        { id: 6, name: "Car Loan", type: "auto", principal: 400000, currentBalance: 320000, annualRate: 11, termMonths: 48, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
+      ],
+      incomes: [
+        { id: 7, name: "Salary - Partner A", amount: 55000, periodicity: "monthly", growthRate: 5, bonusMonth: 12, bonusAmount: 55000, startMonth: 1, endMonth: 0 },
+        { id: 8, name: "Salary - Partner B", amount: 40000, periodicity: "monthly", growthRate: 4, bonusMonth: 12, bonusAmount: 40000, startMonth: 1, endMonth: 0 },
+      ],
+      expenses: [
+        { id: 9, name: "Groceries", amount: 10000, frequency: "monthly", category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 10, name: "Utilities", amount: 4000, frequency: "monthly", category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 11, name: "Insurance", amount: 6000, frequency: "monthly", category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
+        { id: 12, name: "Kids School", amount: 12000, frequency: "monthly", category: "education", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 13, name: "Entertainment", amount: 5000, frequency: "monthly", category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 14, name: "Health", amount: 3000, frequency: "monthly", category: "health", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+      ],
+      config: { horizonYears: 15, inflationRate: 4, startDate: "" },
+      nextId: 15,
+    },
+  },
+  {
+    key: "debt-payoff",
+    label: "Aggressive Debt Payoff",
+    state: {
+      accounts: [
+        { id: 1, name: "Checking", type: "checking", balance: 20000, annualRate: 0, compoundInterval: "monthly" },
+        { id: 2, name: "Savings", type: "savings", balance: 30000, annualRate: 4, compoundInterval: "monthly" },
+      ],
+      loans: [
+        { id: 3, name: "Mortgage", type: "mortgage", principal: 2000000, currentBalance: 1800000, annualRate: 10.5, termMonths: 240, paymentInterval: "monthly", startMonth: 1,
+          amortizations: [
+            { id: 100, type: "periodic", amount: 20000, effect: "reduce-term", startMonth: 6, endMonth: 0, frequency: 6 },
+          ],
+        },
+        { id: 4, name: "Credit Card", type: "credit-card", principal: 80000, currentBalance: 80000, annualRate: 36, termMonths: 24, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
+        { id: 5, name: "Personal Loan", type: "personal", principal: 150000, currentBalance: 120000, annualRate: 15, termMonths: 36, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
+      ],
+      incomes: [
+        { id: 6, name: "Salary", amount: 50000, periodicity: "monthly", growthRate: 4, bonusMonth: 12, bonusAmount: 100000, startMonth: 1, endMonth: 0 },
+      ],
+      expenses: [
+        { id: 7, name: "Essentials", amount: 12000, frequency: "monthly", category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 8, name: "Utilities", amount: 3000, frequency: "monthly", category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 9, name: "Transport", amount: 2500, frequency: "monthly", category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+      ],
+      config: { horizonYears: 8, inflationRate: 4, startDate: "" },
+      nextId: 10,
+    },
+  },
+  {
+    key: "investor",
+    label: "Investment Focused",
+    state: {
+      accounts: [
+        { id: 1, name: "Checking", type: "checking", balance: 30000, annualRate: 0, compoundInterval: "monthly" },
+        { id: 2, name: "High-Yield Savings", type: "savings", balance: 200000, annualRate: 5, compoundInterval: "daily" },
+        { id: 3, name: "Index Fund", type: "investment", balance: 500000, annualRate: 10, compoundInterval: "quarterly" },
+        { id: 4, name: "Bonds", type: "investment", balance: 150000, annualRate: 6, compoundInterval: "monthly" },
+        { id: 5, name: "Retirement", type: "retirement", balance: 400000, annualRate: 8, compoundInterval: "monthly" },
+      ],
+      loans: [],
+      incomes: [
+        { id: 6, name: "Salary", amount: 80000, periodicity: "monthly", growthRate: 3, bonusMonth: 6, bonusAmount: 80000, startMonth: 1, endMonth: 0 },
+        { id: 7, name: "Dividends", amount: 60000, periodicity: "annually", growthRate: 5, bonusMonth: 0, bonusAmount: 0, startMonth: 1, endMonth: 0 },
+        { id: 8, name: "Freelance", amount: 15000, periodicity: "monthly", growthRate: 0, bonusMonth: 0, bonusAmount: 0, startMonth: 1, endMonth: 0 },
+      ],
+      expenses: [
+        { id: 9, name: "Rent", amount: 18000, frequency: "monthly", category: "housing", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 10, name: "Living Expenses", amount: 15000, frequency: "monthly", category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 11, name: "Travel", amount: 60000, frequency: "annually", category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+      ],
+      config: { horizonYears: 20, inflationRate: 3.5, startDate: "" },
+      nextId: 12,
+    },
+  },
+  {
+    key: "empty",
+    label: "Start from Scratch",
+    state: {
+      accounts: [],
+      loans: [],
+      incomes: [],
+      expenses: [],
+      config: { horizonYears: 10, inflationRate: 4, startDate: "" },
+      nextId: 1,
+    },
+  },
+];
+
+// ─── Export / Import helpers ──────────────────────────────────────────
+
+function exportJSON(state: FinanceState) {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "finance-sim.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportCSV(sim: SimulationResult, startDate: string) {
+  const headers = ["Month", "Date", "Income", "Expenses", "Loan Payments", "Interest Paid", "Interest Earned", "Net Cashflow", "Total Assets", "Total Debt", "Net Worth"];
+  const rows = sim.months.map((r) => [
+    r.month,
+    startDate ? monthToDate(r.month, startDate) : `Month ${r.month}`,
+    r.totalIncome.toFixed(2),
+    r.totalExpenses.toFixed(2),
+    r.totalLoanPayments.toFixed(2),
+    r.totalInterestPaid.toFixed(2),
+    r.totalInterestEarned.toFixed(2),
+    r.netCashflow.toFixed(2),
+    r.totalAssets.toFixed(2),
+    r.totalDebt.toFixed(2),
+    r.netWorth.toFixed(2),
+  ]);
+  const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "finance-sim-results.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importJSON(file: File): Promise<FinanceState | null> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result as string) as FinanceState;
+        if (!data.accounts || !data.loans || !data.incomes || !data.expenses || !data.config) {
+          resolve(null);
+          return;
+        }
+        resolve(data);
+      } catch {
+        resolve(null);
+      }
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsText(file);
+  });
 }
 
 // ─── Main Component ───────────────────────────────────────────────────
@@ -504,12 +737,22 @@ export default function FinanceSim() {
   // Income form
   const [incName, setIncName] = useState("New Income");
   const [incAmount, setIncAmount] = useState(10000);
-  const [incPeriodicity, setIncPeriodicity] = useState<"weekly" | "biweekly" | "monthly">("monthly");
+  const [incPeriodicity, setIncPeriodicity] = useState<IncomePeriodicity>("monthly");
   const [incGrowth, setIncGrowth] = useState(3);
   const [incBonusMonth, setIncBonusMonth] = useState(0);
   const [incBonusAmount, setIncBonusAmount] = useState(0);
   const [incStart, setIncStart] = useState(1);
   const [incEnd, setIncEnd] = useState(0);
+
+  // Loan amortization form
+  const [amortLoanId, setAmortLoanId] = useState(0);
+  const [amortType, setAmortType] = useState<"one-time" | "periodic">("one-time");
+  const [amortAmount, setAmortAmount] = useState(50000);
+  const [amortEffect, setAmortEffect] = useState<"reduce-term" | "reduce-payment">("reduce-term");
+  const [amortMonth, setAmortMonth] = useState(12);
+  const [amortStartMonth, setAmortStartMonth] = useState(12);
+  const [amortEndMonth, setAmortEndMonth] = useState(0);
+  const [amortFrequency, setAmortFrequency] = useState(12);
 
   // Expense form
   const [expName, setExpName] = useState("New Expense");
@@ -523,9 +766,28 @@ export default function FinanceSim() {
   // Refs
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstanceRef = useRef<Chart | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Simulation
   const sim = useMemo(() => simulate(state), [state]);
+
+  // Import / Export / Scenario handlers
+  const handleImport = useCallback(async (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const data = await importJSON(file);
+    if (data) {
+      setState(data);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, []);
+
+  const loadScenario = useCallback((key: string) => {
+    const scenario = SCENARIOS.find((s) => s.key === key);
+    if (scenario) {
+      setState(JSON.parse(JSON.stringify(scenario.state)));
+    }
+  }, []);
 
   // ── Input helpers ──
   const numInput = useCallback((
@@ -642,6 +904,7 @@ export default function FinanceSim() {
         principal: loanPrincipal, currentBalance: loanBalance,
         annualRate: loanRate, termMonths: loanTerm,
         paymentInterval: loanInterval, startMonth: loanStart,
+        amortizations: [],
       }],
       nextId: s.nextId + 1,
     }));
@@ -687,9 +950,43 @@ export default function FinanceSim() {
     setState(s => ({ ...s, expenses: s.expenses.filter(e => e.id !== id) }));
   }, []);
 
+  const addAmortization = useCallback(() => {
+    const targetLoan = amortLoanId > 0 ? amortLoanId : state.loans[0]?.id;
+    if (!targetLoan) return;
+    setState(s => {
+      const loan = s.loans.find(l => l.id === targetLoan);
+      if (!loan) return s;
+      const newAmort: LoanAmortization = amortType === "one-time"
+        ? { id: s.nextId, type: "one-time", amount: amortAmount, effect: amortEffect, month: amortMonth }
+        : { id: s.nextId, type: "periodic", amount: amortAmount, effect: amortEffect, startMonth: amortStartMonth, endMonth: amortEndMonth, frequency: amortFrequency };
+      return {
+        ...s,
+        loans: s.loans.map(l =>
+          l.id === targetLoan
+            ? { ...l, amortizations: [...l.amortizations, newAmort] }
+            : l
+        ),
+        nextId: s.nextId + 1,
+      };
+    });
+  }, [amortLoanId, amortType, amortAmount, amortEffect, amortMonth, amortStartMonth, amortEndMonth, amortFrequency, state.loans]);
+
+  const removeAmortization = useCallback((loanId: number, amortId: number) => {
+    setState(s => ({
+      ...s,
+      loans: s.loans.map(l =>
+        l.id === loanId
+          ? { ...l, amortizations: l.amortizations.filter(a => a.id !== amortId) }
+          : l
+      ),
+    }));
+  }, []);
+
   // ── Computed summaries ──
   const totalMonthlyIncome = useMemo(() => {
     return state.incomes.reduce((s, i) => {
+      if (i.periodicity === "one-time") return s;
+      if (i.periodicity === "annually") return s + i.amount / 12;
       let amt = i.amount;
       if (i.periodicity === "weekly") amt = i.amount * 52 / 12;
       else if (i.periodicity === "biweekly") amt = i.amount * 26 / 12;
@@ -699,6 +996,8 @@ export default function FinanceSim() {
 
   const annualGrossIncome = useMemo(() => {
     return state.incomes.reduce((s, i) => {
+      if (i.periodicity === "one-time") return s + i.amount;
+      if (i.periodicity === "annually") return s + i.amount;
       let annual = i.amount;
       if (i.periodicity === "weekly") annual = i.amount * 52;
       else if (i.periodicity === "biweekly") annual = i.amount * 26;
@@ -776,11 +1075,12 @@ export default function FinanceSim() {
     if (totalMonths === 0) return;
 
     // Sample every 12 months for labels
+    const sd = state.config.startDate;
     const labels: string[] = [];
     const dataIndices: number[] = [];
     for (let i = 0; i < totalMonths; i += 12) {
       dataIndices.push(i);
-      labels.push(`Yr ${Math.floor(i / 12) + 1}`);
+      labels.push(sd ? monthToShortDate(i + 1, sd) : `Yr ${Math.floor(i / 12) + 1}`);
     }
 
     const sampleData = (accessor: (r: MonthRow) => number) =>
@@ -941,7 +1241,7 @@ export default function FinanceSim() {
         chartInstanceRef.current = null;
       }
     };
-  }, [sim, chartMode, tab, state.accounts, state.loans]);
+  }, [sim, chartMode, tab, state.accounts, state.loans, state.config.startDate]);
 
   // ── Pill button helper ──
   const pillBtn = (
@@ -1012,6 +1312,21 @@ export default function FinanceSim() {
     >
       <div class="flex items-center gap-2">
         <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+          Start
+        </span>
+        <input
+          type="month"
+          value={state.config.startDate ? state.config.startDate.slice(0, 7) : ""}
+          onInput={(e) => {
+            const v = (e.target as HTMLInputElement).value;
+            setConfig({ startDate: v ? v + "-01" : "" });
+          }}
+          class="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-light)] px-2 py-1 font-mono text-xs text-[var(--color-text)] outline-none transition-colors focus:border-[var(--color-primary)]"
+          style={{ colorScheme: "dark" }}
+        />
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
           Horizon
         </span>
         <input
@@ -1039,6 +1354,64 @@ export default function FinanceSim() {
           })}
         </div>
       </div>
+    </div>
+  );
+
+  const toolbarBtn = (onClick: () => void, text: string, variant: "default" | "danger" = "default") => (
+    <button
+      onClick={onClick}
+      class="rounded-md px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-colors"
+      style={{
+        color: variant === "danger" ? C.red : "var(--color-text-muted)",
+        border: `1px solid ${variant === "danger" ? "rgba(224,92,106,0.25)" : "var(--color-border)"}`,
+        background: "transparent",
+      }}
+    >
+      {text}
+    </button>
+  );
+
+  const renderToolbar = () => (
+    <div class="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-2.5">
+      <span class="mr-1 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+        Scenario
+      </span>
+      <select
+        value=""
+        onChange={(e) => {
+          const v = (e.target as HTMLSelectElement).value;
+          if (v) loadScenario(v);
+          (e.target as HTMLSelectElement).value = "";
+        }}
+        class="cursor-pointer appearance-none rounded-md border border-[var(--color-border)] bg-[var(--color-surface-light)] px-2 py-1.5 pr-6 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text)] outline-none transition-colors focus:border-[var(--color-primary)]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237d8590' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "right 6px center",
+        }}
+      >
+        <option value="">Load...</option>
+        {SCENARIOS.map((s) => (
+          <option key={s.key} value={s.key}>{s.label}</option>
+        ))}
+      </select>
+
+      <div class="mx-1 h-4 w-px bg-[var(--color-border)]" />
+
+      {toolbarBtn(() => exportJSON(state), "Export JSON")}
+      {toolbarBtn(() => exportCSV(sim, state.config.startDate), "Export CSV")}
+      {toolbarBtn(() => fileInputRef.current?.click(), "Import JSON")}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        onChange={handleImport}
+        class="hidden"
+      />
+
+      <div class="mx-1 h-4 w-px bg-[var(--color-border)]" />
+
+      {toolbarBtn(() => loadScenario("empty"), "Clear All", "danger")}
     </div>
   );
 
@@ -1095,8 +1468,12 @@ export default function FinanceSim() {
             color={sim.finalDebt > 0 ? C.red : C.green}
           />
           <StatCard
-            label="Debt-Free Month"
-            value={sim.debtFreeMonth > 0 ? `Month ${sim.debtFreeMonth}` : "N/A"}
+            label="Debt-Free"
+            value={sim.debtFreeMonth > 0
+              ? (state.config.startDate
+                ? monthToDate(sim.debtFreeMonth, state.config.startDate)
+                : `Month ${sim.debtFreeMonth}`)
+              : "N/A"}
             sub={sim.debtFreeMonth > 0 ? `Yr ${Math.ceil(sim.debtFreeMonth / 12)}` : state.loans.length === 0 ? "no loans" : "beyond horizon"}
             color={sim.debtFreeMonth > 0 ? C.green : C.muted}
           />
@@ -1156,7 +1533,11 @@ export default function FinanceSim() {
                     key={ys.year}
                     class="border-b border-[var(--color-border)] transition-colors hover:bg-[var(--color-bg)]"
                   >
-                    <td class="px-2 py-1.5" style={{ color: C.goldLight }}>Yr {ys.year}</td>
+                    <td class="px-2 py-1.5" style={{ color: C.goldLight }}>
+                      {state.config.startDate
+                        ? monthToShortDate(ys.year * 12, state.config.startDate)
+                        : `Yr ${ys.year}`}
+                    </td>
                     <td class="px-2 py-1.5" style={{ color: C.green }}>{fmtShort(ys.totalIncome)}</td>
                     <td class="px-2 py-1.5" style={{ color: C.red }}>{fmtShort(ys.totalExpenses)}</td>
                     <td class="px-2 py-1.5">{fmtShort(ys.totalLoanPayments)}</td>
@@ -1384,28 +1765,108 @@ export default function FinanceSim() {
                 const r = l.annualRate / 100 / 12;
                 const pmt = calcLoanPayment(l.currentBalance, r, l.termMonths);
                 return (
-                  <div
-                    key={l.id}
-                    class="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
-                  >
-                    <div class="min-w-0 flex-1">
-                      <div class="flex items-center gap-2">
-                        <span class="truncate font-mono text-sm text-[var(--color-text)]">
-                          {l.name}
-                        </span>
-                        {badge(l.type, tc)}
+                  <div key={l.id} class="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+                    <div class="flex items-center gap-2">
+                      <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                          <span class="truncate font-mono text-sm text-[var(--color-text)]">
+                            {l.name}
+                          </span>
+                          {badge(l.type, tc)}
+                        </div>
+                        <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
+                          Bal: {fmtM(l.currentBalance)} | {fmtPct(l.annualRate)} | Pmt: {fmtM(pmt)} | {l.termMonths}mo | {l.paymentInterval}
+                        </div>
                       </div>
-                      <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
-                        Bal: {fmtM(l.currentBalance)} | {fmtPct(l.annualRate)} | Pmt: {fmtM(pmt)} | {l.termMonths}mo | {l.paymentInterval}
-                      </div>
+                      {deleteBtn(() => removeLoan(l.id))}
                     </div>
-                    {deleteBtn(() => removeLoan(l.id))}
+                    {/* Amortizations for this loan */}
+                    {l.amortizations.length > 0 && (
+                      <div class="mt-2 space-y-1 border-t border-[var(--color-border)] pt-2">
+                        {l.amortizations.map((a) => (
+                          <div key={a.id} class="flex items-center justify-between">
+                            <span class="font-mono text-[10px] text-[var(--color-text-muted)]">
+                              {a.type === "one-time"
+                                ? `${fmtM(a.amount)} at mo ${a.month}`
+                                : `${fmtM(a.amount)} every ${a.frequency}mo from mo ${a.startMonth}${a.endMonth ? ` to ${a.endMonth}` : ""}`}
+                              {" "}
+                              <span style={{ color: a.effect === "reduce-term" ? C.blue : C.green }}>
+                                [{a.effect === "reduce-term" ? "term" : "payment"}]
+                              </span>
+                            </span>
+                            <button
+                              onClick={() => removeAmortization(l.id, a.id)}
+                              class="ml-2 font-mono text-[10px] text-[var(--color-text-muted)] transition-colors hover:text-red-400"
+                            >
+                              x
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 );
               })
             )}
           </div>
         </div>
+
+        {/* Extra payments / amortization form */}
+        {state.loans.length > 0 && (
+          <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <CardTitle>Extra Payments / Amortization</CardTitle>
+            <div class="mb-3">
+              {label("Loan")}
+              {selectInput(
+                String(amortLoanId || state.loans[0]?.id || 0),
+                (v) => setAmortLoanId(Number(v)),
+                state.loans.map((l) => ({ value: String(l.id), label: l.name }))
+              )}
+            </div>
+            <div class="mb-3 grid grid-cols-2 gap-3">
+              <div>
+                {label("Type")}
+                {selectInput(amortType, (v) => setAmortType(v as "one-time" | "periodic"), [
+                  { value: "one-time", label: "One-time" },
+                  { value: "periodic", label: "Periodic" },
+                ])}
+              </div>
+              <div>
+                {label("Effect")}
+                {selectInput(amortEffect, (v) => setAmortEffect(v as "reduce-term" | "reduce-payment"), [
+                  { value: "reduce-term", label: "Reduce Term" },
+                  { value: "reduce-payment", label: "Reduce Payment" },
+                ])}
+              </div>
+            </div>
+            <div class="mb-3">
+              {label("Amount")}
+              {numInput(amortAmount, setAmortAmount, { prefix: "$", min: 0, step: 5000 })}
+            </div>
+            {amortType === "one-time" ? (
+              <div class="mb-4">
+                {label("Month")}
+                {numInput(amortMonth, setAmortMonth, { min: 1, max: 360, step: 1 })}
+              </div>
+            ) : (
+              <div class="mb-4 grid grid-cols-3 gap-3">
+                <div>
+                  {label("Start Month")}
+                  {numInput(amortStartMonth, setAmortStartMonth, { min: 1, max: 360, step: 1 })}
+                </div>
+                <div>
+                  {label("End (0 = loan end)")}
+                  {numInput(amortEndMonth, setAmortEndMonth, { min: 0, max: 360, step: 1 })}
+                </div>
+                <div>
+                  {label("Every N months")}
+                  {numInput(amortFrequency, setAmortFrequency, { min: 1, max: 60, step: 1 })}
+                </div>
+              </div>
+            )}
+            {goldButton(addAmortization, "Add Extra Payment")}
+          </div>
+        )}
       </div>
 
       {/* Right: summary */}
@@ -1432,6 +1893,31 @@ export default function FinanceSim() {
             />
           </div>
         </div>
+        {state.loans.some(l => l.amortizations.length > 0) && (
+          <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <CardTitle>Amortization Impact</CardTitle>
+            <div class="space-y-2">
+              <div class="flex justify-between font-mono text-xs">
+                <span class="text-[var(--color-text-muted)]">Total Interest Paid (projected)</span>
+                <span style={{ color: C.red }}>{fmtM(sim.totalInterestPaid)}</span>
+              </div>
+              {sim.debtFreeMonth > 0 && (
+                <div class="flex justify-between font-mono text-xs">
+                  <span class="text-[var(--color-text-muted)]">Debt-Free</span>
+                  <span style={{ color: C.green }}>
+                    {state.config.startDate
+                      ? monthToDate(sim.debtFreeMonth, state.config.startDate)
+                      : `Month ${sim.debtFreeMonth}`}
+                  </span>
+                </div>
+              )}
+              <p class="mt-2 font-mono text-[10px] text-[var(--color-text-muted)]">
+                <span style={{ color: C.blue }}>Reduce Term</span> = keep same payment, pay off faster.{" "}
+                <span style={{ color: C.green }}>Reduce Payment</span> = lower monthly payment, same term.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1457,38 +1943,46 @@ export default function FinanceSim() {
             </div>
             <div>
               {label("Periodicity")}
-              {selectInput(incPeriodicity, (v) => setIncPeriodicity(v as Income["periodicity"]), [
-                { value: "weekly", label: "Weekly" },
-                { value: "biweekly", label: "Biweekly" },
+              {selectInput(incPeriodicity, (v) => setIncPeriodicity(v as IncomePeriodicity), [
                 { value: "monthly", label: "Monthly" },
+                { value: "biweekly", label: "Biweekly" },
+                { value: "weekly", label: "Weekly" },
+                { value: "annually", label: "Annually" },
+                { value: "one-time", label: "One-time" },
               ])}
             </div>
           </div>
-          <div class="mb-3">
-            {label("Annual Growth Rate")}
-            {numInput(incGrowth, setIncGrowth, { suffix: "%", min: 0, max: 50, step: 0.5 })}
-          </div>
-          <div class="mb-3 grid grid-cols-2 gap-3">
-            <div>
-              {label("Bonus Month")}
-              {selectInput(String(incBonusMonth), (v) => setIncBonusMonth(Number(v)),
-                MONTH_NAMES.map((m, i) => ({ value: String(i), label: m }))
-              )}
+          {incPeriodicity !== "one-time" && (
+            <div class="mb-3">
+              {label("Annual Growth Rate")}
+              {numInput(incGrowth, setIncGrowth, { suffix: "%", min: 0, max: 50, step: 0.5 })}
             </div>
-            <div>
-              {label("Bonus Amount")}
-              {numInput(incBonusAmount, setIncBonusAmount, { prefix: "$", min: 0, step: 1000 })}
+          )}
+          {(incPeriodicity === "monthly" || incPeriodicity === "biweekly" || incPeriodicity === "weekly") && (
+            <div class="mb-3 grid grid-cols-2 gap-3">
+              <div>
+                {label("Bonus Month")}
+                {selectInput(String(incBonusMonth), (v) => setIncBonusMonth(Number(v)),
+                  MONTH_NAMES.map((m, i) => ({ value: String(i), label: m }))
+                )}
+              </div>
+              <div>
+                {label("Bonus Amount")}
+                {numInput(incBonusAmount, setIncBonusAmount, { prefix: "$", min: 0, step: 1000 })}
+              </div>
             </div>
-          </div>
+          )}
           <div class="mb-4 grid grid-cols-2 gap-3">
             <div>
-              {label("Start Month")}
+              {label(incPeriodicity === "one-time" ? "Month" : "Start Month")}
               {numInput(incStart, setIncStart, { min: 1, max: 360, step: 1 })}
             </div>
-            <div>
-              {label("End Month (0 = indefinite)")}
-              {numInput(incEnd, setIncEnd, { min: 0, max: 360, step: 1 })}
-            </div>
+            {incPeriodicity !== "one-time" && (
+              <div>
+                {label("End Month (0 = indefinite)")}
+                {numInput(incEnd, setIncEnd, { min: 0, max: 360, step: 1 })}
+              </div>
+            )}
           </div>
           {goldButton(addIncome, "Add Income")}
         </div>
@@ -1515,9 +2009,11 @@ export default function FinanceSim() {
                       {badge(inc.periodicity, { color: C.green, bg: C.greenDim, border: C.greenBorder })}
                     </div>
                     <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
-                      {fmtM(inc.amount)}/{inc.periodicity} | Growth: {fmtPct(inc.growthRate)}
+                      {fmtM(inc.amount)}/{inc.periodicity}
+                      {inc.periodicity === "one-time" ? ` at month ${inc.startMonth}` : ""}
+                      {inc.periodicity !== "one-time" && inc.growthRate > 0 ? ` | Growth: ${fmtPct(inc.growthRate)}` : ""}
                       {inc.bonusMonth > 0 ? ` | Bonus: ${fmtM(inc.bonusAmount)} in ${MONTH_NAMES[inc.bonusMonth]}` : ""}
-                      {inc.endMonth > 0 ? ` | Ends month ${inc.endMonth}` : ""}
+                      {inc.periodicity !== "one-time" && inc.endMonth > 0 ? ` | Ends mo ${inc.endMonth}` : ""}
                     </div>
                   </div>
                   {deleteBtn(() => removeIncome(inc.id))}
@@ -1732,6 +2228,7 @@ export default function FinanceSim() {
   return (
     <div class="space-y-0">
       {renderConfigBar()}
+      {renderToolbar()}
       {renderTabs()}
       {tab === "dashboard" && renderDashboard()}
       {tab === "accounts" && renderAccounts()}
