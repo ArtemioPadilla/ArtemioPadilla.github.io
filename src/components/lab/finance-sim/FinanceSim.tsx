@@ -68,6 +68,7 @@ interface MonthRow {
   totalLoanPayments: number; totalInterestPaid: number; totalPrincipalPaid: number;
   totalInterestEarned: number; netCashflow: number;
   accountBalances: Record<number, number>; loanBalances: Record<number, number>;
+  incomeBySource: Record<number, number>; expenseBySource: Record<number, number>;
   totalAssets: number; totalDebt: number; netWorth: number;
 }
 
@@ -204,43 +205,55 @@ function simulate(state: FinanceState): SimulationResult {
 
     // 1. Income
     let totalIncome = 0;
+    const incomeBySource: Record<number, number> = {};
     for (const inc of state.incomes) {
-      if (inc.startMonth > m) continue;
-      if (inc.endMonth > 0 && inc.endMonth < m) continue;
+      let incAmt = 0;
+      if (inc.startMonth > m) { incomeBySource[inc.id] = 0; continue; }
+      if (inc.endMonth > 0 && inc.endMonth < m) { incomeBySource[inc.id] = 0; continue; }
       const growthFactor = Math.pow(1 + inc.growthRate / 100, Math.floor((m - 1) / 12));
 
       if (inc.periodicity === "one-time") {
-        if (m === inc.startMonth) totalIncome += inc.amount;
+        if (m === inc.startMonth) incAmt = inc.amount;
+        incomeBySource[inc.id] = incAmt;
+        totalIncome += incAmt;
         continue;
       }
       if (inc.periodicity === "annually") {
         if (monthInYear === (inc.startMonth > 0 ? ((inc.startMonth - 1) % 12) + 1 : 1)) {
-          totalIncome += inc.amount * growthFactor;
+          incAmt = inc.amount * growthFactor;
         }
+        incomeBySource[inc.id] = incAmt;
+        totalIncome += incAmt;
         continue;
       }
       if (inc.periodicity === "every-n-months") {
         const n = inc.frequencyMonths || 3;
         if ((m - inc.startMonth) % n === 0) {
-          totalIncome += inc.amount * growthFactor;
+          incAmt = inc.amount * growthFactor;
         }
+        incomeBySource[inc.id] = incAmt;
+        totalIncome += incAmt;
         continue;
       }
 
       let monthlyAmt = inc.amount;
       if (inc.periodicity === "weekly") monthlyAmt = inc.amount * 52 / 12;
       else if (inc.periodicity === "biweekly") monthlyAmt = inc.amount * 26 / 12;
-      totalIncome += monthlyAmt * growthFactor;
+      incAmt = monthlyAmt * growthFactor;
       if (inc.bonusMonth > 0 && monthInYear === inc.bonusMonth) {
-        totalIncome += inc.bonusAmount * growthFactor;
+        incAmt += inc.bonusAmount * growthFactor;
       }
+      incomeBySource[inc.id] = incAmt;
+      totalIncome += incAmt;
     }
 
     // 2. Expenses
     let totalExpenses = 0;
+    const expenseBySource: Record<number, number> = {};
     for (const exp of state.expenses) {
-      if (exp.startMonth > m) continue;
-      if (exp.endMonth > 0 && exp.endMonth < m) continue;
+      let expAmt = 0;
+      if (exp.startMonth > m) { expenseBySource[exp.id] = 0; continue; }
+      if (exp.endMonth > 0 && exp.endMonth < m) { expenseBySource[exp.id] = 0; continue; }
 
       let applies = false;
       if (exp.frequency === "monthly") applies = true;
@@ -250,12 +263,13 @@ function simulate(state: FinanceState): SimulationResult {
       else if (exp.frequency === "every-n-months") applies = (m - exp.startMonth) % (exp.frequencyMonths || 3) === 0;
 
       if (applies) {
-        let amount = exp.amount;
+        expAmt = exp.amount;
         if (exp.inflationAdjusted) {
-          amount *= Math.pow(1 + inflRate, (m - 1) / 12);
+          expAmt *= Math.pow(1 + inflRate, (m - 1) / 12);
         }
-        totalExpenses += amount;
       }
+      expenseBySource[exp.id] = expAmt;
+      totalExpenses += expAmt;
     }
 
     // 3. Loan payments (with amortization support)
@@ -382,6 +396,8 @@ function simulate(state: FinanceState): SimulationResult {
       netCashflow,
       accountBalances: { ...accBals },
       loanBalances: { ...loanBals },
+      incomeBySource: { ...incomeBySource },
+      expenseBySource: { ...expenseBySource },
       totalAssets,
       totalDebt,
       netWorth: totalAssets - totalDebt,
@@ -1438,30 +1454,48 @@ export default function FinanceSim() {
       }));
       yAxisTitle = "Remaining Balance ($)";
     } else if (tab === "income") {
+      datasets = state.incomes.map((inc, i) => ({
+        label: inc.name,
+        data: sampleData(r => r.incomeBySource[inc.id] ?? 0),
+        borderColor: C.palette[i % C.palette.length],
+        backgroundColor: "transparent",
+        fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
+        pointBackgroundColor: C.palette[i % C.palette.length],
+      }));
+      // Add total line
       const grad = ctx.createLinearGradient(0, 0, 0, 260);
-      grad.addColorStop(0, "rgba(63,182,138,0.35)");
+      grad.addColorStop(0, "rgba(63,182,138,0.15)");
       grad.addColorStop(1, "rgba(63,182,138,0.02)");
-      datasets = [{
-        label: "Total Income",
+      datasets.push({
+        label: "Total",
         data: sampleData(r => r.totalIncome),
         borderColor: C.green,
         backgroundColor: grad,
-        fill: true, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
-        pointBackgroundColor: C.green,
-      }];
+        fill: true, tension: 0.3, borderWidth: 2.5, pointRadius: 0,
+        borderDash: [6, 3],
+      });
       yAxisTitle = "Monthly Income ($)";
     } else if (tab === "expenses") {
+      datasets = state.expenses.map((exp, i) => ({
+        label: exp.name,
+        data: sampleData(r => r.expenseBySource[exp.id] ?? 0),
+        borderColor: C.palette[i % C.palette.length],
+        backgroundColor: "transparent",
+        fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
+        pointBackgroundColor: C.palette[i % C.palette.length],
+      }));
+      // Add total line
       const grad = ctx.createLinearGradient(0, 0, 0, 260);
-      grad.addColorStop(0, "rgba(224,92,106,0.35)");
+      grad.addColorStop(0, "rgba(224,92,106,0.15)");
       grad.addColorStop(1, "rgba(224,92,106,0.02)");
-      datasets = [{
-        label: "Total Expenses",
+      datasets.push({
+        label: "Total",
         data: sampleData(r => r.totalExpenses),
         borderColor: C.red,
         backgroundColor: grad,
-        fill: true, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
-        pointBackgroundColor: C.red,
-      }];
+        fill: true, tension: 0.3, borderWidth: 2.5, pointRadius: 0,
+        borderDash: [6, 3],
+      });
       yAxisTitle = "Monthly Expenses ($)";
     }
 
@@ -1476,7 +1510,7 @@ export default function FinanceSim() {
         interaction: { mode: "index", intersect: false },
         plugins: {
           legend: {
-            display: tab === "accounts" || tab === "loans",
+            display: true,
             labels: {
               color: textColor,
               font: { family: "monospace", size: 10 },
@@ -1530,7 +1564,7 @@ export default function FinanceSim() {
         tabChartInstanceRef.current = null;
       }
     };
-  }, [sim, tab, state.accounts, state.loans, state.config.startDate, granularity, getChartSamples]);
+  }, [sim, tab, state.accounts, state.loans, state.incomes, state.expenses, state.config.startDate, granularity, getChartSamples]);
 
   // ── Gantt ResizeObserver ──
   useEffect(() => {
@@ -1593,11 +1627,12 @@ export default function FinanceSim() {
 
     // Layout constants
     const dpr = window.devicePixelRatio || 1;
-    const leftPad = 120;
-    const topPad = 28;
-    const rowH = 24;
+    const leftPad = 100;
+    const rightPad = 12;
+    const topPad = 24;
+    const rowH = 26;
     const sectionHeaderH = 22;
-    const bottomPad = 24;
+    const bottomPad = 22;
 
     // Count sections
     const sections = [...new Set(rows.map(r => r.section))];
@@ -1611,7 +1646,7 @@ export default function FinanceSim() {
     canvas.height = canvasH * dpr;
     ctx.scale(dpr, dpr);
 
-    const chartW = containerW - leftPad - 16;
+    const chartW = containerW - leftPad - rightPad;
     const unitW = chartW / Math.max(totalMonths, 1);
 
     // Background
@@ -1631,8 +1666,15 @@ export default function FinanceSim() {
     for (let m = 0; m <= totalMonths; m += tickInterval) {
       const x = leftPad + m * unitW;
       const lbl = sd ? monthToShortDate(m + 1, sd) : `Mo ${m + 1}`;
-      ctx.fillText(lbl, x, topPad - 8);
+      ctx.fillText(lbl, x, topPad - 6);
     }
+    // Top axis line
+    ctx.strokeStyle = isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.08)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(leftPad, topPad);
+    ctx.lineTo(leftPad + chartW, topPad);
+    ctx.stroke();
 
     // Draw sections and bars
     let y = topPad;
@@ -1662,14 +1704,14 @@ export default function FinanceSim() {
       for (const row of sectionRows) {
         const barX = leftPad + (row.start - 1) * unitW;
         const barW = Math.max(2, (row.end - row.start + 1) * unitW);
-        const barY = y + 4;
-        const barH = rowH - 8;
+        const barY = y + 5;
+        const barH = rowH - 10;
 
         // Entity name (truncated)
         ctx.fillStyle = textColor;
         ctx.font = "11px monospace";
         ctx.textAlign = "right";
-        const truncName = row.name.length > 14 ? row.name.slice(0, 13) + "\u2026" : row.name;
+        const truncName = row.name.length > 12 ? row.name.slice(0, 11) + "\u2026" : row.name;
         ctx.fillText(truncName, leftPad - 8, y + rowH / 2 + 4);
 
         // Bar
@@ -1702,14 +1744,21 @@ export default function FinanceSim() {
       }
     }
 
-    // Bottom x-axis labels
+    // Bottom x-axis line and labels
+    ctx.strokeStyle = isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.08)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(leftPad, y);
+    ctx.lineTo(leftPad + chartW, y);
+    ctx.stroke();
+
     ctx.fillStyle = textColor;
     ctx.font = "10px monospace";
     ctx.textAlign = "center";
     for (let m = 0; m <= totalMonths; m += tickInterval) {
       const x = leftPad + m * unitW;
       const lbl = sd ? monthToShortDate(m + 1, sd) : `Mo ${m + 1}`;
-      ctx.fillText(lbl, x, y + 16);
+      ctx.fillText(lbl, x, y + 14);
     }
   }, [sim, tab, timelineOpen, state.incomes, state.expenses, state.loans, state.config.startDate, ganttWidth]);
 
