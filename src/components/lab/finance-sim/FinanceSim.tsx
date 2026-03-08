@@ -1625,10 +1625,12 @@ export default function FinanceSim() {
 
     if (rows.length === 0) return;
 
-    // Layout constants
+    // Layout: align with Chart.js chart area if available
     const dpr = window.devicePixelRatio || 1;
-    const leftPad = 100;
-    const rightPad = 12;
+    const containerW = ganttWidth || canvas.parentElement?.clientWidth || 600;
+    const chartArea = chartInstanceRef.current?.chartArea;
+    const leftPad = chartArea ? chartArea.left : 100;
+    const rightPad = chartArea ? Math.max(8, containerW - chartArea.right) : 12;
     const topPad = 24;
     const rowH = 26;
     const sectionHeaderH = 22;
@@ -1638,7 +1640,6 @@ export default function FinanceSim() {
     const sections = [...new Set(rows.map(r => r.section))];
     const totalRows = rows.length;
     const canvasH = topPad + sections.length * sectionHeaderH + totalRows * rowH + bottomPad;
-    const containerW = ganttWidth || canvas.parentElement?.clientWidth || 600;
 
     canvas.style.width = containerW + "px";
     canvas.style.height = canvasH + "px";
