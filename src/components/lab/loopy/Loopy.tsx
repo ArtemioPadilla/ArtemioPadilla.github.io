@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "preact/hooks";
 
-// ─────────────────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════
+   Types
+   ══════════════════════════════════════════════════════════ */
 
 interface LoopyNode {
   id: number;
@@ -38,16 +38,20 @@ interface Preset {
   edges: PresetEdge[];
 }
 
-type InteractionMode = "select" | "add-node" | "add-edge-source" | "add-edge-target";
+interface DetectedLoop {
+  path: string[];
+  type: "reinforcing" | "balancing";
+}
 
-// ─────────────────────────────────────────────────────────
-// Constants
-// ─────────────────────────────────────────────────────────
+type InteractionMode = "select" | "add-node" | "add-edge-source" | "add-edge-target" | "drag-edge";
+
+/* ══════════════════════════════════════════════════════════
+   Constants
+   ══════════════════════════════════════════════════════════ */
 
 const NODE_BASE_RADIUS = 28;
 const NODE_MAX_RADIUS = 48;
 const ARROW_SIZE = 10;
-const FONT = "13px Inter, system-ui, sans-serif";
 const FONT_BOLD = "bold 13px Inter, system-ui, sans-serif";
 const FONT_SMALL = "11px Inter, system-ui, sans-serif";
 
@@ -100,9 +104,9 @@ const PRESETS: Preset[] = [
   },
 ];
 
-// ─────────────────────────────────────────────────────────
-// Drawing helpers
-// ─────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════
+   Helpers
+   ══════════════════════════════════════════════════════════ */
 
 function getCssVar(name: string, fallback: string): string {
   if (typeof document === "undefined") return fallback;
@@ -116,6 +120,54 @@ function clamp(v: number, min: number, max: number): number {
 function nodeRadius(value: number): number {
   return NODE_BASE_RADIUS + (value / 100) * (NODE_MAX_RADIUS - NODE_BASE_RADIUS);
 }
+
+function detectLoops(nodes: LoopyNode[], edges: LoopyEdge[]): DetectedLoop[] {
+  const adj = new Map<number, { to: number; polarity: 1 | -1 }[]>();
+  for (const e of edges) {
+    if (!adj.has(e.from)) adj.set(e.from, []);
+    adj.get(e.from)!.push({ to: e.to, polarity: e.polarity });
+  }
+
+  const found: DetectedLoop[] = [];
+  const seen = new Set<string>();
+
+  for (const startNode of nodes) {
+    const stack: { id: number; path: number[]; negCount: number }[] = [
+      { id: startNode.id, path: [startNode.id], negCount: 0 },
+    ];
+
+    while (stack.length > 0) {
+      const { id, path, negCount } = stack.pop()!;
+      const neighbors = adj.get(id) ?? [];
+
+      for (const nb of neighbors) {
+        if (nb.to === startNode.id && path.length > 1) {
+          const totalNegs = negCount + (nb.polarity === -1 ? 1 : 0);
+          const type: "reinforcing" | "balancing" = totalNegs % 2 === 0 ? "reinforcing" : "balancing";
+          const names = path.map((nid) => nodes.find((n) => n.id === nid)?.name ?? "?");
+
+          const sortedKey = [...path].sort().join(",") + ":" + type;
+          if (!seen.has(sortedKey)) {
+            seen.add(sortedKey);
+            found.push({ path: names, type });
+          }
+        } else if (!path.includes(nb.to) && path.length < 6) {
+          stack.push({
+            id: nb.to,
+            path: [...path, nb.to],
+            negCount: negCount + (nb.polarity === -1 ? 1 : 0),
+          });
+        }
+      }
+    }
+  }
+
+  return found;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Canvas Drawing
+   ══════════════════════════════════════════════════════════ */
 
 function drawCurvedArrow(
   ctx: CanvasRenderingContext2D,
@@ -132,7 +184,6 @@ function drawCurvedArrow(
   if (dist < 1) return;
 
   const angle = Math.atan2(dy, dx);
-
   const curveOffset = bidirectional ? 30 : 0;
   const perpX = -Math.sin(angle) * curveOffset;
   const perpY = Math.cos(angle) * curveOffset;
@@ -173,54 +224,43 @@ function drawCurvedArrow(
   ctx.fill();
 
   // Polarity label
-  const labelX = mx;
-  const labelY = my - 10;
   ctx.font = FONT_BOLD;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = color;
-  ctx.fillText(polarity === 1 ? "+" : "-", labelX, labelY);
+  ctx.fillText(polarity === 1 ? "+" : "-", mx, my - 10);
 
-  // Animated dot
-  const t = (animPhase % 1);
-  const dotX = (1 - t) * (1 - t) * sx + 2 * (1 - t) * t * mx + t * t * ex;
-  const dotY = (1 - t) * (1 - t) * sy + 2 * (1 - t) * t * my + t * t * ey;
-  ctx.beginPath();
-  ctx.arc(dotX, dotY, 4, 0, Math.PI * 2);
-  ctx.fillStyle = color;
-  ctx.globalAlpha = 0.7;
-  ctx.fill();
-  ctx.globalAlpha = 1;
+  // Animated dot when simulating
+  if (animPhase > 0) {
+    const t = animPhase % 1;
+    const dotX = (1 - t) * (1 - t) * sx + 2 * (1 - t) * t * mx + t * t * ex;
+    const dotY = (1 - t) * (1 - t) * sy + 2 * (1 - t) * t * my + t * t * ey;
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 4, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.7;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
 }
 
-function drawNode(
+function drawNodeShape(
   ctx: CanvasRenderingContext2D,
   node: LoopyNode,
   colorIdx: number,
   selected: boolean,
   isLinkSource: boolean,
-  pulse: number,
 ) {
   const r = nodeRadius(node.value);
   const color = NODE_COLORS[colorIdx % NODE_COLORS.length];
 
-  // Pulse ring
-  if (pulse > 0) {
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, r + 4 + pulse * 6, 0, Math.PI * 2);
-    ctx.strokeStyle = color;
-    ctx.globalAlpha = 0.3 * (1 - pulse);
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-  }
-
-  // Value fill (arc representing current value)
+  // Background
   ctx.beginPath();
   ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
   ctx.fillStyle = getCssVar("--color-surface", "#111");
   ctx.fill();
 
+  // Value fill (pie-style)
   ctx.beginPath();
   ctx.moveTo(node.x, node.y);
   ctx.arc(node.x, node.y, r, -Math.PI / 2, -Math.PI / 2 + (node.value / 100) * Math.PI * 2);
@@ -240,10 +280,10 @@ function drawNode(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = getCssVar("--color-heading", "#fff");
-  const maxLabelWidth = r * 1.6;
+  const maxW = r * 1.6;
   let label = node.name;
-  if (ctx.measureText(label).width > maxLabelWidth) {
-    while (ctx.measureText(label + "..").width > maxLabelWidth && label.length > 2) {
+  if (ctx.measureText(label).width > maxW) {
+    while (ctx.measureText(label + "..").width > maxW && label.length > 2) {
       label = label.slice(0, -1);
     }
     label += "..";
@@ -255,10 +295,6 @@ function drawNode(
   ctx.fillStyle = getCssVar("--color-text-muted", "#a1a1aa");
   ctx.fillText(Math.round(node.value).toString(), node.x, node.y + 10);
 }
-
-// ─────────────────────────────────────────────────────────
-// Chart drawing
-// ─────────────────────────────────────────────────────────
 
 function drawChart(
   ctx: CanvasRenderingContext2D,
@@ -300,7 +336,7 @@ function drawChart(
   }
 
   if (history.length < 2) {
-    ctx.font = FONT;
+    ctx.font = "13px Inter, system-ui, sans-serif";
     ctx.textAlign = "center";
     ctx.fillStyle = mutedColor;
     ctx.fillText("Run simulation to see chart", width / 2, height / 2);
@@ -336,33 +372,28 @@ function drawChart(
       if (val === undefined) continue;
       const x = padL + ((point.step - minStep) / range) * plotW;
       const y = padT + plotH * (1 - val / 100);
-      if (!started) {
-        ctx.moveTo(x, y);
-        started = true;
-      } else {
-        ctx.lineTo(x, y);
-      }
+      if (!started) { ctx.moveTo(x, y); started = true; }
+      else ctx.lineTo(x, y);
     }
     ctx.stroke();
   }
 
   // Legend
-  const legendX = padL + 10;
   let legendY = padT + 10;
   for (let ni = 0; ni < nodes.length; ni++) {
     const color = NODE_COLORS[ni % NODE_COLORS.length];
     ctx.fillStyle = color;
-    ctx.fillRect(legendX, legendY - 4, 12, 3);
+    ctx.fillRect(padL + 10, legendY - 4, 12, 3);
     ctx.font = "10px Inter, system-ui, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(nodes[ni].name, legendX + 16, legendY);
+    ctx.fillText(nodes[ni].name, padL + 26, legendY);
     legendY += 14;
   }
 }
 
-// ─────────────────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════
+   Component
+   ══════════════════════════════════════════════════════════ */
 
 export default function Loopy() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -373,15 +404,17 @@ export default function Loopy() {
   const [mode, setMode] = useState<InteractionMode>("select");
   const [edgeSource, setEdgeSource] = useState<number | null>(null);
   const [dragging, setDragging] = useState<{ id: number; ox: number; oy: number } | null>(null);
+  const [dragEdgeMouse, setDragEdgeMouse] = useState<{ x: number; y: number } | null>(null);
   const [simulating, setSimulating] = useState(false);
   const [speed, setSpeed] = useState(5);
   const [history, setHistory] = useState<HistoryPoint[]>([]);
   const [animPhase, setAnimPhase] = useState(0);
-  const [pulses, setPulses] = useState<Record<number, number>>({});
   const nextId = useRef(1);
   const simRef = useRef<number>(0);
   const animRef = useRef<number>(0);
   const stepRef = useRef(0);
+
+  const loops = detectLoops(nodes, edges);
 
   // ── Drawing ──
   const draw = useCallback(() => {
@@ -395,31 +428,26 @@ export default function Loopy() {
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
-
     ctx.clearRect(0, 0, rect.width, rect.height);
 
-    // Determine bidirectional edges
+    // Bidirectional detection
     const edgePairs = new Set<string>();
     const bidir = new Set<string>();
     for (const e of edges) {
       const key = `${e.from}-${e.to}`;
       const rev = `${e.to}-${e.from}`;
-      if (edgePairs.has(rev)) {
-        bidir.add(key);
-        bidir.add(rev);
-      }
+      if (edgePairs.has(rev)) { bidir.add(key); bidir.add(rev); }
       edgePairs.add(key);
     }
 
     // Draw edges
     for (const edge of edges) {
-      const fromNode = nodes.find(n => n.id === edge.from);
-      const toNode = nodes.find(n => n.id === edge.to);
+      const fromNode = nodes.find((n) => n.id === edge.from);
+      const toNode = nodes.find((n) => n.id === edge.to);
       if (!fromNode || !toNode) continue;
 
       const color = edge.polarity === 1 ? "#34d399" : "#ef4444";
       const key = `${edge.from}-${edge.to}`;
-      const isBidir = bidir.has(key);
 
       drawCurvedArrow(
         ctx,
@@ -427,26 +455,46 @@ export default function Loopy() {
         toNode.x, toNode.y, nodeRadius(toNode.value),
         color, edge.polarity,
         simulating ? animPhase : 0,
-        isBidir,
+        bidir.has(key),
       );
+    }
+
+    // Drag-edge preview line
+    if (mode === "drag-edge" && edgeSource !== null && dragEdgeMouse) {
+      const fromNode = nodes.find((n) => n.id === edgeSource);
+      if (fromNode) {
+        ctx.strokeStyle = "rgba(168,85,247,0.6)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.moveTo(fromNode.x, fromNode.y);
+        ctx.lineTo(dragEdgeMouse.x, dragEdgeMouse.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
     }
 
     // Draw nodes
-    const nodeIds = nodes.map(n => n.id);
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
-      drawNode(
+      drawNodeShape(
         ctx, node, i,
         selectedNode === node.id,
-        mode === "add-edge-target" && edgeSource === node.id,
-        simulating ? (pulses[node.id] || 0) : 0,
+        (mode === "add-edge-target" || mode === "drag-edge") && edgeSource === node.id,
       );
     }
-  }, [nodes, edges, selectedNode, mode, edgeSource, simulating, animPhase, pulses]);
 
-  useEffect(() => {
-    draw();
-  }, [draw]);
+    // Empty state
+    if (nodes.length === 0) {
+      ctx.fillStyle = getCssVar("--color-text-muted", "#a1a1aa");
+      ctx.font = "14px Inter, system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Click '+ Node' then click canvas, or load a preset", rect.width / 2, rect.height / 2);
+    }
+  }, [nodes, edges, selectedNode, mode, edgeSource, simulating, animPhase, dragEdgeMouse]);
+
+  useEffect(() => { draw(); }, [draw]);
 
   // Chart
   useEffect(() => {
@@ -466,18 +514,17 @@ export default function Loopy() {
 
   // ── Simulation ──
   const simulate = useCallback(() => {
-    setNodes(prev => {
-      const newNodes = prev.map(n => {
+    setNodes((prev) => {
+      const newNodes = prev.map((n) => {
         let delta = 0;
         for (const edge of edges) {
           if (edge.to !== n.id) continue;
-          const source = prev.find(s => s.id === edge.from);
+          const source = prev.find((s) => s.id === edge.from);
           if (!source) continue;
           const influence = ((source.value - 50) / 50) * edge.polarity * edge.strength * (speed / 5);
           delta += influence;
         }
-        const newVal = clamp(n.value + delta, 0, 100);
-        return { ...n, value: newVal };
+        return { ...n, value: clamp(n.value + delta, 0, 100) };
       });
       return newNodes;
     });
@@ -493,10 +540,10 @@ export default function Loopy() {
       simulate();
       stepRef.current++;
 
-      setNodes(curr => {
+      setNodes((curr) => {
         const vals: Record<number, number> = {};
         for (const n of curr) vals[n.id] = n.value;
-        setHistory(prev => {
+        setHistory((prev) => {
           const next = [...prev, { step: stepRef.current, values: vals }];
           return next.length > 500 ? next.slice(-500) : next;
         });
@@ -504,12 +551,10 @@ export default function Loopy() {
       });
     }, 100);
 
-    return () => {
-      if (simRef.current) clearInterval(simRef.current);
-    };
+    return () => { if (simRef.current) clearInterval(simRef.current); };
   }, [simulating, simulate]);
 
-  // Animation loop for edge dots and pulses
+  // Animation loop for edge dots
   useEffect(() => {
     if (!simulating) {
       if (animRef.current) cancelAnimationFrame(animRef.current);
@@ -520,97 +565,133 @@ export default function Loopy() {
     const tick = (now: number) => {
       const dt = (now - last) / 1000;
       last = now;
-      setAnimPhase(p => (p + dt * 0.8) % 1);
-      setPulses(prev => {
-        const next: Record<number, number> = {};
-        for (const [k, v] of Object.entries(prev)) {
-          const nv = v + dt;
-          if (nv < 1) next[Number(k)] = nv;
-        }
-        return next;
-      });
+      setAnimPhase((p) => (p + dt * 0.8) % 1);
       animRef.current = requestAnimationFrame(tick);
     };
     animRef.current = requestAnimationFrame(tick);
 
-    return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
-    };
+    return () => { if (animRef.current) cancelAnimationFrame(animRef.current); };
   }, [simulating]);
 
   // ── Mouse handlers ──
-  const getNodeAt = useCallback((x: number, y: number): LoopyNode | null => {
-    for (let i = nodes.length - 1; i >= 0; i--) {
-      const n = nodes[i];
-      const r = nodeRadius(n.value);
-      const dx = n.x - x;
-      const dy = n.y - y;
-      if (dx * dx + dy * dy <= r * r) return n;
-    }
-    return null;
-  }, [nodes]);
-
-  const handleMouseDown = useCallback((e: MouseEvent) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const node = getNodeAt(x, y);
-
-    if (mode === "add-node") {
-      const id = nextId.current++;
-      const newNode: LoopyNode = {
-        id, name: `Var ${id}`, value: 50, x, y, initialValue: 50,
-      };
-      setNodes(prev => [...prev, newNode]);
-      setSelectedNode(id);
-      setMode("select");
-      return;
-    }
-
-    if (mode === "add-edge-source" && node) {
-      setEdgeSource(node.id);
-      setMode("add-edge-target");
-      return;
-    }
-
-    if (mode === "add-edge-target" && node && edgeSource !== null) {
-      if (node.id !== edgeSource) {
-        const exists = edges.some(e => e.from === edgeSource && e.to === node.id);
-        if (!exists) {
-          setEdges(prev => [...prev, { from: edgeSource, to: node.id, polarity: 1, strength: 0.3 }]);
-        }
+  const getNodeAt = useCallback(
+    (x: number, y: number): LoopyNode | null => {
+      for (let i = nodes.length - 1; i >= 0; i--) {
+        const n = nodes[i];
+        const r = nodeRadius(n.value);
+        const dx = n.x - x;
+        const dy = n.y - y;
+        if (dx * dx + dy * dy <= r * r) return n;
       }
-      setEdgeSource(null);
-      setMode("select");
-      return;
-    }
+      return null;
+    },
+    [nodes],
+  );
 
-    if (mode === "select" && node) {
-      setSelectedNode(node.id);
-      setDragging({ id: node.id, ox: x - node.x, oy: y - node.y });
-    } else if (mode === "select") {
-      setSelectedNode(null);
-    }
-  }, [mode, getNodeAt, edgeSource, edges]);
+  const handleMouseDown = useCallback(
+    (e: MouseEvent) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const node = getNodeAt(x, y);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!dragging) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left - dragging.ox;
-    const y = e.clientY - rect.top - dragging.oy;
-    setNodes(prev => prev.map(n => n.id === dragging.id ? { ...n, x, y } : n));
-  }, [dragging]);
+      if (mode === "add-node") {
+        const id = nextId.current++;
+        const newNode: LoopyNode = {
+          id, name: `Var ${id}`, value: 50, x, y, initialValue: 50,
+        };
+        setNodes((prev) => [...prev, newNode]);
+        setSelectedNode(id);
+        setMode("select");
+        return;
+      }
 
-  const handleMouseUp = useCallback(() => {
-    setDragging(null);
-  }, []);
+      if (mode === "add-edge-source" && node) {
+        setEdgeSource(node.id);
+        setMode("drag-edge");
+        setDragEdgeMouse({ x, y });
+        return;
+      }
+
+      if (mode === "add-edge-target" && node && edgeSource !== null) {
+        if (node.id !== edgeSource) {
+          const exists = edges.some((e) => e.from === edgeSource && e.to === node.id);
+          if (!exists) {
+            setEdges((prev) => [...prev, { from: edgeSource, to: node.id, polarity: 1, strength: 0.3 }]);
+          }
+        }
+        setEdgeSource(null);
+        setMode("select");
+        return;
+      }
+
+      if (mode === "select" && node) {
+        setSelectedNode(node.id);
+        setDragging({ id: node.id, ox: x - node.x, oy: y - node.y });
+      } else if (mode === "select") {
+        setSelectedNode(null);
+      }
+    },
+    [mode, getNodeAt, edgeSource, edges],
+  );
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (mode === "drag-edge") {
+        setDragEdgeMouse({ x, y });
+        return;
+      }
+
+      if (dragging) {
+        setNodes((prev) =>
+          prev.map((n) =>
+            n.id === dragging.id ? { ...n, x: x - dragging.ox, y: y - dragging.oy } : n,
+          ),
+        );
+      }
+    },
+    [dragging, mode],
+  );
+
+  const handleMouseUp = useCallback(
+    (e: MouseEvent) => {
+      if (mode === "drag-edge" && edgeSource !== null) {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const target = getNodeAt(x, y);
+          if (target && target.id !== edgeSource) {
+            const exists = edges.some((ed) => ed.from === edgeSource && ed.to === target.id);
+            if (!exists) {
+              setEdges((prev) => [
+                ...prev,
+                { from: edgeSource, to: target.id, polarity: 1, strength: 0.3 },
+              ]);
+            }
+          }
+        }
+        setEdgeSource(null);
+        setDragEdgeMouse(null);
+        setMode("select");
+        return;
+      }
+      setDragging(null);
+    },
+    [mode, edgeSource, getNodeAt, edges],
+  );
 
   const resetValues = useCallback(() => {
-    setNodes(prev => prev.map(n => ({ ...n, value: n.initialValue })));
+    setNodes((prev) => prev.map((n) => ({ ...n, value: n.initialValue })));
     setHistory([]);
     stepRef.current = 0;
     setSimulating(false);
@@ -628,50 +709,53 @@ export default function Loopy() {
 
   const deleteSelectedNode = useCallback(() => {
     if (selectedNode === null) return;
-    setNodes(prev => prev.filter(n => n.id !== selectedNode));
-    setEdges(prev => prev.filter(e => e.from !== selectedNode && e.to !== selectedNode));
+    setNodes((prev) => prev.filter((n) => n.id !== selectedNode));
+    setEdges((prev) => prev.filter((e) => e.from !== selectedNode && e.to !== selectedNode));
     setSelectedNode(null);
   }, [selectedNode]);
 
-  const loadPreset = useCallback((preset: Preset) => {
-    clearAll();
-    const newNodes: LoopyNode[] = preset.nodes.map((n, i) => ({
-      ...n,
-      id: i + 1,
-    }));
-    const newEdges: LoopyEdge[] = preset.edges.map(e => ({
-      from: e.fromIdx + 1,
-      to: e.toIdx + 1,
-      polarity: e.polarity,
-      strength: e.strength,
-    }));
-    setNodes(newNodes);
-    setEdges(newEdges);
-    nextId.current = newNodes.length + 1;
-  }, [clearAll]);
+  const loadPreset = useCallback(
+    (preset: Preset) => {
+      clearAll();
+      const newNodes: LoopyNode[] = preset.nodes.map((n, i) => ({
+        ...n,
+        id: i + 1,
+      }));
+      const newEdges: LoopyEdge[] = preset.edges.map((e) => ({
+        from: e.fromIdx + 1,
+        to: e.toIdx + 1,
+        polarity: e.polarity,
+        strength: e.strength,
+      }));
+      setNodes(newNodes);
+      setEdges(newEdges);
+      nextId.current = newNodes.length + 1;
+    },
+    [clearAll],
+  );
 
-  const selectedNodeData = nodes.find(n => n.id === selectedNode);
-  const selectedEdges = edges.filter(e => e.from === selectedNode || e.to === selectedNode);
+  const selectedNodeData = nodes.find((n) => n.id === selectedNode);
+  const selectedEdges = edges.filter((e) => e.from === selectedNode || e.to === selectedNode);
 
   return (
     <div class="flex flex-col gap-4">
       {/* Toolbar */}
       <div class="flex flex-wrap items-center gap-2">
         <button
-          onClick={() => { setMode("select"); setEdgeSource(null); }}
-          class={`rounded px-3 py-1.5 text-xs font-medium transition ${mode === "select" ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)]"}`}
+          onClick={() => { setMode("select"); setEdgeSource(null); setDragEdgeMouse(null); }}
+          class={`rounded px-3 py-1.5 text-xs font-medium transition ${mode === "select" ? "bg-[var(--color-primary)] text-white" : "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)]"}`}
         >
           Select
         </button>
         <button
           onClick={() => setMode("add-node")}
-          class={`rounded px-3 py-1.5 text-xs font-medium transition ${mode === "add-node" ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)]"}`}
+          class={`rounded px-3 py-1.5 text-xs font-medium transition ${mode === "add-node" ? "bg-[var(--color-primary)] text-white" : "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)]"}`}
         >
           + Node
         </button>
         <button
-          onClick={() => { setMode("add-edge-source"); setEdgeSource(null); }}
-          class={`rounded px-3 py-1.5 text-xs font-medium transition ${mode === "add-edge-source" || mode === "add-edge-target" ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)]"}`}
+          onClick={() => { setMode("add-edge-source"); setEdgeSource(null); setDragEdgeMouse(null); }}
+          class={`rounded px-3 py-1.5 text-xs font-medium transition ${mode === "add-edge-source" || mode === "add-edge-target" || mode === "drag-edge" ? "bg-[var(--color-primary)] text-white" : "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)]"}`}
         >
           + Edge
         </button>
@@ -702,11 +786,11 @@ export default function Loopy() {
             Delete Node
           </button>
         )}
-        {mode === "add-edge-target" && (
-          <span class="text-xs text-[var(--color-accent)]">Click target node...</span>
+        {mode === "drag-edge" && (
+          <span class="text-xs text-[var(--color-accent)]">Drag to target node...</span>
         )}
         {mode === "add-edge-source" && (
-          <span class="text-xs text-[var(--color-text-muted)]">Click source node...</span>
+          <span class="text-xs text-[var(--color-text-muted)]">Click source node then drag to target...</span>
         )}
         {mode === "add-node" && (
           <span class="text-xs text-[var(--color-text-muted)]">Click canvas to place node...</span>
@@ -716,7 +800,7 @@ export default function Loopy() {
       {/* Presets */}
       <div class="flex flex-wrap items-center gap-2">
         <span class="text-xs text-[var(--color-text-muted)]">Presets:</span>
-        {PRESETS.map(preset => (
+        {PRESETS.map((preset) => (
           <button
             key={preset.name}
             onClick={() => loadPreset(preset)}
@@ -733,14 +817,27 @@ export default function Loopy() {
           {/* System canvas */}
           <canvas
             ref={canvasRef}
-            class="h-[400px] w-full cursor-crosshair rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)]"
+            class="h-[400px] w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)]"
+            style={{
+              cursor:
+                mode === "add-node"
+                  ? "crosshair"
+                  : mode === "add-edge-source" || mode === "add-edge-target"
+                    ? "pointer"
+                    : mode === "drag-edge"
+                      ? "grabbing"
+                      : "default",
+            }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
+            onMouseLeave={() => {
+              handleMouseUp(new MouseEvent("mouseup"));
+              setDragging(null);
+            }}
           />
 
-          {/* Chart */}
+          {/* History chart */}
           <canvas
             ref={chartRef}
             class="h-[180px] w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)]"
@@ -751,7 +848,9 @@ export default function Loopy() {
         <div class="flex flex-col gap-3">
           {/* Speed control */}
           <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Simulation Speed</p>
+            <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+              Simulation Speed
+            </p>
             <input
               type="range"
               min="1"
@@ -766,7 +865,9 @@ export default function Loopy() {
 
           {/* Node editor */}
           <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Node Editor</p>
+            <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+              Node Editor
+            </p>
             {selectedNodeData ? (
               <div class="flex flex-col gap-2">
                 <label class="text-xs text-[var(--color-text-muted)]">Name</label>
@@ -775,11 +876,15 @@ export default function Loopy() {
                   value={selectedNodeData.name}
                   onInput={(e) => {
                     const val = (e.target as HTMLInputElement).value;
-                    setNodes(prev => prev.map(n => n.id === selectedNode ? { ...n, name: val } : n));
+                    setNodes((prev) =>
+                      prev.map((n) => (n.id === selectedNode ? { ...n, name: val } : n)),
+                    );
                   }}
                   class="rounded border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1.5 text-sm text-[var(--color-text)] focus:border-[var(--color-primary)] focus:outline-none"
                 />
-                <label class="text-xs text-[var(--color-text-muted)]">Value: {Math.round(selectedNodeData.value)}</label>
+                <label class="text-xs text-[var(--color-text-muted)]">
+                  Value: {Math.round(selectedNodeData.value)}
+                </label>
                 <input
                   type="range"
                   min="0"
@@ -788,7 +893,11 @@ export default function Loopy() {
                   value={selectedNodeData.value}
                   onInput={(e) => {
                     const val = Number((e.target as HTMLInputElement).value);
-                    setNodes(prev => prev.map(n => n.id === selectedNode ? { ...n, value: val, initialValue: val } : n));
+                    setNodes((prev) =>
+                      prev.map((n) =>
+                        n.id === selectedNode ? { ...n, value: val, initialValue: val } : n,
+                      ),
+                    );
                   }}
                   class="w-full accent-[var(--color-primary)]"
                 />
@@ -798,9 +907,10 @@ export default function Loopy() {
                   <div class="mt-2 space-y-2">
                     <p class="text-xs text-[var(--color-text-muted)]">Connections</p>
                     {selectedEdges.map((edge, i) => {
-                      const other = edge.from === selectedNode
-                        ? nodes.find(n => n.id === edge.to)
-                        : nodes.find(n => n.id === edge.from);
+                      const other =
+                        edge.from === selectedNode
+                          ? nodes.find((n) => n.id === edge.to)
+                          : nodes.find((n) => n.id === edge.from);
                       const direction = edge.from === selectedNode ? "to" : "from";
                       return (
                         <div key={i} class="flex items-center gap-2 text-xs">
@@ -808,12 +918,14 @@ export default function Loopy() {
                           <span class="text-[var(--color-text)]">{other?.name || "?"}</span>
                           <button
                             onClick={() => {
-                              setEdges(prev => prev.map((e, j) => {
-                                if (e.from === edge.from && e.to === edge.to) {
-                                  return { ...e, polarity: e.polarity === 1 ? -1 : 1 };
-                                }
-                                return e;
-                              }));
+                              setEdges((prev) =>
+                                prev.map((e) => {
+                                  if (e.from === edge.from && e.to === edge.to) {
+                                    return { ...e, polarity: (e.polarity === 1 ? -1 : 1) as 1 | -1 };
+                                  }
+                                  return e;
+                                }),
+                              );
                             }}
                             class={`rounded px-1.5 py-0.5 text-xs font-bold ${edge.polarity === 1 ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}
                           >
@@ -821,19 +933,25 @@ export default function Loopy() {
                           </button>
                           <input
                             type="range"
-                            min="0.05"
-                            max="1"
-                            step="0.05"
-                            value={edge.strength}
+                            min="5"
+                            max="100"
+                            step="5"
+                            value={edge.strength * 100}
                             onInput={(ev) => {
-                              const val = Number((ev.target as HTMLInputElement).value);
-                              setEdges(prev => prev.map(e =>
-                                e.from === edge.from && e.to === edge.to ? { ...e, strength: val } : e
-                              ));
+                              const val = Number((ev.target as HTMLInputElement).value) / 100;
+                              setEdges((prev) =>
+                                prev.map((e) =>
+                                  e.from === edge.from && e.to === edge.to
+                                    ? { ...e, strength: val }
+                                    : e,
+                                ),
+                              );
                             }}
                             class="w-16 accent-[var(--color-primary)]"
                           />
-                          <span class="text-[var(--color-text-muted)]">{edge.strength.toFixed(2)}</span>
+                          <span class="text-[var(--color-text-muted)]">
+                            {edge.strength.toFixed(2)}
+                          </span>
                         </div>
                       );
                     })}
@@ -841,22 +959,53 @@ export default function Loopy() {
                 )}
               </div>
             ) : (
-              <p class="text-xs text-[var(--color-text-muted)]">Select a node to edit, or click "+ Node" to add one.</p>
+              <p class="text-xs text-[var(--color-text-muted)]">
+                Select a node to edit, or click "+ Node" to add one.
+              </p>
             )}
           </div>
 
+          {/* Detected feedback loops */}
+          {loops.length > 0 && (
+            <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+              <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+                Feedback Loops
+              </p>
+              <div class="space-y-1.5">
+                {loops.map((loop, i) => (
+                  <div
+                    key={i}
+                    class="rounded border px-2 py-1 text-xs"
+                    style={{
+                      borderColor: loop.type === "reinforcing" ? "rgba(52,211,153,0.3)" : "rgba(239,68,68,0.3)",
+                      color: loop.type === "reinforcing" ? "#34d399" : "#ef4444",
+                      background: loop.type === "reinforcing" ? "rgba(52,211,153,0.05)" : "rgba(239,68,68,0.05)",
+                    }}
+                  >
+                    <span class="font-bold">
+                      {loop.type === "reinforcing" ? "R+" : "B-"}
+                    </span>{" "}
+                    {loop.path.join(" -> ")} -> {loop.path[0]}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* How it works */}
           <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">How It Works</p>
+            <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+              How It Works
+            </p>
             <div class="space-y-1 text-xs text-[var(--color-text-muted)]">
               <p>1. Add nodes (variables with 0-100 values)</p>
-              <p>2. Connect them with positive (+) or negative (-) edges</p>
-              <p>3. Adjust edge strengths and node values</p>
+              <p>2. Connect them: click '+ Edge', click source, drag to target</p>
+              <p>3. Toggle +/- polarity and adjust strength</p>
               <p>4. Click "Simulate" to run the dynamics</p>
-              <p>5. Watch feedback loops emerge in the chart</p>
+              <p>5. Watch oscillation and feedback in the chart</p>
               <p class="mt-2 italic">
-                Green (+) edges: source above 50 increases target.
-                Red (-) edges: source above 50 decreases target.
+                Green (+): source above 50 increases target.{" "}
+                Red (-): source above 50 decreases target.
               </p>
             </div>
           </div>
