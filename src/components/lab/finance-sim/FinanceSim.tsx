@@ -69,6 +69,7 @@ interface MonthRow {
   totalInterestEarned: number; netCashflow: number;
   accountBalances: Record<number, number>; loanBalances: Record<number, number>;
   incomeBySource: Record<number, number>; expenseBySource: Record<number, number>;
+  loanPaymentBySource: Record<number, number>;
   totalAssets: number; totalDebt: number; netWorth: number;
 }
 
@@ -276,10 +277,11 @@ function simulate(state: FinanceState): SimulationResult {
     let totalLoanPayments = 0;
     let totalInterestPaid = 0;
     let totalPrincipalPaid = 0;
+    const loanPaymentBySource: Record<number, number> = {};
     for (const loan of state.loans) {
-      if (loan.startMonth > m) continue;
+      if (loan.startMonth > m) { loanPaymentBySource[loan.id] = 0; continue; }
       const bal = loanBals[loan.id];
-      if (bal <= 0.01) continue;
+      if (bal <= 0.01) { loanPaymentBySource[loan.id] = 0; continue; }
 
       const r = loan.annualRate / 100 / 12;
       const monthsElapsed = m - loan.startMonth;
@@ -289,6 +291,7 @@ function simulate(state: FinanceState): SimulationResult {
         totalInterestPaid += interest;
         totalLoanPayments += bal + interest;
         totalPrincipalPaid += bal;
+        loanPaymentBySource[loan.id] = bal + interest;
         loanBals[loan.id] = 0;
         continue;
       }
@@ -306,6 +309,7 @@ function simulate(state: FinanceState): SimulationResult {
       totalInterestPaid += interest;
       totalPrincipalPaid += Math.max(0, principal);
       totalLoanPayments += actualPayment;
+      let loanPmtThisMonth = actualPayment;
       let newBal = Math.max(0, bal - Math.max(0, principal));
 
       // Extra payments / amortizations
@@ -315,6 +319,7 @@ function simulate(state: FinanceState): SimulationResult {
         newBal -= amortReal;
         totalPrincipalPaid += amortReal;
         totalLoanPayments += amortReal;
+        loanPmtThisMonth += amortReal;
 
         if (amort.effect === "reduce-payment" && newBal > 0.01) {
           const mRemaining = Math.max(1, loan.termMonths - monthsElapsed);
@@ -323,6 +328,7 @@ function simulate(state: FinanceState): SimulationResult {
         // "reduce-term": keep the same fixed payment — loan ends sooner
       }
 
+      loanPaymentBySource[loan.id] = loanPmtThisMonth;
       loanBals[loan.id] = newBal;
     }
 
@@ -398,6 +404,7 @@ function simulate(state: FinanceState): SimulationResult {
       loanBalances: { ...loanBals },
       incomeBySource: { ...incomeBySource },
       expenseBySource: { ...expenseBySource },
+      loanPaymentBySource: { ...loanPaymentBySource },
       totalAssets,
       totalDebt,
       netWorth: totalAssets - totalDebt,
@@ -1380,18 +1387,27 @@ export default function FinanceSim() {
                     lines.push("── Expenses ──");
                     for (const exp of state.expenses) {
                       const v = row.expenseBySource[exp.id] ?? 0;
-                      if (v > 0) lines.push(`  ${exp.name}: ${fmtShort(v)}`);
+                      if (v > 0) lines.push(`  ${exp.name}: -${fmtShort(v)}`);
                     }
                   }
-                  if (state.loans.length > 0 && chartMode === "networth") {
+                  if (state.loans.length > 0) {
+                    lines.push("── Loan Payments ──");
+                    for (const loan of state.loans) {
+                      const pmt = row.loanPaymentBySource[loan.id] ?? 0;
+                      if (pmt > 0.01) lines.push(`  ${loan.name}: -${fmtShort(pmt)}`);
+                    }
+                  }
+                  if (chartMode === "networth") {
                     lines.push("── Accounts ──");
                     for (const acc of state.accounts) {
                       lines.push(`  ${acc.name}: ${fmtShort(row.accountBalances[acc.id] ?? 0)}`);
                     }
-                    lines.push("── Loans ──");
-                    for (const loan of state.loans) {
-                      const b = row.loanBalances[loan.id] ?? 0;
-                      if (b > 0.01) lines.push(`  ${loan.name}: -${fmtShort(b)}`);
+                    if (state.loans.length > 0) {
+                      lines.push("── Remaining Debt ──");
+                      for (const loan of state.loans) {
+                        const b = row.loanBalances[loan.id] ?? 0;
+                        if (b > 0.01) lines.push(`  ${loan.name}: -${fmtShort(b)}`);
+                      }
                     }
                   }
                 }
