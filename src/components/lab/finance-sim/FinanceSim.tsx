@@ -1357,9 +1357,46 @@ export default function FinanceSim() {
             bodyColor: textColor,
             titleFont: { family: "monospace", size: 11 },
             bodyFont: { family: "monospace", size: 11 },
+            footerColor: isLight ? "#a1a1aa" : "#7d8590",
+            footerFont: { family: "monospace", size: 10 },
             callbacks: {
               label: (ctx: any) =>
                 ` ${ctx.dataset.label}: ${fmtShort(ctx.parsed.y ?? 0)}`,
+              afterBody: (items: any[]) => {
+                if (items.length === 0) return [];
+                const idx = dataIndices[items[0].dataIndex];
+                if (idx == null || !sim.months[idx]) return [];
+                const row = sim.months[idx];
+                const lines: string[] = [""];
+                if (chartMode === "networth" || chartMode === "cashflow") {
+                  if (state.incomes.length > 0) {
+                    lines.push("── Income ──");
+                    for (const inc of state.incomes) {
+                      const v = row.incomeBySource[inc.id] ?? 0;
+                      if (v > 0) lines.push(`  ${inc.name}: ${fmtShort(v)}`);
+                    }
+                  }
+                  if (state.expenses.length > 0) {
+                    lines.push("── Expenses ──");
+                    for (const exp of state.expenses) {
+                      const v = row.expenseBySource[exp.id] ?? 0;
+                      if (v > 0) lines.push(`  ${exp.name}: ${fmtShort(v)}`);
+                    }
+                  }
+                  if (state.loans.length > 0 && chartMode === "networth") {
+                    lines.push("── Accounts ──");
+                    for (const acc of state.accounts) {
+                      lines.push(`  ${acc.name}: ${fmtShort(row.accountBalances[acc.id] ?? 0)}`);
+                    }
+                    lines.push("── Loans ──");
+                    for (const loan of state.loans) {
+                      const b = row.loanBalances[loan.id] ?? 0;
+                      if (b > 0.01) lines.push(`  ${loan.name}: -${fmtShort(b)}`);
+                    }
+                  }
+                }
+                return lines;
+              },
             },
           },
         },
