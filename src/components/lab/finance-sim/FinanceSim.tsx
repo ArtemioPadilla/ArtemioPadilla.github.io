@@ -87,6 +87,12 @@ interface SimulationResult {
   alerts: string[];
 }
 
+interface ComparisonScenario {
+  name: string;
+  state: FinanceState;
+  sim: SimulationResult;
+}
+
 // ─── Colors ───────────────────────────────────────────────────────────
 
 const C = {
@@ -815,6 +821,8 @@ export default function FinanceSim() {
   const ganttCanvasRef = useRef<HTMLCanvasElement>(null);
   const ganttContainerRef = useRef<HTMLDivElement>(null);
   const [ganttWidth, setGanttWidth] = useState(0);
+  const [comparisonScenarios, setComparisonScenarios] = useState<ComparisonScenario[]>([]);
+  const compFileInputRef = useRef<HTMLInputElement>(null);
 
   // Simulation
   const sim = useMemo(() => simulate(state), [state]);
@@ -828,6 +836,33 @@ export default function FinanceSim() {
       setState(data);
     }
     if (fileInputRef.current) fileInputRef.current.value = "";
+  }, []);
+
+  const addComparisonFromCurrent = useCallback(() => {
+    const name = `Scenario ${comparisonScenarios.length + 1}`;
+    const snapState = JSON.parse(JSON.stringify(state)) as FinanceState;
+    const snapSim = simulate(snapState);
+    setComparisonScenarios(prev => [...prev, { name, state: snapState, sim: snapSim }]);
+  }, [state, comparisonScenarios.length]);
+
+  const addComparisonFromFile = useCallback(async (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const data = await importJSON(file);
+    if (data) {
+      const snapSim = simulate(data);
+      const name = file.name.replace(/\.json$/i, "");
+      setComparisonScenarios(prev => [...prev, { name, state: data, sim: snapSim }]);
+    }
+    if (compFileInputRef.current) compFileInputRef.current.value = "";
+  }, []);
+
+  const removeComparison = useCallback((idx: number) => {
+    setComparisonScenarios(prev => prev.filter((_, i) => i !== idx));
+  }, []);
+
+  const renameComparison = useCallback((idx: number, name: string) => {
+    setComparisonScenarios(prev => prev.map((s, i) => i === idx ? { ...s, name } : s));
   }, []);
 
   const loadScenario = useCallback((key: string) => {
@@ -1221,7 +1256,7 @@ export default function FinanceSim() {
     const step = gran === "monthly" ? 1 : gran === "quarterly" ? 3 : 12;
     const labels: string[] = [];
     const dataIndices: number[] = [];
-    for (let i = 0; i < months.length; i += step) {
+    for (let i = step - 1; i < months.length; i += step) {
       dataIndices.push(i);
       if (startDate) {
         if (gran === "quarterly") {
@@ -1338,6 +1373,63 @@ export default function FinanceSim() {
         };
       });
       yAxisTitle = "Remaining Balance ($)";
+    }
+
+    // Add comparison scenario overlays
+    for (let si = 0; si < comparisonScenarios.length; si++) {
+      const sc = comparisonScenarios[si];
+      const scColor = C.palette[si % C.palette.length];
+      const { dataIndices: scIndices } = getChartSamples(sc.sim.months, granularity, sd);
+      const scSample = (accessor: (r: MonthRow) => number) =>
+        scIndices.map(i => i < sc.sim.months.length ? accessor(sc.sim.months[i]) : null);
+      const dashStyle = { borderDash: [8, 4] as number[], borderWidth: 1.5, pointRadius: 0, fill: false, backgroundColor: "transparent", tension: 0.3 };
+
+      if (chartMode === "networth") {
+        datasets.push({
+          label: `${sc.name}`,
+          data: scSample(r => r.netWorth),
+          borderColor: scColor,
+          ...dashStyle,
+        });
+      } else if (chartMode === "cashflow") {
+        datasets.push({
+          label: `${sc.name} Income`,
+          data: scSample(r => r.totalIncome),
+          borderColor: `${scColor}99`,
+          ...dashStyle,
+        });
+        datasets.push({
+          label: `${sc.name} Outflows`,
+          data: scSample(r => -(r.totalExpenses + r.totalLoanPayments)),
+          borderColor: `${scColor}66`,
+          ...dashStyle,
+          borderDash: [4, 4],
+        });
+        datasets.push({
+          label: `${sc.name} Net`,
+          data: scSample(r => r.netCashflow),
+          borderColor: scColor,
+          ...dashStyle,
+        });
+      } else if (chartMode === "balances") {
+        for (const acc of sc.state.accounts) {
+          datasets.push({
+            label: `${sc.name}: ${acc.name}`,
+            data: scSample(r => r.accountBalances[acc.id] ?? 0),
+            borderColor: `${scColor}99`,
+            ...dashStyle,
+          });
+        }
+      } else {
+        for (const loan of sc.state.loans) {
+          datasets.push({
+            label: `${sc.name}: ${loan.name}`,
+            data: scSample(r => r.loanBalances[loan.id] ?? 0),
+            borderColor: `${scColor}99`,
+            ...dashStyle,
+          });
+        }
+      }
     }
 
     chartInstanceRef.current = new Chart(chartRef.current, {
@@ -1461,7 +1553,7 @@ export default function FinanceSim() {
         chartInstanceRef.current = null;
       }
     };
-  }, [sim, chartMode, tab, state.accounts, state.loans, state.config.startDate, granularity, getChartSamples]);
+  }, [sim, chartMode, tab, state.accounts, state.loans, state.config.startDate, granularity, getChartSamples, comparisonScenarios]);
 
   // ── Entity tab charts ──
   useEffect(() => {
@@ -1648,13 +1740,17 @@ export default function FinanceSim() {
 
     // INCOME section
     for (const inc of state.incomes) {
-      const end = inc.endMonth > 0 ? Math.min(inc.endMonth, totalMonths) : totalMonths;
+      const end = inc.periodicity === "one-time"
+        ? inc.startMonth
+        : (inc.endMonth > 0 ? Math.min(inc.endMonth, totalMonths) : totalMonths);
       rows.push({ name: inc.name, start: inc.startMonth, end, color: C.green, section: "INCOME" });
     }
 
     // EXPENSES section
     for (const exp of state.expenses) {
-      const end = exp.endMonth > 0 ? Math.min(exp.endMonth, totalMonths) : totalMonths;
+      const end = exp.frequency === "one-time"
+        ? exp.startMonth
+        : (exp.endMonth > 0 ? Math.min(exp.endMonth, totalMonths) : totalMonths);
       rows.push({ name: exp.name, start: exp.startMonth, end, color: C.red, section: "EXPENSES" });
     }
 
@@ -1997,6 +2093,22 @@ export default function FinanceSim() {
         class="hidden"
       />
 
+      {/* Comparison section */}
+      <div class="mx-1 h-4 w-px bg-[var(--color-border)]" />
+      <span class="mr-1 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+        Compare
+      </span>
+      {toolbarBtn(addComparisonFromCurrent, "Save Current")}
+      {toolbarBtn(() => compFileInputRef.current?.click(), "Import Scenario")}
+      <input
+        ref={compFileInputRef}
+        type="file"
+        accept=".json"
+        onChange={addComparisonFromFile}
+        class="hidden"
+      />
+      {comparisonScenarios.length > 0 && toolbarBtn(() => setComparisonScenarios([]), "Clear All Comparisons", "danger")}
+
       <div class="mx-1 h-4 w-px bg-[var(--color-border)]" />
 
       {toolbarBtn(() => loadScenario("empty"), "Clear All", "danger")}
@@ -2073,6 +2185,94 @@ export default function FinanceSim() {
           />
         </div>
       </div>
+
+      {/* Comparison Scenarios */}
+      {comparisonScenarios.length > 0 && (
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Scenario Comparison</CardTitle>
+          <div class="flex flex-wrap items-center gap-2">
+            {/* Current scenario tag */}
+            <span
+              class="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-mono text-[10px]"
+              style={{ borderColor: C.goldBorder, background: C.goldDim, color: C.goldLight }}
+            >
+              <span class="inline-block h-2 w-4 rounded-sm" style={{ background: C.gold, borderBottom: `2px solid ${C.gold}` }} />
+              Current
+            </span>
+            {comparisonScenarios.map((sc, i) => {
+              const color = C.palette[i % C.palette.length];
+              return (
+                <span
+                  key={i}
+                  class="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-mono text-[10px]"
+                  style={{ borderColor: `${color}40`, background: `${color}15`, color }}
+                >
+                  <span class="inline-block h-2 w-4 rounded-sm" style={{ borderBottom: `2px dashed ${color}` }} />
+                  <input
+                    type="text"
+                    value={sc.name}
+                    onInput={(e) => renameComparison(i, (e.target as HTMLInputElement).value)}
+                    class="w-20 bg-transparent font-mono text-[10px] outline-none"
+                    style={{ color }}
+                  />
+                  <button
+                    onClick={() => removeComparison(i)}
+                    class="ml-1 opacity-60 hover:opacity-100"
+                    style={{ color }}
+                  >
+                    x
+                  </button>
+                </span>
+              );
+            })}
+          </div>
+
+          {/* KPI Comparison Table */}
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full font-mono text-xs">
+              <thead>
+                <tr style={{ borderBottom: `1px solid var(--color-border)` }}>
+                  <th class="px-2 py-2 text-left font-mono text-[9px] uppercase tracking-wider text-[var(--color-text-muted)]">Metric</th>
+                  <th class="px-2 py-2 text-left font-mono text-[9px] uppercase tracking-wider" style={{ color: C.goldLight }}>Current</th>
+                  {comparisonScenarios.map((sc, i) => (
+                    <th key={i} class="px-2 py-2 text-left font-mono text-[9px] uppercase tracking-wider" style={{ color: C.palette[i % C.palette.length] }}>{sc.name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { label: "Final Net Worth", current: sim.finalNetWorth, get: (s: SimulationResult) => s.finalNetWorth, higher: true },
+                  { label: "Avg Cashflow", current: sim.avgMonthlyCashflow, get: (s: SimulationResult) => s.avgMonthlyCashflow, higher: true },
+                  { label: "Total Assets", current: sim.finalAssets, get: (s: SimulationResult) => s.finalAssets, higher: true },
+                  { label: "Total Debt", current: sim.finalDebt, get: (s: SimulationResult) => s.finalDebt, higher: false },
+                  { label: "Interest Earned", current: sim.totalInterestEarned, get: (s: SimulationResult) => s.totalInterestEarned, higher: true },
+                  { label: "Interest Paid", current: sim.totalInterestPaid, get: (s: SimulationResult) => s.totalInterestPaid, higher: false },
+                ].map(metric => (
+                  <tr key={metric.label} class="border-b border-[var(--color-border)]">
+                    <td class="px-2 py-1.5 text-[var(--color-text-muted)]">{metric.label}</td>
+                    <td class="px-2 py-1.5" style={{ color: C.goldLight }}>{fmtShort(metric.current)}</td>
+                    {comparisonScenarios.map((sc, i) => {
+                      const val = metric.get(sc.sim);
+                      const delta = metric.current - val;
+                      const better = metric.higher ? delta > 0 : delta < 0;
+                      return (
+                        <td key={i} class="px-2 py-1.5">
+                          <span style={{ color: C.palette[i % C.palette.length] }}>{fmtShort(val)}</span>
+                          {Math.abs(delta) > 0.5 && (
+                            <span class="ml-1 text-[9px]" style={{ color: better ? C.green : C.red }}>
+                              ({delta > 0 ? "+" : ""}{fmtShort(delta)})
+                            </span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Chart */}
       <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
