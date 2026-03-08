@@ -726,6 +726,8 @@ export default function FinanceSim() {
   const [tab, setTab] = useState<"dashboard" | "accounts" | "loans" | "income" | "expenses">("dashboard");
   const [chartMode, setChartMode] = useState<"networth" | "cashflow" | "balances" | "debt">("networth");
   const [tableOpen, setTableOpen] = useState(false);
+  const [granularity, setGranularity] = useState<"monthly" | "quarterly" | "yearly">("yearly");
+  const [timelineOpen, setTimelineOpen] = useState(true);
 
   // Account form
   const [accName, setAccName] = useState("New Account");
@@ -785,6 +787,11 @@ export default function FinanceSim() {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstanceRef = useRef<Chart | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const tabChartRef = useRef<HTMLCanvasElement>(null);
+  const tabChartInstanceRef = useRef<Chart | null>(null);
+  const ganttCanvasRef = useRef<HTMLCanvasElement>(null);
+  const ganttContainerRef = useRef<HTMLDivElement>(null);
+  const [ganttWidth, setGanttWidth] = useState(0);
 
   // Simulation
   const sim = useMemo(() => simulate(state), [state]);
@@ -1187,6 +1194,30 @@ export default function FinanceSim() {
     }, 0);
   }, [state.loans]);
 
+  const getChartSamples = useCallback((months: MonthRow[], gran: "monthly" | "quarterly" | "yearly", startDate: string) => {
+    const step = gran === "monthly" ? 1 : gran === "quarterly" ? 3 : 12;
+    const labels: string[] = [];
+    const dataIndices: number[] = [];
+    for (let i = 0; i < months.length; i += step) {
+      dataIndices.push(i);
+      if (startDate) {
+        if (gran === "quarterly") {
+          const d = new Date(startDate + "T00:00:00");
+          d.setMonth(d.getMonth() + i);
+          const q = Math.floor(d.getMonth() / 3) + 1;
+          labels.push(`Q${q} '${String(d.getFullYear()).slice(2)}`);
+        } else {
+          labels.push(monthToShortDate(i + 1, startDate));
+        }
+      } else {
+        if (gran === "monthly") labels.push(`Mo ${i + 1}`);
+        else if (gran === "quarterly") labels.push(`Q${Math.floor(i / 3) + 1}`);
+        else labels.push(`Yr ${Math.floor(i / 12) + 1}`);
+      }
+    }
+    return { labels, dataIndices };
+  }, []);
+
   // ── Chart rendering ──
   useEffect(() => {
     if (!chartRef.current || tab !== "dashboard") return;
@@ -1199,14 +1230,9 @@ export default function FinanceSim() {
     const totalMonths = sim.months.length;
     if (totalMonths === 0) return;
 
-    // Sample every 12 months for labels
     const sd = state.config.startDate;
-    const labels: string[] = [];
-    const dataIndices: number[] = [];
-    for (let i = 0; i < totalMonths; i += 12) {
-      dataIndices.push(i);
-      labels.push(sd ? monthToShortDate(i + 1, sd) : `Yr ${Math.floor(i / 12) + 1}`);
-    }
+    const { labels, dataIndices } = getChartSamples(sim.months, granularity, sd);
+    const ptRadius = granularity === "monthly" ? 0 : granularity === "quarterly" ? 1 : 3;
 
     const sampleData = (accessor: (r: MonthRow) => number) =>
       dataIndices.map(i => accessor(sim.months[i]));
@@ -1226,7 +1252,7 @@ export default function FinanceSim() {
         data: sampleData(r => r.netWorth),
         borderColor: C.gold,
         backgroundColor: grad,
-        fill: true, tension: 0.3, borderWidth: 2.5, pointRadius: 3,
+        fill: true, tension: 0.3, borderWidth: 2.5, pointRadius: ptRadius,
         pointBackgroundColor: C.gold, pointBorderColor: C.gold,
       }];
       yAxisTitle = "Net Worth ($)";
@@ -1260,7 +1286,7 @@ export default function FinanceSim() {
           data: netData,
           borderColor: C.goldLight,
           backgroundColor: "transparent",
-          fill: false, tension: 0.3, borderWidth: 2, pointRadius: 2,
+          fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
           pointBackgroundColor: C.goldLight,
           borderDash: [6, 3],
         },
@@ -1272,7 +1298,7 @@ export default function FinanceSim() {
         data: sampleData(r => r.accountBalances[acc.id] ?? 0),
         borderColor: C.palette[i % C.palette.length],
         backgroundColor: "transparent",
-        fill: false, tension: 0.3, borderWidth: 2, pointRadius: 2,
+        fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
         pointBackgroundColor: C.palette[i % C.palette.length],
       }));
       yAxisTitle = "Account Balance ($)";
@@ -1284,7 +1310,7 @@ export default function FinanceSim() {
           data: sampleData(r => r.loanBalances[loan.id] ?? 0),
           borderColor: color,
           backgroundColor: "transparent",
-          fill: false, tension: 0.3, borderWidth: 2, pointRadius: 2,
+          fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
           pointBackgroundColor: color,
         };
       });
@@ -1336,7 +1362,7 @@ export default function FinanceSim() {
               font: { family: "monospace", size: 9 },
               maxRotation: 0,
               autoSkip: true,
-              maxTicksLimit: 15,
+              maxTicksLimit: granularity === "monthly" ? 20 : granularity === "quarterly" ? 15 : 12,
             },
             border: { color: gridColor },
           },
@@ -1366,7 +1392,326 @@ export default function FinanceSim() {
         chartInstanceRef.current = null;
       }
     };
-  }, [sim, chartMode, tab, state.accounts, state.loans, state.config.startDate]);
+  }, [sim, chartMode, tab, state.accounts, state.loans, state.config.startDate, granularity, getChartSamples]);
+
+  // ── Entity tab charts ──
+  useEffect(() => {
+    if (!tabChartRef.current || tab === "dashboard") return;
+    if (tabChartInstanceRef.current) tabChartInstanceRef.current.destroy();
+
+    const isLight = document.documentElement.classList.contains("light");
+    const gridColor = isLight ? C.gridLight : C.gridDark;
+    const textColor = isLight ? "#71717a" : C.muted;
+
+    if (sim.months.length === 0) return;
+
+    const sd = state.config.startDate;
+    const { labels, dataIndices } = getChartSamples(sim.months, granularity, sd);
+    const ptRadius = granularity === "monthly" ? 0 : granularity === "quarterly" ? 1 : 2;
+    const sampleData = (accessor: (r: MonthRow) => number) =>
+      dataIndices.map(i => accessor(sim.months[i]));
+
+    const ctx = tabChartRef.current.getContext("2d");
+    if (!ctx) return;
+
+    let datasets: any[] = [];
+    let yAxisTitle = "";
+
+    if (tab === "accounts") {
+      datasets = state.accounts.map((acc, i) => ({
+        label: acc.name,
+        data: sampleData(r => r.accountBalances[acc.id] ?? 0),
+        borderColor: C.palette[i % C.palette.length],
+        backgroundColor: "transparent",
+        fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
+        pointBackgroundColor: C.palette[i % C.palette.length],
+      }));
+      yAxisTitle = "Account Balance ($)";
+    } else if (tab === "loans") {
+      datasets = state.loans.map((loan, i) => ({
+        label: loan.name,
+        data: sampleData(r => r.loanBalances[loan.id] ?? 0),
+        borderColor: C.palette[i % C.palette.length],
+        backgroundColor: "transparent",
+        fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
+        pointBackgroundColor: C.palette[i % C.palette.length],
+      }));
+      yAxisTitle = "Remaining Balance ($)";
+    } else if (tab === "income") {
+      const grad = ctx.createLinearGradient(0, 0, 0, 260);
+      grad.addColorStop(0, "rgba(63,182,138,0.35)");
+      grad.addColorStop(1, "rgba(63,182,138,0.02)");
+      datasets = [{
+        label: "Total Income",
+        data: sampleData(r => r.totalIncome),
+        borderColor: C.green,
+        backgroundColor: grad,
+        fill: true, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
+        pointBackgroundColor: C.green,
+      }];
+      yAxisTitle = "Monthly Income ($)";
+    } else if (tab === "expenses") {
+      const grad = ctx.createLinearGradient(0, 0, 0, 260);
+      grad.addColorStop(0, "rgba(224,92,106,0.35)");
+      grad.addColorStop(1, "rgba(224,92,106,0.02)");
+      datasets = [{
+        label: "Total Expenses",
+        data: sampleData(r => r.totalExpenses),
+        borderColor: C.red,
+        backgroundColor: grad,
+        fill: true, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
+        pointBackgroundColor: C.red,
+      }];
+      yAxisTitle = "Monthly Expenses ($)";
+    }
+
+    if (datasets.length === 0) return;
+
+    tabChartInstanceRef.current = new Chart(tabChartRef.current, {
+      type: "line",
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            display: tab === "accounts" || tab === "loans",
+            labels: {
+              color: textColor,
+              font: { family: "monospace", size: 10 },
+              boxWidth: 12, padding: 16,
+            },
+          },
+          tooltip: {
+            backgroundColor: isLight ? "#fff" : "#1c2330",
+            borderColor: isLight ? "#e4e4e7" : "#30363d",
+            borderWidth: 1,
+            titleColor: isLight ? "#18181b" : "#e6edf3",
+            bodyColor: textColor,
+            titleFont: { family: "monospace", size: 11 },
+            bodyFont: { family: "monospace", size: 11 },
+            callbacks: {
+              label: (c: any) => ` ${c.dataset.label}: ${fmtShort(c.parsed.y ?? 0)}`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { color: gridColor, drawTicks: false },
+            ticks: {
+              color: textColor,
+              font: { family: "monospace", size: 9 },
+              maxRotation: 0, autoSkip: true,
+              maxTicksLimit: granularity === "monthly" ? 20 : granularity === "quarterly" ? 15 : 12,
+            },
+            border: { color: gridColor },
+          },
+          y: {
+            title: {
+              display: true, text: yAxisTitle, color: textColor,
+              font: { family: "monospace", size: 10 }, padding: { bottom: 8 },
+            },
+            grid: { color: gridColor },
+            ticks: {
+              color: textColor,
+              font: { family: "monospace", size: 9 },
+              callback: (v: any) => fmtShort(Number(v)),
+            },
+            border: { color: gridColor },
+          },
+        },
+      },
+    });
+
+    return () => {
+      if (tabChartInstanceRef.current) {
+        tabChartInstanceRef.current.destroy();
+        tabChartInstanceRef.current = null;
+      }
+    };
+  }, [sim, tab, state.accounts, state.loans, state.config.startDate, granularity, getChartSamples]);
+
+  // ── Gantt ResizeObserver ──
+  useEffect(() => {
+    const container = ganttContainerRef.current;
+    if (!container) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setGanttWidth(entry.contentRect.width);
+      }
+    });
+    ro.observe(container);
+    return () => ro.disconnect();
+  }, [tab, timelineOpen]);
+
+  // ── Gantt Timeline Drawing ──
+  useEffect(() => {
+    const canvas = ganttCanvasRef.current;
+    if (!canvas || tab !== "dashboard" || !timelineOpen) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const totalMonths = sim.months.length;
+    if (totalMonths === 0) return;
+
+    // Gather entities with their active ranges
+    type GanttRow = { name: string; start: number; end: number; color: string; section: string; amortMonths?: number[] };
+    const rows: GanttRow[] = [];
+
+    // INCOME section
+    for (const inc of state.incomes) {
+      const end = inc.endMonth > 0 ? Math.min(inc.endMonth, totalMonths) : totalMonths;
+      rows.push({ name: inc.name, start: inc.startMonth, end, color: C.green, section: "INCOME" });
+    }
+
+    // EXPENSES section
+    for (const exp of state.expenses) {
+      const end = exp.endMonth > 0 ? Math.min(exp.endMonth, totalMonths) : totalMonths;
+      rows.push({ name: exp.name, start: exp.startMonth, end, color: C.red, section: "EXPENSES" });
+    }
+
+    // LOANS section
+    for (const loan of state.loans) {
+      const end = Math.min(loan.startMonth + loan.termMonths, totalMonths);
+      // Collect amortization months
+      const amortMonths: number[] = [];
+      for (const a of loan.amortizations) {
+        if (a.type === "one-time") {
+          amortMonths.push(a.month);
+        } else {
+          const aEnd = a.endMonth > 0 ? Math.min(a.endMonth, totalMonths) : totalMonths;
+          for (let m = a.startMonth; m <= aEnd; m += a.frequency) {
+            amortMonths.push(m);
+          }
+        }
+      }
+      rows.push({ name: loan.name, start: loan.startMonth, end, color: C.blue, section: "LOANS", amortMonths });
+    }
+
+    if (rows.length === 0) return;
+
+    // Layout constants
+    const dpr = window.devicePixelRatio || 1;
+    const leftPad = 120;
+    const topPad = 28;
+    const rowH = 24;
+    const sectionHeaderH = 22;
+    const bottomPad = 24;
+
+    // Count sections
+    const sections = [...new Set(rows.map(r => r.section))];
+    const totalRows = rows.length;
+    const canvasH = topPad + sections.length * sectionHeaderH + totalRows * rowH + bottomPad;
+    const containerW = ganttWidth || canvas.parentElement?.clientWidth || 600;
+
+    canvas.style.width = containerW + "px";
+    canvas.style.height = canvasH + "px";
+    canvas.width = containerW * dpr;
+    canvas.height = canvasH * dpr;
+    ctx.scale(dpr, dpr);
+
+    const chartW = containerW - leftPad - 16;
+    const unitW = chartW / Math.max(totalMonths, 1);
+
+    // Background
+    ctx.clearRect(0, 0, containerW, canvasH);
+
+    // Computed text color
+    const isLight = document.documentElement.classList.contains("light");
+    const textColor = isLight ? "#71717a" : "#7d8590";
+    const headerBg = isLight ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.03)";
+
+    // X-axis labels at top
+    ctx.fillStyle = textColor;
+    ctx.font = "10px monospace";
+    ctx.textAlign = "center";
+    const sd = state.config.startDate;
+    const tickInterval = totalMonths <= 24 ? 3 : totalMonths <= 60 ? 6 : 12;
+    for (let m = 0; m <= totalMonths; m += tickInterval) {
+      const x = leftPad + m * unitW;
+      const lbl = sd ? monthToShortDate(m + 1, sd) : `Mo ${m + 1}`;
+      ctx.fillText(lbl, x, topPad - 8);
+    }
+
+    // Draw sections and bars
+    let y = topPad;
+    const sectionColors: Record<string, string> = { INCOME: C.green, EXPENSES: C.red, LOANS: C.blue };
+
+    for (const section of sections) {
+      const sectionRows = rows.filter(r => r.section === section);
+      const sColor = sectionColors[section] || C.muted;
+
+      // Section header
+      ctx.fillStyle = headerBg;
+      ctx.fillRect(0, y, containerW, sectionHeaderH);
+      ctx.fillStyle = sColor;
+      ctx.font = "bold 10px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText(section, 8, y + 15);
+      // Colored underline
+      ctx.strokeStyle = sColor;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(8, y + sectionHeaderH - 2);
+      ctx.lineTo(8 + ctx.measureText(section).width, y + sectionHeaderH - 2);
+      ctx.stroke();
+      y += sectionHeaderH;
+
+      // Entity bars
+      for (const row of sectionRows) {
+        const barX = leftPad + (row.start - 1) * unitW;
+        const barW = Math.max(2, (row.end - row.start + 1) * unitW);
+        const barY = y + 4;
+        const barH = rowH - 8;
+
+        // Entity name (truncated)
+        ctx.fillStyle = textColor;
+        ctx.font = "11px monospace";
+        ctx.textAlign = "right";
+        const truncName = row.name.length > 14 ? row.name.slice(0, 13) + "\u2026" : row.name;
+        ctx.fillText(truncName, leftPad - 8, y + rowH / 2 + 4);
+
+        // Bar
+        ctx.fillStyle = row.color + "A6"; // 65% opacity
+        ctx.beginPath();
+        ctx.roundRect(barX, barY, barW, barH, 3);
+        ctx.fill();
+        ctx.strokeStyle = row.color;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Amortization diamonds
+        if (row.amortMonths) {
+          for (const am of row.amortMonths) {
+            if (am < row.start || am > row.end) continue;
+            const dx = leftPad + (am - 1) * unitW;
+            const dy = y + rowH / 2;
+            ctx.fillStyle = C.gold;
+            ctx.beginPath();
+            ctx.moveTo(dx, dy - 5);
+            ctx.lineTo(dx + 4, dy);
+            ctx.lineTo(dx, dy + 5);
+            ctx.lineTo(dx - 4, dy);
+            ctx.closePath();
+            ctx.fill();
+          }
+        }
+
+        y += rowH;
+      }
+    }
+
+    // Bottom x-axis labels
+    ctx.fillStyle = textColor;
+    ctx.font = "10px monospace";
+    ctx.textAlign = "center";
+    for (let m = 0; m <= totalMonths; m += tickInterval) {
+      const x = leftPad + m * unitW;
+      const lbl = sd ? monthToShortDate(m + 1, sd) : `Mo ${m + 1}`;
+      ctx.fillText(lbl, x, y + 16);
+    }
+  }, [sim, tab, timelineOpen, state.incomes, state.expenses, state.loans, state.config.startDate, ganttWidth]);
 
   // ── Pill button helper ──
   const pillBtn = (
@@ -1629,15 +1974,42 @@ export default function FinanceSim() {
       {/* Chart */}
       <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
         <CardTitle>Projection</CardTitle>
-        <div class="mb-4 flex flex-wrap gap-1">
+        <div class="mb-4 flex flex-wrap items-center gap-1">
           {pillBtn(chartMode === "networth", () => setChartMode("networth"), "Net Worth")}
           {pillBtn(chartMode === "cashflow", () => setChartMode("cashflow"), "Cashflow")}
           {pillBtn(chartMode === "balances", () => setChartMode("balances"), "Balances")}
           {pillBtn(chartMode === "debt", () => setChartMode("debt"), "Debt Paydown")}
+          <div class="mx-2 h-5 w-px bg-[var(--color-border)]" />
+          {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
+          {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
+          {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
         </div>
         <div style={{ height: "360px", position: "relative" }}>
           <canvas ref={chartRef} />
         </div>
+      </div>
+
+      {/* Event Timeline */}
+      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <div class="flex items-center justify-between">
+          <CardTitle>Event Timeline</CardTitle>
+          <button
+            onClick={() => setTimelineOpen(!timelineOpen)}
+            class="font-mono text-[10px] uppercase tracking-wider transition-colors"
+            style={{ color: C.gold }}
+          >
+            {timelineOpen ? "Collapse" : "Expand"}
+          </button>
+        </div>
+        {timelineOpen ? (
+          <div ref={ganttContainerRef} class="overflow-x-auto">
+            <canvas ref={ganttCanvasRef} class="w-full" />
+          </div>
+        ) : (
+          <div class="font-mono text-[10px] text-[var(--color-text-muted)]">
+            Timeline showing active periods for income, expenses, and loans. Click expand to view.
+          </div>
+        )}
       </div>
 
       {/* Annual Summary */}
@@ -1834,6 +2206,17 @@ export default function FinanceSim() {
               value={String(state.accounts.length)}
               sub={`${state.accounts.filter(a => a.type === "checking").length} checking, ${state.accounts.filter(a => a.type === "savings").length} savings, ${state.accounts.filter(a => a.type === "investment").length} invest., ${state.accounts.filter(a => a.type === "retirement").length} retire.`}
             />
+          </div>
+        </div>
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Balance Projection</CardTitle>
+          <div class="mb-3 flex flex-wrap gap-1">
+            {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
+            {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
+            {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
+          </div>
+          <div style={{ height: "280px", position: "relative" }}>
+            <canvas ref={tabChartRef} />
           </div>
         </div>
       </div>
@@ -2074,6 +2457,17 @@ export default function FinanceSim() {
             </div>
           </div>
         )}
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Debt Paydown Projection</CardTitle>
+          <div class="mb-3 flex flex-wrap gap-1">
+            {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
+            {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
+            {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
+          </div>
+          <div style={{ height: "280px", position: "relative" }}>
+            <canvas ref={tabChartRef} />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -2215,6 +2609,17 @@ export default function FinanceSim() {
               sub="including bonuses"
               color={C.goldLight}
             />
+          </div>
+        </div>
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Income Trajectory</CardTitle>
+          <div class="mb-3 flex flex-wrap gap-1">
+            {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
+            {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
+            {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
+          </div>
+          <div style={{ height: "280px", position: "relative" }}>
+            <canvas ref={tabChartRef} />
           </div>
         </div>
       </div>
@@ -2405,6 +2810,17 @@ export default function FinanceSim() {
               </div>
             </>
           )}
+        </div>
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Expense Trajectory</CardTitle>
+          <div class="mb-3 flex flex-wrap gap-1">
+            {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
+            {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
+            {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
+          </div>
+          <div style={{ height: "280px", position: "relative" }}>
+            <canvas ref={tabChartRef} />
+          </div>
         </div>
       </div>
     </div>
