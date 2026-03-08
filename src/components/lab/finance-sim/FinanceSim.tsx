@@ -32,6 +32,7 @@ type ExpenseFrequency = "monthly" | "quarterly" | "annually" | "one-time" | "eve
 interface Account {
   id: number; name: string; type: AccountType;
   balance: number; annualRate: number; compoundInterval: CompoundInterval;
+  ownerId?: number;
 }
 
 interface Loan {
@@ -39,6 +40,7 @@ interface Loan {
   principal: number; currentBalance: number; annualRate: number;
   termMonths: number; paymentInterval: "monthly" | "biweekly"; startMonth: number;
   amortizations: LoanAmortization[];
+  ownerId?: number;
 }
 
 interface Income {
@@ -46,6 +48,7 @@ interface Income {
   periodicity: IncomePeriodicity; frequencyMonths: number;
   growthRate: number; bonusMonth: number; bonusAmount: number;
   startMonth: number; endMonth: number;
+  ownerId?: number;
 }
 
 interface Expense {
@@ -53,6 +56,7 @@ interface Expense {
   frequency: ExpenseFrequency; frequencyMonths: number;
   category: string; inflationAdjusted: boolean;
   startMonth: number; endMonth: number;
+  split?: ExpenseSplit;
 }
 
 interface SimConfig { horizonYears: number; inflationRate: number; startDate: string; }
@@ -60,6 +64,7 @@ interface SimConfig { horizonYears: number; inflationRate: number; startDate: st
 interface FinanceState {
   accounts: Account[]; loans: Loan[]; incomes: Income[]; expenses: Expense[];
   config: SimConfig; nextId: number;
+  participants?: Participant[];
 }
 
 interface MonthRow {
@@ -71,6 +76,10 @@ interface MonthRow {
   incomeBySource: Record<number, number>; expenseBySource: Record<number, number>;
   loanPaymentBySource: Record<number, number>;
   totalAssets: number; totalDebt: number; netWorth: number;
+  incomeByParticipant?: Record<number, number>;
+  expenseByParticipant?: Record<number, number>;
+  loanPaymentByParticipant?: Record<number, number>;
+  contributionByParticipant?: Record<number, number>;
 }
 
 interface YearSummary {
@@ -85,6 +94,20 @@ interface SimulationResult {
   totalInterestEarned: number; totalInterestPaid: number;
   avgMonthlyCashflow: number; debtFreeMonth: number;
   alerts: string[];
+}
+
+type SplitMode = "owner" | "equal" | "proportional" | "custom";
+
+interface Participant {
+  id: number;
+  name: string;
+  color: string;
+}
+
+interface ExpenseSplit {
+  mode: SplitMode;
+  participantIds: number[];
+  customShares?: Record<number, number>;
 }
 
 interface ComparisonScenario {
@@ -116,6 +139,8 @@ const C = {
   gridLight: "rgba(0,0,0,0.06)",
   palette: ["#4a9eff", "#3fb68a", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899"],
 };
+
+const PARTICIPANT_COLORS = ["#4a9eff", "#ec4899", "#a855f7", "#f59e0b", "#06b6d4"];
 
 // ─── Formatters ───────────────────────────────────────────────────────
 
@@ -183,6 +208,74 @@ function monthToShortDate(monthIndex: number, startDate: string): string {
   return MONTH_SHORT[d.getMonth()] + " '" + String(d.getFullYear()).slice(2);
 }
 
+// ─── Participant Helpers ──────────────────────────────────────────────
+
+function resolveParticipants(state: FinanceState): Participant[] {
+  if (state.participants && state.participants.length > 0) return state.participants;
+  return [{ id: 0, name: "Me", color: PARTICIPANT_COLORS[0] }];
+}
+
+function getOwnerParticipant(ownerId: number | undefined, participants: Participant[]): number {
+  if (ownerId != null && participants.some(p => p.id === ownerId)) return ownerId;
+  return participants[0].id;
+}
+
+function computeExpenseSplit(
+  expense: Expense,
+  amount: number,
+  participants: Participant[],
+  monthIncomeByParticipant: Record<number, number>,
+): Record<number, number> {
+  const result: Record<number, number> = {};
+  for (const p of participants) result[p.id] = 0;
+
+  const split = expense.split;
+  if (!split) {
+    // No split defined — assign to first participant
+    result[participants[0].id] = amount;
+    return result;
+  }
+
+  const selectedIds = split.participantIds.length > 0
+    ? split.participantIds.filter(pid => participants.some(p => p.id === pid))
+    : participants.map(p => p.id);
+  if (selectedIds.length === 0) {
+    result[participants[0].id] = amount;
+    return result;
+  }
+
+  if (split.mode === "owner") {
+    const ownerId = getOwnerParticipant(selectedIds[0], participants);
+    result[ownerId] = amount;
+  } else if (split.mode === "equal") {
+    const share = amount / selectedIds.length;
+    for (const pid of selectedIds) result[pid] = share;
+  } else if (split.mode === "proportional") {
+    const totalIncome = selectedIds.reduce((s, pid) => s + (monthIncomeByParticipant[pid] ?? 0), 0);
+    if (totalIncome <= 0) {
+      const share = amount / selectedIds.length;
+      for (const pid of selectedIds) result[pid] = share;
+    } else {
+      for (const pid of selectedIds) {
+        result[pid] = amount * ((monthIncomeByParticipant[pid] ?? 0) / totalIncome);
+      }
+    }
+  } else if (split.mode === "custom") {
+    const shares = split.customShares ?? {};
+    const totalShares = selectedIds.reduce((s, pid) => s + (shares[pid] ?? 0), 0);
+    if (totalShares <= 0) {
+      const share = amount / selectedIds.length;
+      for (const pid of selectedIds) result[pid] = share;
+    } else {
+      for (const pid of selectedIds) {
+        result[pid] = amount * ((shares[pid] ?? 0) / totalShares);
+      }
+    }
+  }
+
+  return result;
+}
+
 // ─── Calculation Engine ───────────────────────────────────────────────
 
 function simulate(state: FinanceState): SimulationResult {
@@ -206,6 +299,9 @@ function simulate(state: FinanceState): SimulationResult {
   let cumulativeInterestPaid = 0;
   let debtFreeMonth = 0;
   let negCashflowCount = 0;
+
+  const participants = resolveParticipants(state);
+  const hasParticipants = (state.participants?.length ?? 0) > 1;
 
   for (let m = 1; m <= totalMonths; m++) {
     const monthInYear = ((m - 1) % 12) + 1;
@@ -254,6 +350,16 @@ function simulate(state: FinanceState): SimulationResult {
       totalIncome += incAmt;
     }
 
+    // Per-participant income
+    let incomeByParticipant: Record<number, number> = {};
+    if (hasParticipants) {
+      for (const p of participants) incomeByParticipant[p.id] = 0;
+      for (const inc of state.incomes) {
+        const pid = getOwnerParticipant(inc.ownerId, participants);
+        incomeByParticipant[pid] = (incomeByParticipant[pid] ?? 0) + (incomeBySource[inc.id] ?? 0);
+      }
+    }
+
     // 2. Expenses
     let totalExpenses = 0;
     const expenseBySource: Record<number, number> = {};
@@ -277,6 +383,20 @@ function simulate(state: FinanceState): SimulationResult {
       }
       expenseBySource[exp.id] = expAmt;
       totalExpenses += expAmt;
+    }
+
+    // Per-participant expenses
+    let expenseByParticipant: Record<number, number> = {};
+    if (hasParticipants) {
+      for (const p of participants) expenseByParticipant[p.id] = 0;
+      for (const exp of state.expenses) {
+        const amt = expenseBySource[exp.id] ?? 0;
+        if (amt <= 0) continue;
+        const shares = computeExpenseSplit(exp, amt, participants, incomeByParticipant);
+        for (const pid of Object.keys(shares)) {
+          expenseByParticipant[Number(pid)] = (expenseByParticipant[Number(pid)] ?? 0) + shares[Number(pid)];
+        }
+      }
     }
 
     // 3. Loan payments (with amortization support)
@@ -336,6 +456,24 @@ function simulate(state: FinanceState): SimulationResult {
 
       loanPaymentBySource[loan.id] = loanPmtThisMonth;
       loanBals[loan.id] = newBal;
+    }
+
+    // Per-participant loan payments
+    let loanPaymentByParticipant: Record<number, number> = {};
+    if (hasParticipants) {
+      for (const p of participants) loanPaymentByParticipant[p.id] = 0;
+      for (const loan of state.loans) {
+        const pmt = loanPaymentBySource[loan.id] ?? 0;
+        if (pmt <= 0) continue;
+        if (loan.ownerId != null && loan.ownerId !== 0) {
+          const pid = getOwnerParticipant(loan.ownerId, participants);
+          loanPaymentByParticipant[pid] = (loanPaymentByParticipant[pid] ?? 0) + pmt;
+        } else {
+          // Joint: split equally
+          const share = pmt / participants.length;
+          for (const p of participants) loanPaymentByParticipant[p.id] += share;
+        }
+      }
     }
 
     // 4. Net cashflow
@@ -414,6 +552,14 @@ function simulate(state: FinanceState): SimulationResult {
       totalAssets,
       totalDebt,
       netWorth: totalAssets - totalDebt,
+      ...(hasParticipants ? {
+        incomeByParticipant: { ...incomeByParticipant },
+        expenseByParticipant: { ...expenseByParticipant },
+        loanPaymentByParticipant: { ...loanPaymentByParticipant },
+        contributionByParticipant: Object.fromEntries(
+          participants.map(p => [p.id, (incomeByParticipant[p.id] ?? 0) - (expenseByParticipant[p.id] ?? 0) - (loanPaymentByParticipant[p.id] ?? 0)])
+        ),
+      } : {}),
     });
   }
 
@@ -596,30 +742,34 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
     key: "dual-income",
     label: "Dual Income Family",
     state: {
+      participants: [
+        { id: 100, name: "Partner A", color: PARTICIPANT_COLORS[0] },
+        { id: 101, name: "Partner B", color: PARTICIPANT_COLORS[1] },
+      ],
       accounts: [
-        { id: 1, name: "Joint Checking", type: "checking", balance: 40000, annualRate: 0, compoundInterval: "monthly" },
-        { id: 2, name: "Emergency Fund", type: "savings", balance: 120000, annualRate: 4.5, compoundInterval: "monthly" },
-        { id: 3, name: "Investment Portfolio", type: "investment", balance: 300000, annualRate: 9, compoundInterval: "quarterly" },
-        { id: 4, name: "Retirement 401k", type: "retirement", balance: 200000, annualRate: 7, compoundInterval: "monthly" },
+        { id: 1, name: "Joint Checking", type: "checking", balance: 40000, annualRate: 0, compoundInterval: "monthly", ownerId: 0 },
+        { id: 2, name: "Emergency Fund", type: "savings", balance: 120000, annualRate: 4.5, compoundInterval: "monthly", ownerId: 0 },
+        { id: 3, name: "Investment Portfolio", type: "investment", balance: 300000, annualRate: 9, compoundInterval: "quarterly", ownerId: 0 },
+        { id: 4, name: "Retirement 401k", type: "retirement", balance: 200000, annualRate: 7, compoundInterval: "monthly", ownerId: 0 },
       ],
       loans: [
-        { id: 5, name: "Mortgage", type: "mortgage", principal: 3500000, currentBalance: 3000000, annualRate: 9.5, termMonths: 240, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
-        { id: 6, name: "Car Loan", type: "auto", principal: 400000, currentBalance: 320000, annualRate: 11, termMonths: 48, paymentInterval: "monthly", startMonth: 1, amortizations: [] },
+        { id: 5, name: "Mortgage", type: "mortgage", principal: 3500000, currentBalance: 3000000, annualRate: 9.5, termMonths: 240, paymentInterval: "monthly", startMonth: 1, amortizations: [], ownerId: 0 },
+        { id: 6, name: "Car Loan", type: "auto", principal: 400000, currentBalance: 320000, annualRate: 11, termMonths: 48, paymentInterval: "monthly", startMonth: 1, amortizations: [], ownerId: 0 },
       ],
       incomes: [
-        { id: 7, name: "Salary - Partner A", amount: 55000, periodicity: "monthly", frequencyMonths: 0, growthRate: 5, bonusMonth: 12, bonusAmount: 55000, startMonth: 1, endMonth: 0 },
-        { id: 8, name: "Salary - Partner B", amount: 40000, periodicity: "monthly", frequencyMonths: 0, growthRate: 4, bonusMonth: 12, bonusAmount: 40000, startMonth: 1, endMonth: 0 },
+        { id: 7, name: "Salary - Partner A", amount: 55000, periodicity: "monthly", frequencyMonths: 0, growthRate: 5, bonusMonth: 12, bonusAmount: 55000, startMonth: 1, endMonth: 0, ownerId: 100 },
+        { id: 8, name: "Salary - Partner B", amount: 40000, periodicity: "monthly", frequencyMonths: 0, growthRate: 4, bonusMonth: 12, bonusAmount: 40000, startMonth: 1, endMonth: 0, ownerId: 101 },
       ],
       expenses: [
-        { id: 9, name: "Groceries", amount: 10000, frequency: "monthly", frequencyMonths: 0, category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 10, name: "Utilities", amount: 4000, frequency: "monthly", frequencyMonths: 0, category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 11, name: "Insurance", amount: 6000, frequency: "monthly", frequencyMonths: 0, category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
-        { id: 12, name: "Kids School", amount: 12000, frequency: "monthly", frequencyMonths: 0, category: "education", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 13, name: "Entertainment", amount: 5000, frequency: "monthly", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
-        { id: 14, name: "Health", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "health", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
+        { id: 9, name: "Groceries", amount: 10000, frequency: "monthly", frequencyMonths: 0, category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0, split: { mode: "proportional", participantIds: [100, 101] } },
+        { id: 10, name: "Utilities", amount: 4000, frequency: "monthly", frequencyMonths: 0, category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0, split: { mode: "equal", participantIds: [100, 101] } },
+        { id: 11, name: "Insurance", amount: 6000, frequency: "monthly", frequencyMonths: 0, category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0, split: { mode: "equal", participantIds: [100, 101] } },
+        { id: 12, name: "Kids School", amount: 12000, frequency: "monthly", frequencyMonths: 0, category: "education", inflationAdjusted: true, startMonth: 1, endMonth: 0, split: { mode: "proportional", participantIds: [100, 101] } },
+        { id: 13, name: "Entertainment", amount: 5000, frequency: "monthly", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0, split: { mode: "equal", participantIds: [100, 101] } },
+        { id: 14, name: "Health", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "health", inflationAdjusted: true, startMonth: 1, endMonth: 0, split: { mode: "equal", participantIds: [100, 101] } },
       ],
       config: { horizonYears: 15, inflationRate: 4, startDate: "" },
-      nextId: 15,
+      nextId: 102,
     },
   },
   {
@@ -806,6 +956,18 @@ export default function FinanceSim() {
   const [expStart, setExpStart] = useState(1);
   const [expEnd, setExpEnd] = useState(0);
 
+  // Participant form
+  const [partName, setPartName] = useState("Partner");
+  const [participantsOpen, setParticipantsOpen] = useState(false);
+
+  // Ownership / split form state
+  const [incOwner, setIncOwner] = useState(0);
+  const [accOwner, setAccOwner] = useState(0);
+  const [loanOwner, setLoanOwner] = useState(0);
+  const [expSplitMode, setExpSplitMode] = useState<SplitMode>("equal");
+  const [expSplitParticipants, setExpSplitParticipants] = useState<number[]>([]);
+  const [expCustomShares, setExpCustomShares] = useState<Record<number, number>>({});
+
   // Editing state (null = adding new, number = editing that ID)
   const [editingAccountId, setEditingAccountId] = useState<number | null>(null);
   const [editingLoanId, setEditingLoanId] = useState<number | null>(null);
@@ -826,6 +988,68 @@ export default function FinanceSim() {
 
   // Simulation
   const sim = useMemo(() => simulate(state), [state]);
+
+  // Derived participants
+  const participants = useMemo(() => resolveParticipants(state), [state]);
+
+  // ── Participant management ──
+  const addParticipant = useCallback(() => {
+    setState(s => {
+      const existing = s.participants ?? [];
+      let newParts = [...existing];
+      let nextIdVal = s.nextId;
+      // If going from 0 participants to 2, auto-create "Me" first
+      if (newParts.length === 0) {
+        newParts.push({ id: nextIdVal, name: "Me", color: PARTICIPANT_COLORS[0] });
+        nextIdVal++;
+      }
+      const color = PARTICIPANT_COLORS[newParts.length % PARTICIPANT_COLORS.length];
+      newParts.push({ id: nextIdVal, name: partName || "Partner", color });
+      return { ...s, participants: newParts, nextId: nextIdVal + 1 };
+    });
+    setPartName("Partner");
+    setParticipantsOpen(false);
+  }, [partName]);
+
+  const removeParticipant = useCallback((pid: number) => {
+    setState(s => {
+      const parts = (s.participants ?? []).filter(p => p.id !== pid);
+      if (parts.length <= 1) {
+        // Back to single-person mode: remove all ownership data
+        return {
+          ...s,
+          participants: [],
+          incomes: s.incomes.map(i => ({ ...i, ownerId: undefined })),
+          accounts: s.accounts.map(a => ({ ...a, ownerId: undefined })),
+          loans: s.loans.map(l => ({ ...l, ownerId: undefined })),
+          expenses: s.expenses.map(e => ({ ...e, split: undefined })),
+        };
+      }
+      const firstId = parts[0].id;
+      return {
+        ...s,
+        participants: parts,
+        incomes: s.incomes.map(i => i.ownerId === pid ? { ...i, ownerId: firstId } : i),
+        accounts: s.accounts.map(a => a.ownerId === pid ? { ...a, ownerId: 0 } : a),
+        loans: s.loans.map(l => l.ownerId === pid ? { ...l, ownerId: 0 } : l),
+        expenses: s.expenses.map(e => {
+          if (!e.split) return e;
+          const newIds = e.split.participantIds.filter(id => id !== pid);
+          const newShares = e.split.customShares
+            ? Object.fromEntries(Object.entries(e.split.customShares).filter(([k]) => Number(k) !== pid))
+            : undefined;
+          return { ...e, split: { ...e.split, participantIds: newIds, customShares: newShares } };
+        }),
+      };
+    });
+  }, []);
+
+  const renameParticipant = useCallback((pid: number, name: string) => {
+    setState(s => ({
+      ...s,
+      participants: (s.participants ?? []).map(p => p.id === pid ? { ...p, name } : p),
+    }));
+  }, []);
 
   // Import / Export / Scenario handlers
   const handleImport = useCallback(async (e: Event) => {
@@ -967,12 +1191,13 @@ export default function FinanceSim() {
     setEditingAccountId(a.id);
     setAccName(a.name); setAccType(a.type); setAccBalance(a.balance);
     setAccRate(a.annualRate); setAccCompound(a.compoundInterval);
+    setAccOwner(a.ownerId ?? 0);
   }, []);
 
   const cancelEditAccount = useCallback(() => {
     setEditingAccountId(null);
     setAccName("New Account"); setAccType("savings"); setAccBalance(10000);
-    setAccRate(3); setAccCompound("monthly");
+    setAccRate(3); setAccCompound("monthly"); setAccOwner(0);
   }, []);
 
   const startEditLoan = useCallback((l: Loan) => {
@@ -980,13 +1205,14 @@ export default function FinanceSim() {
     setLoanName(l.name); setLoanType(l.type); setLoanPrincipal(l.principal);
     setLoanBalance(l.currentBalance); setLoanRate(l.annualRate);
     setLoanTerm(l.termMonths); setLoanInterval(l.paymentInterval); setLoanStart(l.startMonth);
+    setLoanOwner(l.ownerId ?? 0);
   }, []);
 
   const cancelEditLoan = useCallback(() => {
     setEditingLoanId(null);
     setLoanName("New Loan"); setLoanType("personal"); setLoanPrincipal(100000);
     setLoanBalance(100000); setLoanRate(12); setLoanTerm(60);
-    setLoanInterval("monthly"); setLoanStart(1);
+    setLoanInterval("monthly"); setLoanStart(1); setLoanOwner(0);
   }, []);
 
   const startEditIncome = useCallback((inc: Income) => {
@@ -995,13 +1221,14 @@ export default function FinanceSim() {
     setIncFreqMonths(inc.frequencyMonths || 3);
     setIncGrowth(inc.growthRate); setIncBonusMonth(inc.bonusMonth);
     setIncBonusAmount(inc.bonusAmount); setIncStart(inc.startMonth); setIncEnd(inc.endMonth);
+    setIncOwner(inc.ownerId ?? 0);
   }, []);
 
   const cancelEditIncome = useCallback(() => {
     setEditingIncomeId(null);
     setIncName("New Income"); setIncAmount(10000); setIncPeriodicity("monthly");
     setIncFreqMonths(3); setIncGrowth(3); setIncBonusMonth(0); setIncBonusAmount(0);
-    setIncStart(1); setIncEnd(0);
+    setIncStart(1); setIncEnd(0); setIncOwner(0);
   }, []);
 
   const startEditExpense = useCallback((exp: Expense) => {
@@ -1010,22 +1237,33 @@ export default function FinanceSim() {
     setExpFreqMonths(exp.frequencyMonths || 3);
     setExpCategory(exp.category); setExpInflation(exp.inflationAdjusted);
     setExpStart(exp.startMonth); setExpEnd(exp.endMonth);
+    if (exp.split) {
+      setExpSplitMode(exp.split.mode);
+      setExpSplitParticipants(exp.split.participantIds);
+      setExpCustomShares(exp.split.customShares ?? {});
+    } else {
+      setExpSplitMode("equal");
+      setExpSplitParticipants([]);
+      setExpCustomShares({});
+    }
   }, []);
 
   const cancelEditExpense = useCallback(() => {
     setEditingExpenseId(null);
     setExpName("New Expense"); setExpAmount(1000); setExpFreq("monthly");
     setExpFreqMonths(3); setExpCategory("other"); setExpInflation(true); setExpStart(1); setExpEnd(0);
+    setExpSplitMode("equal"); setExpSplitParticipants([]); setExpCustomShares({});
   }, []);
 
   // ── Add / Save handlers ──
   const saveAccount = useCallback(() => {
     if (!accName.trim()) return;
+    const ownerData = participants.length > 1 ? { ownerId: accOwner } : {};
     if (editingAccountId !== null) {
       setState(s => ({
         ...s,
         accounts: s.accounts.map(a => a.id === editingAccountId
-          ? { ...a, name: accName, type: accType, balance: accBalance, annualRate: accRate, compoundInterval: accCompound }
+          ? { ...a, name: accName, type: accType, balance: accBalance, annualRate: accRate, compoundInterval: accCompound, ...ownerData }
           : a),
       }));
       cancelEditAccount();
@@ -1035,11 +1273,12 @@ export default function FinanceSim() {
         accounts: [...s.accounts, {
           id: s.nextId, name: accName, type: accType,
           balance: accBalance, annualRate: accRate, compoundInterval: accCompound,
+          ...ownerData,
         }],
         nextId: s.nextId + 1,
       }));
     }
-  }, [accName, accType, accBalance, accRate, accCompound, editingAccountId, cancelEditAccount]);
+  }, [accName, accType, accBalance, accRate, accCompound, accOwner, participants.length, editingAccountId, cancelEditAccount]);
 
   const removeAccount = useCallback((id: number) => {
     setState(s => ({ ...s, accounts: s.accounts.filter(a => a.id !== id) }));
@@ -1048,11 +1287,12 @@ export default function FinanceSim() {
 
   const saveLoan = useCallback(() => {
     if (!loanName.trim()) return;
+    const ownerData = participants.length > 1 ? { ownerId: loanOwner } : {};
     if (editingLoanId !== null) {
       setState(s => ({
         ...s,
         loans: s.loans.map(l => l.id === editingLoanId
-          ? { ...l, name: loanName, type: loanType, principal: loanPrincipal, currentBalance: loanBalance, annualRate: loanRate, termMonths: loanTerm, paymentInterval: loanInterval, startMonth: loanStart }
+          ? { ...l, name: loanName, type: loanType, principal: loanPrincipal, currentBalance: loanBalance, annualRate: loanRate, termMonths: loanTerm, paymentInterval: loanInterval, startMonth: loanStart, ...ownerData }
           : l),
       }));
       cancelEditLoan();
@@ -1065,11 +1305,12 @@ export default function FinanceSim() {
           annualRate: loanRate, termMonths: loanTerm,
           paymentInterval: loanInterval, startMonth: loanStart,
           amortizations: [],
+          ...ownerData,
         }],
         nextId: s.nextId + 1,
       }));
     }
-  }, [loanName, loanType, loanPrincipal, loanBalance, loanRate, loanTerm, loanInterval, loanStart, editingLoanId, cancelEditLoan]);
+  }, [loanName, loanType, loanPrincipal, loanBalance, loanRate, loanTerm, loanInterval, loanStart, loanOwner, participants.length, editingLoanId, cancelEditLoan]);
 
   const removeLoan = useCallback((id: number) => {
     setState(s => ({ ...s, loans: s.loans.filter(l => l.id !== id) }));
@@ -1078,11 +1319,12 @@ export default function FinanceSim() {
 
   const saveIncome = useCallback(() => {
     if (!incName.trim()) return;
+    const ownerData = participants.length > 1 ? { ownerId: incOwner || participants[0].id } : {};
     if (editingIncomeId !== null) {
       setState(s => ({
         ...s,
         incomes: s.incomes.map(i => i.id === editingIncomeId
-          ? { ...i, name: incName, amount: incAmount, periodicity: incPeriodicity, frequencyMonths: incFreqMonths, growthRate: incGrowth, bonusMonth: incBonusMonth, bonusAmount: incBonusAmount, startMonth: incStart, endMonth: incEnd }
+          ? { ...i, name: incName, amount: incAmount, periodicity: incPeriodicity, frequencyMonths: incFreqMonths, growthRate: incGrowth, bonusMonth: incBonusMonth, bonusAmount: incBonusAmount, startMonth: incStart, endMonth: incEnd, ...ownerData }
           : i),
       }));
       cancelEditIncome();
@@ -1095,11 +1337,12 @@ export default function FinanceSim() {
           growthRate: incGrowth,
           bonusMonth: incBonusMonth, bonusAmount: incBonusAmount,
           startMonth: incStart, endMonth: incEnd,
+          ...ownerData,
         }],
         nextId: s.nextId + 1,
       }));
     }
-  }, [incName, incAmount, incPeriodicity, incFreqMonths, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd, editingIncomeId, cancelEditIncome]);
+  }, [incName, incAmount, incPeriodicity, incFreqMonths, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd, incOwner, participants, editingIncomeId, cancelEditIncome]);
 
   const removeIncome = useCallback((id: number) => {
     setState(s => ({ ...s, incomes: s.incomes.filter(i => i.id !== id) }));
@@ -1108,11 +1351,18 @@ export default function FinanceSim() {
 
   const saveExpense = useCallback(() => {
     if (!expName.trim()) return;
+    const splitData = participants.length > 1 ? {
+      split: {
+        mode: expSplitMode,
+        participantIds: expSplitParticipants.length > 0 ? expSplitParticipants : participants.map(p => p.id),
+        ...(expSplitMode === "custom" ? { customShares: expCustomShares } : {}),
+      } as ExpenseSplit,
+    } : {};
     if (editingExpenseId !== null) {
       setState(s => ({
         ...s,
         expenses: s.expenses.map(e => e.id === editingExpenseId
-          ? { ...e, name: expName, amount: expAmount, frequency: expFreq, frequencyMonths: expFreqMonths, category: expCategory, inflationAdjusted: expInflation, startMonth: expStart, endMonth: expEnd }
+          ? { ...e, name: expName, amount: expAmount, frequency: expFreq, frequencyMonths: expFreqMonths, category: expCategory, inflationAdjusted: expInflation, startMonth: expStart, endMonth: expEnd, ...splitData }
           : e),
       }));
       cancelEditExpense();
@@ -1125,11 +1375,12 @@ export default function FinanceSim() {
           category: expCategory,
           inflationAdjusted: expInflation,
           startMonth: expStart, endMonth: expEnd,
+          ...splitData,
         }],
         nextId: s.nextId + 1,
       }));
     }
-  }, [expName, expAmount, expFreq, expFreqMonths, expCategory, expInflation, expStart, expEnd, editingExpenseId, cancelEditExpense]);
+  }, [expName, expAmount, expFreq, expFreqMonths, expCategory, expInflation, expStart, expEnd, expSplitMode, expSplitParticipants, expCustomShares, participants, editingExpenseId, cancelEditExpense]);
 
   const removeExpense = useCallback((id: number) => {
     setState(s => ({ ...s, expenses: s.expenses.filter(e => e.id !== id) }));
@@ -1501,6 +1752,13 @@ export default function FinanceSim() {
                         if (b > 0.01) lines.push(`  ${loan.name}: -${fmtShort(b)}`);
                       }
                     }
+                  }
+                }
+                if (row.contributionByParticipant && participants.length > 1) {
+                  lines.push("── By Participant ──");
+                  for (const p of participants) {
+                    const v = row.contributionByParticipant[p.id] ?? 0;
+                    lines.push(`  ${p.name}: ${v >= 0 ? "+" : ""}${fmtShort(v)}`);
                   }
                 }
                 return lines;
@@ -2038,6 +2296,68 @@ export default function FinanceSim() {
           })}
         </div>
       </div>
+
+      {/* Participants */}
+      <div class="mx-1 h-4 w-px bg-[var(--color-border)]" />
+      <div class="flex flex-wrap items-center gap-1.5">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+          Participants
+        </span>
+        {participants.length > 1 && participants.map(p => (
+          <span
+            key={p.id}
+            class="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-mono text-[10px]"
+            style={{ borderColor: `${p.color}40`, background: `${p.color}15`, color: p.color }}
+          >
+            <span class="inline-block h-2 w-2 rounded-full" style={{ background: p.color }} />
+            <input
+              type="text"
+              value={p.name}
+              onInput={(e) => renameParticipant(p.id, (e.target as HTMLInputElement).value)}
+              class="w-16 bg-transparent font-mono text-[10px] outline-none"
+              style={{ color: p.color }}
+            />
+            <button
+              onClick={() => removeParticipant(p.id)}
+              class="ml-0.5 opacity-60 hover:opacity-100"
+              style={{ color: p.color }}
+            >
+              x
+            </button>
+          </span>
+        ))}
+        {participantsOpen ? (
+          <span class="inline-flex items-center gap-1">
+            <input
+              type="text"
+              value={partName}
+              onInput={(e) => setPartName((e.target as HTMLInputElement).value)}
+              onKeyDown={(e) => { if ((e as KeyboardEvent).key === "Enter") addParticipant(); }}
+              class="w-20 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-light)] px-2 py-1 font-mono text-[10px] text-[var(--color-text)] outline-none"
+              placeholder="Name"
+            />
+            <button
+              onClick={addParticipant}
+              class="rounded-md border border-[var(--color-border)] px-2 py-1 font-mono text-[10px] text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-primary)]"
+            >
+              OK
+            </button>
+            <button
+              onClick={() => setParticipantsOpen(false)}
+              class="font-mono text-[10px] text-[var(--color-text-muted)]"
+            >
+              x
+            </button>
+          </span>
+        ) : (
+          <button
+            onClick={() => setParticipantsOpen(true)}
+            class="rounded-md border border-dashed border-[var(--color-border)] px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-primary)]"
+          >
+            + Add
+          </button>
+        )}
+      </div>
     </div>
   );
 
@@ -2185,6 +2505,55 @@ export default function FinanceSim() {
           />
         </div>
       </div>
+
+      {/* Participant Breakdown */}
+      {participants.length > 1 && sim.months.length > 0 && (
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Participant Breakdown</CardTitle>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {participants.map(p => {
+              let totalInc = 0, totalExp = 0, totalLoan = 0, totalContrib = 0;
+              for (const row of sim.months) {
+                totalInc += row.incomeByParticipant?.[p.id] ?? 0;
+                totalExp += row.expenseByParticipant?.[p.id] ?? 0;
+                totalLoan += row.loanPaymentByParticipant?.[p.id] ?? 0;
+                totalContrib += row.contributionByParticipant?.[p.id] ?? 0;
+              }
+              const avgContrib = sim.months.length > 0 ? totalContrib / sim.months.length : 0;
+              return (
+                <div
+                  key={p.id}
+                  class="rounded-lg border p-3"
+                  style={{ borderColor: `${p.color}30`, background: `${p.color}08` }}
+                >
+                  <div class="mb-2 flex items-center gap-2">
+                    <span class="inline-block h-2.5 w-2.5 rounded-full" style={{ background: p.color }} />
+                    <span class="font-mono text-xs font-medium" style={{ color: p.color }}>{p.name}</span>
+                  </div>
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between font-mono text-[10px]">
+                      <span class="text-[var(--color-text-muted)]">Total Income</span>
+                      <span style={{ color: C.green }}>{fmtShort(totalInc)}</span>
+                    </div>
+                    <div class="flex justify-between font-mono text-[10px]">
+                      <span class="text-[var(--color-text-muted)]">Total Expenses</span>
+                      <span style={{ color: C.red }}>{fmtShort(totalExp)}</span>
+                    </div>
+                    <div class="flex justify-between font-mono text-[10px]">
+                      <span class="text-[var(--color-text-muted)]">Loan Payments</span>
+                      <span>{fmtShort(totalLoan)}</span>
+                    </div>
+                    <div class="flex justify-between border-t border-[var(--color-border)] pt-1.5 font-mono text-[10px]">
+                      <span class="text-[var(--color-text-muted)]">Avg Monthly Contrib.</span>
+                      <span style={{ color: avgContrib >= 0 ? C.goldLight : C.red }}>{fmtShort(avgContrib)}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Comparison Scenarios */}
       {comparisonScenarios.length > 0 && (
@@ -2413,6 +2782,14 @@ export default function FinanceSim() {
             {label("Account Name")}
             {textInput(accName, setAccName)}
           </div>
+          {participants.length > 1 && (
+            <div class="mb-3">
+              {label("Owner")}
+              {selectInput(String(accOwner), (v) => setAccOwner(Number(v)),
+                [{ value: "0", label: "Joint" }, ...participants.map(p => ({ value: String(p.id), label: p.name }))]
+              )}
+            </div>
+          )}
           <div class="mb-3">
             {label("Type")}
             {selectInput(accType, (v) => setAccType(v as AccountType), [
@@ -2473,6 +2850,11 @@ export default function FinanceSim() {
                           {a.name}
                         </span>
                         {badge(a.type, tc)}
+                        {participants.length > 1 && (() => {
+                          if (!a.ownerId || a.ownerId === 0) return <span class="font-mono text-[9px] text-[var(--color-text-muted)]">Joint</span>;
+                          const owner = participants.find(p => p.id === a.ownerId);
+                          return owner ? <span class="font-mono text-[9px]" style={{ color: owner.color }}>{owner.name}</span> : null;
+                        })()}
                       </div>
                       <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
                         {fmtM(a.balance)} | {fmtPct(a.annualRate)} | {a.compoundInterval}
@@ -2540,6 +2922,14 @@ export default function FinanceSim() {
             {label("Loan Name")}
             {textInput(loanName, setLoanName)}
           </div>
+          {participants.length > 1 && (
+            <div class="mb-3">
+              {label("Owner")}
+              {selectInput(String(loanOwner), (v) => setLoanOwner(Number(v)),
+                [{ value: "0", label: "Joint" }, ...participants.map(p => ({ value: String(p.id), label: p.name }))]
+              )}
+            </div>
+          )}
           <div class="mb-3">
             {label("Type")}
             {selectInput(loanType, (v) => setLoanType(v as LoanType), [
@@ -2614,6 +3004,11 @@ export default function FinanceSim() {
                             {l.name}
                           </span>
                           {badge(l.type, tc)}
+                          {participants.length > 1 && (() => {
+                            if (!l.ownerId || l.ownerId === 0) return <span class="font-mono text-[9px] text-[var(--color-text-muted)]">Joint</span>;
+                            const owner = participants.find(p => p.id === l.ownerId);
+                            return owner ? <span class="font-mono text-[9px]" style={{ color: owner.color }}>{owner.name}</span> : null;
+                          })()}
                         </div>
                         <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
                           Bal: {fmtM(l.currentBalance)} | {fmtPct(l.annualRate)} | Pmt: {fmtM(pmt)} | {l.termMonths}mo | {l.paymentInterval}
@@ -2785,9 +3180,19 @@ export default function FinanceSim() {
       <div class="space-y-4">
         <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
           <CardTitle>{editingIncomeId !== null ? "Edit Income" : "Add Income"}</CardTitle>
-          <div class="mb-3">
-            {label("Source Name")}
-            {textInput(incName, setIncName)}
+          <div class={participants.length > 1 ? "mb-3 grid grid-cols-2 gap-3" : "mb-3"}>
+            <div>
+              {label("Source Name")}
+              {textInput(incName, setIncName)}
+            </div>
+            {participants.length > 1 && (
+              <div>
+                {label("Owner")}
+                {selectInput(String(incOwner || participants[0].id), (v) => setIncOwner(Number(v)),
+                  participants.map(p => ({ value: String(p.id), label: p.name }))
+                )}
+              </div>
+            )}
           </div>
           <div class="mb-3 grid grid-cols-2 gap-3">
             <div>
@@ -2877,6 +3282,15 @@ export default function FinanceSim() {
                         inc.periodicity === "every-n-months" ? `every ${inc.frequencyMonths || 3}mo` : inc.periodicity,
                         { color: C.green, bg: C.greenDim, border: C.greenBorder }
                       )}
+                      {participants.length > 1 && (() => {
+                        const owner = participants.find(p => p.id === inc.ownerId) ?? participants[0];
+                        return (
+                          <span class="inline-flex items-center gap-1 font-mono text-[9px]" style={{ color: owner.color }}>
+                            <span class="inline-block h-1.5 w-1.5 rounded-full" style={{ background: owner.color }} />
+                            {owner.name}
+                          </span>
+                        );
+                      })()}
                     </div>
                     <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
                       {fmtM(inc.amount)}/{inc.periodicity === "every-n-months" ? `${inc.frequencyMonths || 3}mo` : inc.periodicity}
@@ -2991,6 +3405,79 @@ export default function FinanceSim() {
               Inflation-adjusted
             </span>
           </div>
+          {participants.length > 1 && (
+            <div class="mb-3">
+              {label("Split Mode")}
+              {selectInput(expSplitMode, (v) => setExpSplitMode(v as SplitMode), [
+                { value: "equal", label: "Equal Split" },
+                { value: "owner", label: "Single Owner" },
+                { value: "proportional", label: "Proportional to Income" },
+                { value: "custom", label: "Custom Percentages" },
+              ])}
+              {expSplitMode === "owner" && (
+                <div class="mt-2">
+                  {label("Paid by")}
+                  {selectInput(
+                    String(expSplitParticipants[0] ?? participants[0].id),
+                    (v) => setExpSplitParticipants([Number(v)]),
+                    participants.map(p => ({ value: String(p.id), label: p.name }))
+                  )}
+                </div>
+              )}
+              {(expSplitMode === "equal" || expSplitMode === "proportional") && (
+                <div class="mt-2">
+                  {label("Shared by")}
+                  <div class="flex flex-wrap gap-1">
+                    {participants.map(p => {
+                      const sel = expSplitParticipants.length === 0 || expSplitParticipants.includes(p.id);
+                      return (
+                        <button
+                          key={p.id}
+                          onClick={() => {
+                            if (sel) {
+                              const next = (expSplitParticipants.length === 0 ? participants.map(pp => pp.id) : expSplitParticipants).filter(id => id !== p.id);
+                              setExpSplitParticipants(next.length === 0 ? [] : next);
+                            } else {
+                              setExpSplitParticipants([...expSplitParticipants, p.id]);
+                            }
+                          }}
+                          class="rounded-md px-2 py-1 font-mono text-[10px] transition-colors"
+                          style={{
+                            background: sel ? `${p.color}20` : "transparent",
+                            border: sel ? `1px solid ${p.color}50` : "1px solid var(--color-border)",
+                            color: sel ? p.color : "var(--color-text-muted)",
+                          }}
+                        >
+                          {p.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              {expSplitMode === "custom" && (
+                <div class="mt-2 space-y-2">
+                  {participants.map(p => (
+                    <div key={p.id} class="flex items-center gap-2">
+                      <span
+                        class="w-16 truncate font-mono text-[10px]"
+                        style={{ color: p.color }}
+                      >
+                        {p.name}
+                      </span>
+                      <div class="flex-1">
+                        {numInput(
+                          expCustomShares[p.id] ?? 0,
+                          (v) => setExpCustomShares(prev => ({ ...prev, [p.id]: v })),
+                          { suffix: "%", min: 0, max: 100, step: 1 }
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           <div class="mb-4 grid grid-cols-2 gap-3">
             <div>
               {label("Start Month")}
@@ -3038,6 +3525,24 @@ export default function FinanceSim() {
                             INF
                           </span>
                         )}
+                        {participants.length > 1 && exp.split && (() => {
+                          const s = exp.split;
+                          if (s.mode === "owner") {
+                            const owner = participants.find(p => p.id === s.participantIds[0]) ?? participants[0];
+                            return <span class="font-mono text-[9px]" style={{ color: owner.color }}>Owner: {owner.name}</span>;
+                          }
+                          if (s.mode === "equal") return <span class="font-mono text-[9px] text-[var(--color-text-muted)]">Equal</span>;
+                          if (s.mode === "proportional") return <span class="font-mono text-[9px] text-[var(--color-text-muted)]">Proportional</span>;
+                          if (s.mode === "custom" && s.customShares) {
+                            const vals = s.participantIds.map(pid => s.customShares?.[pid] ?? 0);
+                            const total = vals.reduce((a, b) => a + b, 0);
+                            if (total > 0) {
+                              const pcts = vals.map(v => Math.round(v / total * 100));
+                              return <span class="font-mono text-[9px] text-[var(--color-text-muted)]">{pcts.join("/")}</span>;
+                            }
+                          }
+                          return null;
+                        })()}
                       </div>
                       <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
                         {fmtM(exp.amount)} / {exp.frequency === "every-n-months" ? `every ${exp.frequencyMonths || 3}mo` : exp.frequency}
