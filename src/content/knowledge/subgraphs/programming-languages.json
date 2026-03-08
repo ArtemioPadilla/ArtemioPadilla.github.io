@@ -1,0 +1,1055 @@
+{
+  "version": "0.1.0",
+  "lastUpdated": "2026-03-08",
+  "nodes": [
+    {
+      "id": "imperative",
+      "label": "Imperative Languages",
+      "type": "domain",
+      "summary": "Languages centered on sequences of statements that change program state. The oldest paradigm, rooted in the von Neumann architecture of fetch-decode-execute cycles.",
+      "tags": ["paradigm", "imperative", "procedural"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "functional",
+      "label": "Functional Languages",
+      "type": "domain",
+      "summary": "Languages built on mathematical functions, immutability, and declarative expression. Rooted in lambda calculus (Church, 1936) and emphasizing composition over mutation.",
+      "tags": ["paradigm", "functional", "lambda-calculus"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "object-oriented",
+      "label": "Object-Oriented Languages",
+      "type": "domain",
+      "summary": "Languages organized around objects that encapsulate data and behavior. Pioneered by Simula (1967) and Smalltalk (1972), OOP became the dominant paradigm of the 1990s-2000s.",
+      "tags": ["paradigm", "oop", "encapsulation", "inheritance"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "scripting",
+      "label": "Scripting Languages",
+      "type": "domain",
+      "summary": "Dynamically typed, interpreted languages designed for rapid development, automation, and gluing systems together. Prioritize developer productivity over raw performance.",
+      "tags": ["paradigm", "scripting", "dynamic-typing", "interpreted"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "systems",
+      "label": "Systems Languages",
+      "type": "domain",
+      "summary": "Languages for low-level programming close to hardware — operating systems, drivers, embedded systems. Prioritize performance, memory control, and deterministic behavior.",
+      "tags": ["paradigm", "systems", "low-level", "performance"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "logic-declarative",
+      "label": "Logic & Declarative Languages",
+      "type": "domain",
+      "summary": "Languages where programs describe what to compute rather than how. Logic programming (Prolog) uses formal logic; query languages (SQL) specify data transformations declaratively.",
+      "tags": ["paradigm", "logic", "declarative", "formal-logic"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "markup-data",
+      "label": "Markup & Data Languages",
+      "type": "domain",
+      "summary": "Languages for structuring, annotating, and serializing data rather than expressing computation. HTML structures documents; JSON and YAML serialize data; LaTeX typesets text.",
+      "tags": ["markup", "data-format", "serialization"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Multi-Paradigm Languages",
+      "type": "domain",
+      "summary": "Post-2010 languages that blend paradigms — static typing with inference, functional features in OOP contexts, and safety guarantees. Designed with hindsight from decades of language evolution.",
+      "tags": ["paradigm", "multi-paradigm", "modern", "type-inference"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "systems/machine-code",
+      "label": "Machine Code",
+      "type": "topic",
+      "summary": "The lowest-level programming language — raw binary instructions executed directly by the CPU. Every higher-level language ultimately compiles or interprets down to machine code.",
+      "tags": ["machine-code", "binary", "hardware", "foundational"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "systems/assembly",
+      "label": "Assembly Language",
+      "type": "topic",
+      "summary": "Human-readable mnemonics mapped 1:1 to machine instructions. First appeared in the 1940s-50s. Architecture-specific (x86, ARM, MIPS) and still used for performance-critical code and OS kernels.",
+      "tags": ["assembly", "low-level", "mnemonics", "foundational"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "imperative/fortran",
+      "label": "Fortran",
+      "type": "topic",
+      "summary": "Created at IBM by John Backus in 1957. The first widely used high-level programming language, designed for scientific and engineering computation. Still dominant in HPC, weather modeling, and numerical simulation.",
+      "tags": ["fortran", "scientific", "numerical", "ibm", "1957"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "imperative/algol",
+      "label": "ALGOL",
+      "type": "topic",
+      "summary": "Algorithmic Language, first specified in 1958 (ALGOL 58) and refined as ALGOL 60. Introduced block structure, lexical scoping, and BNF notation. Never widely used commercially but profoundly influenced nearly every subsequent language.",
+      "tags": ["algol", "structured-programming", "bnf", "academic", "1958"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "imperative/cobol",
+      "label": "COBOL",
+      "type": "topic",
+      "summary": "Common Business-Oriented Language, created in 1959 by a committee led by Grace Hopper. Designed for business data processing with English-like syntax. Still runs an estimated 95% of ATM transactions and 80% of in-person transactions worldwide.",
+      "tags": ["cobol", "business", "legacy", "grace-hopper", "1959"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "imperative/basic",
+      "label": "BASIC",
+      "type": "topic",
+      "summary": "Beginner's All-purpose Symbolic Instruction Code, created by John Kemeny and Thomas Kurtz at Dartmouth in 1964. Designed to make computing accessible to non-science students. Microsoft's first product was a BASIC interpreter (1975).",
+      "tags": ["basic", "education", "beginner", "dartmouth", "1964"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "imperative/pascal",
+      "label": "Pascal",
+      "type": "topic",
+      "summary": "Created by Niklaus Wirth in 1970 as a small, efficient language for teaching structured programming. Influenced Ada, Modula-2, Oberon, and Delphi. Borland's Turbo Pascal (1983) made it commercially successful.",
+      "tags": ["pascal", "education", "structured", "wirth", "1970"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "imperative/ada",
+      "label": "Ada",
+      "type": "topic",
+      "summary": "Designed 1977-1983 for the US Department of Defense by Jean Ichbiah's team. Named after Ada Lovelace. A strongly typed, modular language with built-in concurrency, used in aviation, defense, and safety-critical systems.",
+      "tags": ["ada", "defense", "safety-critical", "concurrency", "1980"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "systems/c",
+      "label": "C",
+      "type": "topic",
+      "summary": "Created by Dennis Ritchie at Bell Labs in 1972 to rewrite Unix. The most influential systems language ever — portable, efficient, and close to hardware. Parent of C++, Objective-C, Java, C#, and dozens more.",
+      "tags": ["c", "systems", "unix", "bell-labs", "ritchie", "1972"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "systems/cpp",
+      "label": "C++",
+      "type": "topic",
+      "summary": "Created by Bjarne Stroustrup at Bell Labs starting in 1979 (as 'C with Classes', renamed 1983). Added OOP, templates, and RAII to C. Powers game engines, browsers, databases, and operating systems.",
+      "tags": ["cpp", "oop", "templates", "stroustrup", "1979"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "systems/objective-c",
+      "label": "Objective-C",
+      "type": "topic",
+      "summary": "Created by Brad Cox and Tom Love around 1984. Adds Smalltalk-style message passing to C. Became Apple's primary language via NeXTSTEP (1988) and dominated iOS/macOS development until Swift (2014).",
+      "tags": ["objective-c", "apple", "nextstep", "message-passing", "1984"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "systems/d",
+      "label": "D",
+      "type": "concept",
+      "summary": "Created by Walter Bright in 2001 as a modernized C++ — keeping the systems-level power while adding garbage collection, first-class arrays, and cleaner syntax. Influenced by C++, Java, Python, and Eiffel.",
+      "tags": ["d", "systems", "modern-cpp", "bright", "2001"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "functional/lisp",
+      "label": "Lisp",
+      "type": "topic",
+      "summary": "Created by John McCarthy at MIT in 1958. The second-oldest high-level language (after Fortran). Pioneered garbage collection, tree data structures, dynamic typing, and homoiconicity. Parent of Scheme, Common Lisp, Clojure, and Racket.",
+      "tags": ["lisp", "functional", "homoiconic", "macros", "mccarthy", "1958"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "functional/scheme",
+      "label": "Scheme",
+      "type": "topic",
+      "summary": "Created by Guy Steele and Gerald Sussman at MIT in 1975. A minimalist Lisp dialect emphasizing lexical scoping, tail-call optimization, and first-class continuations. Hugely influential in CS education (SICP) and language design.",
+      "tags": ["scheme", "lisp", "minimalist", "sicp", "continuations", "1975"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "functional/common-lisp",
+      "label": "Common Lisp",
+      "type": "concept",
+      "summary": "Standardized in 1984 (ANSI 1994) to unify fragmented Lisp dialects. A multi-paradigm powerhouse with CLOS (object system), macros, conditions, and dynamic typing. Used in AI research, Grammarly, and ITA Software (now Google Flights).",
+      "tags": ["common-lisp", "lisp", "clos", "ansi", "macros", "1984"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "functional/clojure",
+      "label": "Clojure",
+      "type": "concept",
+      "summary": "Created by Rich Hickey in 2007. A modern Lisp on the JVM emphasizing immutability, persistent data structures, and concurrency via STM (Software Transactional Memory). Influenced by Lisp, Haskell, Erlang, and Java.",
+      "tags": ["clojure", "lisp", "jvm", "immutability", "concurrency", "hickey", "2007"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "functional/racket",
+      "label": "Racket",
+      "type": "concept",
+      "summary": "Originally PLT Scheme (1995), renamed Racket in 2010. A language-oriented programming language — designed for creating new languages. Built by Matthias Felleisen's team for CS education and PL research.",
+      "tags": ["racket", "scheme", "plt", "language-oriented", "education", "1995"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "functional/ml",
+      "label": "ML",
+      "type": "topic",
+      "summary": "Meta Language, created by Robin Milner at Edinburgh in 1973. Introduced Hindley-Milner type inference, pattern matching, and algebraic data types. Parent of SML, OCaml, F#, and spiritual ancestor of Haskell and Rust's type systems.",
+      "tags": ["ml", "type-inference", "pattern-matching", "milner", "1973"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "functional/ocaml",
+      "label": "OCaml",
+      "type": "concept",
+      "summary": "Created by Xavier Leroy et al. at INRIA in 1996. Extends Caml (an ML dialect) with objects and a powerful module system. Compiles to efficient native code. Influenced Rust, F#, Scala, and Haskell. Used at Jane Street and Facebook.",
+      "tags": ["ocaml", "ml", "modules", "native-code", "inria", "1996"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "functional/haskell",
+      "label": "Haskell",
+      "type": "topic",
+      "summary": "Designed by committee in 1990 to consolidate lazy functional language research. Named after logician Haskell Curry. Features lazy evaluation, monads, type classes, and purity. Influenced Rust, Swift, Scala, Elm, PureScript, and many others.",
+      "tags": ["haskell", "lazy", "monads", "type-classes", "pure", "1990"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "functional/f-sharp",
+      "label": "F#",
+      "type": "concept",
+      "summary": "Created by Don Syme at Microsoft Research in 2005. An ML-family language on .NET, strongly influenced by OCaml. Combines functional programming with OOP and .NET interop. Pioneered async workflows that influenced C# async/await.",
+      "tags": ["f-sharp", "ml", "dotnet", "microsoft", "ocaml", "2005"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "functional/elm",
+      "label": "Elm",
+      "type": "concept",
+      "summary": "Created by Evan Czaplicki in 2012 as his thesis. A purely functional language for web front-ends that compiles to JavaScript. Known for 'no runtime exceptions' guarantee. Influenced by Haskell, OCaml, and F#. Pioneered The Elm Architecture (TEA), later adopted by Redux.",
+      "tags": ["elm", "web", "no-runtime-exceptions", "tea", "2012"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "functional/erlang",
+      "label": "Erlang",
+      "type": "topic",
+      "summary": "Created by Joe Armstrong at Ericsson in 1986 for telecom switches. Designed for massive concurrency, fault tolerance, and hot code swapping via the BEAM VM. Powers WhatsApp, RabbitMQ, and telecom infrastructure worldwide.",
+      "tags": ["erlang", "beam", "concurrency", "fault-tolerant", "telecom", "1986"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "functional/elixir",
+      "label": "Elixir",
+      "type": "concept",
+      "summary": "Created by Jose Valim in 2011. Runs on the Erlang BEAM VM with Ruby-inspired syntax and modern metaprogramming. Combines Erlang's concurrency model with developer-friendly tooling (Mix, Hex, Phoenix framework).",
+      "tags": ["elixir", "beam", "ruby-syntax", "phoenix", "valim", "2011"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "functional/scala",
+      "label": "Scala",
+      "type": "topic",
+      "summary": "Created by Martin Odersky at EPFL in 2004. Fuses OOP and functional programming on the JVM. Features pattern matching, type inference, implicits, and actors (Akka). Used at Twitter, LinkedIn, and the Spark ecosystem.",
+      "tags": ["scala", "jvm", "multi-paradigm", "odersky", "2004"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "object-oriented/simula",
+      "label": "Simula",
+      "type": "topic",
+      "summary": "Created by Ole-Johan Dahl and Kristen Nygaard in Norway, 1967 (Simula 67). The first language with objects, classes, inheritance, and virtual methods. A superset of ALGOL 60. Directly inspired Smalltalk and C++.",
+      "tags": ["simula", "oop", "first", "norway", "simulation", "1967"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "object-oriented/smalltalk",
+      "label": "Smalltalk",
+      "type": "topic",
+      "summary": "Created by Alan Kay, Dan Ingalls, and Adele Goldberg at Xerox PARC in 1972. Everything is an object, everything is a message. Pioneered the IDE, MVC pattern, and GUI programming. Influenced Ruby, Objective-C, Java, Python, and Erlang.",
+      "tags": ["smalltalk", "oop", "xerox-parc", "mvc", "message-passing", "1972"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "object-oriented/java",
+      "label": "Java",
+      "type": "topic",
+      "summary": "Created by James Gosling at Sun Microsystems in 1995. 'Write once, run anywhere' via the JVM. Static typing, garbage collection, and a vast ecosystem. Dominates enterprise software, Android, and big data (Hadoop, Spark, Kafka).",
+      "tags": ["java", "jvm", "enterprise", "android", "gosling", "1995"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "object-oriented/csharp",
+      "label": "C#",
+      "type": "topic",
+      "summary": "Created by Anders Hejlsberg at Microsoft in 2000. Microsoft's answer to Java, running on .NET/CLR. Influenced by C++, Java, Delphi, and Haskell. Features LINQ, async/await, and pattern matching. Powers Unity game engine and enterprise .NET.",
+      "tags": ["csharp", "dotnet", "microsoft", "hejlsberg", "2000"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "object-oriented/kotlin",
+      "label": "Kotlin",
+      "type": "concept",
+      "summary": "Created by JetBrains in 2011. A modern JVM language designed to fix Java's verbosity and null-safety issues. Influenced by Java, Scala, Groovy, C#, and Gosu. Google's preferred language for Android since 2019.",
+      "tags": ["kotlin", "jvm", "android", "jetbrains", "null-safety", "2011"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "object-oriented/swift",
+      "label": "Swift",
+      "type": "concept",
+      "summary": "Created by Chris Lattner at Apple in 2014. Designed to replace Objective-C for iOS/macOS development. Influenced by Objective-C, Rust, Haskell, Ruby, Python, and C#. Features optionals, protocols, and value types. Open-sourced in 2015.",
+      "tags": ["swift", "apple", "ios", "lattner", "protocols", "2014"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "scripting/perl",
+      "label": "Perl",
+      "type": "topic",
+      "summary": "Created by Larry Wall in 1987. 'The duct tape of the internet' — excels at text processing and regex. TMTOWTDI philosophy ('There's More Than One Way To Do It'). Powered the early web (CGI era) and bioinformatics.",
+      "tags": ["perl", "regex", "text-processing", "cgi", "wall", "1987"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "scripting/python",
+      "label": "Python",
+      "type": "topic",
+      "summary": "Created by Guido van Rossum in 1991 as a successor to ABC. Emphasizes readability and 'one obvious way to do it'. Influenced by ABC, C, Modula-3, and Lisp. Dominates ML/AI, data science, web backends, and scripting.",
+      "tags": ["python", "readability", "ml-ai", "data-science", "van-rossum", "1991"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "scripting/ruby",
+      "label": "Ruby",
+      "type": "topic",
+      "summary": "Created by Yukihiro 'Matz' Matsumoto in 1995. Designed for programmer happiness, blending Perl, Smalltalk, Eiffel, Ada, and Lisp. Everything is an object. Ruby on Rails (2004) revolutionized web development.",
+      "tags": ["ruby", "oop", "happiness", "rails", "matz", "1995"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "scripting/php",
+      "label": "PHP",
+      "type": "concept",
+      "summary": "Created by Rasmus Lerdorf in 1995 as 'Personal Home Page' tools. Server-side web scripting language that powers ~77% of websites with known server-side languages (WordPress, Laravel, MediaWiki). Influenced by C, Perl, and Java.",
+      "tags": ["php", "web", "server-side", "wordpress", "1995"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "scripting/javascript",
+      "label": "JavaScript",
+      "type": "topic",
+      "summary": "Created by Brendan Eich at Netscape in 10 days in 1995. Combines Scheme's first-class functions, Self's prototypal inheritance, and Java-like syntax. The language of the web — runs in every browser and on servers (Node.js). Standardized as ECMAScript.",
+      "tags": ["javascript", "web", "browser", "ecmascript", "eich", "1995"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "scripting/lua",
+      "label": "Lua",
+      "type": "concept",
+      "summary": "Created at PUC-Rio, Brazil in 1993 by Roberto Ierusalimschy, Waldemar Celes, and Luiz Henrique de Figueiredo. A tiny, fast, embeddable scripting language. Dominant in game scripting (WoW, Roblox), embedded systems, and Redis.",
+      "tags": ["lua", "embeddable", "games", "lightweight", "brazil", "1993"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "scripting/r",
+      "label": "R",
+      "type": "concept",
+      "summary": "Created by Ross Ihaka and Robert Gentleman at the University of Auckland in 1993. A language for statistical computing and graphics, descended from S (1976). Dominant in biostatistics, academia, and data visualization (ggplot2).",
+      "tags": ["r", "statistics", "data-viz", "biostats", "1993"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "scripting/julia",
+      "label": "Julia",
+      "type": "concept",
+      "summary": "Work began in 2009, publicly released in 2012 by Jeff Bezanson, Stefan Karpinski, Viral Shah, and Alan Edelman. Designed for high-performance numerical computing with the speed of C and usability of Python. Features multiple dispatch and JIT compilation via LLVM.",
+      "tags": ["julia", "scientific", "jit", "multiple-dispatch", "llvm", "2012"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "systems/rust",
+      "label": "Rust",
+      "type": "topic",
+      "summary": "Started by Graydon Hoare at Mozilla in 2010 (v1.0 in 2015). Memory safety without garbage collection via ownership and borrowing. Influenced by ML, OCaml, C++, Haskell, Erlang, and Cyclone. Voted 'most loved language' 7 years running on Stack Overflow.",
+      "tags": ["rust", "memory-safety", "ownership", "borrowing", "mozilla", "2010"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "systems/go",
+      "label": "Go",
+      "type": "topic",
+      "summary": "Created at Google by Robert Griesemer, Rob Pike, and Ken Thompson in 2009. Designed for simplicity, fast compilation, and built-in concurrency (goroutines/channels). Influenced by C, Oberon, Newsqueak, and Limbo. Powers Docker, Kubernetes, and cloud infrastructure.",
+      "tags": ["go", "concurrency", "goroutines", "google", "simplicity", "2009"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "systems/zig",
+      "label": "Zig",
+      "type": "concept",
+      "summary": "Created by Andrew Kelley in 2016. A systems language aiming to be a better C — no hidden control flow, no hidden allocations, comptime metaprogramming. Interops seamlessly with C. Used in the Bun JavaScript runtime.",
+      "tags": ["zig", "systems", "comptime", "no-hidden-control-flow", "2016"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "modern/typescript",
+      "label": "TypeScript",
+      "type": "topic",
+      "summary": "Created by Anders Hejlsberg at Microsoft in 2012. A typed superset of JavaScript that compiles to plain JS. Features structural typing, union types, generics, and type inference. Now the standard for large-scale web development.",
+      "tags": ["typescript", "typed-javascript", "structural-typing", "hejlsberg", "2012"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/dart",
+      "label": "Dart",
+      "type": "concept",
+      "summary": "Created by Lars Bak and Kasper Lund at Google in 2011. Originally designed to replace JavaScript in browsers, now primarily used via Flutter for cross-platform mobile/web/desktop apps. Influenced by Java, JavaScript, Smalltalk, and C#.",
+      "tags": ["dart", "flutter", "cross-platform", "google", "2011"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "modern/nim",
+      "label": "Nim",
+      "type": "concept",
+      "summary": "Created by Andreas Rumpf, made public in 2008. Compiles to C, C++, or JavaScript. Python-like syntax with Ada-style static typing and Lisp-like metaprogramming (macros). Combines expressiveness with systems-level performance.",
+      "tags": ["nim", "python-syntax", "compiles-to-c", "macros", "2008"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "logic-declarative/prolog",
+      "label": "Prolog",
+      "type": "topic",
+      "summary": "Created by Alain Colmerauer and Philippe Roussel in 1972. Programming in formal logic — programs are sets of facts and rules, and computation is logical inference. Foundation of logic programming. Used in AI, NLP, and expert systems.",
+      "tags": ["prolog", "logic", "unification", "backtracking", "ai", "1972"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "logic-declarative/sql",
+      "label": "SQL",
+      "type": "topic",
+      "summary": "Structured Query Language, developed at IBM by Donald Chamberlin and Raymond Boyce in 1974, based on Codd's relational algebra. The universal language for querying relational databases. Standardized by ANSI/ISO. Used by virtually every application with structured data.",
+      "tags": ["sql", "relational", "databases", "query", "ibm", "1974"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "logic-declarative/datalog",
+      "label": "Datalog",
+      "type": "concept",
+      "summary": "A syntactic subset of Prolog focused on database queries, formalized in the late 1970s. Not Turing-complete by design — guarantees termination. Experiencing a renaissance in program analysis (Souffle) and distributed databases (Datomic).",
+      "tags": ["datalog", "logic", "database", "termination", "1970s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "logic-declarative/mercury",
+      "label": "Mercury",
+      "type": "concept",
+      "summary": "Created at the University of Melbourne in 1995 by Fergus Henderson, Thomas Conway, and Zoltan Somogyi. A logic-functional language combining Prolog's logic programming with Haskell's type system and purity. Compiles to C for performance.",
+      "tags": ["mercury", "logic-functional", "purity", "type-system", "1995"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "markup-data/html",
+      "label": "HTML",
+      "type": "topic",
+      "summary": "HyperText Markup Language, created by Tim Berners-Lee at CERN in 1993. The standard markup for web pages. Derived from SGML. HTML5 (2014) added semantic elements, canvas, audio/video, and web APIs. The backbone of the World Wide Web.",
+      "tags": ["html", "web", "markup", "berners-lee", "cern", "1993"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "markup-data/xml",
+      "label": "XML",
+      "type": "concept",
+      "summary": "Extensible Markup Language, standardized by W3C in 1998 as a simplified subset of SGML. A general-purpose markup for structured data exchange. Spawned XHTML, XSLT, XPath, SOAP, and RSS. Largely supplanted by JSON for web APIs.",
+      "tags": ["xml", "data-exchange", "sgml", "w3c", "1998"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "markup-data/json",
+      "label": "JSON",
+      "type": "concept",
+      "summary": "JavaScript Object Notation, specified by Douglas Crockford around 2001. A lightweight data interchange format derived from JavaScript object literal syntax. The dominant format for web APIs, config files, and data serialization.",
+      "tags": ["json", "data-interchange", "web-api", "crockford", "2001"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "markup-data/yaml",
+      "label": "YAML",
+      "type": "concept",
+      "summary": "YAML Ain't Markup Language, first released in 2001 by Clark Evans, Ingy dot Net, and Oren Ben-Kiki. A human-friendly data serialization standard used for configuration (Docker Compose, Kubernetes, GitHub Actions, Ansible).",
+      "tags": ["yaml", "configuration", "human-readable", "devops", "2001"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "markup-data/latex",
+      "label": "LaTeX",
+      "type": "concept",
+      "summary": "Created by Leslie Lamport in 1984, built on Donald Knuth's TeX (1978). A document preparation system and typesetting language. The standard for academic papers in mathematics, physics, and computer science.",
+      "tags": ["latex", "typesetting", "academic", "lamport", "knuth", "1984"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "imperative/algol/algol60",
+      "label": "ALGOL 60",
+      "type": "concept",
+      "summary": "The 1960 revision of ALGOL that introduced block structure, nested scoping, and BNF grammar notation. Never commercially dominant but described as 'the most important language you've never used' — its ideas are in every modern language.",
+      "tags": ["algol-60", "block-structure", "bnf", "scoping", "1960"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "imperative/algol/algol68",
+      "label": "ALGOL 68",
+      "type": "concept",
+      "summary": "The 1968 revision of ALGOL — far more ambitious and complex than ALGOL 60. Introduced user-defined types, operator overloading, and orthogonal design. Considered ahead of its time but too complex for practical use. Influenced C and C++.",
+      "tags": ["algol-68", "orthogonal", "user-types", "1968"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "scripting/python/cpython",
+      "label": "CPython",
+      "type": "concept",
+      "summary": "The reference implementation of Python, written in C. First released by Guido van Rossum in 1991. Uses a GIL (Global Interpreter Lock) for thread safety, a design choice debated for decades and finally being addressed in Python 3.13+.",
+      "tags": ["cpython", "reference-impl", "gil", "c", "1991"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "scripting/javascript/ecmascript",
+      "label": "ECMAScript",
+      "type": "concept",
+      "summary": "The standardized specification behind JavaScript, maintained by TC39. ES3 (1999), ES5 (2009), ES6/ES2015 (the big one — classes, arrows, promises, modules), and now annual releases. The formal name few people use.",
+      "tags": ["ecmascript", "standard", "tc39", "es6", "1997"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "functional/haskell/ghc",
+      "label": "GHC (Glasgow Haskell Compiler)",
+      "type": "concept",
+      "summary": "The de facto standard Haskell compiler, started at the University of Glasgow in 1992. Known for aggressive optimization, type system extensions (GADTs, type families), and serving as a testbed for PL research ideas.",
+      "tags": ["ghc", "compiler", "optimization", "type-extensions", "1992"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "systems/cpp/stl",
+      "label": "C++ STL",
+      "type": "concept",
+      "summary": "The Standard Template Library, designed by Alexander Stepanov and adopted into C++ in 1994. Introduced generic programming with containers, iterators, and algorithms. Proved that abstraction need not cost performance.",
+      "tags": ["stl", "generic-programming", "templates", "stepanov", "1994"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "object-oriented/java/jvm",
+      "label": "Java Virtual Machine (JVM)",
+      "type": "concept",
+      "summary": "The runtime environment for Java bytecode, first released in 1995. Enables 'write once, run anywhere'. Also hosts Scala, Kotlin, Clojure, Groovy, and JRuby. JIT compilation and garbage collection make it competitive with native code for many workloads.",
+      "tags": ["jvm", "bytecode", "platform", "jit", "1995"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "functional/erlang/beam",
+      "label": "BEAM VM",
+      "type": "concept",
+      "summary": "Bogdan/Bjorn's Erlang Abstract Machine — the VM that runs Erlang, Elixir, Gleam, and other BEAM languages. Designed for massive concurrency (millions of lightweight processes), fault tolerance (let it crash), and hot code upgrades.",
+      "tags": ["beam", "vm", "concurrency", "fault-tolerance", "processes"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "object-oriented/csharp/dotnet",
+      "label": ".NET / CLR",
+      "type": "concept",
+      "summary": "Microsoft's Common Language Runtime — a managed execution environment for C#, F#, VB.NET, and others. First released in 2002. Open-sourced as .NET Core (2016), unified as .NET 5+ (2020). Competes with JVM as a multi-language platform.",
+      "tags": ["dotnet", "clr", "managed", "microsoft", "2002"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "scripting/javascript/nodejs",
+      "label": "Node.js",
+      "type": "concept",
+      "summary": "Created by Ryan Dahl in 2009. JavaScript runtime built on Chrome's V8 engine, enabling server-side JavaScript. Event-driven, non-blocking I/O. Spawned the npm ecosystem (the largest package registry) and full-stack JS development.",
+      "tags": ["nodejs", "server-side", "v8", "npm", "event-driven", "2009"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "imperative/abc",
+      "label": "ABC",
+      "type": "concept",
+      "summary": "Created at CWI Amsterdam in the early 1980s by Leo Geurts, Lambert Meertens, and Steven Pemberton. An educational language emphasizing simplicity and readability. Guido van Rossum worked on ABC before creating Python, which it directly inspired.",
+      "tags": ["abc", "education", "cwi", "python-ancestor", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "object-oriented/self",
+      "label": "Self",
+      "type": "concept",
+      "summary": "Created by David Ungar and Randall Smith at Xerox PARC in 1987. A prototype-based OOP language descended from Smalltalk — eliminated the class/instance distinction. Directly inspired JavaScript's prototypal inheritance and pioneered JIT compilation techniques.",
+      "tags": ["self", "prototype-based", "jit", "xerox-parc", "1987"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "imperative/modula",
+      "label": "Modula-2/3",
+      "type": "concept",
+      "summary": "Modula-2 (1978) and Modula-3 (1988), both by Niklaus Wirth and successors. Evolved Pascal with modules, coroutines, and systems programming features. Modula-3 influenced Python's module system and Java's design.",
+      "tags": ["modula", "modules", "wirth", "systems", "1978"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "logic-declarative/s-lang",
+      "label": "S (Statistics Language)",
+      "type": "concept",
+      "summary": "Created by John Chambers at Bell Labs in 1976. A language for statistical analysis and graphics. Parent of both R (open-source reimplementation) and S-PLUS (commercial). Pioneered the idea of an interactive statistical computing environment.",
+      "tags": ["s-language", "statistics", "bell-labs", "chambers", "1976"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "scripting/python/micropython",
+      "label": "MicroPython",
+      "type": "concept",
+      "summary": "Created by Damien George in 2014. A lean Python 3 implementation for microcontrollers and constrained environments. Runs on ESP32, Raspberry Pi Pico, and other embedded boards. Brings Python's accessibility to IoT and hardware.",
+      "tags": ["micropython", "embedded", "iot", "microcontrollers", "2014"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "systems/rust/cargo",
+      "label": "Cargo",
+      "type": "concept",
+      "summary": "Rust's package manager and build system, released with Rust 1.0 in 2015. Manages dependencies via crates.io, handles compilation, testing, documentation, and benchmarking. Widely regarded as one of the best build tools in any language ecosystem.",
+      "tags": ["cargo", "package-manager", "build-system", "crates", "2015"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "modern/wasm",
+      "label": "WebAssembly (Wasm)",
+      "type": "concept",
+      "summary": "A binary instruction format standardized by W3C in 2017. A compilation target for C, C++, Rust, Go, and others — runs near-native speed in browsers and increasingly server-side (WASI). Enables polyglot web applications.",
+      "tags": ["wasm", "binary", "browser", "compilation-target", "w3c", "2017"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "scripting/groovy",
+      "label": "Groovy",
+      "type": "concept",
+      "summary": "Created by James Strachan in 2003. A dynamic JVM language with optional typing, closures, and a concise syntax. Used heavily in Gradle build scripts and Jenkins pipelines. Influenced by Java, Python, Ruby, and Smalltalk.",
+      "tags": ["groovy", "jvm", "dynamic", "gradle", "jenkins", "2003"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "scripting/powershell",
+      "label": "PowerShell",
+      "type": "concept",
+      "summary": "Created by Jeffrey Snover at Microsoft in 2006. A task automation framework combining a command-line shell with a scripting language. Built on .NET, objects flow through pipelines instead of text. Now cross-platform and open-source.",
+      "tags": ["powershell", "automation", "shell", "dotnet", "microsoft", "2006"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "scripting/bash",
+      "label": "Bash",
+      "type": "concept",
+      "summary": "Bourne Again SHell, created by Brian Fox for GNU in 1989. The default shell on most Linux distributions and macOS (until 2019). Descended from the Bourne shell (1979). The lingua franca of Unix system administration and DevOps scripting.",
+      "tags": ["bash", "shell", "unix", "gnu", "automation", "1989"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "imperative/forth",
+      "label": "Forth",
+      "type": "concept",
+      "summary": "Created by Charles Moore around 1970. A stack-based, extensible language with an interactive development style. Extremely minimalist — the programmer builds the language up from primitives. Used in embedded systems and Open Firmware.",
+      "tags": ["forth", "stack-based", "extensible", "embedded", "1970"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "imperative/delphi",
+      "label": "Delphi (Object Pascal)",
+      "type": "concept",
+      "summary": "Released by Borland in 1995. Object Pascal with a visual RAD IDE that dominated Windows desktop development in the late 1990s. Anders Hejlsberg designed Turbo Pascal and early Delphi before moving to Microsoft to create C#.",
+      "tags": ["delphi", "object-pascal", "rad", "borland", "windows", "1995"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "scripting/matlab",
+      "label": "MATLAB",
+      "type": "concept",
+      "summary": "Created by Cleve Moler in the late 1970s, commercialized by MathWorks in 1984. A proprietary language for numerical computing, matrix operations, and engineering simulation. Dominant in academia and industry for signal processing, control systems, and modeling.",
+      "tags": ["matlab", "numerical", "matrices", "engineering", "mathworks", "1984"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "functional/purescript",
+      "label": "PureScript",
+      "type": "concept",
+      "summary": "Created by Phil Freeman in 2013. A strongly typed, purely functional language that compiles to JavaScript. Heavily inspired by Haskell but designed specifically for the JS ecosystem. Features row polymorphism and extensible records.",
+      "tags": ["purescript", "functional", "javascript", "haskell-like", "2013"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "functional/gleam",
+      "label": "Gleam",
+      "type": "concept",
+      "summary": "Created by Louis Pilfold in 2016 (v1.0 in 2024). A friendly, type-safe language for the Erlang BEAM VM. Combines Erlang's concurrency with ML-family type safety. Can also compile to JavaScript. Growing rapidly in the web services space.",
+      "tags": ["gleam", "beam", "type-safe", "friendly", "2016"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "functional/coq",
+      "label": "Coq",
+      "type": "concept",
+      "summary": "Developed at INRIA starting in 1989, first released in 1991. An interactive theorem prover and dependently typed functional language. Used to formally verify mathematical proofs and critical software (CompCert C compiler). Renamed to Rocq in 2024.",
+      "tags": ["coq", "theorem-prover", "dependent-types", "verification", "inria", "1989"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "functional/idris",
+      "label": "Idris",
+      "type": "concept",
+      "summary": "Created by Edwin Brady, first released in 2007 (Idris 2 in 2020). A general-purpose language with dependent types — like Haskell but types can depend on values. Bridges the gap between theorem provers and practical programming.",
+      "tags": ["idris", "dependent-types", "haskell-like", "practical-verification", "2007"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "systems/crystal",
+      "label": "Crystal",
+      "type": "concept",
+      "summary": "Development began in 2011, first released in 2014. A compiled language with Ruby-inspired syntax and static type inference. Aims to combine Ruby's developer happiness with C-level performance. Compiles via LLVM.",
+      "tags": ["crystal", "ruby-syntax", "compiled", "llvm", "type-inference", "2014"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "modern/v",
+      "label": "V",
+      "type": "concept",
+      "summary": "Created by Alexander Medvednikov in 2019. A simple, fast compiled language inspired by Go, Rust, and Oberon. Emphasizes fast compilation, no undefined behavior, and minimalism. Still maturing but has an active community.",
+      "tags": ["v", "fast-compilation", "minimalist", "2019"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "scripting/awk",
+      "label": "AWK",
+      "type": "concept",
+      "summary": "Created by Alfred Aho, Peter Weinberger, and Brian Kernighan at Bell Labs in 1977. A pattern-action language for text processing and data extraction. Named after its creators' initials. Still widely used in Unix pipelines and one-liners.",
+      "tags": ["awk", "text-processing", "bell-labs", "unix", "1977"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "scripting/visual-basic",
+      "label": "Visual Basic",
+      "type": "concept",
+      "summary": "Created by Microsoft in 1991. Made Windows GUI programming accessible through drag-and-drop visual design. Descended from BASIC. VB6 (1998) was enormously popular for business apps. Evolved into VB.NET (2002) on the .NET platform.",
+      "tags": ["visual-basic", "gui", "rad", "microsoft", "windows", "1991"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "functional/sml",
+      "label": "Standard ML",
+      "type": "concept",
+      "summary": "Standardized in 1990 (revised 1997). The first formally defined programming language with a complete rigorous semantics. Direct descendant of ML, featuring modules with functors. Influenced OCaml, Haskell, and Rust.",
+      "tags": ["sml", "ml", "formal-semantics", "modules", "functors", "1990"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "functional/miranda",
+      "label": "Miranda",
+      "type": "concept",
+      "summary": "Created by David Turner in 1985. A lazy, purely functional language that directly precipitated Haskell's creation. Miranda was proprietary, so the Haskell committee designed an open alternative incorporating Miranda's key innovations.",
+      "tags": ["miranda", "lazy", "pure", "turner", "haskell-ancestor", "1985"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    }
+  ],
+
+  "edges": [
+    { "source": "imperative/fortran", "target": "imperative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/algol", "target": "imperative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/cobol", "target": "imperative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/basic", "target": "imperative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/pascal", "target": "imperative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/ada", "target": "imperative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/abc", "target": "imperative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/modula", "target": "imperative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/algol/algol60", "target": "imperative/algol", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/algol/algol68", "target": "imperative/algol", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "functional/lisp", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/scheme", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/common-lisp", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/clojure", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/racket", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/ml", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/ocaml", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/haskell", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/f-sharp", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/elm", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/erlang", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/elixir", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/scala", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "object-oriented/simula", "target": "object-oriented", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "object-oriented/smalltalk", "target": "object-oriented", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "object-oriented/java", "target": "object-oriented", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "object-oriented/csharp", "target": "object-oriented", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "object-oriented/kotlin", "target": "object-oriented", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "object-oriented/swift", "target": "object-oriented", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "object-oriented/self", "target": "object-oriented", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "scripting/perl", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/python", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/ruby", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/php", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/javascript", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/lua", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/r", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/julia", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "systems/machine-code", "target": "systems", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/assembly", "target": "systems", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/c", "target": "systems", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/cpp", "target": "systems", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/objective-c", "target": "systems", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/d", "target": "systems", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/rust", "target": "systems", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/go", "target": "systems", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/zig", "target": "systems", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "logic-declarative/prolog", "target": "logic-declarative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "logic-declarative/sql", "target": "logic-declarative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "logic-declarative/datalog", "target": "logic-declarative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "logic-declarative/mercury", "target": "logic-declarative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "logic-declarative/s-lang", "target": "logic-declarative", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "markup-data/html", "target": "markup-data", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "markup-data/xml", "target": "markup-data", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "markup-data/json", "target": "markup-data", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "markup-data/yaml", "target": "markup-data", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "markup-data/latex", "target": "markup-data", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "modern/typescript", "target": "modern", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "modern/dart", "target": "modern", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "modern/nim", "target": "modern", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "modern/wasm", "target": "modern", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "scripting/python/cpython", "target": "scripting/python", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/python/micropython", "target": "scripting/python", "relation": "is-part-of", "weight": 0.7 },
+    { "source": "scripting/javascript/ecmascript", "target": "scripting/javascript", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/javascript/nodejs", "target": "scripting/javascript", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "functional/haskell/ghc", "target": "functional/haskell", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/erlang/beam", "target": "functional/erlang", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/cpp/stl", "target": "systems/cpp", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "object-oriented/java/jvm", "target": "object-oriented/java", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "object-oriented/csharp/dotnet", "target": "object-oriented/csharp", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/rust/cargo", "target": "systems/rust", "relation": "is-part-of", "weight": 0.8 },
+
+    { "source": "systems/cpp", "target": "systems/c", "relation": "specializes", "weight": 0.95, "label": "C++ began as 'C with Classes' (1979), adding OOP to C" },
+    { "source": "systems/objective-c", "target": "systems/c", "relation": "specializes", "weight": 0.9, "label": "Objective-C layers Smalltalk message passing on top of C" },
+    { "source": "systems/d", "target": "systems/cpp", "relation": "specializes", "weight": 0.8, "label": "D is a modernized redesign of C++ with cleaner semantics" },
+    { "source": "functional/scheme", "target": "functional/lisp", "relation": "specializes", "weight": 0.9, "label": "Scheme distilled Lisp to its minimal core with lexical scoping" },
+    { "source": "functional/common-lisp", "target": "functional/lisp", "relation": "specializes", "weight": 0.9, "label": "Common Lisp unified fragmented Lisp dialects into one standard" },
+    { "source": "functional/racket", "target": "functional/scheme", "relation": "specializes", "weight": 0.9, "label": "Racket evolved from PLT Scheme into a language-creation platform" },
+    { "source": "functional/ocaml", "target": "functional/ml", "relation": "specializes", "weight": 0.9, "label": "OCaml extended Caml (ML dialect) with objects and modules" },
+    { "source": "functional/f-sharp", "target": "functional/ocaml", "relation": "specializes", "weight": 0.85, "label": "F# originated as a .NET implementation of OCaml's core" },
+    { "source": "modern/typescript", "target": "scripting/javascript", "relation": "specializes", "weight": 0.95, "label": "TypeScript is a strict syntactic superset of JavaScript adding types" },
+    { "source": "functional/clojure", "target": "functional/lisp", "relation": "specializes", "weight": 0.85, "label": "Clojure is a modern Lisp dialect on the JVM emphasizing immutability" },
+    { "source": "functional/elixir", "target": "functional/erlang", "relation": "specializes", "weight": 0.9, "label": "Elixir runs on the BEAM VM with Ruby-inspired syntax" },
+    { "source": "imperative/algol/algol60", "target": "imperative/algol", "relation": "specializes", "weight": 0.95, "label": "ALGOL 60 refined ALGOL 58 with block structure and BNF" },
+    { "source": "imperative/algol/algol68", "target": "imperative/algol", "relation": "specializes", "weight": 0.85, "label": "ALGOL 68 ambitiously extended ALGOL 60 with orthogonal design" },
+    { "source": "logic-declarative/datalog", "target": "logic-declarative/prolog", "relation": "specializes", "weight": 0.8, "label": "Datalog is a syntactic subset of Prolog focused on databases" },
+    { "source": "object-oriented/kotlin", "target": "object-oriented/java", "relation": "specializes", "weight": 0.85, "label": "Kotlin was designed as a better Java with full JVM interop" },
+    { "source": "systems/zig", "target": "systems/c", "relation": "specializes", "weight": 0.8, "label": "Zig aims to be a better C with comptime and no hidden control flow" },
+    { "source": "object-oriented/csharp", "target": "object-oriented/java", "relation": "specializes", "weight": 0.75, "label": "C# was Microsoft's answer to Java, built on similar concepts" },
+
+    { "source": "systems/cpp", "target": "object-oriented/simula", "relation": "inspired-by", "weight": 0.85, "label": "Stroustrup created C++ after using Simula for his PhD thesis" },
+    { "source": "systems/objective-c", "target": "object-oriented/smalltalk", "relation": "inspired-by", "weight": 0.9, "label": "Cox added Smalltalk message passing to C after discovering it at ITT" },
+    { "source": "object-oriented/smalltalk", "target": "object-oriented/simula", "relation": "inspired-by", "weight": 0.8, "label": "Simula's objects inspired Kay's vision of message-passing OOP" },
+    { "source": "object-oriented/java", "target": "systems/cpp", "relation": "inspired-by", "weight": 0.8, "label": "Java adopted C++ syntax while removing pointers and manual memory" },
+    { "source": "object-oriented/java", "target": "object-oriented/smalltalk", "relation": "inspired-by", "weight": 0.5, "label": "Smalltalk influenced Java's GC, bytecode VM, and reflection" },
+    { "source": "object-oriented/csharp", "target": "systems/cpp", "relation": "inspired-by", "weight": 0.7, "label": "C# borrowed C++ syntax via Hejlsberg's C++ background" },
+    { "source": "object-oriented/csharp", "target": "imperative/pascal", "relation": "inspired-by", "weight": 0.5, "label": "Hejlsberg designed Turbo Pascal and Delphi before creating C#" },
+    { "source": "object-oriented/kotlin", "target": "functional/scala", "relation": "inspired-by", "weight": 0.7, "label": "Kotlin adopted Scala's design goals but prioritized compilation speed" },
+    { "source": "object-oriented/kotlin", "target": "object-oriented/csharp", "relation": "inspired-by", "weight": 0.5, "label": "C# influenced Kotlin's properties, extension functions, and null safety" },
+    { "source": "object-oriented/swift", "target": "systems/objective-c", "relation": "inspired-by", "weight": 0.8, "label": "Swift was created to modernize and eventually replace Objective-C" },
+    { "source": "object-oriented/swift", "target": "systems/rust", "relation": "inspired-by", "weight": 0.6, "label": "Rust influenced Swift's optionals and value semantics" },
+    { "source": "object-oriented/swift", "target": "functional/haskell", "relation": "inspired-by", "weight": 0.5, "label": "Haskell influenced Swift's protocol-oriented design and type system" },
+    { "source": "object-oriented/swift", "target": "scripting/ruby", "relation": "inspired-by", "weight": 0.4, "label": "Ruby influenced Swift's readable and expressive syntax" },
+    { "source": "object-oriented/swift", "target": "scripting/python", "relation": "inspired-by", "weight": 0.4, "label": "Python influenced Swift's clean syntax and readability goals" },
+    { "source": "scripting/python", "target": "imperative/abc", "relation": "inspired-by", "weight": 0.9, "label": "Van Rossum worked on ABC before creating Python as its successor" },
+    { "source": "scripting/python", "target": "systems/c", "relation": "inspired-by", "weight": 0.6, "label": "C influenced Python's syntax and CPython is implemented in C" },
+    { "source": "scripting/python", "target": "imperative/modula", "relation": "inspired-by", "weight": 0.5, "label": "Modula-3 influenced Python's module system and exception handling" },
+    { "source": "scripting/python", "target": "functional/lisp", "relation": "inspired-by", "weight": 0.4, "label": "Lisp influenced Python's lambda, map, filter, and dynamic nature" },
+    { "source": "scripting/ruby", "target": "scripting/perl", "relation": "inspired-by", "weight": 0.8, "label": "Perl's text processing and regex heavily influenced Ruby" },
+    { "source": "scripting/ruby", "target": "object-oriented/smalltalk", "relation": "inspired-by", "weight": 0.85, "label": "Smalltalk's 'everything is an object' is Ruby's core philosophy" },
+    { "source": "scripting/ruby", "target": "functional/lisp", "relation": "inspired-by", "weight": 0.5, "label": "Lisp influenced Ruby's blocks, closures, and metaprogramming" },
+    { "source": "scripting/ruby", "target": "imperative/ada", "relation": "inspired-by", "weight": 0.3, "label": "Matz cited Ada as one of Ruby's influences" },
+    { "source": "scripting/javascript", "target": "functional/scheme", "relation": "inspired-by", "weight": 0.8, "label": "Eich was hired to put Scheme in the browser; JS got first-class functions" },
+    { "source": "scripting/javascript", "target": "object-oriented/self", "relation": "inspired-by", "weight": 0.8, "label": "Self's prototypal OOP became JavaScript's object model" },
+    { "source": "scripting/javascript", "target": "object-oriented/java", "relation": "inspired-by", "weight": 0.5, "label": "Java influenced JS syntax (curly braces, keywords) by Netscape mandate" },
+    { "source": "scripting/php", "target": "systems/c", "relation": "inspired-by", "weight": 0.6, "label": "C influenced PHP's syntax and string handling" },
+    { "source": "scripting/php", "target": "scripting/perl", "relation": "inspired-by", "weight": 0.7, "label": "Perl influenced PHP's regex, variable sigils, and web scripting" },
+    { "source": "scripting/julia", "target": "scripting/python", "relation": "inspired-by", "weight": 0.6, "label": "Julia aimed for Python's usability with C's performance" },
+    { "source": "scripting/julia", "target": "scripting/r", "relation": "inspired-by", "weight": 0.5, "label": "R influenced Julia's statistical computing focus" },
+    { "source": "scripting/julia", "target": "functional/lisp", "relation": "inspired-by", "weight": 0.6, "label": "Lisp influenced Julia's metaprogramming and homoiconicity" },
+    { "source": "scripting/julia", "target": "scripting/lua", "relation": "inspired-by", "weight": 0.3, "label": "Lua influenced Julia's lightweight design and embedding philosophy" },
+    { "source": "scripting/r", "target": "logic-declarative/s-lang", "relation": "inspired-by", "weight": 0.95, "label": "R is an open-source reimplementation of the S language" },
+    { "source": "systems/rust", "target": "functional/ocaml", "relation": "inspired-by", "weight": 0.7, "label": "OCaml influenced Rust's algebraic data types and pattern matching" },
+    { "source": "systems/rust", "target": "systems/cpp", "relation": "inspired-by", "weight": 0.7, "label": "C++ influenced Rust's RAII, move semantics, and zero-cost abstractions" },
+    { "source": "systems/rust", "target": "functional/haskell", "relation": "inspired-by", "weight": 0.6, "label": "Haskell influenced Rust's traits (type classes) and algebraic types" },
+    { "source": "systems/rust", "target": "functional/erlang", "relation": "inspired-by", "weight": 0.4, "label": "Erlang influenced early Rust's concurrency and failure model" },
+    { "source": "systems/go", "target": "systems/c", "relation": "inspired-by", "weight": 0.8, "label": "Go adopted C's syntax and low-level feel with GC and concurrency" },
+    { "source": "systems/go", "target": "imperative/pascal", "relation": "inspired-by", "weight": 0.4, "label": "Oberon (Pascal family) influenced Go's package and declaration syntax" },
+    { "source": "systems/zig", "target": "systems/cpp", "relation": "inspired-by", "weight": 0.4, "label": "C++ influenced Zig's compile-time computation concepts" },
+    { "source": "functional/scala", "target": "object-oriented/java", "relation": "inspired-by", "weight": 0.8, "label": "Scala runs on JVM and inherits Java's object model" },
+    { "source": "functional/scala", "target": "functional/haskell", "relation": "inspired-by", "weight": 0.7, "label": "Haskell influenced Scala's type system and functional features" },
+    { "source": "functional/scala", "target": "object-oriented/smalltalk", "relation": "inspired-by", "weight": 0.4, "label": "Smalltalk influenced Scala's pure object model" },
+    { "source": "functional/scala", "target": "functional/ml", "relation": "inspired-by", "weight": 0.6, "label": "ML influenced Scala's pattern matching and type inference" },
+    { "source": "functional/clojure", "target": "functional/haskell", "relation": "inspired-by", "weight": 0.5, "label": "Haskell influenced Clojure's immutable data and sequence abstractions" },
+    { "source": "functional/clojure", "target": "functional/erlang", "relation": "inspired-by", "weight": 0.4, "label": "Erlang influenced Clojure's concurrency model and actor concepts" },
+    { "source": "functional/clojure", "target": "object-oriented/java", "relation": "inspired-by", "weight": 0.6, "label": "Java/JVM host influenced Clojure's interop design" },
+    { "source": "functional/elixir", "target": "scripting/ruby", "relation": "inspired-by", "weight": 0.7, "label": "Ruby inspired Elixir's developer-friendly syntax and tooling" },
+    { "source": "functional/elixir", "target": "functional/clojure", "relation": "inspired-by", "weight": 0.4, "label": "Clojure influenced Elixir's immutability and macro system" },
+    { "source": "functional/elm", "target": "functional/haskell", "relation": "inspired-by", "weight": 0.9, "label": "Elm adopted Haskell's syntax, purity, and type system" },
+    { "source": "functional/elm", "target": "functional/ocaml", "relation": "inspired-by", "weight": 0.4, "label": "OCaml influenced Elm's approach to practical functional programming" },
+    { "source": "functional/f-sharp", "target": "functional/haskell", "relation": "inspired-by", "weight": 0.5, "label": "Haskell influenced F#'s computation expressions and type features" },
+    { "source": "functional/f-sharp", "target": "scripting/python", "relation": "inspired-by", "weight": 0.3, "label": "Python influenced F#'s whitespace-significant syntax option" },
+    { "source": "functional/haskell", "target": "functional/ml", "relation": "inspired-by", "weight": 0.8, "label": "ML pioneered the type inference and ADTs that Haskell refined" },
+    { "source": "functional/haskell", "target": "functional/lisp", "relation": "inspired-by", "weight": 0.4, "label": "Lisp's higher-order functions influenced Haskell's functional core" },
+    { "source": "modern/typescript", "target": "object-oriented/csharp", "relation": "inspired-by", "weight": 0.6, "label": "Hejlsberg designed both C# and TypeScript; shared type system ideas" },
+    { "source": "modern/dart", "target": "object-oriented/java", "relation": "inspired-by", "weight": 0.6, "label": "Java influenced Dart's class model and type system" },
+    { "source": "modern/dart", "target": "scripting/javascript", "relation": "inspired-by", "weight": 0.7, "label": "Dart was originally designed to replace JavaScript in browsers" },
+    { "source": "modern/dart", "target": "object-oriented/smalltalk", "relation": "inspired-by", "weight": 0.4, "label": "Smalltalk influenced Dart's cascade syntax and mixins" },
+    { "source": "modern/nim", "target": "scripting/python", "relation": "inspired-by", "weight": 0.7, "label": "Python inspired Nim's indentation-based, readable syntax" },
+    { "source": "modern/nim", "target": "imperative/ada", "relation": "inspired-by", "weight": 0.5, "label": "Ada influenced Nim's static type system and safety features" },
+    { "source": "modern/nim", "target": "functional/lisp", "relation": "inspired-by", "weight": 0.5, "label": "Lisp influenced Nim's powerful macro system" },
+    { "source": "modern/nim", "target": "imperative/modula", "relation": "inspired-by", "weight": 0.4, "label": "Modula-3 influenced Nim's module system and compilation model" },
+    { "source": "systems/d", "target": "object-oriented/java", "relation": "inspired-by", "weight": 0.5, "label": "Java influenced D's garbage collection and module system" },
+    { "source": "systems/d", "target": "scripting/python", "relation": "inspired-by", "weight": 0.3, "label": "Python influenced D's readability and dynamic array features" },
+    { "source": "logic-declarative/mercury", "target": "logic-declarative/prolog", "relation": "inspired-by", "weight": 0.9, "label": "Mercury is based on Prolog's logic programming model" },
+    { "source": "logic-declarative/mercury", "target": "functional/haskell", "relation": "inspired-by", "weight": 0.7, "label": "Haskell influenced Mercury's type system and purity" },
+    { "source": "imperative/pascal", "target": "imperative/algol", "relation": "inspired-by", "weight": 0.9, "label": "Wirth designed Pascal as a practical evolution of ALGOL" },
+    { "source": "imperative/ada", "target": "imperative/pascal", "relation": "inspired-by", "weight": 0.7, "label": "Pascal's structured programming influenced Ada's design" },
+    { "source": "imperative/ada", "target": "imperative/algol/algol68", "relation": "inspired-by", "weight": 0.5, "label": "ALGOL 68's type system influenced Ada's strong typing" },
+    { "source": "imperative/basic", "target": "imperative/fortran", "relation": "inspired-by", "weight": 0.6, "label": "Fortran's computational model influenced BASIC's design" },
+    { "source": "imperative/basic", "target": "imperative/algol", "relation": "inspired-by", "weight": 0.4, "label": "ALGOL influenced BASIC's structured elements" },
+    { "source": "imperative/modula", "target": "imperative/pascal", "relation": "inspired-by", "weight": 0.9, "label": "Wirth designed Modula as Pascal's successor with modules" },
+    { "source": "systems/c", "target": "imperative/algol/algol68", "relation": "inspired-by", "weight": 0.5, "label": "ALGOL 68's operators and struct types influenced C" },
+    { "source": "systems/c", "target": "systems/assembly", "relation": "inspired-by", "weight": 0.6, "label": "C was designed as a step above assembly for Unix portability" },
+    { "source": "systems/assembly", "target": "systems/machine-code", "relation": "specializes", "weight": 0.95, "label": "Assembly is human-readable mnemonics for machine code instructions" },
+    { "source": "object-oriented/simula", "target": "imperative/algol", "relation": "inspired-by", "weight": 0.9, "label": "Simula 67 was built as a superset of ALGOL 60" },
+    { "source": "object-oriented/self", "target": "object-oriented/smalltalk", "relation": "inspired-by", "weight": 0.9, "label": "Self simplified Smalltalk by removing classes, keeping only prototypes" },
+    { "source": "markup-data/xml", "target": "markup-data/html", "relation": "relates-to", "weight": 0.7, "label": "XML and HTML both descend from SGML; XHTML attempted to merge them" },
+    { "source": "markup-data/json", "target": "scripting/javascript", "relation": "relates-to", "weight": 0.8, "label": "JSON syntax is derived from JavaScript object literal notation" },
+    { "source": "markup-data/yaml", "target": "markup-data/json", "relation": "relates-to", "weight": 0.6, "label": "YAML is a superset of JSON with human-friendlier syntax" },
+
+    { "source": "imperative/algol", "target": "imperative", "relation": "causes", "weight": 0.95, "label": "ALGOL's block structure caused the structured programming revolution" },
+    { "source": "object-oriented/simula", "target": "object-oriented", "relation": "causes", "weight": 0.95, "label": "Simula's classes and inheritance caused the OOP paradigm to emerge" },
+    { "source": "object-oriented/smalltalk", "target": "object-oriented", "relation": "causes", "weight": 0.9, "label": "Smalltalk popularized OOP and proved its viability for real systems" },
+    { "source": "functional/lisp", "target": "functional", "relation": "causes", "weight": 0.9, "label": "Lisp proved functional programming practical and pioneered GC" },
+    { "source": "functional/ml", "target": "functional", "relation": "causes", "weight": 0.8, "label": "ML proved static types and type inference could coexist" },
+    { "source": "systems/c", "target": "systems", "relation": "causes", "weight": 0.9, "label": "C proved portable systems programming was possible (Unix rewrite)" },
+    { "source": "scripting/javascript", "target": "modern/wasm", "relation": "causes", "weight": 0.7, "label": "JavaScript's performance limits on the web drove the creation of WebAssembly" },
+    { "source": "object-oriented/java/jvm", "target": "functional/scala", "relation": "causes", "weight": 0.6, "label": "The JVM platform enabled Scala, Kotlin, and Clojure to exist" },
+    { "source": "object-oriented/java/jvm", "target": "object-oriented/kotlin", "relation": "causes", "weight": 0.7, "label": "The JVM platform and Java's shortcomings drove Kotlin's creation" },
+    { "source": "object-oriented/java/jvm", "target": "functional/clojure", "relation": "causes", "weight": 0.6, "label": "The JVM platform enabled Clojure to leverage Java's ecosystem" },
+
+    { "source": "functional", "target": "imperative", "relation": "contradicts", "weight": 0.7, "label": "Functional purity vs imperative mutation: fundamentally different models of computation" },
+    { "source": "functional/haskell", "target": "scripting/python", "relation": "contradicts", "weight": 0.6, "label": "Static purity vs dynamic pragmatism: opposing philosophies of type safety and side effects" },
+    { "source": "systems/rust", "target": "systems/c", "relation": "contradicts", "weight": 0.5, "label": "Rust's ownership model challenges C's assumption that manual memory management is sufficient" },
+    { "source": "object-oriented/smalltalk", "target": "systems/c", "relation": "contradicts", "weight": 0.5, "label": "Smalltalk's 'everything is a message' vs C's 'everything is memory'" },
+    { "source": "logic-declarative/prolog", "target": "imperative", "relation": "contradicts", "weight": 0.7, "label": "Logic programming specifies what; imperative programming specifies how" },
+
+    { "source": "object-oriented/java", "target": "object-oriented/csharp", "relation": "relates-to", "weight": 0.8, "label": "Java and C# evolved in parallel, frequently adopting each other's features" },
+    { "source": "scripting/python", "target": "scripting/ruby", "relation": "relates-to", "weight": 0.6, "label": "Python and Ruby compete in the same niche with different philosophies" },
+    { "source": "systems/rust", "target": "systems/go", "relation": "relates-to", "weight": 0.6, "label": "Rust and Go are both modern systems languages with different trade-offs (safety vs simplicity)" },
+    { "source": "functional/scala", "target": "object-oriented/kotlin", "relation": "relates-to", "weight": 0.7, "label": "Scala and Kotlin compete as better-Java JVM languages" },
+    { "source": "scripting/javascript", "target": "modern/typescript", "relation": "relates-to", "weight": 0.95, "label": "TypeScript and JavaScript share the same ecosystem and runtime" },
+    { "source": "functional/erlang", "target": "functional/elixir", "relation": "relates-to", "weight": 0.9, "label": "Erlang and Elixir share the BEAM VM and OTP platform" },
+    { "source": "object-oriented/csharp", "target": "functional/f-sharp", "relation": "relates-to", "weight": 0.7, "label": "C# and F# share the .NET platform and interoperate seamlessly" },
+    { "source": "systems/c", "target": "systems/cpp", "relation": "relates-to", "weight": 0.9, "label": "C and C++ share headers, linking, and most C code compiles as C++" },
+    { "source": "scripting/perl", "target": "scripting/python", "relation": "relates-to", "weight": 0.5, "label": "Perl and Python competed as the dominant scripting languages of the 1990s-2000s" },
+    { "source": "functional/haskell", "target": "functional/ml", "relation": "relates-to", "weight": 0.7, "label": "Haskell and ML are the two main branches of statically typed functional programming" },
+    { "source": "systems/rust", "target": "modern/wasm", "relation": "relates-to", "weight": 0.6, "label": "Rust is one of the primary languages targeting WebAssembly compilation" },
+    { "source": "systems/cpp", "target": "modern/wasm", "relation": "relates-to", "weight": 0.5, "label": "C++ was the first language to target WebAssembly via Emscripten" },
+    { "source": "object-oriented/swift", "target": "object-oriented/kotlin", "relation": "relates-to", "weight": 0.5, "label": "Swift and Kotlin emerged around the same time with remarkably similar syntax" },
+    { "source": "scripting/lua", "target": "systems/c", "relation": "relates-to", "weight": 0.5, "label": "Lua is implemented in pure C and designed for C embedding" },
+    { "source": "modern/dart", "target": "modern/typescript", "relation": "relates-to", "weight": 0.5, "label": "Dart and TypeScript both emerged in 2011-2012 as typed alternatives for web development" },
+
+    { "source": "scripting/groovy", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/powershell", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/bash", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/awk", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/visual-basic", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "scripting/matlab", "target": "scripting", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/forth", "target": "imperative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "imperative/delphi", "target": "imperative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/purescript", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/gleam", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/coq", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/idris", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/sml", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "functional/miranda", "target": "functional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "systems/crystal", "target": "systems", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "modern/v", "target": "modern", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "scripting/groovy", "target": "object-oriented/java", "relation": "inspired-by", "weight": 0.8, "label": "Groovy runs on the JVM with Java interop as a primary design goal" },
+    { "source": "scripting/groovy", "target": "scripting/python", "relation": "inspired-by", "weight": 0.5, "label": "Python influenced Groovy's dynamic and concise syntax" },
+    { "source": "scripting/groovy", "target": "scripting/ruby", "relation": "inspired-by", "weight": 0.5, "label": "Ruby influenced Groovy's closures and metaprogramming" },
+    { "source": "scripting/powershell", "target": "scripting/bash", "relation": "inspired-by", "weight": 0.5, "label": "Unix shells inspired PowerShell's pipeline concept" },
+    { "source": "scripting/powershell", "target": "object-oriented/csharp", "relation": "inspired-by", "weight": 0.6, "label": "C# and .NET heavily influenced PowerShell's object model" },
+    { "source": "scripting/bash", "target": "systems/c", "relation": "inspired-by", "weight": 0.3, "label": "C influenced Bourne shell syntax (curly braces, semicolons)" },
+    { "source": "scripting/awk", "target": "systems/c", "relation": "inspired-by", "weight": 0.6, "label": "C influenced AWK's syntax; Kernighan co-created both" },
+    { "source": "scripting/visual-basic", "target": "imperative/basic", "relation": "inspired-by", "weight": 0.9, "label": "Visual Basic descended directly from BASIC with a visual IDE" },
+    { "source": "scripting/matlab", "target": "imperative/fortran", "relation": "inspired-by", "weight": 0.7, "label": "MATLAB was originally a Fortran wrapper for LINPACK/EISPACK" },
+    { "source": "imperative/delphi", "target": "imperative/pascal", "relation": "specializes", "weight": 0.9, "label": "Delphi is Object Pascal with a visual RAD IDE" },
+    { "source": "functional/purescript", "target": "functional/haskell", "relation": "inspired-by", "weight": 0.9, "label": "PureScript adopted Haskell's type system and purity for the JS target" },
+    { "source": "functional/gleam", "target": "functional/erlang", "relation": "inspired-by", "weight": 0.8, "label": "Gleam runs on the BEAM VM and inherits Erlang's concurrency" },
+    { "source": "functional/gleam", "target": "functional/elm", "relation": "inspired-by", "weight": 0.5, "label": "Elm influenced Gleam's friendly error messages and developer experience" },
+    { "source": "functional/gleam", "target": "systems/rust", "relation": "inspired-by", "weight": 0.5, "label": "Rust influenced Gleam's type system and Result types" },
+    { "source": "functional/coq", "target": "functional/ml", "relation": "inspired-by", "weight": 0.7, "label": "ML's type system influenced Coq's Calculus of Inductive Constructions" },
+    { "source": "functional/idris", "target": "functional/haskell", "relation": "inspired-by", "weight": 0.9, "label": "Idris extended Haskell's approach with full dependent types" },
+    { "source": "functional/idris", "target": "functional/coq", "relation": "inspired-by", "weight": 0.5, "label": "Coq's dependent types influenced Idris's type theory" },
+    { "source": "functional/sml", "target": "functional/ml", "relation": "specializes", "weight": 0.95, "label": "Standard ML formalized and standardized ML's design" },
+    { "source": "functional/miranda", "target": "functional/ml", "relation": "inspired-by", "weight": 0.7, "label": "ML influenced Miranda's type system and functional approach" },
+    { "source": "functional/haskell", "target": "functional/miranda", "relation": "inspired-by", "weight": 0.85, "label": "Miranda directly precipitated Haskell — the committee created an open alternative" },
+    { "source": "systems/crystal", "target": "scripting/ruby", "relation": "inspired-by", "weight": 0.9, "label": "Crystal adopted Ruby's syntax for a compiled, statically typed language" },
+    { "source": "systems/crystal", "target": "systems/c", "relation": "inspired-by", "weight": 0.4, "label": "C-level performance was Crystal's target via LLVM compilation" },
+    { "source": "modern/v", "target": "systems/go", "relation": "inspired-by", "weight": 0.7, "label": "Go heavily influenced V's simplicity and fast compilation goals" },
+    { "source": "modern/v", "target": "systems/rust", "relation": "inspired-by", "weight": 0.5, "label": "Rust influenced V's memory safety and no-undefined-behavior design" },
+    { "source": "scripting/perl", "target": "scripting/awk", "relation": "inspired-by", "weight": 0.6, "label": "AWK's pattern-action model influenced Perl's text processing" },
+    { "source": "scripting/perl", "target": "systems/c", "relation": "inspired-by", "weight": 0.5, "label": "C influenced Perl's syntax (braces, semicolons, printf)" },
+    { "source": "scripting/julia", "target": "scripting/matlab", "relation": "inspired-by", "weight": 0.7, "label": "MATLAB's matrix-first design influenced Julia's numerical computing focus" },
+    { "source": "functional/gleam", "target": "functional/erlang/beam", "relation": "relates-to", "weight": 0.8, "label": "Gleam, Erlang, and Elixir share the BEAM VM ecosystem" },
+    { "source": "scripting/groovy", "target": "object-oriented/java/jvm", "relation": "relates-to", "weight": 0.7, "label": "Groovy runs on the JVM alongside Java, Scala, Kotlin, and Clojure" },
+    { "source": "functional/coq", "target": "functional/idris", "relation": "relates-to", "weight": 0.6, "label": "Coq and Idris are the two most prominent dependently typed languages" },
+    { "source": "functional/sml", "target": "functional/ocaml", "relation": "relates-to", "weight": 0.7, "label": "SML and OCaml are the two main ML dialects with different trade-offs" }
+  ]
+}

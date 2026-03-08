@@ -1,0 +1,777 @@
+{
+  "version": "0.1.0",
+  "lastUpdated": "2026-03-08",
+  "nodes": [
+    {
+      "id": "classical",
+      "label": "Classical Economics",
+      "type": "domain",
+      "summary": "The founding school of modern economics (1776-1870). Adam Smith, Ricardo, and Mill laid the groundwork for free markets, trade theory, and the labor theory of value.",
+      "tags": ["classical", "free-market", "political-economy"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "keynesian",
+      "label": "Keynesian Economics",
+      "type": "domain",
+      "summary": "Born from the Great Depression (1936). Keynes argued that aggregate demand drives the economy and government intervention is essential to smooth business cycles.",
+      "tags": ["keynesian", "macroeconomics", "demand", "fiscal-policy"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "austrian",
+      "label": "Austrian Economics",
+      "type": "domain",
+      "summary": "Founded by Carl Menger in 1871. Emphasizes subjective value, spontaneous order, entrepreneurship, and skepticism of central planning and state intervention.",
+      "tags": ["austrian", "subjectivism", "free-market", "individualism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "marxian",
+      "label": "Marxian Economics",
+      "type": "domain",
+      "summary": "Rooted in Karl Marx's Das Kapital (1867). Analyzes capitalism through surplus value extraction, class struggle, and the contradictions that drive systemic crises.",
+      "tags": ["marxian", "capitalism", "class", "exploitation"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "institutional",
+      "label": "Institutional Economics",
+      "type": "domain",
+      "summary": "Veblen, Commons, and later North and Coase. Institutions — rules, norms, organizations — shape economic behavior more than abstract models suggest.",
+      "tags": ["institutional", "institutions", "norms", "transaction-costs"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "neoclassical",
+      "label": "Neoclassical Economics",
+      "type": "domain",
+      "summary": "The dominant mainstream paradigm since the 1870s marginalist revolution. Rational agents, equilibrium, marginal analysis, and mathematical formalization define its approach.",
+      "tags": ["neoclassical", "marginalism", "equilibrium", "mainstream"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "heterodox",
+      "label": "Heterodox Economics",
+      "type": "domain",
+      "summary": "Schools that challenge neoclassical orthodoxy — feminist, ecological, MMT, complexity economics. United by skepticism of perfect rationality and market equilibrium.",
+      "tags": ["heterodox", "alternative", "pluralism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Economics",
+      "type": "domain",
+      "summary": "Late 20th and 21st century developments — behavioral economics, game theory, information economics, and mechanism design have reshaped the discipline.",
+      "tags": ["modern", "behavioral", "game-theory", "information"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "classical/adam-smith",
+      "label": "Adam Smith",
+      "type": "concept",
+      "summary": "Father of modern economics. An Inquiry into the Nature and Causes of the Wealth of Nations (1776) introduced the invisible hand, division of labor, and free trade as engines of prosperity.",
+      "tags": ["adam-smith", "invisible-hand", "division-of-labor", "1776"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "classical/david-ricardo",
+      "label": "David Ricardo",
+      "type": "concept",
+      "summary": "Developed the theory of comparative advantage (1817) and the labor theory of value. His Principles of Political Economy shaped trade theory for two centuries.",
+      "tags": ["ricardo", "comparative-advantage", "trade", "labor-theory"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "classical/malthus",
+      "label": "Thomas Malthus",
+      "type": "concept",
+      "summary": "An Essay on the Principle of Population (1798) warned that population grows geometrically while food grows arithmetically. Influenced Darwin and sparked debates on limits to growth.",
+      "tags": ["malthus", "population", "limits-to-growth", "1798"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "classical/say",
+      "label": "Jean-Baptiste Say",
+      "type": "concept",
+      "summary": "Say's Law — supply creates its own demand — was the classical orthodoxy that Keynes later demolished. Say's Treatise on Political Economy (1803) popularized Smith in France.",
+      "tags": ["say", "says-law", "supply", "classical-orthodoxy"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "classical/js-mill",
+      "label": "John Stuart Mill",
+      "type": "concept",
+      "summary": "Last great classical economist. Principles of Political Economy (1848) synthesized Ricardo and Smith, added utilitarianism, and defended individual liberty alongside market economics.",
+      "tags": ["mill", "utilitarianism", "liberty", "synthesis"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "classical/mercantilism",
+      "label": "Mercantilism",
+      "type": "topic",
+      "summary": "The dominant economic doctrine before Smith (16th-18th century). Wealth equals gold; trade is zero-sum; export more, import less. Smith's Wealth of Nations was a direct rebuttal.",
+      "tags": ["mercantilism", "protectionism", "gold", "pre-classical"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "classical/physiocrats",
+      "label": "Physiocrats",
+      "type": "topic",
+      "summary": "French 18th-century school led by Quesnay. First to model the economy as a circular flow. Argued land is the sole source of wealth — a precursor to classical economics.",
+      "tags": ["physiocrats", "quesnay", "circular-flow", "agriculture"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "classical/free-trade",
+      "label": "Free Trade Doctrine",
+      "type": "concept",
+      "summary": "The classical argument that removing tariffs and trade barriers benefits all nations through specialization and comparative advantage. From Smith through Ricardo to the repeal of the Corn Laws (1846).",
+      "tags": ["free-trade", "tariffs", "specialization", "corn-laws"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "classical/labor-theory-of-value",
+      "label": "Labor Theory of Value",
+      "type": "concept",
+      "summary": "The value of a commodity is determined by the socially necessary labor required to produce it. Shared by Smith, Ricardo, and Marx — later replaced by marginalist subjective value theory.",
+      "tags": ["labor-theory", "value", "production", "classical"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "classical/comparative-advantage",
+      "label": "Comparative Advantage",
+      "type": "concept",
+      "summary": "Ricardo's key insight (1817): even if one country is better at producing everything, both benefit from trade if each specializes in what it produces at lower relative cost.",
+      "tags": ["comparative-advantage", "trade", "specialization", "ricardo"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "neoclassical/marginalism",
+      "label": "Marginalist Revolution",
+      "type": "topic",
+      "summary": "The 1870s revolution that replaced labor-based value with subjective marginal utility. Jevons, Menger, and Walras independently published in 1871-1874, founding neoclassical economics.",
+      "tags": ["marginalism", "marginal-utility", "1870s", "revolution"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "neoclassical/marshall",
+      "label": "Alfred Marshall",
+      "type": "concept",
+      "summary": "Principles of Economics (1890) synthesized classical and marginalist thought. Introduced supply-and-demand diagrams, partial equilibrium, consumer surplus, and elasticity.",
+      "tags": ["marshall", "supply-demand", "partial-equilibrium", "elasticity"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "neoclassical/walras",
+      "label": "Leon Walras",
+      "type": "concept",
+      "summary": "Elements of Pure Economics (1874) formalized general equilibrium — all markets clearing simultaneously through a system of equations. The mathematical foundation of neoclassical theory.",
+      "tags": ["walras", "general-equilibrium", "mathematical-economics", "1874"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "neoclassical/pareto",
+      "label": "Vilfredo Pareto",
+      "type": "concept",
+      "summary": "Introduced Pareto optimality — a state where no one can be made better off without making someone worse off. Also discovered the 80/20 power-law distribution of wealth.",
+      "tags": ["pareto", "pareto-optimality", "welfare", "power-law"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "neoclassical/general-equilibrium",
+      "label": "General Equilibrium Theory",
+      "type": "concept",
+      "summary": "Walras's vision formalized by Arrow and Debreu (1954): all markets reach simultaneous equilibrium. Mathematically elegant but criticized for unrealistic assumptions about perfect information and rationality.",
+      "tags": ["general-equilibrium", "arrow-debreu", "markets", "formalism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "neoclassical/micro",
+      "label": "Neoclassical Microeconomics",
+      "type": "topic",
+      "summary": "The theory of rational individual choice: consumers maximize utility, firms maximize profit, markets clear at equilibrium prices. The core of mainstream economics textbooks.",
+      "tags": ["microeconomics", "rational-choice", "utility-maximization", "profit"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "neoclassical/welfare-economics",
+      "label": "Welfare Economics",
+      "type": "concept",
+      "summary": "The study of how to evaluate social well-being. Pareto efficiency, the two welfare theorems, and cost-benefit analysis form its core — but questions of equity remain contentious.",
+      "tags": ["welfare", "pareto-efficiency", "social-welfare", "equity"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "neoclassical/monetarism",
+      "label": "Monetarism",
+      "type": "topic",
+      "summary": "Milton Friedman's counter-revolution (1960s-1980s). Inflation is always and everywhere a monetary phenomenon. Central banks should target money supply growth, not fine-tune with fiscal policy.",
+      "tags": ["monetarism", "friedman", "money-supply", "inflation"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "neoclassical/monetarism/friedman",
+      "label": "Milton Friedman",
+      "type": "concept",
+      "summary": "Nobel laureate (1976). A Monetary History of the United States (1963) blamed the Great Depression on Fed policy. Champion of free markets, school choice, and the natural rate of unemployment.",
+      "tags": ["friedman", "monetarism", "nobel", "free-market", "chicago"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "neoclassical/chicago-school",
+      "label": "Chicago School",
+      "type": "topic",
+      "summary": "The University of Chicago tradition: Friedman, Stigler, Becker, Lucas. Known for price theory, rational expectations, efficient markets, and skepticism of government intervention.",
+      "tags": ["chicago-school", "price-theory", "rational-expectations", "efficient-markets"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "keynesian/keynes",
+      "label": "John Maynard Keynes",
+      "type": "concept",
+      "summary": "The General Theory of Employment, Interest and Money (1936) revolutionized economics. Argued that markets do not self-correct, aggregate demand drives output, and government spending can cure recessions.",
+      "tags": ["keynes", "general-theory", "1936", "aggregate-demand", "revolution"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "keynesian/is-lm",
+      "label": "IS-LM Model",
+      "type": "concept",
+      "summary": "John Hicks's 1937 formalization of Keynes — two curves showing equilibrium in goods (IS) and money (LM) markets simultaneously. Dominated macroeconomic teaching for decades.",
+      "tags": ["is-lm", "hicks", "macro-model", "1937"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "keynesian/multiplier",
+      "label": "Keynesian Multiplier",
+      "type": "concept",
+      "summary": "Government spending has a multiplied effect on national income. One dollar of public investment generates more than one dollar of GDP through successive rounds of spending.",
+      "tags": ["multiplier", "fiscal-stimulus", "spending", "gdp"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "keynesian/new-keynesian",
+      "label": "New Keynesian Economics",
+      "type": "topic",
+      "summary": "1980s-present synthesis of Keynesian insights with neoclassical microfoundations. Sticky prices, menu costs, and imperfect competition explain why markets fail to clear.",
+      "tags": ["new-keynesian", "sticky-prices", "microfoundations", "synthesis"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "keynesian/new-keynesian/mankiw",
+      "label": "N. Gregory Mankiw",
+      "type": "concept",
+      "summary": "Leading New Keynesian. His textbook Principles of Economics is the most widely used in the world. Showed that small menu costs can cause large macroeconomic fluctuations.",
+      "tags": ["mankiw", "new-keynesian", "menu-costs", "textbook"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "keynesian/post-keynesian",
+      "label": "Post-Keynesian Economics",
+      "type": "topic",
+      "summary": "Heterodox Keynesians who reject the neoclassical synthesis. Emphasize fundamental uncertainty, endogenous money, financial instability, and the role of power in economic outcomes.",
+      "tags": ["post-keynesian", "uncertainty", "endogenous-money", "heterodox"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "keynesian/post-keynesian/minsky",
+      "label": "Hyman Minsky",
+      "type": "concept",
+      "summary": "Financial Instability Hypothesis: stability breeds instability. During booms, hedge finance gives way to speculative then Ponzi finance until the 'Minsky moment' collapse. Vindicated by the 2008 crisis.",
+      "tags": ["minsky", "financial-instability", "minsky-moment", "2008-crisis"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "keynesian/fiscal-policy",
+      "label": "Fiscal Policy",
+      "type": "concept",
+      "summary": "The Keynesian prescription: governments should use taxation and spending to manage aggregate demand — deficit spending in recessions, surpluses in booms. Counter-cyclical stabilization.",
+      "tags": ["fiscal-policy", "government-spending", "counter-cyclical", "deficits"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "keynesian/liquidity-trap",
+      "label": "Liquidity Trap",
+      "type": "concept",
+      "summary": "When interest rates hit zero, monetary policy loses traction — people hoard cash rather than spend or invest. Only fiscal policy can break the trap. Japan's lost decades and the 2008 crisis are textbook cases.",
+      "tags": ["liquidity-trap", "zero-lower-bound", "monetary-impotence", "japan"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "keynesian/aggregate-demand",
+      "label": "Aggregate Demand",
+      "type": "concept",
+      "summary": "Total spending in the economy: consumption + investment + government + net exports. Keynes's central insight was that insufficient aggregate demand, not supply failures, causes recessions.",
+      "tags": ["aggregate-demand", "spending", "output", "recessions"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "austrian/menger",
+      "label": "Carl Menger",
+      "type": "concept",
+      "summary": "Founder of the Austrian School. Principles of Economics (1871) introduced subjective value theory and methodological individualism, launching the marginalist revolution alongside Jevons and Walras.",
+      "tags": ["menger", "subjective-value", "methodological-individualism", "1871"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "austrian/mises",
+      "label": "Ludwig von Mises",
+      "type": "concept",
+      "summary": "Human Action (1949) built economics from praxeology — the logic of purposeful human action. His socialist calculation argument (1920) predicted the failure of centrally planned economies.",
+      "tags": ["mises", "praxeology", "human-action", "socialist-calculation"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "austrian/hayek",
+      "label": "Friedrich Hayek",
+      "type": "concept",
+      "summary": "Nobel laureate (1974). The Road to Serfdom (1944) warned against central planning. Argued that prices are an information system and that knowledge is dispersed, never centralizable.",
+      "tags": ["hayek", "spontaneous-order", "knowledge-problem", "nobel", "1974"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "austrian/subjective-value",
+      "label": "Subjective Value Theory",
+      "type": "concept",
+      "summary": "Value is not intrinsic to goods but exists in the mind of the valuer. A glass of water in the desert is worth more than a diamond on a full stomach. Menger's answer to the classical paradox of value.",
+      "tags": ["subjective-value", "marginalism", "utility", "paradox-of-value"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "austrian/business-cycle",
+      "label": "Austrian Business Cycle Theory",
+      "type": "concept",
+      "summary": "Mises and Hayek argued that artificially low interest rates from central banks cause malinvestment booms that inevitably bust. The 2008 housing bubble fits the pattern remarkably well.",
+      "tags": ["abct", "business-cycle", "malinvestment", "interest-rates", "central-banking"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "austrian/spontaneous-order",
+      "label": "Spontaneous Order",
+      "type": "concept",
+      "summary": "Order emerges from individual actions without central design — markets, language, law, and social norms are all examples. Hayek's deepest insight: the best institutions are not planned.",
+      "tags": ["spontaneous-order", "hayek", "emergence", "decentralization"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "austrian/praxeology",
+      "label": "Praxeology",
+      "type": "concept",
+      "summary": "Mises's methodology: economics is deduced from the axiom that humans act purposefully. No empirical testing needed — economic laws are a priori truths, like logic or mathematics.",
+      "tags": ["praxeology", "apriorism", "methodology", "mises"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "austrian/entrepreneurship",
+      "label": "Entrepreneurship Theory",
+      "type": "concept",
+      "summary": "Israel Kirzner extended Austrian economics to show that entrepreneurs drive markets toward equilibrium by discovering and exploiting previously unnoticed profit opportunities.",
+      "tags": ["entrepreneurship", "kirzner", "discovery", "profit-opportunity"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "marxian/marx",
+      "label": "Karl Marx",
+      "type": "concept",
+      "summary": "Das Kapital (1867) analyzed capitalism as a system of surplus value extraction. Historical materialism views economic relations as the base determining all social, political, and cultural superstructure.",
+      "tags": ["marx", "das-kapital", "1867", "capitalism", "critique"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "marxian/surplus-value",
+      "label": "Surplus Value",
+      "type": "concept",
+      "summary": "The difference between the value workers produce and the wages they receive. For Marx, this is the source of profit and the mechanism of capitalist exploitation — the engine of class conflict.",
+      "tags": ["surplus-value", "exploitation", "profit", "labor"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "marxian/historical-materialism",
+      "label": "Historical Materialism",
+      "type": "concept",
+      "summary": "Marx's theory of history: the mode of production (economic base) shapes the superstructure (law, politics, ideology). Societies progress through feudalism, capitalism, and eventually socialism.",
+      "tags": ["historical-materialism", "base-superstructure", "modes-of-production", "dialectics"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "marxian/class-struggle",
+      "label": "Class Struggle",
+      "type": "concept",
+      "summary": "The history of all hitherto existing society is the history of class struggles — bourgeoisie vs proletariat under capitalism. The contradiction between labor and capital drives historical change.",
+      "tags": ["class-struggle", "bourgeoisie", "proletariat", "conflict"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "marxian/dependency-theory",
+      "label": "Dependency Theory",
+      "type": "concept",
+      "summary": "Raul Prebisch and Andre Gunder Frank argued that underdevelopment is not a stage but a product of global capitalism. Rich core nations exploit poor peripheral nations through unequal exchange.",
+      "tags": ["dependency", "core-periphery", "underdevelopment", "prebisch", "frank"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "marxian/world-systems",
+      "label": "World-Systems Theory",
+      "type": "concept",
+      "summary": "Immanuel Wallerstein's framework (1974): the global economy is a single capitalist world-system with core, semi-periphery, and periphery zones locked in structural inequality.",
+      "tags": ["world-systems", "wallerstein", "core-periphery", "global-capitalism"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "marxian/analytical-marxism",
+      "label": "Analytical Marxism",
+      "type": "concept",
+      "summary": "G.A. Cohen, Jon Elster, and John Roemer applied analytical philosophy and rational choice theory to Marxist concepts. Rigorous micro-foundations for class exploitation without labor theory of value.",
+      "tags": ["analytical-marxism", "rational-choice", "cohen", "roemer", "elster"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "marxian/crisis-theory",
+      "label": "Marxian Crisis Theory",
+      "type": "concept",
+      "summary": "Capitalism generates recurrent crises through the tendency of the rate of profit to fall, overproduction, and underconsumption. Crises are not accidents but structural features of the system.",
+      "tags": ["crisis", "falling-rate-of-profit", "overproduction", "contradictions"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "institutional/veblen",
+      "label": "Thorstein Veblen",
+      "type": "concept",
+      "summary": "The Theory of the Leisure Class (1899) introduced conspicuous consumption and challenged neoclassical rationality. Co-founded institutional economics and coined the term 'neoclassical economics.'",
+      "tags": ["veblen", "conspicuous-consumption", "leisure-class", "evolutionary"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "institutional/commons",
+      "label": "John R. Commons",
+      "type": "concept",
+      "summary": "Institutional Economics (1934) placed transactions — not individuals or commodities — at the center of economic analysis. Influenced labor law, social security, and the New Deal.",
+      "tags": ["commons", "transactions", "labor-law", "new-deal"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "institutional/galbraith",
+      "label": "John Kenneth Galbraith",
+      "type": "concept",
+      "summary": "The Affluent Society (1958) and The New Industrial State (1967) argued that large corporations, not free markets, dominate modern capitalism. A public intellectual who challenged orthodox economics.",
+      "tags": ["galbraith", "corporate-power", "affluent-society", "public-intellectual"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "institutional/new-institutional",
+      "label": "New Institutional Economics",
+      "type": "topic",
+      "summary": "Coase, North, and Williamson integrated institutions into neoclassical analysis. Transaction costs, property rights, and institutional design explain why firms exist and economies diverge.",
+      "tags": ["new-institutional", "transaction-costs", "property-rights", "governance"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "institutional/new-institutional/north",
+      "label": "Douglass North",
+      "type": "concept",
+      "summary": "Nobel laureate (1993). Showed that institutions — formal rules and informal norms — are the primary determinant of long-run economic performance. Path dependence shapes institutional evolution.",
+      "tags": ["north", "institutions", "path-dependence", "nobel", "1993"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "institutional/new-institutional/coase",
+      "label": "Ronald Coase",
+      "type": "concept",
+      "summary": "Nobel laureate (1991). The Nature of the Firm (1937) asked why firms exist — answer: to minimize transaction costs. The Coase theorem shows that clear property rights can solve externalities without regulation.",
+      "tags": ["coase", "transaction-costs", "coase-theorem", "firms", "nobel", "1991"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "heterodox/feminist-economics",
+      "label": "Feminist Economics",
+      "type": "concept",
+      "summary": "Challenges economics' blindness to gender. Unpaid care work, the household as a site of production, and gendered labor markets are central concerns. Marilyn Waring's If Women Counted (1988) was a landmark.",
+      "tags": ["feminist", "gender", "care-work", "unpaid-labor", "waring"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "heterodox/ecological-economics",
+      "label": "Ecological Economics",
+      "type": "concept",
+      "summary": "The economy is a subsystem of the biosphere, not the other way around. Herman Daly and Nicholas Georgescu-Roegen argued that infinite growth on a finite planet is thermodynamically impossible.",
+      "tags": ["ecological", "sustainability", "daly", "georgescu-roegen", "entropy"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "heterodox/mmt",
+      "label": "Modern Monetary Theory",
+      "type": "concept",
+      "summary": "A sovereign currency issuer can never run out of money — it creates money when it spends and destroys it when it taxes. Deficits are not inherently bad; the real constraint is inflation, not insolvency.",
+      "tags": ["mmt", "sovereign-currency", "deficits", "chartalism", "wray"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "heterodox/complexity-economics",
+      "label": "Complexity Economics",
+      "type": "concept",
+      "summary": "W. Brian Arthur and the Santa Fe Institute (1980s-present). The economy is a complex adaptive system — agents adapt, equilibrium is the exception, and emergent phenomena like bubbles and crashes are endogenous.",
+      "tags": ["complexity", "santa-fe", "brian-arthur", "adaptive", "emergence"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "heterodox/degrowth",
+      "label": "Degrowth",
+      "type": "concept",
+      "summary": "A political and economic movement arguing that endless GDP growth is ecologically unsustainable and socially unnecessary. Advocates for reduced production and consumption in wealthy nations.",
+      "tags": ["degrowth", "sustainability", "post-growth", "sufficiency"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "heterodox/development-economics",
+      "label": "Development Economics",
+      "type": "topic",
+      "summary": "Why are some countries rich and others poor? From Rostow's stages of growth to Sen's capabilities, the field grapples with poverty, inequality, and how nations can develop sustainably.",
+      "tags": ["development", "poverty", "inequality", "global-south"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "heterodox/development-economics/sen",
+      "label": "Amartya Sen",
+      "type": "concept",
+      "summary": "Nobel laureate (1998). The Capability Approach redefines development as expanding human freedoms, not just growing GDP. Co-created the Human Development Index with Mahbub ul Haq (1990).",
+      "tags": ["sen", "capabilities", "freedom", "hdi", "nobel", "1998"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "modern/behavioral-economics",
+      "label": "Behavioral Economics",
+      "type": "topic",
+      "summary": "Humans are not rational utility maximizers. Kahneman, Tversky, and Thaler showed that cognitive biases, heuristics, and framing effects systematically distort economic decisions.",
+      "tags": ["behavioral", "biases", "heuristics", "bounded-rationality"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/behavioral-economics/kahneman",
+      "label": "Daniel Kahneman",
+      "type": "concept",
+      "summary": "Nobel laureate (2002). A psychologist who won the economics Nobel. Prospect theory (1979, with Tversky) showed that losses loom larger than gains and people evaluate outcomes relative to reference points.",
+      "tags": ["kahneman", "prospect-theory", "loss-aversion", "nobel", "2002"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/behavioral-economics/thaler",
+      "label": "Richard Thaler",
+      "type": "concept",
+      "summary": "Nobel laureate (2017). Nudge (2008) showed how choice architecture can improve decisions without restricting freedom. Discovered the endowment effect and championed libertarian paternalism.",
+      "tags": ["thaler", "nudge", "endowment-effect", "choice-architecture", "nobel", "2017"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/game-theory",
+      "label": "Game Theory",
+      "type": "topic",
+      "summary": "The mathematics of strategic interaction. Von Neumann and Morgenstern (1944) founded it; Nash (1950) generalized equilibrium. Now essential to economics, political science, biology, and AI.",
+      "tags": ["game-theory", "strategic-interaction", "von-neumann", "equilibrium"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/game-theory/nash",
+      "label": "John Nash",
+      "type": "concept",
+      "summary": "Nobel laureate (1994). Nash equilibrium — where no player can gain by unilaterally changing strategy — is the most fundamental solution concept in game theory. Defined in a one-page 1950 PNAS paper.",
+      "tags": ["nash", "nash-equilibrium", "non-cooperative", "nobel", "1994"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/information-economics",
+      "label": "Information Economics",
+      "type": "topic",
+      "summary": "Markets with asymmetric information behave differently than textbook models predict. Adverse selection, moral hazard, and signaling explain insurance markets, used car markets, and credit rationing.",
+      "tags": ["information", "asymmetry", "adverse-selection", "moral-hazard", "signaling"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/information-economics/stiglitz",
+      "label": "Joseph Stiglitz",
+      "type": "concept",
+      "summary": "Nobel laureate (2001, with Akerlof and Spence). Showed that screening mechanisms allow uninformed agents to extract information. Critic of market fundamentalism and globalization's failures.",
+      "tags": ["stiglitz", "screening", "asymmetric-information", "nobel", "2001"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/mechanism-design",
+      "label": "Mechanism Design",
+      "type": "concept",
+      "summary": "Reverse game theory: given desired outcomes, design the rules of the game. Hurwicz, Maskin, and Myerson won the 2007 Nobel for formalizing incentive-compatible institutional design.",
+      "tags": ["mechanism-design", "incentive-compatibility", "auctions", "nobel", "2007"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    }
+  ],
+  "edges": [
+    { "source": "classical/adam-smith", "target": "classical", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical/david-ricardo", "target": "classical", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical/malthus", "target": "classical", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical/say", "target": "classical", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical/js-mill", "target": "classical", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical/mercantilism", "target": "classical", "relation": "is-part-of", "weight": 0.7, "label": "Precursor that classical economics reacted against" },
+    { "source": "classical/physiocrats", "target": "classical", "relation": "is-part-of", "weight": 0.7, "label": "French precursor that influenced Smith's thinking" },
+    { "source": "classical/free-trade", "target": "classical", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "classical/labor-theory-of-value", "target": "classical", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "classical/comparative-advantage", "target": "classical", "relation": "is-part-of", "weight": 0.9 },
+
+    { "source": "neoclassical/marginalism", "target": "neoclassical", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "neoclassical/marshall", "target": "neoclassical", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "neoclassical/walras", "target": "neoclassical", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "neoclassical/pareto", "target": "neoclassical", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "neoclassical/general-equilibrium", "target": "neoclassical", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "neoclassical/micro", "target": "neoclassical", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "neoclassical/welfare-economics", "target": "neoclassical", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "neoclassical/monetarism", "target": "neoclassical", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "neoclassical/monetarism/friedman", "target": "neoclassical/monetarism", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "neoclassical/chicago-school", "target": "neoclassical", "relation": "is-part-of", "weight": 0.9 },
+
+    { "source": "keynesian/keynes", "target": "keynesian", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "keynesian/is-lm", "target": "keynesian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "keynesian/multiplier", "target": "keynesian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "keynesian/new-keynesian", "target": "keynesian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "keynesian/new-keynesian/mankiw", "target": "keynesian/new-keynesian", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "keynesian/post-keynesian", "target": "keynesian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "keynesian/post-keynesian/minsky", "target": "keynesian/post-keynesian", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "keynesian/fiscal-policy", "target": "keynesian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "keynesian/liquidity-trap", "target": "keynesian", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "keynesian/aggregate-demand", "target": "keynesian", "relation": "is-part-of", "weight": 0.9 },
+
+    { "source": "austrian/menger", "target": "austrian", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "austrian/mises", "target": "austrian", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "austrian/hayek", "target": "austrian", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "austrian/subjective-value", "target": "austrian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "austrian/business-cycle", "target": "austrian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "austrian/spontaneous-order", "target": "austrian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "austrian/praxeology", "target": "austrian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "austrian/entrepreneurship", "target": "austrian", "relation": "is-part-of", "weight": 0.8 },
+
+    { "source": "marxian/marx", "target": "marxian", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "marxian/surplus-value", "target": "marxian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "marxian/historical-materialism", "target": "marxian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "marxian/class-struggle", "target": "marxian", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "marxian/dependency-theory", "target": "marxian", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "marxian/world-systems", "target": "marxian", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "marxian/analytical-marxism", "target": "marxian", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "marxian/crisis-theory", "target": "marxian", "relation": "is-part-of", "weight": 0.9 },
+
+    { "source": "institutional/veblen", "target": "institutional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "institutional/commons", "target": "institutional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "institutional/galbraith", "target": "institutional", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "institutional/new-institutional", "target": "institutional", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "institutional/new-institutional/north", "target": "institutional/new-institutional", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "institutional/new-institutional/coase", "target": "institutional/new-institutional", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "heterodox/feminist-economics", "target": "heterodox", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "heterodox/ecological-economics", "target": "heterodox", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "heterodox/mmt", "target": "heterodox", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "heterodox/complexity-economics", "target": "heterodox", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "heterodox/degrowth", "target": "heterodox", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "heterodox/development-economics", "target": "heterodox", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "heterodox/development-economics/sen", "target": "heterodox/development-economics", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "modern/behavioral-economics", "target": "modern", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "modern/behavioral-economics/kahneman", "target": "modern/behavioral-economics", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "modern/behavioral-economics/thaler", "target": "modern/behavioral-economics", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "modern/game-theory", "target": "modern", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "modern/game-theory/nash", "target": "modern/game-theory", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "modern/information-economics", "target": "modern", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "modern/information-economics/stiglitz", "target": "modern/information-economics", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "modern/mechanism-design", "target": "modern", "relation": "is-part-of", "weight": 0.9 },
+
+    { "source": "neoclassical/monetarism", "target": "neoclassical/chicago-school", "relation": "specializes", "weight": 0.9, "label": "Monetarism was the flagship theory of the Chicago School" },
+    { "source": "keynesian/new-keynesian", "target": "keynesian/keynes", "relation": "specializes", "weight": 0.85, "label": "New Keynesians added microfoundations to Keynes's macro insights" },
+    { "source": "keynesian/post-keynesian", "target": "keynesian/keynes", "relation": "specializes", "weight": 0.85, "label": "Post-Keynesians claim fidelity to Keynes's original radical vision" },
+    { "source": "institutional/new-institutional", "target": "institutional/veblen", "relation": "specializes", "weight": 0.7, "label": "New Institutional Economics formalized the old institutionalists' insights" },
+    { "source": "neoclassical/general-equilibrium", "target": "neoclassical/walras", "relation": "specializes", "weight": 0.9, "label": "Arrow-Debreu formalized Walras's vision of simultaneous market clearing" },
+    { "source": "neoclassical/welfare-economics", "target": "neoclassical/pareto", "relation": "specializes", "weight": 0.85, "label": "Welfare economics built on Pareto's efficiency criterion" },
+    { "source": "classical/comparative-advantage", "target": "classical/david-ricardo", "relation": "specializes", "weight": 0.95, "label": "Ricardo's signature contribution to trade theory" },
+    { "source": "marxian/surplus-value", "target": "marxian/marx", "relation": "specializes", "weight": 0.95, "label": "The core analytical concept of Marx's critique of capitalism" },
+    { "source": "austrian/business-cycle", "target": "austrian/mises", "relation": "specializes", "weight": 0.9, "label": "Mises originated the Austrian theory of the trade cycle, later extended by Hayek" },
+    { "source": "austrian/praxeology", "target": "austrian/mises", "relation": "specializes", "weight": 0.95, "label": "Praxeology is Mises's distinctive methodological contribution" },
+    { "source": "austrian/spontaneous-order", "target": "austrian/hayek", "relation": "specializes", "weight": 0.9, "label": "Hayek's deepest contribution to social theory" },
+    { "source": "heterodox/degrowth", "target": "heterodox/ecological-economics", "relation": "specializes", "weight": 0.85, "label": "Degrowth is the political program of ecological economics" },
+    { "source": "marxian/world-systems", "target": "marxian/dependency-theory", "relation": "specializes", "weight": 0.8, "label": "Wallerstein built world-systems theory on dependency theory's core-periphery framework" },
+    { "source": "modern/mechanism-design", "target": "modern/game-theory", "relation": "specializes", "weight": 0.9, "label": "Mechanism design is reverse game theory — designing rules to achieve desired equilibria" },
+    { "source": "keynesian/is-lm", "target": "keynesian/keynes", "relation": "specializes", "weight": 0.8, "label": "Hicks's 1937 mathematical formalization of the General Theory" },
+
+    { "source": "marxian/marx", "target": "classical/david-ricardo", "relation": "inspired-by", "weight": 0.9, "label": "Marx built his labor theory of value directly on Ricardo's foundations" },
+    { "source": "marxian/marx", "target": "classical/labor-theory-of-value", "relation": "inspired-by", "weight": 0.95, "label": "Marx transformed the classical labor theory into a theory of exploitation" },
+    { "source": "keynesian/keynes", "target": "classical/say", "relation": "contradicts", "weight": 0.95, "label": "Keynes's General Theory was a direct attack on Say's Law — demand can fall short of supply" },
+    { "source": "keynesian/keynes", "target": "classical/malthus", "relation": "inspired-by", "weight": 0.6, "label": "Keynes admired Malthus's early intuition that demand deficiency causes unemployment" },
+    { "source": "austrian/mises", "target": "austrian/menger", "relation": "inspired-by", "weight": 0.95, "label": "Mises was a student of Menger's students (Wieser and Bohm-Bawerk) and extended subjective value theory" },
+    { "source": "austrian/hayek", "target": "austrian/mises", "relation": "inspired-by", "weight": 0.9, "label": "Hayek studied under Mises in Vienna and built on his business cycle theory" },
+    { "source": "austrian/hayek", "target": "austrian/menger", "relation": "inspired-by", "weight": 0.8, "label": "Menger's methodological individualism shaped Hayek's approach to social order" },
+    { "source": "neoclassical/marginalism", "target": "austrian/menger", "relation": "inspired-by", "weight": 0.9, "label": "Menger was one of three independent discoverers of marginal utility in 1871" },
+    { "source": "neoclassical/marginalism", "target": "neoclassical/walras", "relation": "inspired-by", "weight": 0.9, "label": "Walras independently formalized marginalism mathematically in 1874" },
+    { "source": "neoclassical/marshall", "target": "classical/david-ricardo", "relation": "inspired-by", "weight": 0.7, "label": "Marshall synthesized Ricardian cost-of-production theory with marginalist demand theory" },
+    { "source": "neoclassical/marshall", "target": "classical/js-mill", "relation": "inspired-by", "weight": 0.65, "label": "Marshall built on Mill's synthesis of classical economics" },
+    { "source": "classical/adam-smith", "target": "classical/physiocrats", "relation": "inspired-by", "weight": 0.7, "label": "Smith visited Quesnay in Paris and was influenced by physiocratic ideas of natural economic law" },
+    { "source": "classical/adam-smith", "target": "classical/mercantilism", "relation": "contradicts", "weight": 0.9, "label": "The Wealth of Nations was written as a systematic critique of mercantilist doctrine" },
+    { "source": "modern/behavioral-economics/kahneman", "target": "neoclassical/micro", "relation": "contradicts", "weight": 0.85, "label": "Prospect theory demolished the assumption of rational utility maximization" },
+    { "source": "modern/behavioral-economics/thaler", "target": "modern/behavioral-economics/kahneman", "relation": "inspired-by", "weight": 0.9, "label": "Thaler discovered prospect theory in the 1970s and built behavioral economics on Kahneman and Tversky's work" },
+    { "source": "heterodox/complexity-economics", "target": "neoclassical/general-equilibrium", "relation": "contradicts", "weight": 0.85, "label": "Complexity economics rejects the equilibrium assumption as unrealistic and misleading" },
+    { "source": "keynesian/post-keynesian/minsky", "target": "keynesian/keynes", "relation": "inspired-by", "weight": 0.9, "label": "Minsky interpreted Keynes's emphasis on uncertainty and financial markets as central, not peripheral" },
+    { "source": "heterodox/mmt", "target": "keynesian/post-keynesian", "relation": "inspired-by", "weight": 0.8, "label": "MMT synthesizes chartalism, functional finance (Lerner), and Minsky's financial analysis" },
+    { "source": "heterodox/mmt", "target": "keynesian/post-keynesian/minsky", "relation": "inspired-by", "weight": 0.75, "label": "MMT incorporates Minsky's views on banking and endogenous money creation" },
+    { "source": "institutional/galbraith", "target": "institutional/veblen", "relation": "inspired-by", "weight": 0.7, "label": "Galbraith continued Veblen's tradition of challenging orthodox assumptions about consumer sovereignty" },
+    { "source": "institutional/new-institutional/north", "target": "institutional/new-institutional/coase", "relation": "inspired-by", "weight": 0.8, "label": "North built on Coase's transaction cost framework to explain institutional change" },
+    { "source": "marxian/dependency-theory", "target": "marxian/marx", "relation": "inspired-by", "weight": 0.8, "label": "Dependency theory extended Marx's analysis of exploitation to international relations between nations" },
+    { "source": "marxian/world-systems", "target": "marxian/marx", "relation": "inspired-by", "weight": 0.75, "label": "Wallerstein used Marxian categories to analyze the global capitalist world-system" },
+    { "source": "heterodox/development-economics/sen", "target": "classical/js-mill", "relation": "inspired-by", "weight": 0.6, "label": "Sen drew on Mill's ideas about liberty and individual flourishing" },
+    { "source": "neoclassical/monetarism/friedman", "target": "neoclassical/marshall", "relation": "inspired-by", "weight": 0.6, "label": "Friedman called himself a Marshallian economist focused on price theory and partial equilibrium" },
+
+    { "source": "keynesian/keynes", "target": "neoclassical/general-equilibrium", "relation": "contradicts", "weight": 0.85, "label": "Keynes rejected the idea that markets automatically clear and produce full employment" },
+    { "source": "austrian/hayek", "target": "keynesian/keynes", "relation": "contradicts", "weight": 0.9, "label": "The Keynes-Hayek debate: government intervention vs spontaneous market adjustment" },
+    { "source": "austrian/business-cycle", "target": "keynesian/fiscal-policy", "relation": "contradicts", "weight": 0.85, "label": "Austrians see fiscal stimulus as postponing the necessary liquidation of malinvestments" },
+    { "source": "neoclassical/monetarism", "target": "keynesian/fiscal-policy", "relation": "contradicts", "weight": 0.85, "label": "Friedman argued monetary policy is more effective than fiscal policy and discretion leads to instability" },
+    { "source": "neoclassical/monetarism/friedman", "target": "keynesian/multiplier", "relation": "contradicts", "weight": 0.8, "label": "Friedman challenged the multiplier, arguing fiscal stimulus crowds out private spending" },
+    { "source": "marxian/marx", "target": "neoclassical/marginalism", "relation": "contradicts", "weight": 0.85, "label": "Marxists reject subjective value theory as obscuring the real source of value: labor" },
+    { "source": "marxian/surplus-value", "target": "neoclassical/welfare-economics", "relation": "contradicts", "weight": 0.75, "label": "Marx argued that market transactions mask exploitation — Pareto efficiency ignores class power" },
+    { "source": "heterodox/mmt", "target": "neoclassical/monetarism", "relation": "contradicts", "weight": 0.9, "label": "MMT rejects the quantity theory of money and argues deficits do not cause inflation per se" },
+    { "source": "heterodox/ecological-economics", "target": "neoclassical/micro", "relation": "contradicts", "weight": 0.8, "label": "Ecological economics rejects the assumption that natural capital is substitutable by human capital" },
+    { "source": "keynesian/post-keynesian", "target": "keynesian/new-keynesian", "relation": "contradicts", "weight": 0.7, "label": "Post-Keynesians reject the neoclassical synthesis, arguing New Keynesians betrayed Keynes's radical insights" },
+    { "source": "austrian/praxeology", "target": "modern/behavioral-economics", "relation": "contradicts", "weight": 0.65, "label": "Austrians argue economics is deductive from action axioms; behavioralists rely on empirical psychology" },
+    { "source": "marxian/class-struggle", "target": "neoclassical/micro", "relation": "contradicts", "weight": 0.8, "label": "Neoclassical theory sees voluntary exchange; Marx sees class domination hidden behind market transactions" },
+    { "source": "heterodox/feminist-economics", "target": "neoclassical/micro", "relation": "contradicts", "weight": 0.7, "label": "Feminist economics challenges the rational economic man model and the exclusion of unpaid care work" },
+    { "source": "neoclassical/marginalism", "target": "classical/labor-theory-of-value", "relation": "contradicts", "weight": 0.9, "label": "The marginalist revolution replaced objective labor-based value with subjective marginal utility" },
+    { "source": "modern/information-economics/stiglitz", "target": "neoclassical/general-equilibrium", "relation": "contradicts", "weight": 0.75, "label": "Stiglitz showed that information asymmetries prevent markets from achieving efficient equilibria" },
+    { "source": "heterodox/degrowth", "target": "neoclassical/micro", "relation": "contradicts", "weight": 0.7, "label": "Degrowth rejects GDP growth as a meaningful goal, challenging the core metric of mainstream economics" },
+    { "source": "austrian/subjective-value", "target": "classical/labor-theory-of-value", "relation": "contradicts", "weight": 0.9, "label": "Menger's subjective value theory directly contradicted the classical labor theory of value" },
+
+    { "source": "keynesian/keynes", "target": "classical", "relation": "causes", "weight": 0.7, "label": "The Great Depression (1929) discredited classical laissez-faire and caused the Keynesian revolution" },
+    { "source": "neoclassical/monetarism", "target": "keynesian", "relation": "causes", "weight": 0.7, "label": "Stagflation in the 1970s discredited Keynesian fine-tuning and caused the monetarist counter-revolution" },
+    { "source": "keynesian/post-keynesian/minsky", "target": "modern", "relation": "causes", "weight": 0.6, "label": "The 2008 financial crisis vindicated Minsky and spurred renewed interest in financial instability" },
+    { "source": "classical/adam-smith", "target": "classical/free-trade", "relation": "causes", "weight": 0.85, "label": "Smith's arguments against mercantilism launched the free trade movement" },
+    { "source": "marxian/crisis-theory", "target": "marxian/class-struggle", "relation": "causes", "weight": 0.75, "label": "Economic crises intensify class conflict and create revolutionary conditions" },
+    { "source": "neoclassical/chicago-school", "target": "neoclassical/monetarism/friedman", "relation": "causes", "weight": 0.7, "label": "The Chicago intellectual environment shaped Friedman's free-market monetarism" },
+    { "source": "marxian/historical-materialism", "target": "marxian/class-struggle", "relation": "causes", "weight": 0.85, "label": "Changes in the mode of production drive the evolution of class relations" },
+    { "source": "classical/malthus", "target": "heterodox/ecological-economics", "relation": "causes", "weight": 0.5, "label": "Malthus's concern about natural limits foreshadowed ecological economics by two centuries" },
+    { "source": "modern/information-economics", "target": "modern/mechanism-design", "relation": "causes", "weight": 0.8, "label": "The discovery of information problems motivated the design of incentive-compatible mechanisms" },
+    { "source": "neoclassical/marginalism", "target": "neoclassical", "relation": "causes", "weight": 0.95, "label": "The 1870s marginalist revolution directly created neoclassical economics as a discipline" },
+
+    { "source": "neoclassical", "target": "classical", "relation": "relates-to", "weight": 0.85, "label": "Neoclassical economics inherited and formalized many classical insights, especially on markets and trade" },
+    { "source": "keynesian/new-keynesian", "target": "neoclassical/micro", "relation": "relates-to", "weight": 0.8, "label": "New Keynesians adopted neoclassical microfoundations — the 'new neoclassical synthesis'" },
+    { "source": "austrian/spontaneous-order", "target": "heterodox/complexity-economics", "relation": "relates-to", "weight": 0.7, "label": "Both see emergent order from decentralized interaction — Hayek anticipated complexity science" },
+    { "source": "modern/game-theory", "target": "neoclassical/micro", "relation": "relates-to", "weight": 0.8, "label": "Game theory provides the strategic foundations for microeconomic analysis of oligopoly and bargaining" },
+    { "source": "modern/behavioral-economics", "target": "institutional/veblen", "relation": "relates-to", "weight": 0.6, "label": "Veblen's challenge to rational economic man foreshadowed behavioral economics by a century" },
+    { "source": "heterodox/development-economics", "target": "marxian/dependency-theory", "relation": "relates-to", "weight": 0.7, "label": "Development economics grapples with dependency theory's core question: why does underdevelopment persist?" },
+    { "source": "heterodox/mmt", "target": "keynesian/fiscal-policy", "relation": "relates-to", "weight": 0.8, "label": "MMT extends Keynesian fiscal policy by arguing sovereign governments face no financial budget constraint" },
+    { "source": "institutional/new-institutional/coase", "target": "modern/information-economics", "relation": "relates-to", "weight": 0.7, "label": "Transaction costs arise from information problems — Coase and Stiglitz address two sides of market friction" },
+    { "source": "modern/mechanism-design", "target": "institutional/new-institutional", "relation": "relates-to", "weight": 0.65, "label": "Mechanism design formalizes institutional design — creating rules that produce desired economic outcomes" },
+    { "source": "heterodox/ecological-economics", "target": "heterodox/degrowth", "relation": "relates-to", "weight": 0.85, "label": "Degrowth is the policy implication of ecological economics' biophysical constraints" },
+    { "source": "marxian/analytical-marxism", "target": "modern/game-theory", "relation": "relates-to", "weight": 0.6, "label": "Analytical Marxists used game theory and rational choice to formalize class exploitation" },
+    { "source": "heterodox/development-economics/sen", "target": "neoclassical/welfare-economics", "relation": "relates-to", "weight": 0.65, "label": "Sen extended and critiqued welfare economics by shifting focus from utility to capabilities and freedoms" },
+    { "source": "keynesian/liquidity-trap", "target": "neoclassical/monetarism", "relation": "relates-to", "weight": 0.7, "label": "The liquidity trap demonstrates the limits of monetarism — when monetary policy loses traction" },
+    { "source": "marxian/crisis-theory", "target": "keynesian/post-keynesian/minsky", "relation": "relates-to", "weight": 0.65, "label": "Both Marxian crisis theory and Minsky share the view that capitalism is inherently prone to crises" },
+    { "source": "classical/physiocrats", "target": "classical/adam-smith", "relation": "relates-to", "weight": 0.65, "label": "Quesnay's Tableau Economique influenced Smith's concept of the circular flow of income" }
+  ]
+}

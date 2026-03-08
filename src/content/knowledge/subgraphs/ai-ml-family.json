@@ -1,0 +1,859 @@
+{
+  "version": "0.1.0",
+  "lastUpdated": "2026-03-08",
+  "nodes": [
+    {
+      "id": "symbolic",
+      "label": "Symbolic AI",
+      "type": "domain",
+      "summary": "The classical AI paradigm based on logic, rules, and explicit knowledge representation. Dominated from the 1950s through the 1980s.",
+      "tags": ["symbolic", "logic", "gofai", "knowledge-representation"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist",
+      "label": "Connectionist / Neural Networks",
+      "type": "domain",
+      "summary": "AI through networks of artificial neurons that learn from data. From perceptrons (1958) to transformers (2017), the dominant paradigm since 2012.",
+      "tags": ["neural-networks", "deep-learning", "connectionism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "probabilistic",
+      "label": "Probabilistic AI",
+      "type": "domain",
+      "summary": "Methods grounded in probability theory and statistical inference. Bayesian reasoning, graphical models, and uncertainty quantification.",
+      "tags": ["probability", "bayesian", "statistics", "inference"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "evolutionary",
+      "label": "Evolutionary Computation",
+      "type": "domain",
+      "summary": "Optimization algorithms inspired by biological evolution: selection, mutation, crossover. Includes genetic algorithms, swarm intelligence, and neuroevolution.",
+      "tags": ["evolution", "optimization", "bio-inspired"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "reinforcement",
+      "label": "Reinforcement Learning",
+      "type": "domain",
+      "summary": "Learning through interaction with an environment to maximize cumulative reward. From Q-learning to AlphaGo to RLHF.",
+      "tags": ["reinforcement-learning", "reward", "policy", "agent"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "generative",
+      "label": "Generative Models",
+      "type": "domain",
+      "summary": "Models that learn to generate new data: images, text, audio, video. GANs, VAEs, diffusion models, and large language models.",
+      "tags": ["generative", "generation", "synthesis"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "applied",
+      "label": "Applied AI",
+      "type": "domain",
+      "summary": "Real-world applications of AI and ML across industries: computer vision, NLP, robotics, healthcare, autonomous systems.",
+      "tags": ["applications", "industry", "deployment"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "foundations",
+      "label": "Foundations & History",
+      "type": "domain",
+      "summary": "The key historical milestones, paradigm shifts, and inflection points that shaped AI as a field from 1950 to present.",
+      "tags": ["history", "milestones", "paradigm-shift"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "foundations/turing-test",
+      "label": "Turing Test",
+      "type": "concept",
+      "summary": "Alan Turing's 1950 paper 'Computing Machinery and Intelligence' proposed the imitation game as a test for machine intelligence, founding the philosophical basis for AI.",
+      "tags": ["turing", "intelligence-test", "philosophy", "1950"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "foundations/dartmouth-conference",
+      "label": "Dartmouth Conference (1956)",
+      "type": "concept",
+      "summary": "The 1956 Dartmouth workshop coined the term 'Artificial Intelligence' and launched AI as a formal academic discipline. Organized by McCarthy, Minsky, Rochester, and Shannon.",
+      "tags": ["dartmouth", "origin", "mccarthy", "minsky", "1956"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "foundations/perceptron",
+      "label": "Perceptron (1958)",
+      "type": "concept",
+      "summary": "Frank Rosenblatt's 1958 perceptron was the first trainable neural network. Minsky and Papert's 1969 critique of its limitations contributed to the first AI winter.",
+      "tags": ["perceptron", "rosenblatt", "neural-network", "1958"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "foundations/ai-winter-1",
+      "label": "First AI Winter (1974-1980)",
+      "type": "concept",
+      "summary": "Triggered by the 1973 Lighthill Report and DARPA funding cuts in 1974. Perceptron limitations and unfulfilled promises led to a collapse of AI research funding.",
+      "tags": ["ai-winter", "lighthill", "funding-collapse", "1974"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "foundations/expert-systems-era",
+      "label": "Expert Systems Era (1980s)",
+      "type": "concept",
+      "summary": "Revival between the two AI winters. Rule-based expert systems like XCON saved DEC $40M. By 1985, corporations spent over $1B on AI annually.",
+      "tags": ["expert-systems", "xcon", "knowledge-engineering", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "foundations/ai-winter-2",
+      "label": "Second AI Winter (1987-1993)",
+      "type": "concept",
+      "summary": "Collapse of the LISP machine market in 1987 as cheaper workstations emerged. Expert systems proved brittle and expensive to maintain, eroding confidence in AI.",
+      "tags": ["ai-winter", "lisp-machines", "expert-systems-collapse", "1987"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "foundations/statistical-turn",
+      "label": "Statistical Turn (1990s)",
+      "type": "concept",
+      "summary": "AI shifted from hand-crafted rules to data-driven statistical methods in the 1990s. Machine learning, SVMs, and probabilistic models replaced symbolic approaches.",
+      "tags": ["statistics", "machine-learning", "data-driven", "1990s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "foundations/deep-learning-revolution",
+      "label": "Deep Learning Revolution (2012)",
+      "type": "concept",
+      "summary": "AlexNet's 2012 ImageNet victory proved deep neural networks could dramatically outperform traditional methods, igniting the modern deep learning era.",
+      "tags": ["deep-learning", "imagenet", "gpu-computing", "2012"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "symbolic/gofai",
+      "label": "GOFAI (Good Old-Fashioned AI)",
+      "type": "topic",
+      "summary": "John Haugeland's term for classical symbolic AI: intelligence as formal symbol manipulation. Dominated the field from the 1950s to the 1980s.",
+      "tags": ["gofai", "symbol-manipulation", "classical-ai"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "symbolic/logic-programming",
+      "label": "Logic Programming",
+      "type": "concept",
+      "summary": "Programming paradigm based on formal logic. Prolog (1972) became the primary language. Japan's Fifth Generation Computer project (1982) was built on it.",
+      "tags": ["logic", "prolog", "formal-reasoning"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "symbolic/expert-systems",
+      "label": "Expert Systems",
+      "type": "concept",
+      "summary": "Rule-based systems encoding domain expert knowledge. MYCIN (1976) diagnosed infections; XCON (1980) configured DEC computers. Peak popularity in the 1980s.",
+      "tags": ["expert-systems", "rules", "knowledge-engineering", "mycin"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "symbolic/knowledge-representation",
+      "label": "Knowledge Representation",
+      "type": "topic",
+      "summary": "Methods for encoding information about the world in forms that AI systems can reason about: semantic networks, ontologies, description logics.",
+      "tags": ["knowledge-representation", "ontology", "semantic-networks"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "symbolic/planning",
+      "label": "Automated Planning",
+      "type": "concept",
+      "summary": "AI systems that generate sequences of actions to achieve goals. STRIPS (1971) introduced the classical planning formalism still used today.",
+      "tags": ["planning", "strips", "goal-directed"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "symbolic/nlp-symbolic",
+      "label": "Symbolic NLP",
+      "type": "concept",
+      "summary": "Early natural language processing using grammars, parse trees, and hand-crafted rules. Chomsky's formal grammars and Winograd's SHRDLU (1970) exemplified this approach.",
+      "tags": ["nlp", "parsing", "grammar", "shrdlu"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "symbolic/ontologies",
+      "label": "Ontologies",
+      "type": "concept",
+      "summary": "Formal specifications of shared conceptualizations. Cyc (1984) attempted to encode all common sense knowledge. OWL became the standard for the Semantic Web.",
+      "tags": ["ontology", "cyc", "owl", "knowledge-graph"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "symbolic/semantic-web",
+      "label": "Semantic Web",
+      "type": "concept",
+      "summary": "Tim Berners-Lee's vision (2001) of a machine-readable web using RDF, OWL, and SPARQL. A modern evolution of symbolic knowledge representation ideas.",
+      "tags": ["semantic-web", "rdf", "linked-data", "berners-lee"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "symbolic/automated-reasoning",
+      "label": "Automated Reasoning",
+      "type": "concept",
+      "summary": "Using formal logic to automatically prove theorems and verify programs. Resolution theorem proving (1965) and SAT solvers underpin modern verification tools.",
+      "tags": ["theorem-proving", "sat", "verification", "formal-methods"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "symbolic/frames",
+      "label": "Frames",
+      "type": "concept",
+      "summary": "Minsky's 1974 frame theory: knowledge as stereotyped situations with default values. Influenced object-oriented programming and modern knowledge graphs.",
+      "tags": ["frames", "minsky", "knowledge-structure"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "connectionist/perceptrons",
+      "label": "Perceptrons",
+      "type": "concept",
+      "summary": "Single-layer neural networks that learn linear decision boundaries. Rosenblatt (1958) built the Mark I Perceptron hardware. Limited to linearly separable problems.",
+      "tags": ["perceptron", "linear-classifier", "rosenblatt"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "connectionist/backpropagation",
+      "label": "Backpropagation (1986)",
+      "type": "concept",
+      "summary": "Rumelhart, Hinton, and Williams popularized backpropagation in 1986, enabling training of multi-layer networks. The algorithm that made deep learning possible.",
+      "tags": ["backpropagation", "gradient-descent", "hinton", "1986"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/mlp",
+      "label": "Multilayer Perceptron (MLP)",
+      "type": "concept",
+      "summary": "Feedforward networks with one or more hidden layers. The Universal Approximation Theorem (1989) proved MLPs can approximate any continuous function.",
+      "tags": ["mlp", "feedforward", "universal-approximation"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "connectionist/cnns",
+      "label": "Convolutional Neural Networks",
+      "type": "topic",
+      "summary": "Networks using convolution operations to extract spatial features. Inspired by the visual cortex. Revolutionized computer vision from LeNet (1998) to ResNet (2015).",
+      "tags": ["cnn", "convolution", "computer-vision"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/cnns/lenet",
+      "label": "LeNet (1998)",
+      "type": "concept",
+      "summary": "Yann LeCun's 1998 CNN for handwritten digit recognition. Deployed in ATMs nationwide. Proved convolutions could learn hierarchical visual features.",
+      "tags": ["lenet", "lecun", "digit-recognition", "1998"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "connectionist/cnns/alexnet",
+      "label": "AlexNet (2012)",
+      "type": "concept",
+      "summary": "Alex Krizhevsky's deep CNN won ImageNet 2012 by a massive margin (top-5 error 15.3% vs 26.2%). Used GPUs, ReLU, and dropout. Ignited the deep learning revolution.",
+      "tags": ["alexnet", "imagenet", "gpu", "krizhevsky", "2012"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/cnns/resnet",
+      "label": "ResNet (2015)",
+      "type": "concept",
+      "summary": "Kaiming He's residual networks introduced skip connections, enabling training of 152-layer networks. Achieved 3.57% top-5 error, surpassing human performance on ImageNet.",
+      "tags": ["resnet", "residual-connections", "skip-connections", "2015"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/rnns",
+      "label": "Recurrent Neural Networks",
+      "type": "topic",
+      "summary": "Networks with feedback connections for processing sequences. Capable of modeling temporal dependencies but prone to vanishing gradients in long sequences.",
+      "tags": ["rnn", "recurrent", "sequence-modeling"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/rnns/lstm",
+      "label": "LSTM (1997)",
+      "type": "concept",
+      "summary": "Hochreiter and Schmidhuber's 1997 Long Short-Term Memory solved the vanishing gradient problem with gated memory cells. Dominated sequence modeling for 20 years.",
+      "tags": ["lstm", "gating", "long-term-dependencies", "1997"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/rnns/gru",
+      "label": "GRU (2014)",
+      "type": "concept",
+      "summary": "Kyunghyun Cho's 2014 Gated Recurrent Unit simplified LSTM with fewer parameters (two gates instead of three) while achieving comparable performance.",
+      "tags": ["gru", "gating", "cho", "2014"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "connectionist/attention",
+      "label": "Attention Mechanism (2014)",
+      "type": "concept",
+      "summary": "Bahdanau et al. (2014) introduced attention for neural machine translation, allowing models to dynamically focus on relevant input parts. The key insight behind transformers.",
+      "tags": ["attention", "bahdanau", "alignment", "2014"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/transformers",
+      "label": "Transformer Architecture (2017)",
+      "type": "topic",
+      "summary": "Vaswani et al.'s 'Attention Is All You Need' (2017) replaced recurrence with self-attention. Enabled massive parallelization and scaling, becoming the foundation of modern AI.",
+      "tags": ["transformer", "self-attention", "vaswani", "2017"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/transformers/bert",
+      "label": "BERT (2018)",
+      "type": "concept",
+      "summary": "Google's Bidirectional Encoder Representations from Transformers (2018). Pre-trained on masked language modeling, it set new benchmarks across 11 NLP tasks.",
+      "tags": ["bert", "google", "masked-lm", "pre-training", "2018"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/transformers/gpt",
+      "label": "GPT-1 (2018)",
+      "type": "concept",
+      "summary": "OpenAI's first Generative Pre-trained Transformer (2018). Demonstrated that unsupervised pre-training on text followed by fine-tuning could achieve strong NLP performance.",
+      "tags": ["gpt", "openai", "autoregressive", "pre-training", "2018"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/transformers/gpt-3",
+      "label": "GPT-3 (2020)",
+      "type": "concept",
+      "summary": "OpenAI's 175-billion parameter model (2020) demonstrated emergent few-shot learning abilities. Showed that scaling language models yields qualitatively new capabilities.",
+      "tags": ["gpt-3", "openai", "few-shot", "scaling", "2020"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/transformers/gpt-4",
+      "label": "GPT-4 (2023)",
+      "type": "concept",
+      "summary": "OpenAI's multimodal model released March 2023. Accepts text and images, passes professional exams (bar exam 90th percentile), and demonstrates broad reasoning abilities.",
+      "tags": ["gpt-4", "openai", "multimodal", "reasoning", "2023"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "connectionist/transformers/vision-transformer",
+      "label": "Vision Transformer / ViT (2020)",
+      "type": "concept",
+      "summary": "Dosovitskiy et al. (2020) applied transformers directly to image patches, proving that pure attention without convolutions matches or beats CNNs on image classification.",
+      "tags": ["vit", "vision-transformer", "image-patches", "2020"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "connectionist/autoencoders",
+      "label": "Autoencoders",
+      "type": "concept",
+      "summary": "Networks trained to reconstruct their input through a bottleneck, learning compressed representations. Foundational for dimensionality reduction and generative models.",
+      "tags": ["autoencoder", "representation-learning", "compression"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "connectionist/word2vec",
+      "label": "Word2Vec (2013)",
+      "type": "concept",
+      "summary": "Mikolov et al. (2013) at Google trained word embeddings using Skip-gram and CBOW. Showed that vector arithmetic captures semantic relationships (king - man + woman = queen).",
+      "tags": ["word2vec", "embeddings", "mikolov", "2013"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "probabilistic/bayesian-networks",
+      "label": "Bayesian Networks",
+      "type": "concept",
+      "summary": "Directed acyclic graphs representing conditional dependencies. Judea Pearl formalized them in the 1980s. Enable principled reasoning under uncertainty.",
+      "tags": ["bayesian-networks", "pearl", "graphical-models", "dag"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "probabilistic/hidden-markov-models",
+      "label": "Hidden Markov Models",
+      "type": "concept",
+      "summary": "Statistical models for sequential data with hidden states. Dominated speech recognition from the 1980s through the 2010s. Also used in bioinformatics and NLP.",
+      "tags": ["hmm", "markov", "sequence-modeling", "speech"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "probabilistic/gaussian-processes",
+      "label": "Gaussian Processes",
+      "type": "concept",
+      "summary": "Non-parametric Bayesian models defining distributions over functions. Provide uncertainty estimates naturally. Used in Bayesian optimization and surrogate modeling.",
+      "tags": ["gaussian-processes", "bayesian", "non-parametric", "uncertainty"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "probabilistic/mcmc",
+      "label": "Markov Chain Monte Carlo",
+      "type": "concept",
+      "summary": "Family of algorithms for sampling from probability distributions. Metropolis-Hastings (1953/1970) and Gibbs sampling enable Bayesian inference in complex models.",
+      "tags": ["mcmc", "sampling", "metropolis-hastings", "gibbs"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "probabilistic/variational-inference",
+      "label": "Variational Inference",
+      "type": "concept",
+      "summary": "Approximate Bayesian inference by optimization rather than sampling. Turns intractable posterior computation into a tractable optimization problem. Faster than MCMC.",
+      "tags": ["variational-inference", "elbo", "approximation", "optimization"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "probabilistic/topic-models",
+      "label": "Topic Models (LDA)",
+      "type": "concept",
+      "summary": "Latent Dirichlet Allocation (Blei et al., 2003) discovers latent topics in document collections using Bayesian generative models. Influential in text mining and NLP.",
+      "tags": ["lda", "topic-modeling", "blei", "text-mining"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "probabilistic/probabilistic-programming",
+      "label": "Probabilistic Programming",
+      "type": "concept",
+      "summary": "Languages that combine programming with probabilistic modeling. Stan, Pyro, and NumPyro allow specifying generative models and performing automatic inference.",
+      "tags": ["probabilistic-programming", "stan", "pyro", "automatic-inference"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "probabilistic/causal-inference",
+      "label": "Causal Inference",
+      "type": "concept",
+      "summary": "Judea Pearl's do-calculus and causal diagrams formalize reasoning about cause and effect beyond correlation. A bridge between statistics and interventional reasoning.",
+      "tags": ["causality", "pearl", "do-calculus", "interventions"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "reinforcement/q-learning",
+      "label": "Q-Learning",
+      "type": "concept",
+      "summary": "Watkins' 1989 model-free RL algorithm that learns action-value functions. Converges to optimal policy without requiring a model of the environment.",
+      "tags": ["q-learning", "model-free", "value-function", "watkins"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "reinforcement/policy-gradient",
+      "label": "Policy Gradient Methods",
+      "type": "concept",
+      "summary": "RL algorithms that directly optimize the policy by gradient ascent on expected reward. REINFORCE (Williams, 1992) and actor-critic methods are foundational variants.",
+      "tags": ["policy-gradient", "reinforce", "actor-critic"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "reinforcement/deep-rl",
+      "label": "Deep Reinforcement Learning",
+      "type": "topic",
+      "summary": "Combining deep neural networks with RL. DeepMind's DQN (2013) played Atari from pixels. Enabled RL to scale to high-dimensional observation and action spaces.",
+      "tags": ["deep-rl", "dqn", "atari", "deepmind"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "reinforcement/alphago",
+      "label": "AlphaGo (2016)",
+      "type": "concept",
+      "summary": "DeepMind's AlphaGo defeated world champion Lee Sedol at Go in March 2016. Combined deep neural networks with Monte Carlo tree search. A landmark for AI.",
+      "tags": ["alphago", "deepmind", "go", "mcts", "2016"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "reinforcement/alphastar",
+      "label": "AlphaStar (2019)",
+      "type": "concept",
+      "summary": "DeepMind's AlphaStar reached Grandmaster level in StarCraft II in 2019, mastering a real-time strategy game with imperfect information and continuous action spaces.",
+      "tags": ["alphastar", "deepmind", "starcraft", "multi-agent", "2019"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "reinforcement/rlhf",
+      "label": "RLHF (2017)",
+      "type": "concept",
+      "summary": "Reinforcement Learning from Human Feedback, introduced by Christiano et al. (2017). Uses human preferences to define reward signals. Critical for aligning LLMs like ChatGPT and Claude.",
+      "tags": ["rlhf", "alignment", "human-feedback", "christiano", "2017"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "reinforcement/multi-agent-rl",
+      "label": "Multi-Agent RL",
+      "type": "concept",
+      "summary": "RL with multiple interacting agents that cooperate or compete. Self-play in AlphaGo Zero and multi-agent training in AlphaStar are landmark examples.",
+      "tags": ["multi-agent", "self-play", "cooperation", "competition"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "reinforcement/model-based-rl",
+      "label": "Model-Based RL",
+      "type": "concept",
+      "summary": "RL methods that learn a model of environment dynamics and plan using it. More sample-efficient than model-free methods but requires accurate world models.",
+      "tags": ["model-based", "world-model", "planning", "sample-efficiency"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "generative/gans",
+      "label": "Generative Adversarial Networks (2014)",
+      "type": "concept",
+      "summary": "Goodfellow et al. (2014) introduced adversarial training: a generator creates samples while a discriminator judges authenticity. Produced breakthrough image synthesis results.",
+      "tags": ["gan", "adversarial", "goodfellow", "image-synthesis", "2014"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "generative/vaes",
+      "label": "Variational Autoencoders (2013)",
+      "type": "concept",
+      "summary": "Kingma and Welling (2013) combined autoencoders with variational inference, creating a principled framework for learning latent representations and generating new samples.",
+      "tags": ["vae", "variational", "kingma", "latent-space", "2013"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "generative/diffusion-models",
+      "label": "Diffusion Models (2020)",
+      "type": "concept",
+      "summary": "Ho et al.'s DDPM (2020) generates data by learning to reverse a noise diffusion process. Achieved image quality surpassing GANs with more stable training.",
+      "tags": ["diffusion", "ddpm", "denoising", "score-matching", "2020"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "generative/stable-diffusion",
+      "label": "Stable Diffusion (2022)",
+      "type": "concept",
+      "summary": "Stability AI's open-source latent diffusion model (2022). Performs diffusion in a compressed latent space, making high-quality image generation accessible on consumer GPUs.",
+      "tags": ["stable-diffusion", "latent-diffusion", "open-source", "2022"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "generative/dall-e",
+      "label": "DALL-E (2021)",
+      "type": "concept",
+      "summary": "OpenAI's text-to-image model (January 2021) using a transformer to generate images from text descriptions. DALL-E 2 (2022) and DALL-E 3 (2023) dramatically improved quality.",
+      "tags": ["dall-e", "openai", "text-to-image", "2021"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "generative/llms",
+      "label": "Large Language Models",
+      "type": "topic",
+      "summary": "Massive transformer-based models trained on internet-scale text corpora. Exhibit emergent abilities including reasoning, code generation, and instruction following.",
+      "tags": ["llm", "language-model", "scaling", "emergent-abilities"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "generative/llms/chatgpt",
+      "label": "ChatGPT (2022)",
+      "type": "concept",
+      "summary": "OpenAI's conversational AI released November 2022. Fine-tuned GPT-3.5 with RLHF. Reached 100M users in 2 months, making AI mainstream worldwide.",
+      "tags": ["chatgpt", "openai", "conversational-ai", "mainstream", "2022"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "generative/llms/claude",
+      "label": "Claude",
+      "type": "concept",
+      "summary": "Anthropic's AI assistant, first released March 2023. Trained with Constitutional AI (RLAIF) for improved safety and helpfulness. Emphasizes harmlessness and honesty.",
+      "tags": ["claude", "anthropic", "constitutional-ai", "safety", "2023"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "generative/image-generation",
+      "label": "Image Generation",
+      "type": "topic",
+      "summary": "The field of synthesizing images from noise, text, or other inputs. Evolved from GANs through VAEs to diffusion models, achieving photorealistic quality by 2022.",
+      "tags": ["image-generation", "synthesis", "photorealism"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "generative/text-to-video",
+      "label": "Text-to-Video Generation",
+      "type": "concept",
+      "summary": "Generating video from text descriptions. OpenAI's Sora (2024) and similar models extend diffusion to temporal consistency. One of the most challenging generative tasks.",
+      "tags": ["text-to-video", "sora", "video-generation", "temporal"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "evolutionary/genetic-algorithms",
+      "label": "Genetic Algorithms",
+      "type": "concept",
+      "summary": "John Holland's 1975 optimization method inspired by natural selection. Solutions evolve through selection, crossover, and mutation over generations.",
+      "tags": ["genetic-algorithm", "holland", "selection", "crossover", "mutation"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "evolutionary/genetic-programming",
+      "label": "Genetic Programming",
+      "type": "concept",
+      "summary": "Evolving computer programs represented as tree structures. John Koza (1992) pioneered evolving LISP programs to solve symbolic regression and classification problems.",
+      "tags": ["genetic-programming", "koza", "program-synthesis"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "evolutionary/neuroevolution",
+      "label": "Neuroevolution",
+      "type": "concept",
+      "summary": "Evolving neural network architectures and weights. NEAT (Stanley, 2002) co-evolves topology and weights. OpenAI showed evolution can match RL for policy search (2017).",
+      "tags": ["neuroevolution", "neat", "topology", "architecture-search"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "evolutionary/swarm-intelligence",
+      "label": "Swarm Intelligence",
+      "type": "concept",
+      "summary": "Collective behavior of decentralized agents. Ant Colony Optimization (Dorigo, 1992) and Particle Swarm Optimization (Kennedy & Eberhart, 1995) solve combinatorial problems.",
+      "tags": ["swarm", "ant-colony", "particle-swarm", "collective"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "evolutionary/evolutionary-strategies",
+      "label": "Evolutionary Strategies",
+      "type": "concept",
+      "summary": "Black-box optimization using population-based search with Gaussian perturbations. CMA-ES (Hansen, 2001) is the gold standard. Competitive with RL for policy optimization.",
+      "tags": ["evolutionary-strategies", "cma-es", "black-box-optimization"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "applied/computer-vision",
+      "label": "Computer Vision",
+      "type": "topic",
+      "summary": "Enabling machines to interpret visual information. From edge detection to CNNs to vision transformers. Applications in autonomous driving, medical imaging, and AR.",
+      "tags": ["computer-vision", "image-recognition", "object-detection"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "applied/nlp",
+      "label": "Natural Language Processing",
+      "type": "topic",
+      "summary": "AI for understanding and generating human language. Evolved from rule-based systems through statistical methods to transformer-based models that achieve near-human performance.",
+      "tags": ["nlp", "language", "text-understanding"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "applied/speech-recognition",
+      "label": "Speech Recognition",
+      "type": "concept",
+      "summary": "Converting spoken language to text. Evolved from HMMs to deep learning. OpenAI's Whisper (2022) provides robust multilingual transcription as an open model.",
+      "tags": ["speech", "asr", "whisper", "voice"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "applied/robotics",
+      "label": "Robotics",
+      "type": "topic",
+      "summary": "Integrating AI with physical systems. Combines computer vision, RL, and planning for manipulation, locomotion, and human-robot interaction.",
+      "tags": ["robotics", "manipulation", "locomotion", "embodied-ai"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "applied/recommendation-systems",
+      "label": "Recommendation Systems",
+      "type": "concept",
+      "summary": "Algorithms predicting user preferences. Collaborative filtering, content-based filtering, and deep learning approaches power Netflix, Spotify, YouTube, and Amazon recommendations.",
+      "tags": ["recommendations", "collaborative-filtering", "personalization"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "applied/autonomous-vehicles",
+      "label": "Autonomous Vehicles",
+      "type": "concept",
+      "summary": "Self-driving cars combining computer vision, sensor fusion, and planning. Waymo, Tesla, and Cruise represent different approaches (LiDAR+HD maps vs pure vision).",
+      "tags": ["self-driving", "autonomous", "waymo", "tesla"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "applied/drug-discovery",
+      "label": "AI Drug Discovery",
+      "type": "concept",
+      "summary": "Using ML to accelerate pharmaceutical research. Molecular property prediction, generative chemistry, and virtual screening reduce time and cost of drug development.",
+      "tags": ["drug-discovery", "pharma", "molecular", "healthcare"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "applied/protein-folding",
+      "label": "Protein Folding (AlphaFold)",
+      "type": "concept",
+      "summary": "DeepMind's AlphaFold2 (2020) solved protein structure prediction with atomic accuracy. Won CASP14 by a massive margin. Released structures for 200M+ proteins.",
+      "tags": ["alphafold", "protein", "structural-biology", "deepmind", "2020"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    }
+  ],
+
+  "edges": [
+    { "source": "foundations/turing-test", "target": "foundations", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "foundations/dartmouth-conference", "target": "foundations", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "foundations/perceptron", "target": "foundations", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "foundations/ai-winter-1", "target": "foundations", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "foundations/expert-systems-era", "target": "foundations", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "foundations/ai-winter-2", "target": "foundations", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "foundations/statistical-turn", "target": "foundations", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "foundations/deep-learning-revolution", "target": "foundations", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "symbolic/gofai", "target": "symbolic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "symbolic/logic-programming", "target": "symbolic", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "symbolic/expert-systems", "target": "symbolic", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "symbolic/knowledge-representation", "target": "symbolic", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "symbolic/planning", "target": "symbolic", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "symbolic/nlp-symbolic", "target": "symbolic", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "symbolic/ontologies", "target": "symbolic", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "symbolic/semantic-web", "target": "symbolic", "relation": "is-part-of", "weight": 0.7 },
+    { "source": "symbolic/automated-reasoning", "target": "symbolic", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "symbolic/frames", "target": "symbolic", "relation": "is-part-of", "weight": 0.7 },
+
+    { "source": "connectionist/perceptrons", "target": "connectionist", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "connectionist/backpropagation", "target": "connectionist", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "connectionist/mlp", "target": "connectionist", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "connectionist/cnns", "target": "connectionist", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "connectionist/rnns", "target": "connectionist", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "connectionist/attention", "target": "connectionist", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "connectionist/transformers", "target": "connectionist", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "connectionist/autoencoders", "target": "connectionist", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "connectionist/word2vec", "target": "connectionist", "relation": "is-part-of", "weight": 0.8 },
+
+    { "source": "probabilistic/bayesian-networks", "target": "probabilistic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "probabilistic/hidden-markov-models", "target": "probabilistic", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "probabilistic/gaussian-processes", "target": "probabilistic", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "probabilistic/mcmc", "target": "probabilistic", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "probabilistic/variational-inference", "target": "probabilistic", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "probabilistic/topic-models", "target": "probabilistic", "relation": "is-part-of", "weight": 0.7 },
+    { "source": "probabilistic/probabilistic-programming", "target": "probabilistic", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "probabilistic/causal-inference", "target": "probabilistic", "relation": "is-part-of", "weight": 0.8 },
+
+    { "source": "reinforcement/q-learning", "target": "reinforcement", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "reinforcement/policy-gradient", "target": "reinforcement", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "reinforcement/deep-rl", "target": "reinforcement", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "reinforcement/alphago", "target": "reinforcement", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "reinforcement/alphastar", "target": "reinforcement", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "reinforcement/rlhf", "target": "reinforcement", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "reinforcement/multi-agent-rl", "target": "reinforcement", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "reinforcement/model-based-rl", "target": "reinforcement", "relation": "is-part-of", "weight": 0.7 },
+
+    { "source": "generative/gans", "target": "generative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "generative/vaes", "target": "generative", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "generative/diffusion-models", "target": "generative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "generative/stable-diffusion", "target": "generative", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "generative/dall-e", "target": "generative", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "generative/llms", "target": "generative", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "generative/image-generation", "target": "generative", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "generative/text-to-video", "target": "generative", "relation": "is-part-of", "weight": 0.7 },
+
+    { "source": "evolutionary/genetic-algorithms", "target": "evolutionary", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "evolutionary/genetic-programming", "target": "evolutionary", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "evolutionary/neuroevolution", "target": "evolutionary", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "evolutionary/swarm-intelligence", "target": "evolutionary", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "evolutionary/evolutionary-strategies", "target": "evolutionary", "relation": "is-part-of", "weight": 0.8 },
+
+    { "source": "applied/computer-vision", "target": "applied", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "applied/nlp", "target": "applied", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "applied/speech-recognition", "target": "applied", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "applied/robotics", "target": "applied", "relation": "is-part-of", "weight": 0.9 },
+    { "source": "applied/recommendation-systems", "target": "applied", "relation": "is-part-of", "weight": 0.7 },
+    { "source": "applied/autonomous-vehicles", "target": "applied", "relation": "is-part-of", "weight": 0.8 },
+    { "source": "applied/drug-discovery", "target": "applied", "relation": "is-part-of", "weight": 0.7 },
+    { "source": "applied/protein-folding", "target": "applied", "relation": "is-part-of", "weight": 0.8 },
+
+    { "source": "connectionist/cnns/lenet", "target": "connectionist/cnns", "relation": "specializes", "weight": 0.9, "label": "First practical CNN architecture" },
+    { "source": "connectionist/cnns/alexnet", "target": "connectionist/cnns", "relation": "specializes", "weight": 1.0, "label": "Scaled CNNs with GPUs and modern techniques" },
+    { "source": "connectionist/cnns/resnet", "target": "connectionist/cnns", "relation": "specializes", "weight": 1.0, "label": "Skip connections enabled ultra-deep networks" },
+    { "source": "connectionist/rnns/lstm", "target": "connectionist/rnns", "relation": "specializes", "weight": 1.0, "label": "Solved vanishing gradients with gated memory" },
+    { "source": "connectionist/rnns/gru", "target": "connectionist/rnns", "relation": "specializes", "weight": 0.8, "label": "Simplified LSTM with fewer parameters" },
+    { "source": "connectionist/transformers/bert", "target": "connectionist/transformers", "relation": "specializes", "weight": 0.9, "label": "Bidirectional encoder for NLU" },
+    { "source": "connectionist/transformers/gpt", "target": "connectionist/transformers", "relation": "specializes", "weight": 0.9, "label": "Autoregressive decoder for generation" },
+    { "source": "connectionist/transformers/gpt-3", "target": "connectionist/transformers/gpt", "relation": "specializes", "weight": 0.9, "label": "Scaled GPT to 175B parameters" },
+    { "source": "connectionist/transformers/gpt-4", "target": "connectionist/transformers/gpt-3", "relation": "specializes", "weight": 0.9, "label": "Added multimodal capabilities and improved reasoning" },
+    { "source": "connectionist/transformers/vision-transformer", "target": "connectionist/transformers", "relation": "specializes", "weight": 0.8, "label": "Applied self-attention to image patches" },
+    { "source": "generative/llms/chatgpt", "target": "generative/llms", "relation": "specializes", "weight": 0.9, "label": "Conversational interface for GPT models" },
+    { "source": "generative/llms/claude", "target": "generative/llms", "relation": "specializes", "weight": 0.8, "label": "Constitutional AI approach to LLM alignment" },
+    { "source": "generative/stable-diffusion", "target": "generative/diffusion-models", "relation": "specializes", "weight": 0.9, "label": "Latent-space diffusion for efficiency" },
+    { "source": "generative/dall-e", "target": "generative/image-generation", "relation": "specializes", "weight": 0.9, "label": "Transformer-based text-to-image" },
+    { "source": "generative/text-to-video", "target": "generative/image-generation", "relation": "specializes", "weight": 0.7, "label": "Extended image generation to temporal domain" },
+    { "source": "connectionist/mlp", "target": "connectionist/perceptrons", "relation": "specializes", "weight": 0.9, "label": "Added hidden layers to perceptrons" },
+    { "source": "connectionist/rnns/gru", "target": "connectionist/rnns/lstm", "relation": "specializes", "weight": 0.7, "label": "Simplified variant of LSTM gating" },
+    { "source": "reinforcement/deep-rl", "target": "reinforcement/q-learning", "relation": "specializes", "weight": 0.8, "label": "Deep neural networks as Q-function approximators" },
+    { "source": "reinforcement/alphago", "target": "reinforcement/deep-rl", "relation": "specializes", "weight": 0.9, "label": "Combined deep RL with MCTS for Go" },
+    { "source": "reinforcement/alphastar", "target": "reinforcement/deep-rl", "relation": "specializes", "weight": 0.8, "label": "Multi-agent deep RL for real-time strategy" },
+    { "source": "evolutionary/genetic-programming", "target": "evolutionary/genetic-algorithms", "relation": "specializes", "weight": 0.8, "label": "Evolves programs instead of fixed-length strings" },
+    { "source": "evolutionary/neuroevolution", "target": "evolutionary/genetic-algorithms", "relation": "specializes", "weight": 0.8, "label": "Evolves neural network topologies and weights" },
+    { "source": "symbolic/ontologies", "target": "symbolic/knowledge-representation", "relation": "specializes", "weight": 0.8, "label": "Formal ontologies are a KR formalism" },
+    { "source": "symbolic/semantic-web", "target": "symbolic/ontologies", "relation": "specializes", "weight": 0.7, "label": "Applied ontologies to the web" },
+    { "source": "symbolic/frames", "target": "symbolic/knowledge-representation", "relation": "specializes", "weight": 0.7, "label": "Frame-based knowledge representation" },
+
+    { "source": "connectionist/transformers", "target": "connectionist/attention", "relation": "inspired-by", "weight": 1.0, "label": "Attention Is All You Need replaced recurrence with self-attention" },
+    { "source": "connectionist/backpropagation", "target": "foundations/perceptron", "relation": "inspired-by", "weight": 0.8, "label": "Extended perceptrons to trainable multi-layer networks" },
+    { "source": "connectionist/cnns/alexnet", "target": "connectionist/cnns/lenet", "relation": "inspired-by", "weight": 0.8, "label": "Scaled up LeCun's convolutional approach with GPUs" },
+    { "source": "connectionist/cnns/resnet", "target": "connectionist/cnns/alexnet", "relation": "inspired-by", "weight": 0.7, "label": "Built on deep CNN paradigm with residual connections" },
+    { "source": "connectionist/word2vec", "target": "connectionist/mlp", "relation": "inspired-by", "weight": 0.6, "label": "Shallow neural networks for word embeddings" },
+    { "source": "connectionist/transformers/bert", "target": "connectionist/word2vec", "relation": "inspired-by", "weight": 0.6, "label": "Contextualized embeddings extending static word vectors" },
+    { "source": "connectionist/transformers/gpt", "target": "connectionist/transformers", "relation": "inspired-by", "weight": 1.0, "label": "Applied transformer decoder for language modeling" },
+    { "source": "connectionist/transformers/bert", "target": "connectionist/transformers", "relation": "inspired-by", "weight": 1.0, "label": "Applied transformer encoder for NLU" },
+    { "source": "connectionist/transformers/vision-transformer", "target": "connectionist/cnns", "relation": "inspired-by", "weight": 0.7, "label": "Replaced convolutions with attention for vision" },
+    { "source": "connectionist/transformers/vision-transformer", "target": "connectionist/transformers/bert", "relation": "inspired-by", "weight": 0.8, "label": "Adapted BERT-like pre-training for images" },
+    { "source": "generative/vaes", "target": "connectionist/autoencoders", "relation": "inspired-by", "weight": 0.9, "label": "Added probabilistic latent space to autoencoders" },
+    { "source": "generative/vaes", "target": "probabilistic/variational-inference", "relation": "inspired-by", "weight": 0.9, "label": "Applied variational inference to neural generative models" },
+    { "source": "generative/diffusion-models", "target": "generative/vaes", "relation": "inspired-by", "weight": 0.5, "label": "Both use latent variables and ELBO-like objectives" },
+    { "source": "generative/stable-diffusion", "target": "generative/vaes", "relation": "inspired-by", "weight": 0.7, "label": "Uses VAE encoder/decoder for latent-space diffusion" },
+    { "source": "generative/dall-e", "target": "connectionist/transformers", "relation": "inspired-by", "weight": 0.9, "label": "Used transformer for text-to-image generation" },
+    { "source": "generative/dall-e", "target": "generative/vaes", "relation": "inspired-by", "weight": 0.7, "label": "DALL-E 1 used a discrete VAE for image tokens" },
+    { "source": "generative/llms/chatgpt", "target": "reinforcement/rlhf", "relation": "inspired-by", "weight": 1.0, "label": "RLHF was critical to ChatGPT's conversational ability" },
+    { "source": "generative/llms/chatgpt", "target": "connectionist/transformers/gpt-3", "relation": "inspired-by", "weight": 1.0, "label": "Fine-tuned GPT-3.5 for conversation" },
+    { "source": "generative/llms/claude", "target": "reinforcement/rlhf", "relation": "inspired-by", "weight": 0.9, "label": "Uses RLAIF, a variant of RLHF with AI feedback" },
+    { "source": "reinforcement/rlhf", "target": "reinforcement/policy-gradient", "relation": "inspired-by", "weight": 0.8, "label": "Uses policy gradient methods with human reward signal" },
+    { "source": "reinforcement/alphago", "target": "probabilistic/mcmc", "relation": "inspired-by", "weight": 0.6, "label": "Monte Carlo tree search shares sampling ideas with MCMC" },
+    { "source": "reinforcement/alphastar", "target": "reinforcement/alphago", "relation": "inspired-by", "weight": 0.8, "label": "Extended AlphaGo's approach to real-time imperfect-information games" },
+    { "source": "reinforcement/alphastar", "target": "reinforcement/multi-agent-rl", "relation": "inspired-by", "weight": 0.9, "label": "Trained via league-based multi-agent self-play" },
+    { "source": "evolutionary/neuroevolution", "target": "connectionist/mlp", "relation": "inspired-by", "weight": 0.7, "label": "Evolves neural network parameters and structure" },
+    { "source": "foundations/expert-systems-era", "target": "symbolic/expert-systems", "relation": "inspired-by", "weight": 0.9, "label": "Expert systems drove the 1980s AI boom" },
+    { "source": "foundations/statistical-turn", "target": "probabilistic/bayesian-networks", "relation": "inspired-by", "weight": 0.7, "label": "Statistical methods replaced symbolic approaches" },
+    { "source": "foundations/statistical-turn", "target": "probabilistic/hidden-markov-models", "relation": "inspired-by", "weight": 0.7, "label": "HMMs exemplified the shift to statistical AI" },
+    { "source": "foundations/deep-learning-revolution", "target": "connectionist/cnns/alexnet", "relation": "inspired-by", "weight": 1.0, "label": "AlexNet's ImageNet victory triggered the revolution" },
+    { "source": "applied/protein-folding", "target": "connectionist/transformers", "relation": "inspired-by", "weight": 0.8, "label": "AlphaFold2 uses attention mechanisms for structure prediction" },
+    { "source": "applied/protein-folding", "target": "reinforcement/deep-rl", "relation": "inspired-by", "weight": 0.5, "label": "AlphaFold draws from DeepMind's RL research culture" },
+    { "source": "generative/text-to-video", "target": "generative/diffusion-models", "relation": "inspired-by", "weight": 0.9, "label": "Video generation extends diffusion to temporal sequences" },
+    { "source": "probabilistic/causal-inference", "target": "probabilistic/bayesian-networks", "relation": "inspired-by", "weight": 0.8, "label": "Pearl extended Bayesian networks to causal reasoning" },
+    { "source": "probabilistic/probabilistic-programming", "target": "probabilistic/mcmc", "relation": "inspired-by", "weight": 0.7, "label": "PPLs automate MCMC and variational inference" },
+    { "source": "probabilistic/probabilistic-programming", "target": "probabilistic/variational-inference", "relation": "inspired-by", "weight": 0.7, "label": "PPLs automate variational inference" },
+
+    { "source": "connectionist/cnns/alexnet", "target": "foundations/deep-learning-revolution", "relation": "causes", "weight": 1.0, "label": "AlexNet's ImageNet victory proved deep learning works at scale" },
+    { "source": "connectionist/attention", "target": "connectionist/transformers", "relation": "causes", "weight": 1.0, "label": "Attention mechanism enabled the transformer architecture" },
+    { "source": "foundations/perceptron", "target": "foundations/ai-winter-1", "relation": "causes", "weight": 0.7, "label": "Perceptron limitations contributed to the first AI winter" },
+    { "source": "foundations/expert-systems-era", "target": "foundations/ai-winter-2", "relation": "causes", "weight": 0.8, "label": "Expert systems' brittleness led to the second AI winter" },
+    { "source": "foundations/ai-winter-1", "target": "foundations/expert-systems-era", "relation": "causes", "weight": 0.6, "label": "First winter shifted focus from neural nets to expert systems" },
+    { "source": "foundations/ai-winter-2", "target": "foundations/statistical-turn", "relation": "causes", "weight": 0.7, "label": "Second winter drove shift to statistical methods" },
+    { "source": "foundations/dartmouth-conference", "target": "symbolic/gofai", "relation": "causes", "weight": 0.9, "label": "Dartmouth launched the symbolic AI research program" },
+    { "source": "connectionist/backpropagation", "target": "connectionist/mlp", "relation": "causes", "weight": 1.0, "label": "Backpropagation made training multi-layer networks practical" },
+    { "source": "connectionist/transformers", "target": "generative/llms", "relation": "causes", "weight": 1.0, "label": "Transformers made large language models possible" },
+    { "source": "generative/llms/chatgpt", "target": "generative/text-to-video", "relation": "causes", "weight": 0.5, "label": "ChatGPT's success accelerated investment in all generative AI" },
+    { "source": "connectionist/word2vec", "target": "connectionist/attention", "relation": "causes", "weight": 0.5, "label": "Dense embeddings enabled attention over distributed representations" },
+    { "source": "foundations/turing-test", "target": "foundations/dartmouth-conference", "relation": "causes", "weight": 0.7, "label": "Turing's ideas directly inspired the Dartmouth founders" },
+    { "source": "foundations/deep-learning-revolution", "target": "generative/gans", "relation": "causes", "weight": 0.6, "label": "Deep learning revolution enabled GAN research" },
+    { "source": "reinforcement/rlhf", "target": "generative/llms/chatgpt", "relation": "causes", "weight": 0.9, "label": "RLHF alignment enabled ChatGPT's safe, helpful behavior" },
+    { "source": "connectionist/transformers/gpt-3", "target": "connectionist/transformers/gpt-4", "relation": "causes", "weight": 0.8, "label": "GPT-3's success justified the investment in GPT-4" },
+
+    { "source": "symbolic/gofai", "target": "connectionist", "relation": "contradicts", "weight": 0.8, "label": "Symbolic vs connectionist: rules vs learned representations" },
+    { "source": "connectionist", "target": "symbolic/gofai", "relation": "contradicts", "weight": 0.8, "label": "Connectionist learning challenges hand-crafted symbolic reasoning" },
+    { "source": "reinforcement/model-based-rl", "target": "reinforcement/q-learning", "relation": "contradicts", "weight": 0.5, "label": "Model-based vs model-free: learn dynamics or learn values directly" },
+    { "source": "generative/gans", "target": "generative/vaes", "relation": "contradicts", "weight": 0.4, "label": "Adversarial training vs variational inference: different generative paradigms" },
+    { "source": "generative/diffusion-models", "target": "generative/gans", "relation": "contradicts", "weight": 0.4, "label": "Iterative denoising vs adversarial training for image generation" },
+
+    { "source": "connectionist/cnns", "target": "applied/computer-vision", "relation": "relates-to", "weight": 0.9, "label": "CNNs are the backbone of modern computer vision" },
+    { "source": "connectionist/rnns", "target": "applied/speech-recognition", "relation": "relates-to", "weight": 0.7, "label": "RNNs dominated speech recognition before transformers" },
+    { "source": "connectionist/transformers", "target": "applied/nlp", "relation": "relates-to", "weight": 1.0, "label": "Transformers revolutionized NLP" },
+    { "source": "reinforcement/deep-rl", "target": "applied/robotics", "relation": "relates-to", "weight": 0.8, "label": "Deep RL enables robotic control and manipulation" },
+    { "source": "reinforcement/deep-rl", "target": "applied/autonomous-vehicles", "relation": "relates-to", "weight": 0.6, "label": "RL used for self-driving decision making" },
+    { "source": "connectionist/cnns", "target": "applied/autonomous-vehicles", "relation": "relates-to", "weight": 0.8, "label": "CNNs power perception in self-driving cars" },
+    { "source": "probabilistic/bayesian-networks", "target": "applied/drug-discovery", "relation": "relates-to", "weight": 0.5, "label": "Bayesian methods used in clinical trial design" },
+    { "source": "generative/llms", "target": "applied/nlp", "relation": "relates-to", "weight": 0.9, "label": "LLMs are the state of the art for most NLP tasks" },
+    { "source": "applied/speech-recognition", "target": "applied/nlp", "relation": "relates-to", "weight": 0.7, "label": "Speech recognition is a core NLP application" },
+    { "source": "probabilistic/hidden-markov-models", "target": "applied/speech-recognition", "relation": "relates-to", "weight": 0.8, "label": "HMMs were the foundation of speech recognition for decades" },
+    { "source": "symbolic/planning", "target": "applied/robotics", "relation": "relates-to", "weight": 0.7, "label": "Classical planning used in robot task planning" },
+    { "source": "symbolic/nlp-symbolic", "target": "applied/nlp", "relation": "relates-to", "weight": 0.6, "label": "Early NLP was rule-based before the statistical turn" },
+    { "source": "generative/image-generation", "target": "applied/computer-vision", "relation": "relates-to", "weight": 0.7, "label": "Image generation and understanding are complementary" },
+    { "source": "evolutionary/evolutionary-strategies", "target": "reinforcement/policy-gradient", "relation": "relates-to", "weight": 0.6, "label": "ES and policy gradients are alternative approaches to policy optimization" },
+    { "source": "connectionist/transformers/vision-transformer", "target": "applied/computer-vision", "relation": "relates-to", "weight": 0.8, "label": "ViT competes with CNNs for vision tasks" }
+  ]
+}

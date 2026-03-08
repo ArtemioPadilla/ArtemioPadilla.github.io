@@ -392,6 +392,59 @@
       }
     },
     {
+      "id": "technology/programming-languages",
+      "label": "Programming Languages",
+      "type": "topic",
+      "summary": "The family tree of programming languages — how paradigms evolved, influenced each other, and shaped how we think about computation.",
+      "tags": ["programming", "languages", "paradigms", "computation"],
+      "subgraph": "programming-languages.json",
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "philosophy/history",
+      "label": "History of Philosophy",
+      "type": "topic",
+      "summary": "From the Pre-Socratics to contemporary thought — how philosophical traditions branched, clashed, and evolved over 2600 years.",
+      "tags": ["philosophy", "history", "traditions", "schools"],
+      "subgraph": "philosophy-history.json",
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "technology/ai/family-tree",
+      "label": "AI & Machine Learning Family Tree",
+      "type": "topic",
+      "summary": "The evolution of artificial intelligence — from symbolic reasoning to deep learning to large language models.",
+      "tags": ["ai", "machine-learning", "deep-learning", "history"],
+      "subgraph": "ai-ml-family.json",
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "society/economic-schools",
+      "label": "Economic Schools of Thought",
+      "type": "topic",
+      "summary": "How economists disagree — from Adam Smith to behavioral economics, the competing frameworks for understanding markets and society.",
+      "tags": ["economics", "schools", "markets", "policy"],
+      "subgraph": "economic-schools.json",
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "art-culture/musical-genres",
+      "label": "Musical Genres",
+      "type": "topic",
+      "summary": "The family tree of music — how genres branched, fused, and evolved from African roots to electronic music and beyond.",
+      "tags": ["music", "genres", "culture", "evolution"],
+      "subgraph": "musical-genres.json",
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "art-culture",
+      "label": "Art & Culture",
+      "type": "domain",
+      "summary": "Human creative expression — music, visual art, literature, film, and the cultural movements that shape civilization.",
+      "tags": ["art", "culture", "creativity", "expression"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
       "id": "personal",
       "label": "Personal",
       "type": "domain",
@@ -624,6 +677,68 @@
       "relation": "relates-to",
       "weight": 0.8,
       "label": "Religions are philosophical systems — cosmology, ethics, metaphysics, and epistemology all intertwined"
+    },
+    {
+      "source": "technology/programming-languages",
+      "target": "technology",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "technology/programming-languages",
+      "target": "mathematics/computation",
+      "relation": "relates-to",
+      "weight": 0.8,
+      "label": "Programming languages are the practical interface to computation theory"
+    },
+    {
+      "source": "philosophy/history",
+      "target": "philosophy",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "philosophy/history",
+      "target": "philosophy/aristotle",
+      "relation": "relates-to",
+      "weight": 0.9
+    },
+    {
+      "source": "technology/ai/family-tree",
+      "target": "technology/ai",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "technology/ai/family-tree",
+      "target": "technology/ai/deep-learning",
+      "relation": "relates-to",
+      "weight": 0.9
+    },
+    {
+      "source": "society/economic-schools",
+      "target": "society",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "society/economic-schools",
+      "target": "society/systems-thinking",
+      "relation": "relates-to",
+      "weight": 0.7,
+      "label": "Economic models are systems models — feedback loops, equilibria, and emergent behavior"
+    },
+    {
+      "source": "art-culture/musical-genres",
+      "target": "art-culture",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "personal/curiosity",
+      "target": "art-culture",
+      "relation": "causes",
+      "weight": 0.8
     }
   ]
 }

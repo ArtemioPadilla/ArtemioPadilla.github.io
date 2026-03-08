@@ -1,0 +1,1069 @@
+{
+  "version": "0.1.0",
+  "lastUpdated": "2026-03-08",
+  "nodes": [
+    {
+      "id": "african-roots",
+      "label": "African Roots",
+      "type": "domain",
+      "summary": "The foundational musical traditions of Africa and the African diaspora — spirituals, work songs, and field hollers that seeded blues, jazz, gospel, and virtually all popular music.",
+      "tags": ["africa", "diaspora", "oral-tradition"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "classical-western",
+      "label": "Classical Western",
+      "type": "domain",
+      "summary": "The European art music tradition spanning from medieval plainchant through Baroque, Classical, Romantic, and into 20th-century modernism and minimalism.",
+      "tags": ["classical", "europe", "art-music"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "rock",
+      "label": "Rock",
+      "type": "domain",
+      "summary": "Born from blues, gospel, and country in the 1950s, rock music became the dominant popular music form of the 20th century, branching into dozens of subgenres.",
+      "tags": ["rock", "guitar", "popular-music"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "electronic",
+      "label": "Electronic",
+      "type": "domain",
+      "summary": "Music primarily produced with electronic instruments, synthesizers, drum machines, and digital audio workstations — from early experiments to global dance culture.",
+      "tags": ["electronic", "synthesizer", "dance"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "hip-hop",
+      "label": "Hip-Hop",
+      "type": "domain",
+      "summary": "A cultural movement and music genre born in the Bronx in 1973, built on DJing, MCing, breakdancing, and graffiti — now the world's most consumed music genre.",
+      "tags": ["hip-hop", "rap", "bronx", "culture"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues",
+      "label": "Jazz & Blues",
+      "type": "domain",
+      "summary": "The twin pillars of African-American music — blues rooted in field hollers and spirituals, jazz in improvisation and harmonic complexity. Together they shaped the 20th century.",
+      "tags": ["jazz", "blues", "african-american", "improvisation"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "latin",
+      "label": "Latin",
+      "type": "domain",
+      "summary": "The rich musical traditions of Latin America and the Caribbean — from Cuban son and Brazilian samba to Argentine tango and modern reggaeton.",
+      "tags": ["latin", "caribbean", "south-america"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "world",
+      "label": "World",
+      "type": "domain",
+      "summary": "Musical traditions from Jamaica, East Asia, South Asia, and Iberia that cross-pollinated with Western popular music to create globally influential genres.",
+      "tags": ["world", "global", "cross-cultural"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "african-roots/west-african-music",
+      "label": "West African Music",
+      "type": "topic",
+      "summary": "The polyrhythmic, call-and-response vocal traditions of West Africa — griot storytelling, drumming circles, and pentatonic scales that enslaved Africans carried to the Americas.",
+      "tags": ["west-africa", "polyrhythm", "griot", "oral-tradition"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "african-roots/spirituals",
+      "label": "Spirituals",
+      "type": "topic",
+      "summary": "Sacred songs created by enslaved African Americans, blending African musical traditions with Christian hymns. Coded messages of resistance and hope that laid groundwork for gospel and blues.",
+      "tags": ["spirituals", "sacred", "slavery", "resistance"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "african-roots/work-songs",
+      "label": "Work Songs",
+      "type": "concept",
+      "summary": "Rhythmic songs sung by enslaved and later free Black laborers to coordinate physical work. Their call-and-response structure and blue notes fed directly into the blues.",
+      "tags": ["work-songs", "labor", "call-and-response"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "african-roots/field-hollers",
+      "label": "Field Hollers",
+      "type": "concept",
+      "summary": "Solo vocal cries sung by enslaved field workers in the American South. Their melismatic, improvised melodies and bent notes are direct precursors to the blues vocal style.",
+      "tags": ["field-hollers", "vocal", "improvisation", "south"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "african-roots/afrobeat",
+      "label": "Afrobeat",
+      "type": "topic",
+      "summary": "Genre pioneered by Fela Kuti in Lagos in the late 1960s, fusing Yoruba music and Ghanaian highlife with American funk, jazz, and psychedelic rock. Politically charged and rhythmically complex.",
+      "tags": ["afrobeat", "fela-kuti", "nigeria", "funk", "political"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "african-roots/highlife",
+      "label": "Highlife",
+      "type": "topic",
+      "summary": "A Ghanaian and Nigerian popular music genre from the early 20th century, blending local melodies with Western instruments — brass bands, guitars, and jazz harmonies. A key ingredient of Afrobeat.",
+      "tags": ["highlife", "ghana", "nigeria", "brass"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "jazz-blues/blues",
+      "label": "Blues",
+      "type": "topic",
+      "summary": "Born in the Deep South around the 1890s-1900s from spirituals, work songs, and field hollers. The 12-bar blues form, blue notes, and call-and-response became the DNA of popular music.",
+      "tags": ["blues", "twelve-bar", "deep-south", "blue-notes"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/delta-blues",
+      "label": "Delta Blues",
+      "type": "concept",
+      "summary": "The earliest recorded blues style, originating in the Mississippi Delta in the 1900s-1920s. Acoustic guitar and slide guitar, raw vocals. Robert Johnson, Charley Patton, Son House.",
+      "tags": ["delta-blues", "mississippi", "acoustic", "slide-guitar"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/chicago-blues",
+      "label": "Chicago Blues",
+      "type": "concept",
+      "summary": "Electrified Delta blues transplanted to Chicago during the Great Migration (1940s-1950s). Muddy Waters, Howlin Wolf, and Little Walter added electric guitar, amplified harmonica, and full bands.",
+      "tags": ["chicago-blues", "electric", "great-migration", "muddy-waters"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/rhythm-and-blues",
+      "label": "Rhythm and Blues",
+      "type": "topic",
+      "summary": "Emerged in the late 1940s as a commercial term for African-American popular music. Combined blues, jazz, and gospel into an upbeat, dance-oriented style that directly birthed rock and roll.",
+      "tags": ["rnb", "rhythm-and-blues", "dance", "crossover"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/jazz",
+      "label": "Jazz",
+      "type": "topic",
+      "summary": "Originated in New Orleans in the 1910s from blues, ragtime, and brass band traditions. Defined by improvisation, swing, and complex harmony. America's classical music.",
+      "tags": ["jazz", "new-orleans", "improvisation", "swing"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/swing",
+      "label": "Swing",
+      "type": "concept",
+      "summary": "The dominant popular music of the 1930s-1940s. Big band jazz with danceable rhythms — Duke Ellington, Count Basie, Benny Goodman. The first truly mass-market American music.",
+      "tags": ["swing", "big-band", "dance", "1930s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/bebop",
+      "label": "Bebop",
+      "type": "concept",
+      "summary": "A virtuosic, harmonically complex jazz style developed in the mid-1940s by Charlie Parker, Dizzy Gillespie, and Thelonious Monk. Fast tempos, intricate melodies, and improvisation over chord changes.",
+      "tags": ["bebop", "charlie-parker", "virtuosity", "1940s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/cool-jazz",
+      "label": "Cool Jazz",
+      "type": "concept",
+      "summary": "A relaxed, lyrical response to bebop's intensity, emerging in the late 1940s-1950s. Miles Davis's Birth of the Cool (1957), Dave Brubeck, Chet Baker. West Coast jazz.",
+      "tags": ["cool-jazz", "miles-davis", "west-coast", "1950s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/hard-bop",
+      "label": "Hard Bop",
+      "type": "concept",
+      "summary": "A grittier, blues- and gospel-inflected extension of bebop, flourishing in the 1950s-1960s. Art Blakey, Horace Silver, Cannonball Adderley. The East Coast response to cool jazz.",
+      "tags": ["hard-bop", "art-blakey", "east-coast", "1950s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/free-jazz",
+      "label": "Free Jazz",
+      "type": "concept",
+      "summary": "Avant-garde jazz that abandoned fixed chord progressions, tempos, and structures in the 1960s. Ornette Coleman, John Coltrane, Cecil Taylor. Radical freedom as aesthetic principle.",
+      "tags": ["free-jazz", "avant-garde", "ornette-coleman", "1960s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/fusion",
+      "label": "Jazz Fusion",
+      "type": "concept",
+      "summary": "Jazz fused with rock, funk, and electronic instruments in the late 1960s-1970s. Miles Davis's Bitches Brew (1970), Weather Report, Herbie Hancock, Return to Forever.",
+      "tags": ["fusion", "jazz-rock", "miles-davis", "1970s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/smooth-jazz",
+      "label": "Smooth Jazz",
+      "type": "concept",
+      "summary": "A commercially oriented, radio-friendly jazz style emphasizing melody over improvisation. Emerged in the 1980s from fusion. Grover Washington Jr., Kenny G, George Benson.",
+      "tags": ["smooth-jazz", "radio", "commercial", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/gospel",
+      "label": "Gospel",
+      "type": "topic",
+      "summary": "African-American sacred music rooted in spirituals, hymns, and the Black church. Thomas A. Dorsey formalized it in the 1930s. Its vocal intensity and emotional power shaped soul, R&B, and rock.",
+      "tags": ["gospel", "sacred", "church", "vocals"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/soul",
+      "label": "Soul",
+      "type": "topic",
+      "summary": "Born in the late 1950s-1960s by fusing gospel fervor with R&B rhythm. Ray Charles, Sam Cooke, Aretha Franklin, Otis Redding. Motown and Stax defined two distinct approaches.",
+      "tags": ["soul", "motown", "stax", "1960s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "jazz-blues/funk",
+      "label": "Funk",
+      "type": "topic",
+      "summary": "James Brown and Parliament-Funkadelic made the groove the song itself in the late 1960s-1970s. Syncopated bass, rhythmic guitar, heavy drums. The One. Directly seeded hip-hop and electronic dance music.",
+      "tags": ["funk", "james-brown", "groove", "syncopation"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "rock/rock-and-roll",
+      "label": "Rock and Roll",
+      "type": "topic",
+      "summary": "Exploded in the mid-1950s from rhythm and blues, gospel, and country. Chuck Berry, Little Richard, Elvis Presley, Fats Domino. The cultural earthquake that launched the modern music era.",
+      "tags": ["rock-and-roll", "1950s", "chuck-berry", "elvis"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "rock/british-invasion",
+      "label": "British Invasion",
+      "type": "concept",
+      "summary": "UK bands reinterpreted American blues and rock and roll for global audiences in the early-mid 1960s. The Beatles, Rolling Stones, The Who, The Kinks. Reshaped popular music worldwide.",
+      "tags": ["british-invasion", "beatles", "1960s", "uk"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "rock/psychedelic-rock",
+      "label": "Psychedelic Rock",
+      "type": "concept",
+      "summary": "Mid-to-late 1960s rock exploring altered consciousness through studio effects, Eastern instruments, and extended improvisation. Jimi Hendrix, Pink Floyd, Jefferson Airplane, The Doors.",
+      "tags": ["psychedelic", "1960s", "hendrix", "counterculture"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "rock/progressive-rock",
+      "label": "Progressive Rock",
+      "type": "concept",
+      "summary": "Late 1960s-1970s rock that incorporated classical structures, odd time signatures, concept albums, and virtuoso musicianship. Yes, Genesis, King Crimson, Pink Floyd, ELP.",
+      "tags": ["prog-rock", "concept-album", "classical-influence", "1970s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "rock/hard-rock",
+      "label": "Hard Rock",
+      "type": "concept",
+      "summary": "Aggressive, amplified blues-rock with distorted guitars and powerful vocals, emerging in the late 1960s. Led Zeppelin, Deep Purple, AC/DC. The bridge between blues-rock and heavy metal.",
+      "tags": ["hard-rock", "distortion", "led-zeppelin", "1960s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "rock/punk-rock",
+      "label": "Punk Rock",
+      "type": "topic",
+      "summary": "A deliberate rejection of progressive rock's complexity, erupting in 1976-77. Ramones, Sex Pistols, The Clash. Fast, loud, stripped-down, DIY. Three chords and the truth.",
+      "tags": ["punk", "diy", "ramones", "1970s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "rock/post-punk",
+      "label": "Post-Punk",
+      "type": "concept",
+      "summary": "Late 1970s-early 1980s movement that retained punk's energy but embraced experimentation — synthesizers, art, angular guitars. Joy Division, Siouxsie, Wire, Talking Heads.",
+      "tags": ["post-punk", "art-rock", "joy-division", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "rock/new-wave",
+      "label": "New Wave",
+      "type": "concept",
+      "summary": "Pop-oriented post-punk with synthesizers, quirky aesthetics, and mainstream appeal (late 1970s-1980s). Blondie, Devo, The Cars, Duran Duran, Depeche Mode.",
+      "tags": ["new-wave", "synth", "1980s", "pop"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "rock/heavy-metal",
+      "label": "Heavy Metal",
+      "type": "topic",
+      "summary": "Born from hard rock circa 1970 with Black Sabbath's debut. Distorted guitars, powerful drums, dark themes. Spawned dozens of subgenres over five decades.",
+      "tags": ["metal", "black-sabbath", "distortion", "1970s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "rock/thrash-metal",
+      "label": "Thrash Metal",
+      "type": "concept",
+      "summary": "Fast, aggressive metal fusing NWOBHM with hardcore punk in the early 1980s. Metallica, Slayer, Megadeth, Anthrax — the Big Four. Speed, precision, and socio-political anger.",
+      "tags": ["thrash", "metallica", "speed", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "rock/death-metal",
+      "label": "Death Metal",
+      "type": "concept",
+      "summary": "Extreme metal pushing thrash to its limits in the mid-late 1980s. Growled vocals, blast beats, technical riffing. Death, Morbid Angel, Cannibal Corpse. Florida and Sweden scenes.",
+      "tags": ["death-metal", "extreme", "blast-beats", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "rock/black-metal",
+      "label": "Black Metal",
+      "type": "concept",
+      "summary": "Extreme metal emphasizing atmosphere, tremolo picking, shrieked vocals, and anti-establishment ideology. Emerged in the 1980s-1990s. Bathory, Mayhem, Burzum. Norwegian scene notorious.",
+      "tags": ["black-metal", "extreme", "atmosphere", "norway"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "rock/alternative-rock",
+      "label": "Alternative Rock",
+      "type": "topic",
+      "summary": "An umbrella term for underground rock emerging from the 1980s indie and post-punk scenes, breaking mainstream with Nirvana in 1991. R.E.M., Pixies, Radiohead, Smashing Pumpkins.",
+      "tags": ["alternative", "indie", "1990s", "underground"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "rock/grunge",
+      "label": "Grunge",
+      "type": "concept",
+      "summary": "Seattle sound fusing punk energy with heavy metal riffs and introspective lyrics (mid-1980s-1990s). Nirvana, Pearl Jam, Soundgarden, Alice in Chains. Killed hair metal, defined Generation X.",
+      "tags": ["grunge", "seattle", "nirvana", "1990s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "rock/indie-rock",
+      "label": "Indie Rock",
+      "type": "concept",
+      "summary": "Rock released on independent labels or with a DIY ethos, flourishing from the 1980s onward. Sonic Youth, Pavement, Modest Mouse, Arcade Fire. Aesthetic independence over commercial appeal.",
+      "tags": ["indie", "diy", "independent", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "rock/shoegaze",
+      "label": "Shoegaze",
+      "type": "concept",
+      "summary": "Late 1980s-early 1990s UK genre defined by walls of distorted guitar, ethereal vocals, and heavy effects pedal use. My Bloody Valentine, Slowdive, Ride. Named for performers staring at their pedals.",
+      "tags": ["shoegaze", "effects", "ethereal", "1990s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "rock/garage-rock",
+      "label": "Garage Rock",
+      "type": "concept",
+      "summary": "Raw, energetic rock played by amateur bands in the 1960s — The Sonics, The Kingsmen, 13th Floor Elevators. Proto-punk spirit. Revived in the 2000s by The Strokes and White Stripes.",
+      "tags": ["garage-rock", "raw", "1960s", "proto-punk"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "rock/surf-rock",
+      "label": "Surf Rock",
+      "type": "concept",
+      "summary": "Early 1960s Southern California genre featuring reverb-drenched guitar instrumentals and beach culture themes. Dick Dale, The Beach Boys, The Ventures. Reverb as identity.",
+      "tags": ["surf-rock", "reverb", "california", "1960s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "rock/folk-rock",
+      "label": "Folk Rock",
+      "type": "concept",
+      "summary": "Mid-1960s fusion of folk songwriting and rock instrumentation. Bob Dylan going electric (1965), The Byrds, Simon & Garfunkel. Protest lyrics met amplified sound.",
+      "tags": ["folk-rock", "bob-dylan", "protest", "1960s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "rock/country-rock",
+      "label": "Country Rock",
+      "type": "concept",
+      "summary": "Late 1960s-1970s blend of rock with country and western elements. The Byrds (Sweetheart of the Rodeo), Gram Parsons, Eagles, Creedence Clearwater Revival.",
+      "tags": ["country-rock", "byrds", "eagles", "1970s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "electronic/electronic-music",
+      "label": "Electronic Music",
+      "type": "topic",
+      "summary": "Music produced primarily through electronic means — from early tape experiments and Moog synthesizers in the 1950s-60s to the global dance music industry.",
+      "tags": ["electronic", "production", "technology"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "electronic/synthesizer-music",
+      "label": "Synthesizer Music",
+      "type": "concept",
+      "summary": "Music centered on the synthesizer, from Wendy Carlos's Switched-On Bach (1968) to Kraftwerk's electronic pop (1970s). The DX7 and TR-808 revolutionized production in the 1980s.",
+      "tags": ["synth", "kraftwerk", "moog", "1970s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "electronic/disco",
+      "label": "Disco",
+      "type": "topic",
+      "summary": "1970s dance music born in underground clubs of New York — funk, soul, and Latin rhythms with four-on-the-floor beats. Donna Summer, Bee Gees, Giorgio Moroder. Catalyzed house and techno.",
+      "tags": ["disco", "dance", "four-on-the-floor", "1970s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "electronic/house",
+      "label": "House",
+      "type": "topic",
+      "summary": "Born in Chicago clubs in the early 1980s from disco, electronic pop, and drum machines. Frankie Knuckles, the Warehouse. Four-on-the-floor kick, synthesized basslines, soulful vocals.",
+      "tags": ["house", "chicago", "frankie-knuckles", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "electronic/techno",
+      "label": "Techno",
+      "type": "topic",
+      "summary": "Emerged in Detroit in the mid-1980s, created by Juan Atkins, Derrick May, and Kevin Saunderson. Fused Chicago house, Kraftwerk's electronic sound, and Detroit funk into futuristic machine music.",
+      "tags": ["techno", "detroit", "belleville-three", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "electronic/trance",
+      "label": "Trance",
+      "type": "concept",
+      "summary": "Melodic, hypnotic electronic dance music that emerged in Germany and the Netherlands in the early 1990s. Build-ups, breakdowns, and euphoric synth leads. Paul van Dyk, Tiesto, Armin van Buuren.",
+      "tags": ["trance", "melodic", "euphoric", "1990s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "electronic/drum-and-bass",
+      "label": "Drum and Bass",
+      "type": "concept",
+      "summary": "Fast-tempo (160-180 BPM) UK electronic genre from the early 1990s, emphasizing breakbeats and heavy bass. Evolved from rave and jungle. Goldie, Roni Size, LTJ Bukem.",
+      "tags": ["drum-and-bass", "breakbeat", "uk", "1990s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "electronic/ambient",
+      "label": "Ambient",
+      "type": "concept",
+      "summary": "Music emphasizing atmosphere, tone, and texture over rhythm or melody. Brian Eno coined the term with Ambient 1: Music for Airports (1978). Aphex Twin, Stars of the Lid.",
+      "tags": ["ambient", "brian-eno", "atmosphere", "texture"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "electronic/idm",
+      "label": "IDM",
+      "type": "concept",
+      "summary": "Intelligent dance music — experimental electronic music for listening rather than dancing, emerging in the early 1990s. Aphex Twin, Autechre, Boards of Canada. Warp Records.",
+      "tags": ["idm", "experimental", "warp", "1990s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "electronic/dubstep",
+      "label": "Dubstep",
+      "type": "concept",
+      "summary": "Born in South London in the early 2000s from UK garage, dub, and drum and bass. Deep sub-bass, sparse rhythms, half-time beats. Skream, Burial, Benga. Later popularized by Skrillex.",
+      "tags": ["dubstep", "bass", "london", "2000s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "electronic/edm",
+      "label": "EDM",
+      "type": "concept",
+      "summary": "Umbrella term for festival-oriented electronic dance music that dominated the 2010s. Big-room drops, pop crossovers, Las Vegas residencies. Avicii, Calvin Harris, Marshmello.",
+      "tags": ["edm", "festival", "mainstream", "2010s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "electronic/synthwave",
+      "label": "Synthwave",
+      "type": "concept",
+      "summary": "2000s-2010s retro-electronic genre inspired by 1980s film soundtracks, video games, and synth-pop. Analog synths, neon aesthetics. Kavinsky, Perturbator, Carpenter Brut.",
+      "tags": ["synthwave", "retro", "1980s-nostalgia", "2010s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "electronic/vaporwave",
+      "label": "Vaporwave",
+      "type": "concept",
+      "summary": "Internet-born micro-genre from the early 2010s — slowed-down samples of 1980s-90s muzak, smooth jazz, and pop. Critique of consumer capitalism through surreal nostalgia. Macintosh Plus.",
+      "tags": ["vaporwave", "internet", "sampling", "2010s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "electronic/lo-fi",
+      "label": "Lo-Fi",
+      "type": "concept",
+      "summary": "Chill, low-fidelity hip-hop-influenced beats popularized on YouTube and streaming platforms in the 2010s. Jazz samples, vinyl crackle, relaxed tempos. Nujabes as spiritual predecessor.",
+      "tags": ["lo-fi", "chill", "beats", "streaming"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "electronic/industrial",
+      "label": "Industrial",
+      "type": "concept",
+      "summary": "Abrasive, confrontational electronic music using noise, distortion, and mechanical sounds. Throbbing Gristle (1976), Einsturzende Neubauten, Nine Inch Nails, Ministry.",
+      "tags": ["industrial", "noise", "throbbing-gristle", "1970s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "hip-hop/hip-hop",
+      "label": "Hip-Hop",
+      "type": "topic",
+      "summary": "Born August 11, 1973, at a Bronx block party. DJ Kool Herc isolated funk breakbeats, MCs rapped over them. Jamaican sound system culture meets African-American street culture.",
+      "tags": ["hip-hop", "bronx", "dj-kool-herc", "1973"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "hip-hop/old-school",
+      "label": "Old School Hip-Hop",
+      "type": "concept",
+      "summary": "The earliest recorded hip-hop era (1979-1984). Simple beats, party-oriented rapping, DJ scratching. Sugarhill Gang, Grandmaster Flash, Afrika Bambaataa, Run-DMC.",
+      "tags": ["old-school", "party-rap", "sugarhill", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "hip-hop/golden-age",
+      "label": "Golden Age Hip-Hop",
+      "type": "concept",
+      "summary": "The creative peak of hip-hop (late 1980s-early 1990s). Diverse styles, innovative sampling, lyrical sophistication. Rakim, Public Enemy, A Tribe Called Quest, De La Soul, Nas.",
+      "tags": ["golden-age", "sampling", "lyrical", "1990s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "hip-hop/gangsta-rap",
+      "label": "Gangsta Rap",
+      "type": "concept",
+      "summary": "Subgenre depicting street life, violence, and systemic injustice. Emerged in the late 1980s. N.W.A, Ice-T, Tupac, Notorious B.I.G. Controversial but culturally transformative.",
+      "tags": ["gangsta-rap", "nwa", "street", "1980s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "hip-hop/east-coast",
+      "label": "East Coast Hip-Hop",
+      "type": "concept",
+      "summary": "New York-centered hip-hop emphasizing lyrical complexity, jazz-influenced production, and boom-bap beats. Nas, Wu-Tang Clan, Notorious B.I.G., Jay-Z.",
+      "tags": ["east-coast", "new-york", "boom-bap", "1990s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "hip-hop/west-coast",
+      "label": "West Coast Hip-Hop",
+      "type": "concept",
+      "summary": "Los Angeles-centered hip-hop with G-funk production, synthesizer-heavy beats, and laid-back flows. Dr. Dre, Snoop Dogg, Tupac, Ice Cube. The Chronic (1992) defined the sound.",
+      "tags": ["west-coast", "g-funk", "los-angeles", "1990s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "hip-hop/southern-rap",
+      "label": "Southern Rap",
+      "type": "concept",
+      "summary": "Hip-hop from the American South — Atlanta, Houston, Memphis, New Orleans. Distinct bass-heavy production, regional slang, crunk energy. OutKast, UGK, Three 6 Mafia, Lil Wayne.",
+      "tags": ["southern-rap", "atlanta", "houston", "crunk"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "hip-hop/trap",
+      "label": "Trap",
+      "type": "concept",
+      "summary": "Atlanta-born subgenre defined by 808 bass, hi-hat rolls, and dark synthesizers. Named after T.I.'s Trap Muzik (2003), popularized by Lex Luger and Waka Flocka in 2010. Dominated 2010s hip-hop.",
+      "tags": ["trap", "808", "atlanta", "2010s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "hip-hop/conscious-rap",
+      "label": "Conscious Rap",
+      "type": "concept",
+      "summary": "Socially and politically aware hip-hop focusing on knowledge, justice, and Black empowerment. KRS-One, Common, Talib Kweli, Kendrick Lamar. The thinking person's rap.",
+      "tags": ["conscious", "political", "knowledge", "empowerment"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "hip-hop/drill",
+      "label": "Drill",
+      "type": "concept",
+      "summary": "Aggressive hip-hop subgenre born in Chicago (early 2010s) from trap music and gangsta rap. Chief Keef, Lil Durk, Young Chop. Spread to London (UK drill) and Brooklyn.",
+      "tags": ["drill", "chicago", "uk-drill", "2010s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "classical-western/medieval-music",
+      "label": "Medieval Music",
+      "type": "topic",
+      "summary": "European music from roughly 500-1400 CE. Gregorian chant, troubadour songs, early polyphony. Sacred and secular traditions before notation standardized. Hildegard von Bingen.",
+      "tags": ["medieval", "chant", "polyphony", "sacred"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "classical-western/baroque",
+      "label": "Baroque",
+      "type": "topic",
+      "summary": "Ornate, dramatic European art music (1600-1750). Tonal harmony, basso continuo, fugue, concerto grosso. Bach, Handel, Vivaldi. The foundation of Western harmonic language.",
+      "tags": ["baroque", "bach", "harmony", "1600s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "classical-western/classical-period",
+      "label": "Classical Period",
+      "type": "topic",
+      "summary": "The age of elegance, balance, and form (1750-1820). Sonata form, symphony, string quartet. Haydn, Mozart, early Beethoven. Clarity and emotional restraint.",
+      "tags": ["classical-period", "mozart", "sonata", "1750s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "classical-western/romantic",
+      "label": "Romantic",
+      "type": "topic",
+      "summary": "Emotional intensity, expanded orchestras, nationalism, and individual expression (1820-1900). Beethoven, Chopin, Wagner, Tchaikovsky, Brahms. Art as feeling.",
+      "tags": ["romantic", "emotion", "nationalism", "1820s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "classical-western/impressionism",
+      "label": "Impressionism",
+      "type": "concept",
+      "summary": "Late 19th-early 20th century movement emphasizing atmosphere, color, and mood over structure. Debussy, Ravel. Parallel fifths, whole-tone scales, shimmering orchestration.",
+      "tags": ["impressionism", "debussy", "atmosphere", "1890s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "classical-western/modernist",
+      "label": "Modernist",
+      "type": "concept",
+      "summary": "Early-mid 20th century break with Romantic tradition. Atonality, serialism, neoclassicism, primitivism. Schoenberg, Stravinsky, Bartok. Radical reinvention of what music could be.",
+      "tags": ["modernism", "atonality", "serialism", "1900s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "classical-western/minimalism",
+      "label": "Minimalism",
+      "type": "concept",
+      "summary": "Repetitive structures, gradual transformation, and consonant harmony — a reaction against serialist complexity in the 1960s-70s. Steve Reich, Philip Glass, Terry Riley, La Monte Young.",
+      "tags": ["minimalism", "repetition", "steve-reich", "1960s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "classical-western/contemporary-classical",
+      "label": "Contemporary Classical",
+      "type": "concept",
+      "summary": "Art music from the late 20th century onward — spectral music, post-minimalism, electroacoustic, new complexity. John Adams, Kaija Saariaho, Thomas Ades. Pluralistic and eclectic.",
+      "tags": ["contemporary", "post-minimalism", "spectral", "21st-century"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "classical-western/opera",
+      "label": "Opera",
+      "type": "concept",
+      "summary": "Dramatic vocal art form combining music, theater, and spectacle, born in Florence around 1600. Monteverdi, Mozart, Verdi, Wagner, Puccini. The total work of art.",
+      "tags": ["opera", "vocal", "theater", "drama"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "classical-western/chamber-music",
+      "label": "Chamber Music",
+      "type": "concept",
+      "summary": "Intimate ensemble music for small groups without conductor — string quartets, piano trios, sonatas. Haydn, Beethoven, Schubert, Bartok. The art of musical conversation.",
+      "tags": ["chamber-music", "string-quartet", "intimate", "ensemble"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "latin/salsa",
+      "label": "Salsa",
+      "type": "topic",
+      "summary": "Dance music forged in 1960s-1970s New York by Cuban and Puerto Rican immigrants, blending son cubano, mambo, and jazz. Celia Cruz, Hector Lavoe, Willie Colon. Fania Records.",
+      "tags": ["salsa", "cuban", "new-york", "dance"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "latin/bossa-nova",
+      "label": "Bossa Nova",
+      "type": "topic",
+      "summary": "Quiet revolution in Brazilian music (late 1950s). Antonio Carlos Jobim and Joao Gilberto fused samba rhythm with jazz harmony. The Girl from Ipanema became a global standard.",
+      "tags": ["bossa-nova", "brazil", "jobim", "1950s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "latin/samba",
+      "label": "Samba",
+      "type": "topic",
+      "summary": "Afro-Brazilian music and dance rooted in West African rhythms, born in Rio de Janeiro in the early 20th century. Syncopated percussion, Carnival parades, batucada. Brazil's national sound.",
+      "tags": ["samba", "brazil", "carnival", "afro-brazilian"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "latin/cumbia",
+      "label": "Cumbia",
+      "type": "concept",
+      "summary": "Colombian folk genre blending Indigenous, African, and European elements, originating on the Caribbean coast. Spread across Latin America, evolving locally in Mexico, Argentina, and Peru.",
+      "tags": ["cumbia", "colombia", "folk", "dance"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "latin/reggaeton",
+      "label": "Reggaeton",
+      "type": "topic",
+      "summary": "Born from reggae en espanol in Panama (late 1980s) and Puerto Rican underground, fusing dancehall reggae with hip-hop. Dembow beat. Daddy Yankee, Bad Bunny. Now dominates global pop.",
+      "tags": ["reggaeton", "dembow", "puerto-rico", "2000s"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "latin/tango",
+      "label": "Tango",
+      "type": "concept",
+      "summary": "Argentine music and dance born in the working-class neighborhoods of Buenos Aires in the late 19th century. Bandoneon, passionate expression. Carlos Gardel, Astor Piazzolla (nuevo tango).",
+      "tags": ["tango", "argentina", "bandoneon", "dance"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "latin/mariachi",
+      "label": "Mariachi",
+      "type": "concept",
+      "summary": "Traditional Mexican folk ensemble music from Jalisco, featuring violins, trumpets, guitars, and vihuela. UNESCO Intangible Cultural Heritage. Ranchera singing and son jalisciense roots.",
+      "tags": ["mariachi", "mexico", "folk", "jalisco"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "latin/latin-pop",
+      "label": "Latin Pop",
+      "type": "concept",
+      "summary": "Spanish-language pop music blending Latin rhythms with mainstream pop production. Crossover appeal from Gloria Estefan and Ricky Martin to Shakira and Bad Bunny.",
+      "tags": ["latin-pop", "crossover", "mainstream", "spanish"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "world/reggae",
+      "label": "Reggae",
+      "type": "topic",
+      "summary": "Jamaican music emerging in the late 1960s from ska and rocksteady. Off-beat rhythmic guitar, bass-heavy grooves, Rastafari spirituality. Bob Marley made it a global language of resistance.",
+      "tags": ["reggae", "jamaica", "bob-marley", "rastafari"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "world/ska",
+      "label": "Ska",
+      "type": "topic",
+      "summary": "Jamaican genre from the late 1950s combining Caribbean mento and calypso with American R&B and jazz. Uptempo, walking bass, off-beat guitar. Precursor to rocksteady and reggae.",
+      "tags": ["ska", "jamaica", "mento", "1950s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "world/dub",
+      "label": "Dub",
+      "type": "concept",
+      "summary": "Jamaican production style (early 1970s) stripping reggae to drums and bass, adding echo, reverb, and delay. King Tubby, Lee Scratch Perry. The birth of remix culture and producer as artist.",
+      "tags": ["dub", "remix", "king-tubby", "1970s"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "world/k-pop",
+      "label": "K-Pop",
+      "type": "concept",
+      "summary": "South Korean popular music blending pop, hip-hop, R&B, and electronic dance music with synchronized choreography and visual spectacle. BTS, BLACKPINK. Global phenomenon since the 2010s.",
+      "tags": ["k-pop", "south-korea", "idol", "global"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "world/j-pop",
+      "label": "J-Pop",
+      "type": "concept",
+      "summary": "Japanese popular music encompassing a wide range of styles from the 1990s onward. Influenced by Western rock, electronic, and pop but with distinctly Japanese aesthetics and idol culture.",
+      "tags": ["j-pop", "japan", "idol", "1990s"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "world/bollywood",
+      "label": "Bollywood Music",
+      "type": "concept",
+      "summary": "Film music from India's Hindi-language movie industry, blending Indian classical ragas, folk melodies, and Western pop/disco/electronic production. The world's largest music industry by output.",
+      "tags": ["bollywood", "india", "film-music", "fusion"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "world/flamenco",
+      "label": "Flamenco",
+      "type": "concept",
+      "summary": "Andalusian art form combining guitar, singing (cante), dance, and handclaps. Romani, Moorish, Jewish, and Spanish roots. UNESCO Intangible Cultural Heritage. Paco de Lucia modernized it.",
+      "tags": ["flamenco", "spain", "andalusia", "romani"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "world/fado",
+      "label": "Fado",
+      "type": "concept",
+      "summary": "Portuguese urban folk music expressing saudade — melancholic longing. Born in 1820s Lisbon from sailor songs, African rhythms, and Brazilian modinha. Amalia Rodrigues, Mariza. UNESCO heritage.",
+      "tags": ["fado", "portugal", "saudade", "lisbon"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    }
+  ],
+  "edges": [
+    { "source": "african-roots/west-african-music", "target": "african-roots", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "african-roots/spirituals", "target": "african-roots", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "african-roots/work-songs", "target": "african-roots", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "african-roots/field-hollers", "target": "african-roots", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "african-roots/afrobeat", "target": "african-roots", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "african-roots/highlife", "target": "african-roots", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "jazz-blues/blues", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/delta-blues", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/chicago-blues", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/rhythm-and-blues", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/jazz", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/swing", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/bebop", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/cool-jazz", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/hard-bop", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/free-jazz", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/fusion", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/smooth-jazz", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/gospel", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/soul", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "jazz-blues/funk", "target": "jazz-blues", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "rock/rock-and-roll", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/british-invasion", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/psychedelic-rock", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/progressive-rock", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/hard-rock", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/punk-rock", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/post-punk", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/new-wave", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/heavy-metal", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/thrash-metal", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/death-metal", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/black-metal", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/alternative-rock", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/grunge", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/indie-rock", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/shoegaze", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/garage-rock", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/surf-rock", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/folk-rock", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "rock/country-rock", "target": "rock", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "electronic/electronic-music", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/synthesizer-music", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/disco", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/house", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/techno", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/trance", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/drum-and-bass", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/ambient", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/idm", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/dubstep", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/edm", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/synthwave", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/vaporwave", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/lo-fi", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "electronic/industrial", "target": "electronic", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "hip-hop/hip-hop", "target": "hip-hop", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "hip-hop/old-school", "target": "hip-hop", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "hip-hop/golden-age", "target": "hip-hop", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "hip-hop/gangsta-rap", "target": "hip-hop", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "hip-hop/east-coast", "target": "hip-hop", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "hip-hop/west-coast", "target": "hip-hop", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "hip-hop/southern-rap", "target": "hip-hop", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "hip-hop/trap", "target": "hip-hop", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "hip-hop/conscious-rap", "target": "hip-hop", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "hip-hop/drill", "target": "hip-hop", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "classical-western/medieval-music", "target": "classical-western", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical-western/baroque", "target": "classical-western", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical-western/classical-period", "target": "classical-western", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical-western/romantic", "target": "classical-western", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical-western/impressionism", "target": "classical-western", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical-western/modernist", "target": "classical-western", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical-western/minimalism", "target": "classical-western", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical-western/contemporary-classical", "target": "classical-western", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical-western/opera", "target": "classical-western", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "classical-western/chamber-music", "target": "classical-western", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "latin/salsa", "target": "latin", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "latin/bossa-nova", "target": "latin", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "latin/samba", "target": "latin", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "latin/cumbia", "target": "latin", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "latin/reggaeton", "target": "latin", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "latin/tango", "target": "latin", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "latin/mariachi", "target": "latin", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "latin/latin-pop", "target": "latin", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "world/reggae", "target": "world", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "world/ska", "target": "world", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "world/dub", "target": "world", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "world/k-pop", "target": "world", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "world/j-pop", "target": "world", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "world/bollywood", "target": "world", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "world/flamenco", "target": "world", "relation": "is-part-of", "weight": 1.0 },
+    { "source": "world/fado", "target": "world", "relation": "is-part-of", "weight": 1.0 },
+
+    { "source": "jazz-blues/delta-blues", "target": "jazz-blues/blues", "relation": "specializes", "weight": 0.9, "label": "Earliest recorded style of blues, Mississippi Delta" },
+    { "source": "jazz-blues/chicago-blues", "target": "jazz-blues/blues", "relation": "specializes", "weight": 0.9, "label": "Electrified Delta blues after the Great Migration" },
+    { "source": "jazz-blues/rhythm-and-blues", "target": "jazz-blues/blues", "relation": "specializes", "weight": 0.8, "label": "Commercial, upbeat evolution of blues for dance" },
+    { "source": "jazz-blues/swing", "target": "jazz-blues/jazz", "relation": "specializes", "weight": 0.9, "label": "Big band jazz for mass dancing, 1930s-40s" },
+    { "source": "jazz-blues/bebop", "target": "jazz-blues/jazz", "relation": "specializes", "weight": 0.9, "label": "Virtuosic small-group jazz, 1940s" },
+    { "source": "jazz-blues/cool-jazz", "target": "jazz-blues/bebop", "relation": "specializes", "weight": 0.8, "label": "Relaxed, lyrical response to bebop's intensity" },
+    { "source": "jazz-blues/hard-bop", "target": "jazz-blues/bebop", "relation": "specializes", "weight": 0.8, "label": "Blues- and gospel-tinged bebop" },
+    { "source": "jazz-blues/free-jazz", "target": "jazz-blues/jazz", "relation": "specializes", "weight": 0.8, "label": "Abandonment of fixed structure" },
+    { "source": "jazz-blues/fusion", "target": "jazz-blues/jazz", "relation": "specializes", "weight": 0.8, "label": "Jazz fused with rock and electronic elements" },
+    { "source": "jazz-blues/smooth-jazz", "target": "jazz-blues/fusion", "relation": "specializes", "weight": 0.7, "label": "Commercially oriented, radio-friendly fusion" },
+    { "source": "jazz-blues/soul", "target": "jazz-blues/rhythm-and-blues", "relation": "specializes", "weight": 0.8, "label": "R&B infused with gospel intensity" },
+    { "source": "jazz-blues/funk", "target": "jazz-blues/soul", "relation": "specializes", "weight": 0.7, "label": "Groove-centered evolution of soul" },
+
+    { "source": "rock/british-invasion", "target": "rock/rock-and-roll", "relation": "specializes", "weight": 0.8, "label": "UK bands reinterpreted American rock and roll" },
+    { "source": "rock/psychedelic-rock", "target": "rock/rock-and-roll", "relation": "specializes", "weight": 0.7, "label": "Rock exploring altered states and studio effects" },
+    { "source": "rock/progressive-rock", "target": "rock/psychedelic-rock", "relation": "specializes", "weight": 0.7, "label": "Extended psychedelic ambition with classical structures" },
+    { "source": "rock/hard-rock", "target": "rock/rock-and-roll", "relation": "specializes", "weight": 0.8, "label": "Amplified, distorted blues-rock" },
+    { "source": "rock/heavy-metal", "target": "rock/hard-rock", "relation": "specializes", "weight": 0.9, "label": "Hard rock pushed to extremes by Black Sabbath" },
+    { "source": "rock/thrash-metal", "target": "rock/heavy-metal", "relation": "specializes", "weight": 0.9, "label": "Metal fused with hardcore punk speed" },
+    { "source": "rock/death-metal", "target": "rock/thrash-metal", "relation": "specializes", "weight": 0.8, "label": "Thrash pushed to extreme technical brutality" },
+    { "source": "rock/black-metal", "target": "rock/heavy-metal", "relation": "specializes", "weight": 0.8, "label": "Atmospheric extreme metal with ideological emphasis" },
+    { "source": "rock/post-punk", "target": "rock/punk-rock", "relation": "specializes", "weight": 0.8, "label": "Punk energy with experimental ambition" },
+    { "source": "rock/new-wave", "target": "rock/post-punk", "relation": "specializes", "weight": 0.7, "label": "Pop-accessible post-punk with synths" },
+    { "source": "rock/grunge", "target": "rock/alternative-rock", "relation": "specializes", "weight": 0.8, "label": "Seattle's heavy take on alternative rock" },
+    { "source": "rock/indie-rock", "target": "rock/alternative-rock", "relation": "specializes", "weight": 0.8, "label": "Independent-label alternative rock" },
+    { "source": "rock/shoegaze", "target": "rock/alternative-rock", "relation": "specializes", "weight": 0.7, "label": "Effects-heavy, ethereal alternative rock" },
+    { "source": "rock/surf-rock", "target": "rock/rock-and-roll", "relation": "specializes", "weight": 0.7, "label": "Reverb-drenched California rock" },
+    { "source": "rock/folk-rock", "target": "rock/rock-and-roll", "relation": "specializes", "weight": 0.7, "label": "Folk songwriting meets rock amplification" },
+    { "source": "rock/country-rock", "target": "rock/rock-and-roll", "relation": "specializes", "weight": 0.7, "label": "Rock blended with country instrumentation" },
+
+    { "source": "electronic/house", "target": "electronic/disco", "relation": "specializes", "weight": 0.9, "label": "Disco reimagined with drum machines in Chicago" },
+    { "source": "electronic/techno", "target": "electronic/electronic-music", "relation": "specializes", "weight": 0.8, "label": "Detroit's machine music, futuristic electronic" },
+    { "source": "electronic/trance", "target": "electronic/techno", "relation": "specializes", "weight": 0.7, "label": "Melodic, euphoric offshoot of techno" },
+    { "source": "electronic/dubstep", "target": "electronic/electronic-music", "relation": "specializes", "weight": 0.7, "label": "UK garage meets dub and drum-and-bass" },
+    { "source": "electronic/idm", "target": "electronic/electronic-music", "relation": "specializes", "weight": 0.7, "label": "Experimental electronic for listening" },
+    { "source": "electronic/edm", "target": "electronic/house", "relation": "specializes", "weight": 0.6, "label": "Festival-oriented mainstream electronic" },
+    { "source": "electronic/synthwave", "target": "electronic/synthesizer-music", "relation": "specializes", "weight": 0.7, "label": "Retro 1980s synth nostalgia" },
+
+    { "source": "hip-hop/old-school", "target": "hip-hop/hip-hop", "relation": "specializes", "weight": 0.9, "label": "Earliest recorded hip-hop era" },
+    { "source": "hip-hop/golden-age", "target": "hip-hop/hip-hop", "relation": "specializes", "weight": 0.9, "label": "Creative peak, diverse styles, innovative sampling" },
+    { "source": "hip-hop/gangsta-rap", "target": "hip-hop/hip-hop", "relation": "specializes", "weight": 0.8, "label": "Street life narratives, West Coast origins" },
+    { "source": "hip-hop/east-coast", "target": "hip-hop/golden-age", "relation": "specializes", "weight": 0.8, "label": "NYC lyrical focus, boom-bap production" },
+    { "source": "hip-hop/west-coast", "target": "hip-hop/gangsta-rap", "relation": "specializes", "weight": 0.8, "label": "LA G-funk, synthesizer-heavy" },
+    { "source": "hip-hop/southern-rap", "target": "hip-hop/hip-hop", "relation": "specializes", "weight": 0.8, "label": "Southern regional hip-hop styles" },
+    { "source": "hip-hop/trap", "target": "hip-hop/southern-rap", "relation": "specializes", "weight": 0.9, "label": "Atlanta 808-driven production" },
+    { "source": "hip-hop/conscious-rap", "target": "hip-hop/golden-age", "relation": "specializes", "weight": 0.7, "label": "Socially aware lyricism from golden age tradition" },
+    { "source": "hip-hop/drill", "target": "hip-hop/trap", "relation": "specializes", "weight": 0.8, "label": "Chicago's aggressive trap variant" },
+
+    { "source": "classical-western/baroque", "target": "classical-western/medieval-music", "relation": "specializes", "weight": 0.6, "label": "Evolved from medieval polyphony into tonal harmony" },
+    { "source": "classical-western/classical-period", "target": "classical-western/baroque", "relation": "specializes", "weight": 0.7, "label": "Refined Baroque forms into elegant clarity" },
+    { "source": "classical-western/romantic", "target": "classical-western/classical-period", "relation": "specializes", "weight": 0.8, "label": "Classical form expanded with Romantic emotion" },
+    { "source": "classical-western/impressionism", "target": "classical-western/romantic", "relation": "specializes", "weight": 0.7, "label": "Atmosphere and color over Romantic structure" },
+    { "source": "classical-western/modernist", "target": "classical-western/romantic", "relation": "specializes", "weight": 0.6, "label": "Radical break from Romantic tonality" },
+    { "source": "classical-western/contemporary-classical", "target": "classical-western/modernist", "relation": "specializes", "weight": 0.7, "label": "Post-WWII pluralistic art music" },
+
+    { "source": "world/reggae", "target": "world/ska", "relation": "specializes", "weight": 0.8, "label": "Slowed-down ska via rocksteady" },
+    { "source": "world/dub", "target": "world/reggae", "relation": "specializes", "weight": 0.9, "label": "Reggae stripped to drums and bass with effects" },
+
+    { "source": "jazz-blues/blues", "target": "african-roots/spirituals", "relation": "inspired-by", "weight": 0.9, "label": "Blues drew on spiritual vocal traditions" },
+    { "source": "jazz-blues/blues", "target": "african-roots/work-songs", "relation": "inspired-by", "weight": 0.9, "label": "Work song rhythms and call-and-response fed the blues" },
+    { "source": "jazz-blues/blues", "target": "african-roots/field-hollers", "relation": "inspired-by", "weight": 0.9, "label": "Field holler melisma became blues vocal style" },
+    { "source": "jazz-blues/blues", "target": "african-roots/west-african-music", "relation": "inspired-by", "weight": 0.8, "label": "West African scales, rhythms, and vocal traditions" },
+    { "source": "jazz-blues/jazz", "target": "jazz-blues/blues", "relation": "inspired-by", "weight": 0.9, "label": "Jazz grew from blues harmonies and improvisation" },
+    { "source": "jazz-blues/gospel", "target": "african-roots/spirituals", "relation": "inspired-by", "weight": 0.9, "label": "Gospel formalized the spiritual tradition" },
+    { "source": "jazz-blues/soul", "target": "jazz-blues/gospel", "relation": "inspired-by", "weight": 0.9, "label": "Soul brought gospel fervor to secular music" },
+    { "source": "jazz-blues/funk", "target": "jazz-blues/rhythm-and-blues", "relation": "inspired-by", "weight": 0.7, "label": "Funk deepened R&B's rhythmic intensity" },
+    { "source": "jazz-blues/fusion", "target": "rock/psychedelic-rock", "relation": "inspired-by", "weight": 0.6, "label": "Miles Davis heard Hendrix and went electric" },
+    { "source": "rock/rock-and-roll", "target": "jazz-blues/rhythm-and-blues", "relation": "inspired-by", "weight": 0.9, "label": "R&B was the primary musical source of rock and roll" },
+    { "source": "rock/rock-and-roll", "target": "jazz-blues/gospel", "relation": "inspired-by", "weight": 0.8, "label": "Gospel vocal intensity shaped rock and roll singing" },
+    { "source": "rock/rock-and-roll", "target": "jazz-blues/blues", "relation": "inspired-by", "weight": 0.8, "label": "Blues chord progressions and guitar style" },
+    { "source": "rock/british-invasion", "target": "jazz-blues/blues", "relation": "inspired-by", "weight": 0.9, "label": "British bands studied American blues records" },
+    { "source": "rock/british-invasion", "target": "jazz-blues/chicago-blues", "relation": "inspired-by", "weight": 0.8, "label": "Stones and Yardbirds idolized Muddy Waters" },
+    { "source": "rock/hard-rock", "target": "jazz-blues/blues", "relation": "inspired-by", "weight": 0.8, "label": "Hard rock amplified the blues" },
+    { "source": "rock/punk-rock", "target": "rock/garage-rock", "relation": "inspired-by", "weight": 0.8, "label": "Garage rock's raw DIY spirit inspired punk" },
+    { "source": "rock/grunge", "target": "rock/punk-rock", "relation": "inspired-by", "weight": 0.8, "label": "Punk's energy and DIY ethos" },
+    { "source": "rock/grunge", "target": "rock/heavy-metal", "relation": "inspired-by", "weight": 0.7, "label": "Heavy riffs from Black Sabbath and Led Zeppelin" },
+    { "source": "rock/thrash-metal", "target": "rock/punk-rock", "relation": "inspired-by", "weight": 0.7, "label": "Hardcore punk's speed merged with metal" },
+    { "source": "rock/alternative-rock", "target": "rock/post-punk", "relation": "inspired-by", "weight": 0.8, "label": "Post-punk's experimental attitude" },
+    { "source": "rock/alternative-rock", "target": "rock/punk-rock", "relation": "inspired-by", "weight": 0.7, "label": "Punk's independence and anti-commercial stance" },
+    { "source": "rock/shoegaze", "target": "rock/post-punk", "relation": "inspired-by", "weight": 0.7, "label": "Post-punk atmospherics and guitar textures" },
+    { "source": "electronic/disco", "target": "jazz-blues/funk", "relation": "inspired-by", "weight": 0.8, "label": "Disco built on funk grooves" },
+    { "source": "electronic/disco", "target": "jazz-blues/soul", "relation": "inspired-by", "weight": 0.7, "label": "Soul vocals over dance rhythms" },
+    { "source": "electronic/techno", "target": "electronic/synthesizer-music", "relation": "inspired-by", "weight": 0.8, "label": "Kraftwerk's electronic vision was foundational" },
+    { "source": "electronic/techno", "target": "jazz-blues/funk", "relation": "inspired-by", "weight": 0.7, "label": "Detroit funk rhythms in machine form" },
+    { "source": "electronic/techno", "target": "electronic/house", "relation": "inspired-by", "weight": 0.8, "label": "Chicago house was a direct precursor" },
+    { "source": "electronic/dubstep", "target": "world/dub", "relation": "inspired-by", "weight": 0.8, "label": "Jamaican dub bass and production philosophy" },
+    { "source": "electronic/dubstep", "target": "electronic/drum-and-bass", "relation": "inspired-by", "weight": 0.7, "label": "Drum and bass rhythmic complexity" },
+    { "source": "electronic/ambient", "target": "electronic/synthesizer-music", "relation": "inspired-by", "weight": 0.7, "label": "Synthesizers enabled textural soundscapes" },
+    { "source": "electronic/industrial", "target": "electronic/synthesizer-music", "relation": "inspired-by", "weight": 0.6, "label": "Early synths and tape machines as noise tools" },
+    { "source": "electronic/vaporwave", "target": "electronic/synthwave", "relation": "inspired-by", "weight": 0.5, "label": "Shared 1980s nostalgia through opposite lenses" },
+    { "source": "electronic/vaporwave", "target": "jazz-blues/smooth-jazz", "relation": "inspired-by", "weight": 0.6, "label": "Smooth jazz and muzak as ironic sample source" },
+    { "source": "electronic/lo-fi", "target": "hip-hop/hip-hop", "relation": "inspired-by", "weight": 0.7, "label": "Hip-hop beat structure as foundation" },
+    { "source": "electronic/lo-fi", "target": "jazz-blues/jazz", "relation": "inspired-by", "weight": 0.6, "label": "Jazz samples for chord progressions" },
+    { "source": "hip-hop/hip-hop", "target": "jazz-blues/funk", "relation": "inspired-by", "weight": 0.9, "label": "DJ Kool Herc isolated funk breakbeats" },
+    { "source": "hip-hop/hip-hop", "target": "electronic/disco", "relation": "inspired-by", "weight": 0.7, "label": "Disco DJing techniques and turntablism" },
+    { "source": "hip-hop/hip-hop", "target": "world/reggae", "relation": "inspired-by", "weight": 0.7, "label": "Jamaican toasting and sound system culture" },
+    { "source": "hip-hop/west-coast", "target": "jazz-blues/funk", "relation": "inspired-by", "weight": 0.8, "label": "G-funk sampled Parliament-Funkadelic heavily" },
+    { "source": "hip-hop/gangsta-rap", "target": "hip-hop/old-school", "relation": "inspired-by", "weight": 0.6, "label": "Built on old school's MC traditions" },
+    { "source": "hip-hop/drill", "target": "hip-hop/gangsta-rap", "relation": "inspired-by", "weight": 0.7, "label": "Gangsta rap's street narratives" },
+    { "source": "african-roots/afrobeat", "target": "jazz-blues/funk", "relation": "inspired-by", "weight": 0.8, "label": "James Brown's funk was central to Fela Kuti" },
+    { "source": "african-roots/afrobeat", "target": "jazz-blues/jazz", "relation": "inspired-by", "weight": 0.7, "label": "Fela Kuti studied jazz in London" },
+    { "source": "african-roots/afrobeat", "target": "african-roots/highlife", "relation": "inspired-by", "weight": 0.8, "label": "Highlife was Afrobeat's Ghanaian/Nigerian root" },
+    { "source": "latin/bossa-nova", "target": "latin/samba", "relation": "inspired-by", "weight": 0.9, "label": "Bossa nova is a quiet reimagining of samba" },
+    { "source": "latin/bossa-nova", "target": "jazz-blues/jazz", "relation": "inspired-by", "weight": 0.8, "label": "Jazz harmony shaped bossa nova chords" },
+    { "source": "latin/salsa", "target": "jazz-blues/jazz", "relation": "inspired-by", "weight": 0.6, "label": "Jazz horn arrangements in salsa" },
+    { "source": "latin/reggaeton", "target": "world/reggae", "relation": "inspired-by", "weight": 0.8, "label": "Reggae en espanol was the direct ancestor" },
+    { "source": "latin/reggaeton", "target": "hip-hop/hip-hop", "relation": "inspired-by", "weight": 0.8, "label": "Hip-hop lyrical structure and attitude" },
+    { "source": "latin/latin-pop", "target": "latin/salsa", "relation": "inspired-by", "weight": 0.5, "label": "Latin rhythms in pop production" },
+    { "source": "latin/latin-pop", "target": "latin/reggaeton", "relation": "inspired-by", "weight": 0.6, "label": "Reggaeton beats driving modern Latin pop" },
+    { "source": "world/k-pop", "target": "hip-hop/hip-hop", "relation": "inspired-by", "weight": 0.7, "label": "Hip-hop choreography, rap verses, production" },
+    { "source": "world/k-pop", "target": "electronic/edm", "relation": "inspired-by", "weight": 0.7, "label": "EDM drops and production techniques" },
+    { "source": "world/bollywood", "target": "electronic/disco", "relation": "inspired-by", "weight": 0.5, "label": "Disco and electronic production in 1980s Bollywood" },
+    { "source": "latin/samba", "target": "african-roots/west-african-music", "relation": "inspired-by", "weight": 0.8, "label": "West African rhythms carried by enslaved people to Brazil" },
+    { "source": "world/ska", "target": "jazz-blues/rhythm-and-blues", "relation": "inspired-by", "weight": 0.7, "label": "American R&B heard on Jamaican radios" },
+    { "source": "classical-western/minimalism", "target": "african-roots/west-african-music", "relation": "inspired-by", "weight": 0.4, "label": "Steve Reich studied West African drumming" },
+
+    { "source": "jazz-blues/blues", "target": "rock/rock-and-roll", "relation": "causes", "weight": 0.9, "label": "Blues was the primary catalyst for rock and roll" },
+    { "source": "jazz-blues/rhythm-and-blues", "target": "jazz-blues/soul", "relation": "causes", "weight": 0.8, "label": "R&B's commercial framework birthed soul" },
+    { "source": "rock/punk-rock", "target": "rock/post-punk", "relation": "causes", "weight": 0.9, "label": "Punk's explosion directly caused post-punk" },
+    { "source": "rock/punk-rock", "target": "rock/new-wave", "relation": "causes", "weight": 0.8, "label": "Punk opened space for new wave pop" },
+    { "source": "electronic/disco", "target": "electronic/house", "relation": "causes", "weight": 0.9, "label": "Disco's death in Chicago clubs birthed house" },
+    { "source": "rock/rock-and-roll", "target": "rock/british-invasion", "relation": "causes", "weight": 0.8, "label": "American rock and roll catalyzed UK bands" },
+    { "source": "jazz-blues/chicago-blues", "target": "rock/british-invasion", "relation": "causes", "weight": 0.7, "label": "Chicago blues records traveled to Britain and inspired a generation" },
+    { "source": "jazz-blues/funk", "target": "hip-hop/hip-hop", "relation": "causes", "weight": 0.9, "label": "Funk breakbeats were hip-hop's sonic raw material" },
+    { "source": "world/ska", "target": "world/reggae", "relation": "causes", "weight": 0.9, "label": "Ska slowed to rocksteady, then evolved to reggae" },
+    { "source": "hip-hop/southern-rap", "target": "hip-hop/trap", "relation": "causes", "weight": 0.9, "label": "Southern rap scenes produced the trap sound" },
+
+    { "source": "rock/punk-rock", "target": "rock/progressive-rock", "relation": "contradicts", "weight": 0.9, "label": "Punk deliberately rejected prog's complexity and pretension" },
+    { "source": "hip-hop/conscious-rap", "target": "hip-hop/gangsta-rap", "relation": "contradicts", "weight": 0.7, "label": "Conscious rap challenged gangsta rap's glorification of violence" },
+    { "source": "jazz-blues/cool-jazz", "target": "jazz-blues/hard-bop", "relation": "contradicts", "weight": 0.6, "label": "West Coast restraint vs East Coast intensity" },
+    { "source": "classical-western/modernist", "target": "classical-western/romantic", "relation": "contradicts", "weight": 0.7, "label": "Modernism rejected Romantic emotional excess" },
+    { "source": "rock/grunge", "target": "rock/new-wave", "relation": "contradicts", "weight": 0.6, "label": "Grunge's authenticity rejected new wave's glossy artifice" },
+
+    { "source": "rock/rock-and-roll", "target": "rock/garage-rock", "relation": "relates-to", "weight": 0.7, "label": "Garage rock was raw, amateur rock and roll" },
+    { "source": "rock/new-wave", "target": "electronic/synthesizer-music", "relation": "relates-to", "weight": 0.7, "label": "New wave embraced synthesizers" },
+    { "source": "electronic/industrial", "target": "rock/heavy-metal", "relation": "relates-to", "weight": 0.6, "label": "Industrial metal fused both genres" },
+    { "source": "jazz-blues/fusion", "target": "rock/progressive-rock", "relation": "relates-to", "weight": 0.7, "label": "Both explored virtuosity and extended forms" },
+    { "source": "jazz-blues/funk", "target": "electronic/disco", "relation": "relates-to", "weight": 0.8, "label": "Funk and disco shared grooves and clubs" },
+    { "source": "world/dub", "target": "electronic/ambient", "relation": "relates-to", "weight": 0.6, "label": "Dub's spacious production influenced ambient" },
+    { "source": "world/dub", "target": "electronic/dubstep", "relation": "relates-to", "weight": 0.8, "label": "Dubstep took its name and bass philosophy from dub" },
+    { "source": "african-roots/afrobeat", "target": "world/reggae", "relation": "relates-to", "weight": 0.5, "label": "Both blended African traditions with Western pop forms" },
+    { "source": "classical-western/opera", "target": "classical-western/baroque", "relation": "relates-to", "weight": 0.8, "label": "Opera emerged during the Baroque era" },
+    { "source": "classical-western/chamber-music", "target": "classical-western/classical-period", "relation": "relates-to", "weight": 0.8, "label": "String quartet flourished in the Classical period" },
+    { "source": "electronic/drum-and-bass", "target": "electronic/techno", "relation": "relates-to", "weight": 0.6, "label": "Both emerged from UK rave culture" },
+    { "source": "electronic/idm", "target": "electronic/ambient", "relation": "relates-to", "weight": 0.7, "label": "IDM shares ambient's listening orientation" },
+    { "source": "electronic/edm", "target": "electronic/trance", "relation": "relates-to", "weight": 0.7, "label": "Trance's euphoria influenced EDM festival culture" },
+    { "source": "hip-hop/east-coast", "target": "hip-hop/west-coast", "relation": "relates-to", "weight": 0.8, "label": "The defining rivalry of 1990s hip-hop" },
+    { "source": "world/flamenco", "target": "latin/tango", "relation": "relates-to", "weight": 0.5, "label": "Both are passionate, rhythmic art forms with shared Spanish roots" },
+    { "source": "world/fado", "target": "latin/bossa-nova", "relation": "relates-to", "weight": 0.5, "label": "Portuguese saudade and Brazilian longing share a cultural thread" },
+    { "source": "world/j-pop", "target": "world/k-pop", "relation": "relates-to", "weight": 0.6, "label": "East Asian pop industries with shared idol-culture model" },
+    { "source": "latin/cumbia", "target": "latin/salsa", "relation": "relates-to", "weight": 0.5, "label": "Both blend African, Indigenous, and European elements" },
+    { "source": "electronic/synthwave", "target": "rock/new-wave", "relation": "relates-to", "weight": 0.6, "label": "Synthwave is nostalgic homage to new wave's synth era" },
+    { "source": "rock/folk-rock", "target": "rock/country-rock", "relation": "relates-to", "weight": 0.7, "label": "Both blended acoustic traditions with rock" }
+  ]
+}

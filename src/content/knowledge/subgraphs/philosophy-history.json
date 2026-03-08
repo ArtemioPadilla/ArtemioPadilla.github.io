@@ -1,0 +1,1987 @@
+{
+  "version": "0.1.0",
+  "lastUpdated": "2026-03-08",
+  "nodes": [
+    {
+      "id": "ancient",
+      "label": "Ancient Philosophy",
+      "type": "domain",
+      "summary": "Western philosophy from Thales (~624 BCE) to the fall of Rome (476 CE). The birth of rational inquiry — cosmology, ethics, logic, and metaphysics emerged here.",
+      "tags": ["ancient", "greek", "roman", "classical"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "medieval",
+      "label": "Medieval Philosophy",
+      "type": "domain",
+      "summary": "Philosophy from Augustine (~400 CE) to the Renaissance (~1500). Faith meets reason — Scholasticism, Islamic Golden Age, and Jewish philosophy shaped the synthesis.",
+      "tags": ["medieval", "scholasticism", "faith-reason"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Philosophy",
+      "type": "domain",
+      "summary": "From Descartes (1637) to Hegel (1831). The age of epistemology — Rationalism, Empiricism, and the Kantian synthesis reshaped what we can know and how.",
+      "tags": ["modern", "enlightenment", "epistemology"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "contemporary",
+      "label": "Contemporary Philosophy",
+      "type": "domain",
+      "summary": "20th-21st century movements that cross the analytic-continental divide — Pragmatism, Feminism, Critical Theory, and applied ethics for a technological age.",
+      "tags": ["contemporary", "applied", "pluralist"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "eastern",
+      "label": "Eastern Philosophy",
+      "type": "domain",
+      "summary": "Philosophical traditions of China, India, Japan, and the Islamic world — Confucianism, Taoism, Buddhism, Vedanta, and Islamic philosophy spanning 3000 years.",
+      "tags": ["eastern", "asian", "indian", "chinese"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "analytic",
+      "label": "Analytic Philosophy",
+      "type": "domain",
+      "summary": "The tradition from Frege and Russell onward — logical analysis, linguistic precision, and formal methods applied to philosophical problems. Dominant in Anglophone academia.",
+      "tags": ["analytic", "logic", "language", "formal"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental",
+      "label": "Continental Philosophy",
+      "type": "domain",
+      "summary": "The European tradition from Kierkegaard through Postmodernism — Existentialism, Phenomenology, Hermeneutics, Critical Theory, and Deconstruction.",
+      "tags": ["continental", "european", "existentialism", "phenomenology"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "ancient/pre-socratics",
+      "label": "Pre-Socratic Philosophy",
+      "type": "topic",
+      "summary": "The first Western philosophers (6th-5th century BCE). They asked: what is everything made of? Thales said water, Heraclitus said fire and flux, Parmenides said change is illusion, Democritus said atoms.",
+      "tags": ["pre-socratics", "cosmology", "natural-philosophy", "greek"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "ancient/pre-socratics/heraclitus",
+      "label": "Heraclitus",
+      "type": "concept",
+      "summary": "Heraclitus of Ephesus (~535-475 BCE). 'Everything flows' (panta rhei). Reality is constant change governed by the Logos. You cannot step into the same river twice. Unity of opposites.",
+      "tags": ["heraclitus", "flux", "logos", "opposites"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "ancient/pre-socratics/parmenides",
+      "label": "Parmenides",
+      "type": "concept",
+      "summary": "Parmenides of Elea (~515-450 BCE). Being is one, unchanging, and eternal. Change and motion are illusions. His rigorous deductive method influenced all subsequent metaphysics.",
+      "tags": ["parmenides", "being", "monism", "eleatic"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "ancient/pre-socratics/democritus",
+      "label": "Democritus",
+      "type": "concept",
+      "summary": "Democritus of Abdera (~460-370 BCE). Co-founder of atomism with Leucippus. Reality is atoms and void. All qualities emerge from the arrangement of indivisible particles — anticipating modern physics by 2400 years.",
+      "tags": ["democritus", "atomism", "materialism", "void"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "ancient/socrates",
+      "label": "Socrates",
+      "type": "concept",
+      "summary": "Socrates of Athens (470-399 BCE). Wrote nothing; known through Plato's dialogues. Invented the Socratic method — relentless questioning to expose ignorance. 'The unexamined life is not worth living.' Executed for impiety and corrupting youth.",
+      "tags": ["socrates", "dialectic", "ethics", "irony", "athens"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "ancient/plato",
+      "label": "Plato",
+      "type": "concept",
+      "summary": "Plato (428-348 BCE). Student of Socrates, founded the Academy. Theory of Forms: true reality is abstract, eternal, perfect Ideas — the physical world is mere shadow. Allegory of the Cave. Philosopher-kings should rule.",
+      "tags": ["plato", "forms", "idealism", "academy", "republic"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "ancient/aristotle",
+      "label": "Aristotle",
+      "type": "concept",
+      "summary": "Aristotle (384-322 BCE). Student of Plato, tutor to Alexander. Systematized logic, ethics, politics, biology, metaphysics. Rejected Plato's separate Forms — universals exist in particulars. Founded the Lyceum.",
+      "tags": ["aristotle", "logic", "metaphysics", "ethics", "empiricism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "ancient/stoicism",
+      "label": "Stoicism",
+      "type": "topic",
+      "summary": "Founded by Zeno of Citium (~300 BCE). Virtue is the only good; external events are indifferent. Live according to nature and reason. Control what you can, accept what you cannot. Thrived from Athens to Rome.",
+      "tags": ["stoicism", "virtue", "reason", "acceptance", "hellenistic"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "ancient/stoicism/epictetus",
+      "label": "Epictetus",
+      "type": "concept",
+      "summary": "Epictetus (~50-135 CE). Born a slave, became one of the greatest Stoic teachers. 'It is not things that disturb us, but our judgments about things.' His Discourses and Enchiridion are practical handbooks for living.",
+      "tags": ["epictetus", "stoicism", "slave", "discourses", "judgment"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "ancient/stoicism/marcus-aurelius",
+      "label": "Marcus Aurelius",
+      "type": "concept",
+      "summary": "Marcus Aurelius (121-180 CE). Roman Emperor and Stoic philosopher. His Meditations — private journal never meant for publication — remains the most intimate portrait of philosophical practice ever written.",
+      "tags": ["marcus-aurelius", "stoicism", "meditations", "roman-emperor"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "ancient/epicureanism",
+      "label": "Epicureanism",
+      "type": "concept",
+      "summary": "Founded by Epicurus (~341-270 BCE). Pleasure (ataraxia — tranquility) is the highest good, but true pleasure is the absence of pain, not hedonistic excess. Atomist physics, no fear of death or gods.",
+      "tags": ["epicureanism", "pleasure", "ataraxia", "atomism"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "ancient/cynicism",
+      "label": "Cynicism",
+      "type": "concept",
+      "summary": "Founded by Antisthenes and Diogenes of Sinope (~4th century BCE). Reject convention, live according to nature, pursue virtue through radical simplicity. Diogenes lived in a barrel and told Alexander to move out of his sunlight.",
+      "tags": ["cynicism", "diogenes", "simplicity", "convention"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "ancient/skepticism",
+      "label": "Ancient Skepticism",
+      "type": "concept",
+      "summary": "Pyrrho of Elis (~360-270 BCE) and later Academic Skeptics. Suspend judgment (epoche) on all claims — neither affirm nor deny. True peace of mind comes from abandoning the pursuit of certainty.",
+      "tags": ["skepticism", "pyrrho", "epoche", "suspension"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "ancient/neoplatonism",
+      "label": "Neoplatonism",
+      "type": "topic",
+      "summary": "Late ancient synthesis of Plato with mystical and metaphysical elements (3rd-6th century CE). Reality emanates from the One through stages of decreasing perfection. Profoundly influenced Christianity, Islam, and Judaism.",
+      "tags": ["neoplatonism", "emanation", "the-one", "mysticism"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "ancient/neoplatonism/plotinus",
+      "label": "Plotinus",
+      "type": "concept",
+      "summary": "Plotinus (204-270 CE). Founder of Neoplatonism. Reality flows from the One (absolute unity) through Nous (intellect) to Soul to the material world. Mystical union with the One is the ultimate goal.",
+      "tags": ["plotinus", "the-one", "emanation", "nous", "mystical-union"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "medieval/augustine",
+      "label": "Augustine of Hippo",
+      "type": "concept",
+      "summary": "Augustine (354-430 CE). Fused Neoplatonism with Christianity. Original sin, divine grace, the City of God. His Confessions invented autobiography. Dominated Western theology for a millennium.",
+      "tags": ["augustine", "christianity", "neoplatonism", "grace", "confessions"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "medieval/aquinas",
+      "label": "Thomas Aquinas",
+      "type": "concept",
+      "summary": "Thomas Aquinas (1225-1274). Synthesized Aristotle with Christianity in the Summa Theologiae. Five Ways to prove God's existence. Natural law ethics. Faith and reason are compatible — the crowning achievement of Scholasticism.",
+      "tags": ["aquinas", "scholasticism", "aristotelian", "natural-law", "five-ways"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "medieval/scholasticism",
+      "label": "Scholasticism",
+      "type": "topic",
+      "summary": "The dominant method of medieval universities (11th-15th century). Rigorous dialectical reasoning applied to theological questions. Disputatio, quaestio, and commentary on authorities — especially Aristotle and the Bible.",
+      "tags": ["scholasticism", "dialectic", "university", "disputatio"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "medieval/avicenna",
+      "label": "Avicenna (Ibn Sina)",
+      "type": "concept",
+      "summary": "Avicenna (980-1037 CE). Persian polymath — philosopher, physician, astronomer. His Canon of Medicine and The Cure shaped both Islamic and Latin philosophy. Essence-existence distinction. The Flying Man thought experiment.",
+      "tags": ["avicenna", "ibn-sina", "islamic", "essence-existence", "persian"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "medieval/averroes",
+      "label": "Averroes (Ibn Rushd)",
+      "type": "concept",
+      "summary": "Averroes (1126-1198 CE). The great Aristotelian commentator from Cordoba. Defended philosophy against al-Ghazali's attacks. His commentaries on Aristotle dominated European universities for centuries.",
+      "tags": ["averroes", "ibn-rushd", "aristotelian", "commentator", "cordoba"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "medieval/maimonides",
+      "label": "Maimonides",
+      "type": "concept",
+      "summary": "Moses Maimonides (1138-1204). Greatest medieval Jewish philosopher. Guide for the Perplexed reconciled Aristotelian philosophy with Jewish theology. Negative theology — God is known by what He is not.",
+      "tags": ["maimonides", "jewish", "aristotelian", "negative-theology"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "medieval/ockham",
+      "label": "William of Ockham",
+      "type": "concept",
+      "summary": "William of Ockham (~1287-1347). Nominalist who denied the reality of universals. Ockham's Razor: 'Entities must not be multiplied beyond necessity.' His parsimony principle became foundational to modern science.",
+      "tags": ["ockham", "nominalism", "razor", "parsimony", "franciscan"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "medieval/mysticism",
+      "label": "Medieval Mysticism",
+      "type": "concept",
+      "summary": "Meister Eckhart, Hildegard of Bingen, Julian of Norwich, and others (~12th-15th century). Direct experience of the divine beyond rational theology. Influenced by Neoplatonism and Pseudo-Dionysius.",
+      "tags": ["mysticism", "eckhart", "hildegard", "contemplation"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+
+    {
+      "id": "modern/rationalism",
+      "label": "Rationalism",
+      "type": "topic",
+      "summary": "The 17th-century school holding that reason, not sense experience, is the primary source of knowledge. Innate ideas exist. Descartes, Spinoza, and Leibniz built grand metaphysical systems from pure thought.",
+      "tags": ["rationalism", "reason", "innate-ideas", "a-priori"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/rationalism/descartes",
+      "label": "Descartes",
+      "type": "concept",
+      "summary": "Rene Descartes (1596-1650). Father of modern philosophy. Methodical doubt stripped away all beliefs until 'Cogito ergo sum' — I think, therefore I am. Mind-body dualism. Analytic geometry.",
+      "tags": ["descartes", "cogito", "dualism", "method", "doubt"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/rationalism/spinoza",
+      "label": "Spinoza",
+      "type": "concept",
+      "summary": "Baruch Spinoza (1632-1677). God and Nature are one substance (Deus sive Natura). Everything follows necessarily from God's nature. Ethics demonstrated in geometric order. Radical monism, determinism, and intellectual love of God.",
+      "tags": ["spinoza", "monism", "pantheism", "determinism", "ethics"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "modern/rationalism/leibniz",
+      "label": "Leibniz",
+      "type": "concept",
+      "summary": "Gottfried Wilhelm Leibniz (1646-1716). Reality consists of monads — indivisible, windowless units of perception. This is the best of all possible worlds (theodicy). Co-invented calculus. Universal logical language.",
+      "tags": ["leibniz", "monads", "theodicy", "calculus", "logic"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "modern/empiricism",
+      "label": "Empiricism",
+      "type": "topic",
+      "summary": "The British school holding that all knowledge derives from sense experience. No innate ideas — the mind begins as a blank slate. Locke, Berkeley, and Hume pushed this principle to increasingly radical conclusions.",
+      "tags": ["empiricism", "experience", "blank-slate", "british"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/empiricism/locke",
+      "label": "John Locke",
+      "type": "concept",
+      "summary": "John Locke (1632-1704). The mind is a tabula rasa — all knowledge comes from experience (sensation and reflection). Natural rights to life, liberty, property. Social contract. Father of classical liberalism.",
+      "tags": ["locke", "tabula-rasa", "natural-rights", "liberalism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/empiricism/hume",
+      "label": "David Hume",
+      "type": "concept",
+      "summary": "David Hume (1711-1776). The great skeptic. Causation is mere habit, not logical necessity. The is-ought gap in ethics. Undermined rational theology, induction, and personal identity. Woke Kant from his 'dogmatic slumber.'",
+      "tags": ["hume", "skepticism", "causation", "is-ought", "induction"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/empiricism/berkeley",
+      "label": "George Berkeley",
+      "type": "concept",
+      "summary": "George Berkeley (1685-1753). Esse est percipi — to be is to be perceived. Material objects exist only as ideas in minds. Immaterialism: God's perpetual perception sustains reality. Radical empiricism taken to idealist conclusions.",
+      "tags": ["berkeley", "idealism", "immaterialism", "perception"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "modern/kant",
+      "label": "Immanuel Kant",
+      "type": "concept",
+      "summary": "Immanuel Kant (1724-1804). Synthesized Rationalism and Empiricism in the Critique of Pure Reason. Space, time, and causation are forms imposed by the mind. The categorical imperative in ethics. Changed everything.",
+      "tags": ["kant", "critical-philosophy", "categorical-imperative", "synthetic-a-priori"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/utilitarianism",
+      "label": "Utilitarianism",
+      "type": "topic",
+      "summary": "The moral theory that the right action maximizes overall happiness. Founded by Bentham's felicific calculus and refined by Mill's qualitative distinctions. The most influential consequentialist ethics.",
+      "tags": ["utilitarianism", "consequentialism", "happiness", "greatest-good"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/utilitarianism/bentham",
+      "label": "Jeremy Bentham",
+      "type": "concept",
+      "summary": "Jeremy Bentham (1748-1832). Founder of utilitarianism. 'The greatest happiness of the greatest number.' Felicific calculus to measure pleasure and pain. Legal reformer, animal rights advocate, his skeleton still displayed at UCL.",
+      "tags": ["bentham", "utility", "felicific-calculus", "reform"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "modern/utilitarianism/mill",
+      "label": "John Stuart Mill",
+      "type": "concept",
+      "summary": "John Stuart Mill (1806-1873). Refined utilitarianism with qualitative distinctions — 'better to be Socrates dissatisfied than a fool satisfied.' On Liberty defended individual freedom. Champion of women's rights.",
+      "tags": ["mill", "liberty", "qualitative-pleasure", "feminism"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "modern/german-idealism",
+      "label": "German Idealism",
+      "type": "topic",
+      "summary": "Post-Kantian movement (1780s-1830s). Fichte, Schelling, and Hegel sought to complete Kant's project by unifying subject and object, mind and world, in grand systematic philosophies of Spirit.",
+      "tags": ["german-idealism", "post-kantian", "spirit", "absolute"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/german-idealism/hegel",
+      "label": "Hegel",
+      "type": "concept",
+      "summary": "Georg Wilhelm Friedrich Hegel (1770-1831). The dialectic: thesis, antithesis, synthesis. History is the self-realization of Spirit (Geist). The rational is real. Most ambitious philosophical system since Aristotle — and the most contested.",
+      "tags": ["hegel", "dialectic", "geist", "history", "absolute-idealism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "modern/german-idealism/schopenhauer",
+      "label": "Schopenhauer",
+      "type": "concept",
+      "summary": "Arthur Schopenhauer (1788-1860). The world is Will — blind, purposeless striving. Life is suffering; desire is insatiable. Escape through art, compassion, and ascetic denial. Influenced Nietzsche, Wagner, and Freud.",
+      "tags": ["schopenhauer", "will", "pessimism", "aesthetics", "suffering"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "continental/existentialism",
+      "label": "Existentialism",
+      "type": "topic",
+      "summary": "The philosophy of radical freedom and individual existence (19th-20th century). Existence precedes essence. Authenticity, anxiety, absurdity, and the burden of choice. From Kierkegaard to Sartre and Camus.",
+      "tags": ["existentialism", "freedom", "authenticity", "absurdity"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/existentialism/kierkegaard",
+      "label": "Kierkegaard",
+      "type": "concept",
+      "summary": "Soren Kierkegaard (1813-1855). Father of existentialism. The leap of faith. Three stages of existence: aesthetic, ethical, religious. Subjectivity is truth. Attacked Hegel's system for ignoring the individual.",
+      "tags": ["kierkegaard", "leap-of-faith", "subjectivity", "anxiety", "individual"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/existentialism/nietzsche",
+      "label": "Nietzsche",
+      "type": "concept",
+      "summary": "Friedrich Nietzsche (1844-1900). God is dead — and we killed him. Will to power, eternal recurrence, the Ubermensch. Master and slave morality. Demolished comfortable certainties; created the crisis of meaning that defines modernity.",
+      "tags": ["nietzsche", "will-to-power", "ubermensch", "nihilism", "genealogy"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/existentialism/heidegger",
+      "label": "Heidegger",
+      "type": "concept",
+      "summary": "Martin Heidegger (1889-1976). Being and Time (1927) asked: what does it mean to be? Dasein (being-there), thrownness, being-toward-death, authenticity. Revolutionized ontology. His Nazi involvement remains deeply troubling.",
+      "tags": ["heidegger", "dasein", "being", "phenomenology", "ontology"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/existentialism/sartre",
+      "label": "Sartre",
+      "type": "concept",
+      "summary": "Jean-Paul Sartre (1905-1980). Existence precedes essence — we are condemned to be free. Being and Nothingness. Bad faith is self-deception about our freedom. Engaged intellectual, declined the Nobel Prize.",
+      "tags": ["sartre", "freedom", "bad-faith", "nothingness", "engagement"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/existentialism/camus",
+      "label": "Camus",
+      "type": "concept",
+      "summary": "Albert Camus (1913-1960). The Myth of Sisyphus: life is absurd, but we must imagine Sisyphus happy. The Stranger, The Plague. Rejected existentialist label; broke with Sartre over political violence.",
+      "tags": ["camus", "absurdism", "revolt", "sisyphus", "stranger"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "continental/phenomenology",
+      "label": "Phenomenology",
+      "type": "topic",
+      "summary": "The study of structures of experience as they appear to consciousness. Founded by Husserl's 'to the things themselves!' Intentionality — consciousness is always consciousness of something.",
+      "tags": ["phenomenology", "intentionality", "consciousness", "experience"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/phenomenology/husserl",
+      "label": "Husserl",
+      "type": "concept",
+      "summary": "Edmund Husserl (1859-1938). Founder of phenomenology. Logical Investigations and Ideas. Phenomenological reduction (epoche) brackets the natural attitude to reveal pure consciousness. Influenced Heidegger, Sartre, Merleau-Ponty, and Derrida.",
+      "tags": ["husserl", "epoche", "intentionality", "reduction", "lifeworld"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/marxism",
+      "label": "Marxism",
+      "type": "topic",
+      "summary": "Philosophy of historical materialism, class struggle, and revolutionary praxis. Marx inverted Hegel — material conditions, not ideas, drive history. Alienation, ideology, and the critique of capitalism.",
+      "tags": ["marxism", "materialism", "class-struggle", "dialectic", "capitalism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/marxism/marx",
+      "label": "Karl Marx",
+      "type": "concept",
+      "summary": "Karl Marx (1818-1883). Historical materialism, dialectical materialism, surplus value, alienation. The Communist Manifesto and Das Kapital. Turned Hegel on his head — the material world shapes consciousness, not the reverse.",
+      "tags": ["marx", "capital", "alienation", "class", "historical-materialism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/postmodernism",
+      "label": "Postmodernism",
+      "type": "topic",
+      "summary": "Late 20th-century critique of grand narratives, objective truth, and Enlightenment reason. Everything is text, power shapes knowledge, meaning is unstable. Foucault, Derrida, Lyotard, Baudrillard.",
+      "tags": ["postmodernism", "deconstruction", "power", "narrative"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/postmodernism/foucault",
+      "label": "Foucault",
+      "type": "concept",
+      "summary": "Michel Foucault (1926-1984). Power/knowledge — power produces truth, not just represses it. Discipline and Punish, History of Sexuality. Genealogy of institutions: prisons, asylums, clinics. Discourse shapes what we can think.",
+      "tags": ["foucault", "power-knowledge", "discourse", "genealogy", "discipline"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "continental/postmodernism/derrida",
+      "label": "Derrida",
+      "type": "concept",
+      "summary": "Jacques Derrida (1930-2004). Deconstruction — texts undermine their own claims. There is nothing outside the text (il n'y a pas de hors-texte). Differance, logocentrism, binary oppositions. The most controversial philosopher of the 20th century.",
+      "tags": ["derrida", "deconstruction", "differance", "logocentrism", "text"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "analytic/logic",
+      "label": "Mathematical Logic",
+      "type": "topic",
+      "summary": "The formalization of reasoning using mathematical methods. From Frege's predicate calculus through Russell's logicism to Godel's incompleteness. The foundation of analytic philosophy and computer science.",
+      "tags": ["logic", "formalization", "predicate-calculus", "foundations"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "analytic/logic/frege",
+      "label": "Frege",
+      "type": "concept",
+      "summary": "Gottlob Frege (1848-1925). Father of analytic philosophy and modern logic. Begriffsschrift (1879) invented predicate logic with quantifiers. Sense (Sinn) vs reference (Bedeutung). Failed logicist program undermined by Russell's Paradox.",
+      "tags": ["frege", "predicate-logic", "sense-reference", "logicism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "analytic/logic/russell",
+      "label": "Bertrand Russell",
+      "type": "concept",
+      "summary": "Bertrand Russell (1872-1970). Principia Mathematica (with Whitehead) attempted to derive all mathematics from logic. Theory of descriptions, logical atomism. Nobel Prize in Literature. Pacifist, activist, popularizer of philosophy.",
+      "tags": ["russell", "logicism", "principia", "descriptions", "atomism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "analytic/logic/wittgenstein-early",
+      "label": "Early Wittgenstein",
+      "type": "concept",
+      "summary": "Ludwig Wittgenstein, Tractatus Logico-Philosophicus (1921). The world is the totality of facts, not things. Language pictures reality. 'Whereof one cannot speak, thereof one must be silent.' Believed he had solved all problems of philosophy.",
+      "tags": ["wittgenstein", "tractatus", "picture-theory", "limits-of-language"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "analytic/logical-positivism",
+      "label": "Logical Positivism",
+      "type": "concept",
+      "summary": "The Vienna Circle (1920s-30s): Schlick, Carnap, Neurath. Verification principle — a statement is meaningful only if empirically verifiable or analytically true. Metaphysics is literally nonsensical. Hugely influential, then dismantled by Quine and others.",
+      "tags": ["logical-positivism", "vienna-circle", "verification", "carnap"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "analytic/ordinary-language",
+      "label": "Ordinary Language Philosophy",
+      "type": "topic",
+      "summary": "Oxford philosophy of the 1940s-60s: Austin, Ryle, Strawson. Philosophical problems arise from misunderstanding how language ordinarily works. 'Don't ask for the meaning, ask for the use.' Later Wittgenstein's inheritance.",
+      "tags": ["ordinary-language", "oxford", "use", "austin", "ryle"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "analytic/ordinary-language/wittgenstein-late",
+      "label": "Late Wittgenstein",
+      "type": "concept",
+      "summary": "Ludwig Wittgenstein, Philosophical Investigations (1953, posthumous). Repudiated his own Tractatus. Language games, family resemblance, rule-following paradox, private language argument. Meaning is use. The beetle in the box.",
+      "tags": ["wittgenstein", "language-games", "meaning-as-use", "investigations"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "analytic/philosophy-of-mind",
+      "label": "Philosophy of Mind",
+      "type": "concept",
+      "summary": "What is the mind? Behaviorism (Ryle), identity theory (Smart), functionalism (Putnam), eliminativism (Churchlands). The hard problem of consciousness (Chalmers). Chinese Room (Searle). Central to AI debates.",
+      "tags": ["philosophy-of-mind", "consciousness", "functionalism", "qualia"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "analytic/philosophy-of-science",
+      "label": "Philosophy of Science",
+      "type": "topic",
+      "summary": "What makes science scientific? Demarcation, explanation, theory change, realism vs anti-realism. From the Vienna Circle through Popper's falsificationism to Kuhn's paradigm shifts and Lakatos's research programmes.",
+      "tags": ["philosophy-of-science", "demarcation", "theory-change", "realism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "analytic/philosophy-of-science/popper",
+      "label": "Karl Popper",
+      "type": "concept",
+      "summary": "Karl Popper (1902-1994). Falsificationism — science advances not by verifying but by trying to refute. Conjectures and Refutations. The Open Society and Its Enemies attacked Plato, Hegel, and Marx. Critical rationalism.",
+      "tags": ["popper", "falsification", "open-society", "critical-rationalism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "analytic/philosophy-of-science/kuhn",
+      "label": "Thomas Kuhn",
+      "type": "concept",
+      "summary": "Thomas Kuhn (1922-1996). The Structure of Scientific Revolutions (1962). Normal science operates within paradigms; anomalies accumulate until a paradigm shift occurs. Incommensurability between paradigms. Changed how we understand science.",
+      "tags": ["kuhn", "paradigm-shift", "normal-science", "incommensurability"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "analytic/ethics",
+      "label": "Analytic Ethics",
+      "type": "topic",
+      "summary": "Moral philosophy in the analytic tradition. Meta-ethics (what is moral language?), normative ethics (what should we do?), applied ethics. From Moore's naturalistic fallacy to Rawls's justice and Singer's effective altruism.",
+      "tags": ["ethics", "meta-ethics", "normative", "applied-ethics"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "analytic/ethics/rawls",
+      "label": "John Rawls",
+      "type": "concept",
+      "summary": "John Rawls (1921-2002). A Theory of Justice (1971). The veil of ignorance: design society not knowing your place in it. Justice as fairness, difference principle, political liberalism. Revived political philosophy.",
+      "tags": ["rawls", "justice", "veil-of-ignorance", "fairness", "liberalism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+
+    {
+      "id": "eastern/confucianism",
+      "label": "Confucianism",
+      "type": "concept",
+      "summary": "Founded by Confucius (551-479 BCE). Ren (benevolence), li (ritual propriety), xiao (filial piety). Moral cultivation through education and social harmony. The Analects. Dominant philosophy of China for over two millennia.",
+      "tags": ["confucianism", "confucius", "ren", "li", "chinese"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "eastern/taoism",
+      "label": "Taoism",
+      "type": "concept",
+      "summary": "Laozi (6th century BCE) and Zhuangzi (4th century BCE). The Tao that can be told is not the eternal Tao. Wu wei (non-action), naturalness, spontaneity. The Tao Te Ching. Water is soft yet overcomes the hard.",
+      "tags": ["taoism", "tao", "wu-wei", "naturalness", "laozi"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "eastern/buddhist-philosophy",
+      "label": "Buddhist Philosophy",
+      "type": "topic",
+      "summary": "Siddhartha Gautama (~5th century BCE). Four Noble Truths, Eightfold Path. Dependent origination (pratityasamutpada), no-self (anatman), impermanence (anicca). Split into Theravada, Mahayana, and Vajrayana traditions.",
+      "tags": ["buddhism", "four-noble-truths", "no-self", "dependent-origination"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "eastern/buddhist-philosophy/nagarjuna",
+      "label": "Nagarjuna",
+      "type": "concept",
+      "summary": "Nagarjuna (~150-250 CE). Founder of Madhyamaka (Middle Way) school. Sunyata (emptiness) — all things lack inherent existence. Mulamadhyamakakarika. The most important Buddhist philosopher after the Buddha himself.",
+      "tags": ["nagarjuna", "sunyata", "emptiness", "madhyamaka", "middle-way"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "eastern/buddhist-philosophy/zen-philosophy",
+      "label": "Zen Philosophy",
+      "type": "concept",
+      "summary": "Chan/Zen Buddhism (~6th century CE onward). Direct pointing at the mind, seeing one's nature, becoming Buddha. Koans, zazen, satori. Bodhidharma brought Chan to China; it became Zen in Japan. Beyond words and concepts.",
+      "tags": ["zen", "chan", "meditation", "satori", "koans"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "eastern/hindu-philosophy",
+      "label": "Hindu Philosophy",
+      "type": "topic",
+      "summary": "Six orthodox schools (darshanas) of Indian philosophy: Nyaya, Vaisheshika, Samkhya, Yoga, Mimamsa, Vedanta. Rooted in the Vedas and Upanishads. Spanning 3000 years of metaphysical, epistemological, and ethical inquiry.",
+      "tags": ["hindu", "darshana", "vedas", "upanishads", "indian"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "eastern/hindu-philosophy/vedanta",
+      "label": "Vedanta",
+      "type": "concept",
+      "summary": "The culmination of Vedic philosophy. Shankara's Advaita (non-dualism): Brahman alone is real, the world is maya, the self (Atman) is Brahman. Ramanuja's qualified non-dualism and Madhva's dualism offer alternatives.",
+      "tags": ["vedanta", "advaita", "brahman", "atman", "shankara"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "eastern/hindu-philosophy/yoga-philosophy",
+      "label": "Yoga Philosophy",
+      "type": "concept",
+      "summary": "Patanjali's Yoga Sutras (~2nd century BCE). Eight limbs of yoga. Chitta vritti nirodha — cessation of mental fluctuations. Union of individual consciousness with universal consciousness. Far more than physical postures.",
+      "tags": ["yoga", "patanjali", "eight-limbs", "meditation", "samadhi"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "eastern/islamic-philosophy",
+      "label": "Islamic Philosophy",
+      "type": "topic",
+      "summary": "Falsafa — the Islamic philosophical tradition rooted in Greek thought (8th-12th century). Al-Kindi, al-Farabi, Avicenna, al-Ghazali, Averroes. Preserved and transformed Aristotle, shaped medieval European thought.",
+      "tags": ["islamic-philosophy", "falsafa", "kalam", "arabic"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "eastern/islamic-philosophy/al-ghazali",
+      "label": "Al-Ghazali",
+      "type": "concept",
+      "summary": "Abu Hamid al-Ghazali (1058-1111). The Incoherence of the Philosophers attacked Avicenna and the Falsafa. Defended Ash'ari theology. Then withdrew to Sufi mysticism. Deeply shaped the relationship between reason and revelation in Islam.",
+      "tags": ["al-ghazali", "incoherence", "sufism", "theology", "ash-ari"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "eastern/islamic-philosophy/ibn-rushd",
+      "label": "Ibn Rushd (Averroes)",
+      "type": "concept",
+      "summary": "Ibn Rushd / Averroes (1126-1198). The Incoherence of the Incoherence defended philosophy against al-Ghazali. Greatest Aristotelian commentator. Double truth theory (disputed). More influential in Europe than in the Islamic world.",
+      "tags": ["ibn-rushd", "averroes", "aristotelian", "commentator", "andalusia"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+
+    {
+      "id": "contemporary/pragmatism",
+      "label": "Pragmatism",
+      "type": "topic",
+      "summary": "America's original philosophy (1870s onward). Truth is what works — ideas are tools for navigating experience. Peirce, James, Dewey. Anti-foundationalist, pluralist, meliorist. Later revived by Rorty, Putnam, and Brandom.",
+      "tags": ["pragmatism", "truth-as-utility", "american", "anti-foundationalism"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "contemporary/pragmatism/james",
+      "label": "William James",
+      "type": "concept",
+      "summary": "William James (1842-1910). Pragmatism, radical empiricism, The Varieties of Religious Experience. Truth is what 'works' in practice. Stream of consciousness. Father of American psychology and pragmatist philosophy.",
+      "tags": ["james", "pragmatism", "radical-empiricism", "psychology", "religion"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "contemporary/pragmatism/dewey",
+      "label": "John Dewey",
+      "type": "concept",
+      "summary": "John Dewey (1859-1952). Democracy and Education. Instrumentalism — inquiry is problem-solving, not mirror-of-nature. Experience is interaction with environment. Progressive education, public philosophy, democratic experimentalism.",
+      "tags": ["dewey", "instrumentalism", "education", "democracy", "inquiry"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "contemporary/feminism",
+      "label": "Feminist Philosophy",
+      "type": "concept",
+      "summary": "Philosophy through the lens of gender. Beauvoir's 'One is not born, but becomes a woman.' Standpoint theory, ethics of care, intersectionality. Challenges the implicit male bias in the Western canon.",
+      "tags": ["feminism", "gender", "beauvoir", "intersectionality", "care-ethics"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "contemporary/critical-theory",
+      "label": "Critical Theory",
+      "type": "concept",
+      "summary": "The Frankfurt School: Horkheimer, Adorno, Marcuse, Habermas (1930s onward). Critique of instrumental reason, culture industry, and late capitalism. Neo-Marxist diagnosis of modernity's pathologies. Habermas's communicative rationality.",
+      "tags": ["critical-theory", "frankfurt-school", "adorno", "habermas", "ideology"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    },
+    {
+      "id": "contemporary/effective-altruism",
+      "label": "Effective Altruism",
+      "type": "concept",
+      "summary": "Using evidence and reason to determine the most effective ways to do good (2010s). Peter Singer, Toby Ord, William MacAskill. Utilitarian roots applied to global poverty, animal welfare, existential risk, and AI safety.",
+      "tags": ["effective-altruism", "singer", "longtermism", "evidence-based"],
+      "metadata": { "added": "2026-03-08", "importance": 3, "status": "seed" }
+    },
+    {
+      "id": "contemporary/philosophy-of-ai",
+      "label": "Philosophy of AI",
+      "type": "concept",
+      "summary": "Can machines think? Turing Test, Chinese Room argument, symbol grounding problem, AI alignment. From Turing (1950) to the alignment crisis of the 2020s. The most consequential applied philosophy of our time.",
+      "tags": ["philosophy-of-ai", "turing-test", "chinese-room", "alignment", "consciousness"],
+      "metadata": { "added": "2026-03-08", "importance": 1, "status": "seed" }
+    },
+    {
+      "id": "contemporary/environmental-ethics",
+      "label": "Environmental Ethics",
+      "type": "concept",
+      "summary": "Does nature have intrinsic value? Deep ecology (Naess), land ethic (Leopold), animal liberation (Singer). Anthropocene philosophy — responsibility for climate change, biodiversity loss, and future generations.",
+      "tags": ["environmental-ethics", "deep-ecology", "animal-rights", "anthropocene"],
+      "metadata": { "added": "2026-03-08", "importance": 2, "status": "seed" }
+    }
+  ],
+  "edges": [
+    {
+      "source": "ancient/pre-socratics",
+      "target": "ancient",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/pre-socratics/heraclitus",
+      "target": "ancient/pre-socratics",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/pre-socratics/parmenides",
+      "target": "ancient/pre-socratics",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/pre-socratics/democritus",
+      "target": "ancient/pre-socratics",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/socrates",
+      "target": "ancient",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/plato",
+      "target": "ancient",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/aristotle",
+      "target": "ancient",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/stoicism",
+      "target": "ancient",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/stoicism/epictetus",
+      "target": "ancient/stoicism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/stoicism/marcus-aurelius",
+      "target": "ancient/stoicism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/epicureanism",
+      "target": "ancient",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/cynicism",
+      "target": "ancient",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/skepticism",
+      "target": "ancient",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/neoplatonism",
+      "target": "ancient",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "ancient/neoplatonism/plotinus",
+      "target": "ancient/neoplatonism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "medieval/augustine",
+      "target": "medieval",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "medieval/aquinas",
+      "target": "medieval",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "medieval/scholasticism",
+      "target": "medieval",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "medieval/avicenna",
+      "target": "medieval",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "medieval/averroes",
+      "target": "medieval",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "medieval/maimonides",
+      "target": "medieval",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "medieval/ockham",
+      "target": "medieval",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "medieval/mysticism",
+      "target": "medieval",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/rationalism",
+      "target": "modern",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/rationalism/descartes",
+      "target": "modern/rationalism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/rationalism/spinoza",
+      "target": "modern/rationalism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/rationalism/leibniz",
+      "target": "modern/rationalism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/empiricism",
+      "target": "modern",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/empiricism/locke",
+      "target": "modern/empiricism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/empiricism/hume",
+      "target": "modern/empiricism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/empiricism/berkeley",
+      "target": "modern/empiricism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/kant",
+      "target": "modern",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/utilitarianism",
+      "target": "modern",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/utilitarianism/bentham",
+      "target": "modern/utilitarianism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/utilitarianism/mill",
+      "target": "modern/utilitarianism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/german-idealism",
+      "target": "modern",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/german-idealism/hegel",
+      "target": "modern/german-idealism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "modern/german-idealism/schopenhauer",
+      "target": "modern/german-idealism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/existentialism",
+      "target": "continental",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/existentialism/kierkegaard",
+      "target": "continental/existentialism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/existentialism/nietzsche",
+      "target": "continental/existentialism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/existentialism/heidegger",
+      "target": "continental/existentialism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/existentialism/sartre",
+      "target": "continental/existentialism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/existentialism/camus",
+      "target": "continental/existentialism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/phenomenology",
+      "target": "continental",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/phenomenology/husserl",
+      "target": "continental/phenomenology",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/marxism",
+      "target": "continental",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/marxism/marx",
+      "target": "continental/marxism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/postmodernism",
+      "target": "continental",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/postmodernism/foucault",
+      "target": "continental/postmodernism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "continental/postmodernism/derrida",
+      "target": "continental/postmodernism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/logic",
+      "target": "analytic",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/logic/frege",
+      "target": "analytic/logic",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/logic/russell",
+      "target": "analytic/logic",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/logic/wittgenstein-early",
+      "target": "analytic/logic",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/logical-positivism",
+      "target": "analytic",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/ordinary-language",
+      "target": "analytic",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/ordinary-language/wittgenstein-late",
+      "target": "analytic/ordinary-language",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/philosophy-of-mind",
+      "target": "analytic",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/philosophy-of-science",
+      "target": "analytic",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/philosophy-of-science/popper",
+      "target": "analytic/philosophy-of-science",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/philosophy-of-science/kuhn",
+      "target": "analytic/philosophy-of-science",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/ethics",
+      "target": "analytic",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "analytic/ethics/rawls",
+      "target": "analytic/ethics",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/confucianism",
+      "target": "eastern",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/taoism",
+      "target": "eastern",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/buddhist-philosophy",
+      "target": "eastern",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/buddhist-philosophy/nagarjuna",
+      "target": "eastern/buddhist-philosophy",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/buddhist-philosophy/zen-philosophy",
+      "target": "eastern/buddhist-philosophy",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/hindu-philosophy",
+      "target": "eastern",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/hindu-philosophy/vedanta",
+      "target": "eastern/hindu-philosophy",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/hindu-philosophy/yoga-philosophy",
+      "target": "eastern/hindu-philosophy",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/islamic-philosophy",
+      "target": "eastern",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/islamic-philosophy/al-ghazali",
+      "target": "eastern/islamic-philosophy",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "eastern/islamic-philosophy/ibn-rushd",
+      "target": "eastern/islamic-philosophy",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "contemporary/pragmatism",
+      "target": "contemporary",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "contemporary/pragmatism/james",
+      "target": "contemporary/pragmatism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "contemporary/pragmatism/dewey",
+      "target": "contemporary/pragmatism",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "contemporary/feminism",
+      "target": "contemporary",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "contemporary/critical-theory",
+      "target": "contemporary",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "contemporary/effective-altruism",
+      "target": "contemporary",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "contemporary/philosophy-of-ai",
+      "target": "contemporary",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+    {
+      "source": "contemporary/environmental-ethics",
+      "target": "contemporary",
+      "relation": "is-part-of",
+      "weight": 0.9
+    },
+
+    {
+      "source": "ancient/plato",
+      "target": "ancient/socrates",
+      "relation": "inspired-by",
+      "weight": 0.95,
+      "label": "Plato was Socrates' student — Socrates' execution drove Plato to write the dialogues and found the Academy"
+    },
+    {
+      "source": "ancient/aristotle",
+      "target": "ancient/plato",
+      "relation": "inspired-by",
+      "weight": 0.9,
+      "label": "Aristotle studied at Plato's Academy for 20 years, then rejected the Theory of Forms while preserving the systematic ambition"
+    },
+    {
+      "source": "ancient/stoicism",
+      "target": "ancient/socrates",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "Stoics traced their lineage through Socrates — his calm acceptance of death was their ethical ideal"
+    },
+    {
+      "source": "ancient/cynicism",
+      "target": "ancient/socrates",
+      "relation": "inspired-by",
+      "weight": 0.75,
+      "label": "Antisthenes, founder of Cynicism, was a student of Socrates who radicalized his master's indifference to wealth"
+    },
+    {
+      "source": "ancient/stoicism",
+      "target": "ancient/cynicism",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "Zeno of Citium studied under the Cynic Crates before founding Stoicism — preserved Cynic ethics, added physics and logic"
+    },
+    {
+      "source": "ancient/epicureanism",
+      "target": "ancient/pre-socratics/democritus",
+      "relation": "inspired-by",
+      "weight": 0.8,
+      "label": "Epicurus adopted Democritus's atomic physics as the foundation for his materialist worldview"
+    },
+    {
+      "source": "ancient/neoplatonism/plotinus",
+      "target": "ancient/plato",
+      "relation": "inspired-by",
+      "weight": 0.9,
+      "label": "Plotinus saw himself as the true interpreter of Plato — transformed the Forms into emanations from the One"
+    },
+    {
+      "source": "medieval/augustine",
+      "target": "ancient/neoplatonism/plotinus",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "Augustine converted through Neoplatonism — fused Plotinus's metaphysics with Christian theology"
+    },
+    {
+      "source": "medieval/aquinas",
+      "target": "ancient/aristotle",
+      "relation": "inspired-by",
+      "weight": 0.95,
+      "label": "Aquinas called Aristotle 'The Philosopher' and built the Summa Theologiae on Aristotelian foundations"
+    },
+    {
+      "source": "medieval/aquinas",
+      "target": "medieval/averroes",
+      "relation": "inspired-by",
+      "weight": 0.8,
+      "label": "Aquinas relied heavily on Averroes' Aristotelian commentaries — called him 'The Commentator'"
+    },
+    {
+      "source": "medieval/aquinas",
+      "target": "medieval/avicenna",
+      "relation": "inspired-by",
+      "weight": 0.75,
+      "label": "Avicenna's essence-existence distinction and proof of God's existence profoundly shaped Aquinas's metaphysics"
+    },
+    {
+      "source": "medieval/averroes",
+      "target": "ancient/aristotle",
+      "relation": "inspired-by",
+      "weight": 0.95,
+      "label": "Averroes wrote the most comprehensive commentaries on Aristotle in the medieval world"
+    },
+    {
+      "source": "medieval/avicenna",
+      "target": "ancient/aristotle",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "Avicenna's philosophy is fundamentally Aristotelian, enriched with Neoplatonic emanation theory"
+    },
+    {
+      "source": "medieval/avicenna",
+      "target": "ancient/neoplatonism",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "Avicenna's emanation cosmology derives from Neoplatonic sources filtered through al-Farabi"
+    },
+    {
+      "source": "medieval/maimonides",
+      "target": "ancient/aristotle",
+      "relation": "inspired-by",
+      "weight": 0.8,
+      "label": "Maimonides reconciled Aristotelian philosophy with Jewish theology in the Guide for the Perplexed"
+    },
+    {
+      "source": "medieval/maimonides",
+      "target": "medieval/avicenna",
+      "relation": "inspired-by",
+      "weight": 0.65,
+      "label": "Maimonides engaged deeply with Avicenna's proofs and metaphysics in formulating his own positions"
+    },
+    {
+      "source": "medieval/mysticism",
+      "target": "ancient/neoplatonism",
+      "relation": "inspired-by",
+      "weight": 0.8,
+      "label": "Medieval mysticism drew heavily on Neoplatonic ideas of emanation and union with the divine One"
+    },
+    {
+      "source": "modern/rationalism/descartes",
+      "target": "medieval/scholasticism",
+      "relation": "inspired-by",
+      "weight": 0.6,
+      "label": "Descartes was educated by Jesuits in the Scholastic tradition — his methodical doubt was a reaction against it"
+    },
+    {
+      "source": "modern/rationalism/spinoza",
+      "target": "modern/rationalism/descartes",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "Spinoza radicalized Descartes — collapsed his two substances (mind and matter) into one substance: God/Nature"
+    },
+    {
+      "source": "modern/rationalism/leibniz",
+      "target": "modern/rationalism/descartes",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "Leibniz responded to Descartes's physics and metaphysics, proposing monads as a better solution to the mind-body problem"
+    },
+    {
+      "source": "modern/empiricism/hume",
+      "target": "modern/empiricism/locke",
+      "relation": "inspired-by",
+      "weight": 0.75,
+      "label": "Hume pushed Locke's empiricism to its radical skeptical conclusions — dissolving causation, self, and induction"
+    },
+    {
+      "source": "modern/empiricism/berkeley",
+      "target": "modern/empiricism/locke",
+      "relation": "inspired-by",
+      "weight": 0.8,
+      "label": "Berkeley radicalized Locke — if all we know is ideas, why posit material substance at all? Only minds and ideas exist"
+    },
+    {
+      "source": "modern/kant",
+      "target": "modern/empiricism/hume",
+      "relation": "inspired-by",
+      "weight": 0.9,
+      "label": "Hume's skepticism woke Kant from his 'dogmatic slumber' — the Critique of Pure Reason is a direct response"
+    },
+    {
+      "source": "modern/kant",
+      "target": "modern/rationalism",
+      "relation": "inspired-by",
+      "weight": 0.8,
+      "label": "Kant synthesized Rationalism and Empiricism — the mind structures experience, but content comes from the senses"
+    },
+    {
+      "source": "modern/german-idealism/hegel",
+      "target": "modern/kant",
+      "relation": "inspired-by",
+      "weight": 0.9,
+      "label": "Hegel sought to complete Kant's project — overcoming the thing-in-itself through dialectical reason and absolute knowledge"
+    },
+    {
+      "source": "modern/german-idealism/schopenhauer",
+      "target": "modern/kant",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "Schopenhauer took Kant's thing-in-itself and identified it as blind Will — the world as will and representation"
+    },
+    {
+      "source": "modern/utilitarianism/mill",
+      "target": "modern/utilitarianism/bentham",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "Mill was Bentham's intellectual heir — refined utilitarianism by introducing qualitative distinctions between pleasures"
+    },
+    {
+      "source": "continental/existentialism/nietzsche",
+      "target": "modern/german-idealism/schopenhauer",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "Nietzsche's early work was shaped by Schopenhauer's pessimism — he later overcame it with the will to power and affirmation of life"
+    },
+    {
+      "source": "continental/existentialism/heidegger",
+      "target": "continental/phenomenology/husserl",
+      "relation": "inspired-by",
+      "weight": 0.9,
+      "label": "Heidegger was Husserl's student and successor — Being and Time transformed phenomenology into existential ontology"
+    },
+    {
+      "source": "continental/existentialism/sartre",
+      "target": "continental/existentialism/heidegger",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "Sartre adapted Heidegger's ontology for existentialism — Being and Nothingness reworks Dasein as pour-soi"
+    },
+    {
+      "source": "continental/existentialism/sartre",
+      "target": "continental/phenomenology/husserl",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "Sartre studied Husserl in Berlin — adopted intentionality as the basis for his theory of consciousness"
+    },
+    {
+      "source": "continental/existentialism/camus",
+      "target": "continental/existentialism/kierkegaard",
+      "relation": "inspired-by",
+      "weight": 0.6,
+      "label": "Camus engaged with Kierkegaard's leap of faith — and rejected it. The absurd must be confronted without hope of transcendence"
+    },
+    {
+      "source": "continental/marxism/marx",
+      "target": "modern/german-idealism/hegel",
+      "relation": "inspired-by",
+      "weight": 0.95,
+      "label": "Marx turned Hegel on his head — kept the dialectic but replaced Spirit with material conditions as the driver of history"
+    },
+    {
+      "source": "continental/postmodernism/foucault",
+      "target": "continental/existentialism/nietzsche",
+      "relation": "inspired-by",
+      "weight": 0.8,
+      "label": "Foucault's genealogical method is directly inspired by Nietzsche's Genealogy of Morals — power, not truth, drives knowledge"
+    },
+    {
+      "source": "continental/postmodernism/derrida",
+      "target": "continental/phenomenology/husserl",
+      "relation": "inspired-by",
+      "weight": 0.75,
+      "label": "Derrida's first works deconstructed Husserl — showing that the presence Husserl sought is always already deferred"
+    },
+    {
+      "source": "continental/postmodernism/derrida",
+      "target": "continental/existentialism/heidegger",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "Derrida radicalized Heidegger's destruction of metaphysics into deconstruction — the end of onto-theology"
+    },
+    {
+      "source": "analytic/logic/russell",
+      "target": "analytic/logic/frege",
+      "relation": "inspired-by",
+      "weight": 0.9,
+      "label": "Russell discovered Frege's work and extended his logicist program — then broke it with Russell's Paradox"
+    },
+    {
+      "source": "analytic/logic/wittgenstein-early",
+      "target": "analytic/logic/russell",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "Wittgenstein came to Cambridge to study with Russell — the Tractatus grew from Russell's logical atomism"
+    },
+    {
+      "source": "analytic/logical-positivism",
+      "target": "analytic/logic/wittgenstein-early",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "The Vienna Circle took the Tractatus as their bible — though Wittgenstein thought they misunderstood it"
+    },
+    {
+      "source": "analytic/ordinary-language/wittgenstein-late",
+      "target": "analytic/logic/wittgenstein-early",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "The Philosophical Investigations is a sustained self-critique — Wittgenstein demolished his own Tractatus"
+    },
+    {
+      "source": "analytic/philosophy-of-science/popper",
+      "target": "analytic/logical-positivism",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "Popper engaged deeply with the Vienna Circle but rejected verification — falsification replaced it as the demarcation criterion"
+    },
+    {
+      "source": "analytic/philosophy-of-science/kuhn",
+      "target": "analytic/philosophy-of-science/popper",
+      "relation": "inspired-by",
+      "weight": 0.75,
+      "label": "Kuhn challenged Popper's falsificationism — scientists don't abandon paradigms at the first anomaly"
+    },
+    {
+      "source": "analytic/ethics/rawls",
+      "target": "modern/kant",
+      "relation": "inspired-by",
+      "weight": 0.8,
+      "label": "Rawls's veil of ignorance is a Kantian thought experiment — justice as fairness derives from the categorical imperative's universalizability"
+    },
+    {
+      "source": "contemporary/critical-theory",
+      "target": "continental/marxism/marx",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "The Frankfurt School is neo-Marxist — updating Marx's critique of capitalism with psychoanalysis and cultural criticism"
+    },
+    {
+      "source": "contemporary/effective-altruism",
+      "target": "modern/utilitarianism",
+      "relation": "inspired-by",
+      "weight": 0.85,
+      "label": "Effective altruism is applied utilitarianism — maximizing well-being through evidence-based giving and career choice"
+    },
+    {
+      "source": "contemporary/feminism",
+      "target": "continental/existentialism/sartre",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "Beauvoir applied Sartre's existentialism to gender — 'One is not born, but rather becomes, a woman'"
+    },
+    {
+      "source": "eastern/buddhist-philosophy/zen-philosophy",
+      "target": "eastern/taoism",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "Chan/Zen Buddhism absorbed Taoist concepts of naturalness, spontaneity, and non-conceptual awareness"
+    },
+    {
+      "source": "eastern/islamic-philosophy/ibn-rushd",
+      "target": "eastern/islamic-philosophy/al-ghazali",
+      "relation": "inspired-by",
+      "weight": 0.7,
+      "label": "Ibn Rushd's Incoherence of the Incoherence was a direct response to al-Ghazali's attack on philosophy"
+    },
+
+    {
+      "source": "ancient/pre-socratics/heraclitus",
+      "target": "ancient/pre-socratics/parmenides",
+      "relation": "contradicts",
+      "weight": 0.95,
+      "label": "The foundational opposition: Heraclitus (everything changes) vs Parmenides (nothing changes). All later metaphysics responds to this tension"
+    },
+    {
+      "source": "modern/rationalism",
+      "target": "modern/empiricism",
+      "relation": "contradicts",
+      "weight": 0.9,
+      "label": "The great early modern debate: is knowledge from reason (innate ideas) or experience (blank slate)? Kant synthesized both"
+    },
+    {
+      "source": "analytic",
+      "target": "continental",
+      "relation": "contradicts",
+      "weight": 0.7,
+      "label": "The 20th-century divide: logic and language analysis vs phenomenology and historical interpretation. The gap is narrowing"
+    },
+    {
+      "source": "modern/empiricism/hume",
+      "target": "modern/kant",
+      "relation": "contradicts",
+      "weight": 0.8,
+      "label": "Hume denied necessary causal knowledge; Kant replied that causation is a synthetic a priori category the mind imposes on experience"
+    },
+    {
+      "source": "continental/existentialism/kierkegaard",
+      "target": "modern/german-idealism/hegel",
+      "relation": "contradicts",
+      "weight": 0.9,
+      "label": "Kierkegaard attacked Hegel's system for swallowing the individual — existence cannot be captured in abstract dialectics"
+    },
+    {
+      "source": "continental/existentialism/camus",
+      "target": "continental/existentialism/sartre",
+      "relation": "contradicts",
+      "weight": 0.65,
+      "label": "Camus and Sartre broke over political violence and the nature of revolt — Camus rejected Sartre's Marxist commitments"
+    },
+    {
+      "source": "eastern/islamic-philosophy/al-ghazali",
+      "target": "medieval/avicenna",
+      "relation": "contradicts",
+      "weight": 0.85,
+      "label": "Al-Ghazali's Incoherence of the Philosophers attacked Avicenna's Aristotelian metaphysics as incompatible with Islamic revelation"
+    },
+    {
+      "source": "eastern/islamic-philosophy/ibn-rushd",
+      "target": "eastern/islamic-philosophy/al-ghazali",
+      "relation": "contradicts",
+      "weight": 0.85,
+      "label": "Ibn Rushd defended philosophy against al-Ghazali's attacks — the Incoherence of the Incoherence is a point-by-point refutation"
+    },
+    {
+      "source": "analytic/philosophy-of-science/kuhn",
+      "target": "analytic/philosophy-of-science/popper",
+      "relation": "contradicts",
+      "weight": 0.75,
+      "label": "Kuhn showed that Popper's falsificationism does not match how science actually works — normal science tolerates anomalies"
+    },
+    {
+      "source": "analytic/ordinary-language/wittgenstein-late",
+      "target": "analytic/logic/wittgenstein-early",
+      "relation": "contradicts",
+      "weight": 0.9,
+      "label": "The Investigations explicitly repudiates the Tractatus — meaning is use, not logical picturing. One philosopher, two incompatible visions"
+    },
+    {
+      "source": "modern/german-idealism/schopenhauer",
+      "target": "modern/german-idealism/hegel",
+      "relation": "contradicts",
+      "weight": 0.8,
+      "label": "Schopenhauer called Hegel a charlatan — rejected dialectical reason for blind irrational Will as the essence of reality"
+    },
+    {
+      "source": "continental/marxism/marx",
+      "target": "modern/german-idealism/hegel",
+      "relation": "contradicts",
+      "weight": 0.75,
+      "label": "Marx inverted Hegel — material conditions determine consciousness, not the other way around. Dialectical materialism replaces dialectical idealism"
+    },
+    {
+      "source": "ancient/epicureanism",
+      "target": "ancient/stoicism",
+      "relation": "contradicts",
+      "weight": 0.7,
+      "label": "Rival Hellenistic schools: Stoics sought virtue through reason and duty; Epicureans sought tranquility through pleasure and retreat"
+    },
+    {
+      "source": "eastern/buddhist-philosophy/nagarjuna",
+      "target": "eastern/hindu-philosophy/vedanta",
+      "relation": "contradicts",
+      "weight": 0.7,
+      "label": "Nagarjuna's emptiness (sunyata) denies any permanent self or essence — directly opposing Vedanta's eternal Atman/Brahman"
+    },
+    {
+      "source": "analytic/logical-positivism",
+      "target": "continental/existentialism/heidegger",
+      "relation": "contradicts",
+      "weight": 0.85,
+      "label": "Carnap singled out Heidegger's 'The Nothing nothings' as the exemplar of meaningless metaphysical pseudo-statements"
+    },
+
+    {
+      "source": "ancient/stoicism",
+      "target": "ancient/pre-socratics/heraclitus",
+      "relation": "specializes",
+      "weight": 0.6,
+      "label": "Stoics adopted Heraclitus's Logos and fire cosmology, developing them into a systematic physics and ethics"
+    },
+    {
+      "source": "ancient/neoplatonism",
+      "target": "ancient/plato",
+      "relation": "specializes",
+      "weight": 0.85,
+      "label": "Neoplatonism systematized and mystified Plato's metaphysics — the Forms became stages in the emanation from the One"
+    },
+    {
+      "source": "medieval/scholasticism",
+      "target": "ancient/aristotle",
+      "relation": "specializes",
+      "weight": 0.8,
+      "label": "Scholasticism applied Aristotelian logic and metaphysics to theological questions — reason in the service of faith"
+    },
+    {
+      "source": "modern/german-idealism",
+      "target": "modern/kant",
+      "relation": "specializes",
+      "weight": 0.85,
+      "label": "German Idealism arose as attempts to complete and overcome Kant's critical philosophy — Fichte, Schelling, then Hegel"
+    },
+    {
+      "source": "continental/phenomenology",
+      "target": "modern/rationalism/descartes",
+      "relation": "specializes",
+      "weight": 0.6,
+      "label": "Husserl saw phenomenology as radicalizing Descartes — bracketing everything except the structures of consciousness itself"
+    },
+    {
+      "source": "analytic/logical-positivism",
+      "target": "modern/empiricism",
+      "relation": "specializes",
+      "weight": 0.7,
+      "label": "Logical Positivism is radical empiricism armed with modern logic — only verifiable statements are meaningful"
+    },
+    {
+      "source": "analytic/philosophy-of-science",
+      "target": "modern/empiricism",
+      "relation": "specializes",
+      "weight": 0.65,
+      "label": "Philosophy of science inherits empiricism's core question: how do we know the world through observation?"
+    },
+    {
+      "source": "analytic/ethics",
+      "target": "modern/utilitarianism",
+      "relation": "specializes",
+      "weight": 0.6,
+      "label": "Analytic ethics began by refining utilitarianism — Moore, Sidgwick, and later Singer continued the consequentialist tradition"
+    },
+    {
+      "source": "continental/existentialism",
+      "target": "continental/phenomenology",
+      "relation": "specializes",
+      "weight": 0.8,
+      "label": "Existentialism specializes phenomenology toward the structures of human existence — anxiety, freedom, authenticity, death"
+    },
+    {
+      "source": "continental/postmodernism",
+      "target": "continental/existentialism/nietzsche",
+      "relation": "specializes",
+      "weight": 0.7,
+      "label": "Postmodernism radicalizes Nietzsche's perspectivism — if God is dead, so are all grand narratives and objective truths"
+    },
+    {
+      "source": "eastern/buddhist-philosophy/nagarjuna",
+      "target": "eastern/buddhist-philosophy",
+      "relation": "specializes",
+      "weight": 0.85,
+      "label": "Nagarjuna's Madhyamaka is the most rigorous philosophical elaboration of the Buddha's teaching on dependent origination"
+    },
+    {
+      "source": "eastern/hindu-philosophy/vedanta",
+      "target": "eastern/hindu-philosophy",
+      "relation": "specializes",
+      "weight": 0.8,
+      "label": "Vedanta is the culmination of Hindu philosophical inquiry — the 'end of the Vedas' and the school's deepest metaphysics"
+    },
+    {
+      "source": "contemporary/effective-altruism",
+      "target": "analytic/ethics",
+      "relation": "specializes",
+      "weight": 0.7,
+      "label": "Effective altruism applies analytic ethics to practical questions of maximizing well-being with limited resources"
+    },
+    {
+      "source": "contemporary/philosophy-of-ai",
+      "target": "analytic/philosophy-of-mind",
+      "relation": "specializes",
+      "weight": 0.8,
+      "label": "Philosophy of AI extends philosophy of mind — can machines be conscious? What is the relationship between computation and thought?"
+    },
+    {
+      "source": "contemporary/critical-theory",
+      "target": "continental/marxism",
+      "relation": "specializes",
+      "weight": 0.75,
+      "label": "Critical Theory is Marxism updated for late capitalism — cultural critique, ideology, and the administered society"
+    },
+    {
+      "source": "eastern/buddhist-philosophy/zen-philosophy",
+      "target": "eastern/buddhist-philosophy",
+      "relation": "specializes",
+      "weight": 0.8,
+      "label": "Zen is a distinctly East Asian specialization of Buddhism emphasizing direct experience over textual study"
+    },
+    {
+      "source": "eastern/hindu-philosophy/yoga-philosophy",
+      "target": "eastern/hindu-philosophy",
+      "relation": "specializes",
+      "weight": 0.75,
+      "label": "Yoga philosophy systematizes the practices of meditation and concentration within Hindu metaphysics"
+    },
+    {
+      "source": "medieval/aquinas",
+      "target": "medieval/scholasticism",
+      "relation": "specializes",
+      "weight": 0.9,
+      "label": "Aquinas is the pinnacle of Scholasticism — the Summa Theologiae is its most complete and enduring achievement"
+    },
+    {
+      "source": "medieval/ockham",
+      "target": "medieval/scholasticism",
+      "relation": "specializes",
+      "weight": 0.75,
+      "label": "Ockham represents late Scholasticism's nominalist turn — his razor cut away the metaphysical excesses of his predecessors"
+    },
+
+    {
+      "source": "ancient/socrates",
+      "target": "ancient/plato",
+      "relation": "causes",
+      "weight": 0.9,
+      "label": "Socrates' trial and execution (399 BCE) traumatized Plato and drove him to write the Republic and found the Academy"
+    },
+    {
+      "source": "modern/empiricism/hume",
+      "target": "modern/kant",
+      "relation": "causes",
+      "weight": 0.9,
+      "label": "Hume's skepticism about causation was the specific trigger that woke Kant from his 'dogmatic slumber' and produced the Critiques"
+    },
+    {
+      "source": "modern/german-idealism/hegel",
+      "target": "continental/marxism/marx",
+      "relation": "causes",
+      "weight": 0.85,
+      "label": "Without Hegel's dialectic there is no Marx — historical materialism is the dialectic applied to economic conditions"
+    },
+    {
+      "source": "analytic/logic/frege",
+      "target": "analytic",
+      "relation": "causes",
+      "weight": 0.9,
+      "label": "Frege's invention of predicate logic (1879) made the analytic tradition possible — formal analysis of language became philosophy's core method"
+    },
+    {
+      "source": "continental/existentialism/nietzsche",
+      "target": "continental/existentialism",
+      "relation": "causes",
+      "weight": 0.85,
+      "label": "Nietzsche's proclamation that God is dead created the crisis of meaning that existentialism addresses"
+    },
+    {
+      "source": "ancient/pre-socratics",
+      "target": "ancient/socrates",
+      "relation": "causes",
+      "weight": 0.7,
+      "label": "Pre-Socratic cosmology set the stage — Socrates shifted philosophy from nature to ethics, but inherited their rational method"
+    },
+    {
+      "source": "medieval/scholasticism",
+      "target": "modern/rationalism/descartes",
+      "relation": "causes",
+      "weight": 0.7,
+      "label": "Descartes's methodical doubt was a revolt against Scholastic authority — modern philosophy begins in the rejection of tradition"
+    },
+    {
+      "source": "modern/kant",
+      "target": "modern/german-idealism",
+      "relation": "causes",
+      "weight": 0.9,
+      "label": "Kant's critical philosophy generated German Idealism — Fichte, Schelling, and Hegel all began as responses to the three Critiques"
+    },
+    {
+      "source": "continental/phenomenology/husserl",
+      "target": "continental/existentialism/heidegger",
+      "relation": "causes",
+      "weight": 0.8,
+      "label": "Husserl's phenomenological method directly produced Heidegger's existential ontology — Being and Time emerged from Husserl's seminars"
+    },
+    {
+      "source": "analytic/logic/wittgenstein-early",
+      "target": "analytic/logical-positivism",
+      "relation": "causes",
+      "weight": 0.8,
+      "label": "The Tractatus directly inspired the Vienna Circle's verification principle — though Wittgenstein distanced himself from their interpretation"
+    },
+
+    {
+      "source": "ancient/skepticism",
+      "target": "modern/empiricism/hume",
+      "relation": "relates-to",
+      "weight": 0.7,
+      "label": "Hume revived ancient Pyrrhonian skepticism in modern form — suspension of judgment about causal necessity"
+    },
+    {
+      "source": "ancient/stoicism",
+      "target": "modern/kant",
+      "relation": "relates-to",
+      "weight": 0.6,
+      "label": "Kant's ethics echoes Stoic themes — duty, reason, and the good will as the only unconditional good"
+    },
+    {
+      "source": "eastern/taoism",
+      "target": "continental/existentialism/heidegger",
+      "relation": "relates-to",
+      "weight": 0.5,
+      "label": "Heidegger engaged with Taoism late in life — parallels between Gelassenheit (letting-be) and wu wei (non-action)"
+    },
+    {
+      "source": "eastern/buddhist-philosophy/nagarjuna",
+      "target": "ancient/skepticism",
+      "relation": "relates-to",
+      "weight": 0.6,
+      "label": "Nagarjuna's tetralemma and Pyrrho's suspension of judgment share a family resemblance — Pyrrho may have encountered Indian philosophy"
+    },
+    {
+      "source": "eastern/confucianism",
+      "target": "ancient/aristotle",
+      "relation": "relates-to",
+      "weight": 0.55,
+      "label": "Confucius and Aristotle share virtue ethics — moral cultivation through practice, the mean, and practical wisdom"
+    },
+    {
+      "source": "modern/german-idealism/schopenhauer",
+      "target": "eastern/buddhist-philosophy",
+      "relation": "relates-to",
+      "weight": 0.7,
+      "label": "Schopenhauer was the first major Western philosopher to engage seriously with Buddhist and Hindu thought — life as suffering, will as desire"
+    },
+    {
+      "source": "analytic/philosophy-of-mind",
+      "target": "continental/phenomenology",
+      "relation": "relates-to",
+      "weight": 0.6,
+      "label": "Analytic philosophy of mind and phenomenology both address consciousness — from opposite methodological directions"
+    },
+    {
+      "source": "contemporary/pragmatism",
+      "target": "modern/empiricism",
+      "relation": "relates-to",
+      "weight": 0.7,
+      "label": "Pragmatism inherits empiricism's emphasis on experience but rejects the spectator theory of knowledge — knowing is doing"
+    },
+    {
+      "source": "contemporary/environmental-ethics",
+      "target": "eastern/taoism",
+      "relation": "relates-to",
+      "weight": 0.55,
+      "label": "Deep ecology echoes Taoist themes — nature has intrinsic value, harmony with the natural world, rejection of anthropocentrism"
+    },
+    {
+      "source": "contemporary/environmental-ethics",
+      "target": "eastern/buddhist-philosophy",
+      "relation": "relates-to",
+      "weight": 0.5,
+      "label": "Buddhist interdependence (pratityasamutpada) resonates with ecological thinking — all beings arise together in mutual dependence"
+    },
+    {
+      "source": "medieval/averroes",
+      "target": "eastern/islamic-philosophy/ibn-rushd",
+      "relation": "relates-to",
+      "weight": 0.95,
+      "label": "Averroes and Ibn Rushd are the same person — the medieval Latin and Arabic names for the philosopher from Cordoba"
+    },
+    {
+      "source": "medieval/avicenna",
+      "target": "eastern/islamic-philosophy",
+      "relation": "relates-to",
+      "weight": 0.9,
+      "label": "Avicenna belongs to both medieval and Islamic philosophical traditions — a bridge between East and West"
+    },
+    {
+      "source": "contemporary/feminism",
+      "target": "continental/postmodernism",
+      "relation": "relates-to",
+      "weight": 0.65,
+      "label": "Feminist philosophy engages critically with postmodernism — Butler's gender performativity draws on Foucault and Derrida"
+    },
+    {
+      "source": "contemporary/pragmatism",
+      "target": "analytic/ordinary-language",
+      "relation": "relates-to",
+      "weight": 0.6,
+      "label": "Later Wittgenstein and the pragmatists converge — meaning as use, philosophy as therapy, anti-foundationalism"
+    },
+    {
+      "source": "contemporary/philosophy-of-ai",
+      "target": "analytic/logic",
+      "relation": "relates-to",
+      "weight": 0.7,
+      "label": "Formal logic is the intellectual ancestor of AI — from Leibniz's dream of a universal calculus to modern machine reasoning"
+    }
+  ]
+}
