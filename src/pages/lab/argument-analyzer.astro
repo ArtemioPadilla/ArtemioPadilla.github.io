@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
+import ArgumentAnalyzer from "../../components/lab/argument-analyzer/ArgumentAnalyzer.tsx";
+---
+
+<BaseLayout
+  title="Argument Analyzer — Lab — Artemio Padilla"
+  description="Break down arguments, detect logical fallacies, and evaluate reasoning strength."
+>
+  <Navigation currentPath="/lab" />
+  <LabToolLayout currentSlug="argument-analyzer">
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Argument Analyzer</span>
+      </div>
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">🧠</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">Argument Analyzer</h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">Break down arguments, detect logical fallacies, and evaluate reasoning strength.</p>
+      </div>
+      <ArgumentAnalyzer client:visible />
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]"><p>All analysis runs in your browser.</p></div>
+    </div>
+  </main>
+  <Footer />
+  </LabToolLayout>
+</BaseLayout>

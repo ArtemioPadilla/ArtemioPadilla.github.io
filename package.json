@@ -17,6 +17,7 @@
     "@astrojs/preact": "^4.0.0",
     "@astrojs/rss": "^4.0.15",
     "@astrojs/sitemap": "^3.3.0",
+    "@sigma/node-border": "^3.0.0",
     "3d-force-graph": "^1.79.1",
     "astro": "^5.5.0",
     "chart.js": "^4.5.1",

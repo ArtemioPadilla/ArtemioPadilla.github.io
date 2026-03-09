@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
+import DecisionMatrix from "../../components/lab/decision-matrix/DecisionMatrix.tsx";
+---
+
+<BaseLayout
+  title="Weighted Decision Matrix — Lab — Artemio Padilla"
+  description="Compare options across weighted criteria with sensitivity analysis and visualizations."
+>
+  <Navigation currentPath="/lab" />
+  <LabToolLayout currentSlug="decision-matrix">
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Weighted Decision Matrix</span>
+      </div>
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">⚖️</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">Weighted Decision Matrix</h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">Compare options across weighted criteria with sensitivity analysis and visualizations.</p>
+      </div>
+      <DecisionMatrix client:visible />
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]"><p>All calculations run in your browser.</p></div>
+    </div>
+  </main>
+  <Footer />
+  </LabToolLayout>
+</BaseLayout>

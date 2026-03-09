@@ -129,6 +129,19 @@ export const categoryMap: Record<string, string> = {
   "segregation-sim": "systems",
   "dns-resolver": "systems",
   "tcp-viz": "systems",
+
+  // Life & Personal Tools
+  "tax-sim": "life",
+  "nutrition-planner": "life",
+  "career-model": "life",
+  "decision-matrix": "life",
+  "investment-compare": "life",
+  "housing-sim": "life",
+  "sleep-optimizer": "life",
+  "habit-tracker": "life",
+  "argument-analyzer": "life",
+  "life-tradeoff": "life",
+  "total-comp": "life",
 };
 
 export interface CategoryMeta {
@@ -148,4 +161,5 @@ export const categories: CategoryMeta[] = [
   { key: "audio", label: "Audio & Music", icon: "music", description: "Audio analysis, music theory, and Web Audio experiments" },
   { key: "python", label: "Python", icon: "python", description: "Browser-based Python REPL and code execution visualizer" },
   { key: "systems", label: "Systems & Networking", icon: "globe", description: "Network protocols, blockchain, and physics simulation" },
+  { key: "life", label: "Life & Personal", icon: "heart", description: "Tax, career, nutrition, sleep, habits, and decision-making tools" },
 ];

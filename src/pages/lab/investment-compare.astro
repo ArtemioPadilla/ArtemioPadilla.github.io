@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import Navigation from "../../components/layout/Navigation.astro";
+import Footer from "../../components/layout/Footer.astro";
+import LabToolLayout from "../../components/lab/LabToolLayout.astro";
+import InvestmentCompare from "../../components/lab/investment-compare/InvestmentCompare.tsx";
+---
+
+<BaseLayout
+  title="Mexican Investment Comparator — Lab — Artemio Padilla"
+  description="Compare investment instruments with after-tax and after-inflation real yields."
+>
+  <Navigation currentPath="/lab" />
+  <LabToolLayout currentSlug="investment-compare">
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-6 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+        <a href="/lab" class="no-underline transition-colors hover:text-[var(--color-heading)]">Lab</a>
+        <span>/</span>
+        <span class="text-[var(--color-heading)]">Mexican Investment Comparator</span>
+      </div>
+      <div class="mb-8">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">📊</span>
+          <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl">Mexican Investment Comparator</h1>
+        </div>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">Compare investment instruments with after-tax and after-inflation real yields.</p>
+      </div>
+      <InvestmentCompare client:visible />
+      <div class="mt-6 text-xs text-[var(--color-text-muted)]"><p>Rates are illustrative, not investment advice.</p></div>
+    </div>
+  </main>
+  <Footer />
+  </LabToolLayout>
+</BaseLayout>

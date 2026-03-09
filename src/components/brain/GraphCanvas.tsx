@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "preact/hooks";
+import { useEffect, useRef, useState, useCallback, useMemo } from "preact/hooks";
 import type { KnowledgeNode, KnowledgeEdge, LayoutMode, EdgeRelation } from "../../types/knowledge";
 import { DOMAIN_COLORS, getNodeDomain, getNodeDepth } from "../../types/knowledge";
 import type { FunctionalComponent } from "preact";
@@ -198,10 +198,22 @@ const GraphCanvas: FunctionalComponent<Props> = ({
     const init = async () => {
       const { default: Graph } = await import("graphology");
       const { default: Sigma } = await import("sigma");
+      const { createNodeBorderProgram } = await import("@sigma/node-border");
 
       if (destroyed || !containerRef.current) return;
 
+      // Create a bordered node program for subgraph-bearing nodes
+      const SubgraphNodeProgram = createNodeBorderProgram({
+        borders: [
+          { color: { attribute: "borderColor", defaultValue: "#ffffff" }, size: { value: 0.15, mode: "relative" } },
+          { color: { attribute: "color" }, size: { fill: true } },
+        ],
+      });
+
       const graph = new Graph();
+
+      // Build a set of node IDs that have subgraphs
+      const subgraphNodeIds = new Set(nodes.filter((n) => n.subgraph).map((n) => n.id));
 
       // Add nodes with random initial positions
       for (const node of nodes) {
@@ -209,13 +221,15 @@ const GraphCanvas: FunctionalComponent<Props> = ({
         const depth = getNodeDepth(node.id);
         const angle = Math.random() * 2 * Math.PI;
         const radius = 50 + depth * 80 + Math.random() * 40;
+        const hasSubgraph = subgraphNodeIds.has(node.id);
         graph.addNode(node.id, {
-          label: node.label,
+          label: hasSubgraph ? `⊕ ${node.label}` : node.label,
           x: Math.cos(angle) * radius,
           y: Math.sin(angle) * radius,
-          size: getNodeSize(node),
+          size: hasSubgraph ? getNodeSize(node) * 1.6 : getNodeSize(node),
           color: getNodeColor(node, domainColors),
-          type: "circle",
+          type: hasSubgraph ? "bordered" : "circle",
+          borderColor: isLight ? "#18181b" : "#ffffff",
           _nodeData: node,
         });
       }
@@ -256,6 +270,8 @@ const GraphCanvas: FunctionalComponent<Props> = ({
 
       const bgColor = isLight ? "#fafafa" : "#09090b";
 
+      const { NodeCircleProgram } = await import("sigma/rendering");
+
       const renderer = new Sigma(graph, containerRef.current, {
         renderLabels: true,
         labelColor: { color: isLight ? "#18181b" : "#e4e4e7" },
@@ -266,6 +282,10 @@ const GraphCanvas: FunctionalComponent<Props> = ({
         defaultEdgeColor: isLight ? "#d4d4d8" : "#333333",
         defaultNodeColor: "#888888",
         stagePadding: 40,
+        nodeProgramClasses: {
+          circle: NodeCircleProgram,
+          bordered: SubgraphNodeProgram,
+        },
         nodeReducer: (nodeId: string, data: any) => {
           const res = { ...data };
 
@@ -448,10 +468,11 @@ const GraphCanvas: FunctionalComponent<Props> = ({
         .filter((n) => visibleNodes.has(n.id))
         .map((n) => ({
           id: n.id,
-          label: n.label,
+          label: n.subgraph ? `⊕ ${n.label}` : n.label,
           color: getNodeColor(n, domainColors),
-          size: getNodeSize(n),
+          size: n.subgraph ? getNodeSize(n) * 2 : getNodeSize(n),
           _nodeData: n,
+          _hasSubgraph: !!n.subgraph,
         }));
 
       // Filter edges by relation if active
