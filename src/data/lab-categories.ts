@@ -144,6 +144,117 @@ export const categoryMap: Record<string, string> = {
   "total-comp": "life",
 };
 
+// ─── Subcategory mapping ─────────────────────────────────────────────
+export const subcategoryMap: Record<string, string> = {
+  // ML & AI
+  "neural-network": "neural-nets", "activation-functions": "neural-nets", "backprop-viz": "neural-nets",
+  "loss-explorer": "neural-nets", "loss-landscape": "neural-nets", "convolution-viz": "neural-nets",
+  "tokenizer": "nlp", "tokenizer-compare": "nlp", "word-embeddings": "nlp",
+  "attention-viz": "nlp", "embedding-explorer": "nlp",
+  "gradient-descent": "optimization", "genetic-algorithm": "optimization",
+  "neuroevolution": "optimization", "rl-playground": "optimization",
+  "gan-playground": "generative", "diffusion-viz": "generative",
+  "decision-tree": "classical-ml", "clustering": "classical-ml", "confusion-matrix": "classical-ml",
+  "mcmc-visualizer": "classical-ml", "gradient-boosting": "classical-ml", "dim-reduction": "classical-ml",
+
+  // Math & Statistics
+  "distributions": "probability", "ab-test": "probability", "bayesian-inference": "probability",
+  "hypothesis-testing": "probability", "bootstrap-resampling": "probability", "central-limit": "probability",
+  "monte-carlo": "probability", "dice-lab": "probability", "glm-explorer": "probability",
+  "markov-chain": "probability", "mcmc-visualizer": "probability",
+  "mortgage-calc": "finance", "investment-sim": "finance", "compound-interest": "finance",
+  "supply-demand": "finance", "amortization-race": "finance", "finance-sim": "finance",
+  "fourier-viz": "analysis", "calculus-viz": "analysis", "complex-numbers": "analysis",
+  "linear-algebra": "geometry", "bezier-editor": "geometry", "voronoi": "geometry",
+  "strange-attractors": "geometry",
+  "evolution-trust": "game-theory", "voting-systems": "game-theory", "epidemic-sim": "game-theory",
+  "loopy": "game-theory",
+
+  // CS Theory
+  "turing-machine": "automata", "state-machine": "automata", "regex-automaton": "automata",
+  "memory-allocator": "os-memory", "gc-visualizer": "os-memory", "cpu-pipeline": "os-memory",
+  "process-scheduler": "os-memory", "page-replacement": "os-memory",
+  "db-index-viz": "cs-other", "compiler-pipeline": "cs-other", "search-engine": "cs-other",
+
+  // Graphics
+  "perlin-noise": "procedural", "flow-field": "procedural", "tessellation": "procedural",
+  "lissajous": "procedural", "spirograph": "procedural",
+  "shader-playground": "rendering", "ray-tracer": "rendering", "fractal-explorer": "rendering",
+  "pixel-art": "gfx-tools", "color-palette": "gfx-tools",
+
+  // Dev Tools
+  "json-validator": "data-text", "json-visualizer": "data-text", "diff-viewer": "data-text",
+  "markdown-preview": "data-text", "mermaid-viz": "data-text",
+  "jwt-decoder": "encoding", "hash-generator": "encoding", "base-converter": "encoding",
+  "qr-generator": "encoding",
+  "regex-tester": "dev-other", "cron-parser": "dev-other", "timestamp": "dev-other",
+  "sql-playground": "dev-other", "git-viz": "dev-other",
+
+  // Systems & Networking
+  "physics-sandbox": "physics", "fluid-sim": "physics", "wave-sim": "physics",
+  "orbital-mechanics": "physics", "cloth-sim": "physics", "em-field": "physics",
+  "optics-bench": "physics", "entropy-demon": "physics", "pendulum-lab": "physics",
+  "network-protocols": "networking", "dns-resolver": "networking", "tcp-viz": "networking",
+  "blockchain": "networking",
+  "particle-life": "emergence", "boids": "emergence", "reaction-diffusion": "emergence",
+  "segregation-sim": "emergence",
+
+  // Life & Personal
+  "tax-sim": "life-finance", "investment-compare": "life-finance", "housing-sim": "life-finance",
+  "nutrition-planner": "health", "sleep-optimizer": "health",
+  "career-model": "career", "total-comp": "career",
+  "decision-matrix": "thinking", "argument-analyzer": "thinking",
+  "life-tradeoff": "thinking", "habit-tracker": "thinking",
+};
+
+export interface SubcategoryMeta {
+  key: string;
+  label: string;
+  categoryKey: string;
+}
+
+export const subcategories: SubcategoryMeta[] = [
+  // ML & AI
+  { key: "neural-nets", label: "Neural Networks", categoryKey: "ml" },
+  { key: "nlp", label: "NLP & Language", categoryKey: "ml" },
+  { key: "optimization", label: "Optimization", categoryKey: "ml" },
+  { key: "generative", label: "Generative Models", categoryKey: "ml" },
+  { key: "classical-ml", label: "Classical ML", categoryKey: "ml" },
+
+  // Math
+  { key: "probability", label: "Probability & Stats", categoryKey: "math" },
+  { key: "finance", label: "Finance & Economics", categoryKey: "math" },
+  { key: "analysis", label: "Analysis & Calculus", categoryKey: "math" },
+  { key: "geometry", label: "Geometry & Algebra", categoryKey: "math" },
+  { key: "game-theory", label: "Game Theory", categoryKey: "math" },
+
+  // CS
+  { key: "automata", label: "Automata", categoryKey: "cs" },
+  { key: "os-memory", label: "OS & Memory", categoryKey: "cs" },
+  { key: "cs-other", label: "Other", categoryKey: "cs" },
+
+  // Graphics
+  { key: "procedural", label: "Procedural", categoryKey: "gfx" },
+  { key: "rendering", label: "Rendering", categoryKey: "gfx" },
+  { key: "gfx-tools", label: "Tools", categoryKey: "gfx" },
+
+  // Dev
+  { key: "data-text", label: "Data & Text", categoryKey: "dev" },
+  { key: "encoding", label: "Encoding & Security", categoryKey: "dev" },
+  { key: "dev-other", label: "Other", categoryKey: "dev" },
+
+  // Systems
+  { key: "physics", label: "Physics", categoryKey: "systems" },
+  { key: "networking", label: "Networking", categoryKey: "systems" },
+  { key: "emergence", label: "Emergence", categoryKey: "systems" },
+
+  // Life
+  { key: "life-finance", label: "Finance", categoryKey: "life" },
+  { key: "health", label: "Health", categoryKey: "life" },
+  { key: "career", label: "Career", categoryKey: "life" },
+  { key: "thinking", label: "Decision-Making", categoryKey: "life" },
+];
+
 export interface CategoryMeta {
   key: string;
   label: string;

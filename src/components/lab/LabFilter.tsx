@@ -7,6 +7,7 @@ interface ToolEntry {
   tags: string[];
   slug: string;
   categoryKey: string;
+  subcategoryKey: string;
   createdDate: string;
 }
 
@@ -16,18 +17,28 @@ interface CategoryInfo {
   count: number;
 }
 
+interface SubcategoryInfo {
+  key: string;
+  label: string;
+  categoryKey: string;
+  count: number;
+}
+
 interface Props {
   tools: ToolEntry[];
   categories: CategoryInfo[];
+  subcategories: SubcategoryInfo[];
   totalCount: number;
 }
 
 type SortMode = "default" | "az" | "newest";
 type ViewMode = "grid" | "list";
 
-export default function LabFilter({ tools, categories, totalCount }: Props) {
+export default function LabFilter({ tools, categories, subcategories, totalCount }: Props) {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
+  const [activeSubcategory, setActiveSubcategory] = useState("all");
+  const [activeTag, setActiveTag] = useState("");
   const [sortBy, setSortBy] = useState<SortMode>("default");
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     if (typeof window !== "undefined") {
@@ -53,6 +64,14 @@ export default function LabFilter({ tools, categories, totalCount }: Props) {
     [tools]
   );
 
+  // Subcategories for the active category
+  const visibleSubcategories = useMemo(() => {
+    if (activeCategory === "all") return [];
+    return subcategories.filter(
+      (sc) => sc.categoryKey === activeCategory && sc.count > 0
+    );
+  }, [activeCategory, subcategories]);
+
   // Sorted tools for ordering
   const sortedSlugs = useMemo(() => {
     let sorted = [...tools];
@@ -66,6 +85,27 @@ export default function LabFilter({ tools, categories, totalCount }: Props) {
     }
     return sorted.map((t) => t.slug);
   }, [tools, sortBy]);
+
+  // Reset subcategory when category changes
+  useEffect(() => {
+    setActiveSubcategory("all");
+    setActiveTag("");
+  }, [activeCategory]);
+
+  // Listen for tag-filter events from ToolCard
+  useEffect(() => {
+    function onTagFilter(e: Event) {
+      const tag = (e as CustomEvent).detail;
+      if (tag) {
+        setActiveTag(tag);
+        setActiveCategory("all");
+        setActiveSubcategory("all");
+        setQuery("");
+      }
+    }
+    document.addEventListener("lab-tag-filter", onTagFilter);
+    return () => document.removeEventListener("lab-tag-filter", onTagFilter);
+  }, []);
 
   // Apply filter + sort to DOM
   useEffect(() => {
@@ -89,10 +129,19 @@ export default function LabFilter({ tools, categories, totalCount }: Props) {
     wrappers.forEach((el) => {
       const slug = el.dataset.slug || "";
       const cat = el.dataset.category || "";
+      const subcat = el.dataset.subcategory || "";
+      const tags = el.dataset.tags || "";
 
       const matchesSearch = searchMatches === null || searchMatches.has(slug);
       const matchesCat = activeCategory === "all" || cat === activeCategory;
-      const visible = matchesSearch && matchesCat;
+      const matchesSubcat =
+        activeSubcategory === "all" || subcat === activeSubcategory;
+      const matchesTag =
+        !activeTag ||
+        tags
+          .split(",")
+          .some((t) => t.trim().toLowerCase() === activeTag.toLowerCase());
+      const visible = matchesSearch && matchesCat && matchesSubcat && matchesTag;
 
       el.classList.toggle("hidden", !visible);
       el.style.order = String(orderMap.get(slug) ?? 0);
@@ -126,7 +175,7 @@ export default function LabFilter({ tools, categories, totalCount }: Props) {
     }
 
     setVisibleCount(count);
-  }, [query, activeCategory, sortBy, sortedSlugs, viewMode, fuse]);
+  }, [query, activeCategory, activeSubcategory, activeTag, sortBy, sortedSlugs, viewMode, fuse]);
 
   // Persist view mode
   useEffect(() => {
@@ -138,15 +187,16 @@ export default function LabFilter({ tools, categories, totalCount }: Props) {
   // Keyboard: Escape clears search
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape" && query) {
+      if (e.key === "Escape" && (query || activeTag)) {
         e.preventDefault();
         setQuery("");
+        setActiveTag("");
         inputRef.current?.blur();
       }
     }
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [query]);
+  }, [query, activeTag]);
 
   return (
     <div class="lab-filter-sticky mt-8 space-y-4">
@@ -171,15 +221,21 @@ export default function LabFilter({ tools, categories, totalCount }: Props) {
             ref={inputRef}
             type="text"
             value={query}
-            onInput={(e) => setQuery((e.target as HTMLInputElement).value)}
+            onInput={(e) => {
+              setQuery((e.target as HTMLInputElement).value);
+              setActiveTag("");
+            }}
             placeholder="Filter tools..."
             role="searchbox"
             aria-label="Search lab tools"
             class="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] py-2.5 pl-10 pr-4 text-sm text-[var(--color-text)] placeholder-[var(--color-text-muted)] outline-none transition-colors focus:border-[var(--color-primary)]"
           />
-          {query && (
+          {(query || activeTag) && (
             <button
-              onClick={() => setQuery("")}
+              onClick={() => {
+                setQuery("");
+                setActiveTag("");
+              }}
               class="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-heading)]"
               aria-label="Clear search"
             >
@@ -272,6 +328,59 @@ export default function LabFilter({ tools, categories, totalCount }: Props) {
           </button>
         ))}
       </div>
+
+      {/* Subcategory pills — shown when a category is selected */}
+      {visibleSubcategories.length > 0 && (
+        <div
+          class="cat-scroll flex gap-2"
+          role="tablist"
+          aria-label="Subcategories"
+        >
+          <button
+            role="tab"
+            aria-selected={activeSubcategory === "all"}
+            onClick={() => setActiveSubcategory("all")}
+            class={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-all ${
+              activeSubcategory === "all"
+                ? "border-[var(--color-accent)] bg-[var(--color-accent)]/8 text-[var(--color-accent)]"
+                : "border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+            }`}
+          >
+            All
+          </button>
+          {visibleSubcategories.map((sc) => (
+            <button
+              key={sc.key}
+              role="tab"
+              aria-selected={activeSubcategory === sc.key}
+              onClick={() => setActiveSubcategory(sc.key)}
+              class={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-all ${
+                activeSubcategory === sc.key
+                  ? "border-[var(--color-accent)] bg-[var(--color-accent)]/8 text-[var(--color-accent)]"
+                  : "border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+              }`}
+            >
+              {sc.label} ({sc.count})
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Active tag indicator */}
+      {activeTag && (
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-[var(--color-text-muted)]">Tag:</span>
+          <button
+            onClick={() => setActiveTag("")}
+            class="inline-flex items-center gap-1 rounded-full border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/8 px-2.5 py-0.5 text-xs font-medium text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)]/15"
+          >
+            {activeTag}
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Result count */}
       <div role="status" aria-live="polite" class="text-xs text-[var(--color-text-muted)]">

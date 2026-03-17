@@ -6,7 +6,7 @@ import Footer from "../../components/layout/Footer.astro";
 import ToolCard from "../../components/lab/ToolCard.astro";
 import LabFilter from "../../components/lab/LabFilter.tsx";
 import LabToolLayout from "../../components/lab/LabToolLayout.astro";
-import { categoryMap, categories } from "../../data/lab-categories.ts";
+import { categoryMap, categories, subcategoryMap, subcategories } from "../../data/lab-categories.ts";
 
 const allTools = await getCollection("lab", ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
@@ -45,6 +45,7 @@ const filterTools = tools.map((t) => ({
   tags: t.data.tags,
   slug: t.data.componentSlug,
   categoryKey: categoryMap[t.data.componentSlug] ?? "dev",
+  subcategoryKey: subcategoryMap[t.data.componentSlug] ?? "",
   createdDate: t.data.createdDate instanceof Date
     ? t.data.createdDate.toISOString()
     : String(t.data.createdDate),
@@ -54,6 +55,14 @@ const filterCategories = categories.map((c) => ({
   key: c.key,
   label: c.label,
   count: grouped.get(c.key)?.length ?? 0,
+}));
+
+// Subcategory data for LabFilter
+const filterSubcategories = subcategories.map((sc) => ({
+  key: sc.key,
+  label: sc.label,
+  categoryKey: sc.categoryKey,
+  count: tools.filter((t) => subcategoryMap[t.data.componentSlug] === sc.key).length,
 }));
 
 // SVG icon paths for categories
@@ -150,6 +159,7 @@ const categoryIcons: Record<string, string> = {
         client:load
         tools={filterTools}
         categories={filterCategories}
+        subcategories={filterSubcategories}
         totalCount={totalCount}
       />
 
@@ -192,6 +202,8 @@ const categoryIcons: Record<string, string> = {
                       class="tool-card-wrapper"
                       data-slug={slug}
                       data-category={catKey}
+                      data-subcategory={subcategoryMap[slug] ?? ""}
+                      data-tags={tool.data.tags.join(",")}
                       data-title={tool.data.title}
                       data-created={tool.data.createdDate instanceof Date
                         ? tool.data.createdDate.toISOString()
@@ -295,6 +307,10 @@ const categoryIcons: Record<string, string> = {
 
   :global(.cat-scroll::-webkit-scrollbar) {
     display: none;
+  }
+
+  :global(.cat-scroll) + :global(.cat-scroll) {
+    margin-top: -0.25rem;
   }
 
   @media (max-width: 640px) {

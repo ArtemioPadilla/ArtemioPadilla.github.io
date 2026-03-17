@@ -54,7 +54,10 @@ const statusColors = {
     {tags.length > 0 && (
       <div class="tool-card-tags mt-4 flex flex-wrap gap-2">
         {tags.slice(0, 4).map((tag) => (
-          <span class="rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-xs font-medium text-[var(--color-text-muted)] transition-all duration-300 group-hover:border-[var(--color-primary)]/20 group-hover:text-[var(--color-primary)]">
+          <span
+            class="tag-chip cursor-pointer rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-xs font-medium text-[var(--color-text-muted)] transition-all duration-300 hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)] group-hover:border-[var(--color-primary)]/20 group-hover:text-[var(--color-primary)]"
+            data-tag={tag}
+          >
             {tag}
           </span>
         ))}
@@ -62,6 +65,19 @@ const statusColors = {
     )}
   </div>
 </a>
+
+<script>
+  document.addEventListener("click", (e) => {
+    const chip = (e.target as HTMLElement).closest(".tag-chip");
+    if (!chip) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const tag = (chip as HTMLElement).dataset.tag;
+    if (tag) {
+      document.dispatchEvent(new CustomEvent("lab-tag-filter", { detail: tag }));
+    }
+  });
+</script>
 
 <style>
   .tool-card-glow {
