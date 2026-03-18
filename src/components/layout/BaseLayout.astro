@@ -126,6 +126,15 @@ const structuredData = jsonLd ?? defaultJsonLd;
       </svg>
     </button>
 
+    <!-- Service worker registration -->
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' });
+        });
+      }
+    </script>
+
     <!-- Theme toggle script -->
     <script is:inline>
       const theme = localStorage.getItem("theme") || "dark";

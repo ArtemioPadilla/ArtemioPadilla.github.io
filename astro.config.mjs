@@ -39,6 +39,22 @@ export default defineConfig({
             purpose: "maskable",
           },
         ],
+        screenshots: [
+          {
+            src: "screenshots/desktop.png",
+            sizes: "1920x1080",
+            type: "image/png",
+            form_factor: "wide",
+            label: "Home — Artemio Padilla",
+          },
+          {
+            src: "screenshots/mobile.png",
+            sizes: "375x667",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "Home — Artemio Padilla",
+          },
+        ],
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
