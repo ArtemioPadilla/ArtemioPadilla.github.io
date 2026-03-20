@@ -58,8 +58,18 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        globIgnores: ["**/watchboard/**"],
         navigateFallbackDenylist: [/^\/watchboard/],
+        // Skip /watchboard/ entirely — let the network handle it
         runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/artemiop\.com\/watchboard\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiopadilla\.github\.io\/watchboard\/.*/i,
+            handler: "NetworkOnly",
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: "CacheFirst",
