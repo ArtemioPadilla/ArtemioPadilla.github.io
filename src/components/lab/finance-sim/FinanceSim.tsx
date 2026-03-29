@@ -22,6 +22,10 @@ import {
   calcMonthlyIsr,
   DEFAULT_UMA_DIARIO,
 } from "../shared/mexican-tax";
+import {
+  projectPayoff,
+  type PayoffProjection,
+} from "../shared/payoff-projection";
 
 Chart.register(
   CategoryScale, LinearScale, PointElement, LineElement,
@@ -144,6 +148,7 @@ interface SimulationResult {
   peakDti: number;
   peakDtiMonth: number;
   alerts: string[];
+  loanPayoffProjections: PayoffProjection[];
 }
 
 type SplitMode = "owner" | "equal" | "proportional" | "custom";
@@ -992,6 +997,34 @@ function simulate(state: FinanceState): SimulationResult {
 
   if (peakStressBalance === Infinity) peakStressBalance = 0;
 
+  // Loan payoff projections beyond the simulation horizon
+  const loanPayoffProjections: PayoffProjection[] = [];
+  for (const loan of state.loans) {
+    const endBal = loanBals[loan.id];
+    if (endBal > 0.01) {
+      loanPayoffProjections.push(
+        projectPayoff(
+          loan.id,
+          endBal,
+          loan.annualRate,
+          loan.termMonths,
+          loan.startMonth,
+          loan.paymentInterval,
+          loan.amortizations,
+          totalMonths,
+          600,
+        ),
+      );
+    } else {
+      loanPayoffProjections.push({
+        loanId: loan.id,
+        payoffMonth: 0,
+        totalInterestPaid: 0,
+        totalPaid: 0,
+      });
+    }
+  }
+
   return {
     months,
     yearSummaries,
@@ -1010,6 +1043,7 @@ function simulate(state: FinanceState): SimulationResult {
     peakDti,
     peakDtiMonth,
     alerts,
+    loanPayoffProjections,
   };
 }
 
@@ -3277,16 +3311,31 @@ export default function FinanceSim() {
             sub="remaining"
             color={sim.finalDebt > 0 ? C.red : C.green}
           />
-          <StatCard
-            label="Debt-Free"
-            value={sim.debtFreeMonth > 0
-              ? (state.config.startDate
-                ? monthToDate(sim.debtFreeMonth, state.config.startDate)
-                : `Month ${sim.debtFreeMonth}`)
-              : "N/A"}
-            sub={sim.debtFreeMonth > 0 ? `Yr ${Math.ceil(sim.debtFreeMonth / 12)}` : state.loans.length === 0 ? "no loans" : "beyond horizon"}
-            color={sim.debtFreeMonth > 0 ? C.green : C.muted}
-          />
+          {(() => {
+            const latestPayoff = sim.loanPayoffProjections.reduce(
+              (max, p) => (p.payoffMonth > max ? p.payoffMonth : max),
+              0,
+            );
+            const debtFreeSub = sim.debtFreeMonth > 0
+              ? `Yr ${Math.ceil(sim.debtFreeMonth / 12)}`
+              : state.loans.length === 0
+                ? "no loans"
+                : latestPayoff > 0
+                  ? `projected ~Yr ${Math.ceil(latestPayoff / 12)}`
+                  : "beyond horizon";
+            return (
+              <StatCard
+                label="Debt-Free"
+                value={sim.debtFreeMonth > 0
+                  ? (state.config.startDate
+                    ? monthToDate(sim.debtFreeMonth, state.config.startDate)
+                    : `Month ${sim.debtFreeMonth}`)
+                  : "N/A"}
+                sub={debtFreeSub}
+                color={sim.debtFreeMonth > 0 ? C.green : C.muted}
+              />
+            );
+          })()}
           <StatCard
             label="Interest Earned vs Paid"
             value={fmtShort(sim.totalInterestEarned)}
@@ -3917,6 +3966,18 @@ export default function FinanceSim() {
                         ))}
                       </div>
                     )}
+                    {(() => {
+                      const proj = sim.loanPayoffProjections.find(p => p.loanId === l.id);
+                      if (!proj || proj.payoffMonth <= 0) return null;
+                      const lbl = state.config.startDate
+                        ? monthToDate(proj.payoffMonth, state.config.startDate)
+                        : `Month ${proj.payoffMonth}`;
+                      return (
+                        <div class="mt-1 font-mono text-[10px] text-[var(--color-text-muted)]">
+                          Payoff: {lbl} · Total interest: {fmtShort(proj.totalInterestPaid)}
+                        </div>
+                      );
+                    })()}
                   </div>
                 );
               })
