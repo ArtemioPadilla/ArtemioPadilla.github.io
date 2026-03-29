@@ -429,27 +429,30 @@ const milestonePlugin = {
     const opts = chart.options?.plugins?.milestones;
     if (!opts?.items?.length) return;
     const { ctx, chartArea, scales } = chart;
-    for (const ms of opts.items) {
+    for (let i = 0; i < opts.items.length; i++) {
+      const ms = opts.items[i];
       const x = scales.x.getPixelForValue(ms.index);
       if (x < chartArea.left || x > chartArea.right) continue;
       ctx.save();
-      // Draw vertical line
+      // Dashed vertical line
       ctx.strokeStyle = ms.color + "44";
       ctx.lineWidth = 1;
       ctx.setLineDash([3, 4]);
       ctx.beginPath();
-      ctx.moveTo(x, chartArea.top);
+      ctx.moveTo(x, chartArea.top + 14);
       ctx.lineTo(x, chartArea.bottom);
       ctx.stroke();
-      // Draw small triangle marker at the bottom instead of top labels
-      ctx.fillStyle = ms.color + "99";
-      const triSize = 4;
+      // Numbered circle at top
+      const r = 7;
+      ctx.fillStyle = ms.color + "cc";
       ctx.beginPath();
-      ctx.moveTo(x, chartArea.bottom);
-      ctx.lineTo(x - triSize, chartArea.bottom + triSize + 2);
-      ctx.lineTo(x + triSize, chartArea.bottom + triSize + 2);
-      ctx.closePath();
+      ctx.arc(x, chartArea.top + 7, r, 0, Math.PI * 2);
       ctx.fill();
+      ctx.fillStyle = "#000";
+      ctx.font = "bold 8px monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(i + 1), x, chartArea.top + 7);
       ctx.restore();
     }
   },
@@ -3714,6 +3717,19 @@ export default function FinanceSim() {
         <div style={{ height: "360px", position: "relative" }}>
           <canvas ref={chartRef} />
         </div>
+        {showMilestones && milestones.length > 0 && (
+          <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+            {milestones.map((ms, i) => (
+              <div key={i} class="flex items-center gap-1.5">
+                <span class="inline-flex h-4 w-4 items-center justify-center rounded-full font-mono text-[8px] font-bold text-black" style={{ background: ms.color + "cc" }}>{i + 1}</span>
+                <span class="font-mono text-[10px] text-[var(--color-text-muted)]">
+                  {ms.label}
+                  {state.config.startDate ? ` (${monthToShortDate(ms.month, state.config.startDate)})` : ` Mo ${ms.month}`}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Event Timeline */}
