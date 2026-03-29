@@ -15,6 +15,13 @@ import {
   getAmortizationForMonth,
   type LoanAmortization,
 } from "../shared/amortization";
+import {
+  calcNetMonthlyIsr,
+  calcAguinaldoTax,
+  calcPtuTax,
+  calcMonthlyIsr,
+  DEFAULT_UMA_DIARIO,
+} from "../shared/mexican-tax";
 
 Chart.register(
   CategoryScale, LinearScale, PointElement, LineElement,
@@ -26,6 +33,7 @@ Chart.register(
 type AccountType = "checking" | "savings" | "investment" | "retirement";
 type CompoundInterval = "daily" | "monthly" | "quarterly" | "annually";
 type LoanType = "mortgage" | "auto" | "personal" | "credit-card";
+type AssetType = "property" | "vehicle" | "other";
 type IncomePeriodicity = "weekly" | "biweekly" | "monthly" | "annually" | "one-time" | "every-n-months";
 type ExpenseFrequency = "monthly" | "quarterly" | "annually" | "one-time" | "every-n-months";
 
@@ -43,12 +51,15 @@ interface Loan {
   ownerId?: number;
 }
 
+type TaxCategory = "salary" | "aguinaldo" | "ptu" | "bonus" | "exempt";
+
 interface Income {
   id: number; name: string; amount: number;
   periodicity: IncomePeriodicity; frequencyMonths: number;
   growthRate: number; bonusMonth: number; bonusAmount: number;
   startMonth: number; endMonth: number;
   ownerId?: number;
+  taxCategory?: TaxCategory;
 }
 
 interface Expense {
@@ -59,23 +70,44 @@ interface Expense {
   split?: ExpenseSplit;
 }
 
-interface SimConfig { horizonYears: number; inflationRate: number; startDate: string; umaAnnual?: number; art185AnnualCap?: number; }
+interface Asset {
+  id: number; name: string; type: AssetType;
+  value: number; annualAppreciation: number; startMonth: number;
+}
+
+interface WaterfallStep {
+  id: number;
+  type: "fill-account" | "pay-debt";
+  accountId?: number;
+  targetBalance?: number; // 0 = unlimited (fill-account)
+  debtStrategy?: "highest-rate" | "lowest-balance"; // for pay-debt
+}
+
+interface Milestone {
+  month: number; label: string; color: string;
+}
+
+interface SimConfig { horizonYears: number; inflationRate: number; startDate: string; umaAnnual?: number; art185AnnualCap?: number; taxEnabled?: boolean; umaDiario?: number; }
 
 interface FinanceState {
   accounts: Account[]; loans: Loan[]; incomes: Income[]; expenses: Expense[];
+  assets: Asset[];
   pprs: PPR[];
   config: SimConfig; nextId: number;
   participants?: Participant[];
+  waterfall?: WaterfallStep[];
 }
 
 interface MonthRow {
   month: number; year: number;
   totalIncome: number; totalExpenses: number;
-  totalLoanPayments: number; totalInterestPaid: number; totalPrincipalPaid: number;
+  totalLoanPayments: number; totalLoanDisbursements: number;
+  totalInterestPaid: number; totalPrincipalPaid: number;
   totalInterestEarned: number; netCashflow: number;
   accountBalances: Record<number, number>; loanBalances: Record<number, number>;
   incomeBySource: Record<number, number>; expenseBySource: Record<number, number>;
   loanPaymentBySource: Record<number, number>;
+  assetValues: Record<number, number>; totalAssetValue: number;
   totalAssets: number; totalDebt: number; netWorth: number;
   incomeByParticipant?: Record<number, number>;
   expenseByParticipant?: Record<number, number>;
@@ -88,12 +120,15 @@ interface MonthRow {
   totalPPRBalance?: number;
   totalPPRContributions?: number;
   totalPPRRefunds?: number;
+  totalTaxPaid?: number;
 }
 
 interface YearSummary {
   year: number; totalIncome: number; totalExpenses: number;
-  totalLoanPayments: number; interestEarned: number; interestPaid: number;
+  totalLoanPayments: number; totalLoanDisbursements: number;
+  interestEarned: number; interestPaid: number;
   netCashflow: number; endAssets: number; endDebt: number; endNetWorth: number;
+  totalTaxPaid?: number;
 }
 
 interface SimulationResult {
@@ -216,6 +251,12 @@ const LOAN_TYPE_COLORS: Record<LoanType, { color: string; bg: string; border: st
   "credit-card": { color: C.red,     bg: C.redDim,     border: "rgba(224,92,106,0.25)" },
 };
 
+const ASSET_TYPE_COLORS: Record<AssetType, { color: string; bg: string; border: string }> = {
+  property: { color: C.gold,   bg: C.goldDim,   border: C.goldBorder },
+  vehicle:  { color: C.orange, bg: "rgba(245,158,11,0.15)", border: "rgba(245,158,11,0.25)" },
+  other:    { color: C.cyan,   bg: "rgba(6,182,212,0.15)",  border: "rgba(6,182,212,0.25)" },
+};
+
 const MONTH_NAMES = ["None","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const MONTH_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -301,6 +342,75 @@ function computeExpenseSplit(
   return result;
 }
 
+// ─── Milestones ──────────────────────────────────────────────────────
+
+function detectMilestones(state: FinanceState, sim: SimulationResult): Milestone[] {
+  const ms: Milestone[] = [];
+  // Loan starts
+  for (const loan of state.loans) {
+    if (loan.startMonth > 1) ms.push({ month: loan.startMonth, label: loan.name, color: C.blue });
+  }
+  // Loan payoffs
+  for (const loan of state.loans) {
+    const payoff = sim.months.find(r => r.month >= loan.startMonth && r.loanBalances[loan.id] <= 0.01);
+    if (payoff) ms.push({ month: payoff.month, label: `${loan.name} paid`, color: C.green });
+  }
+  // Large one-time expenses (≥50K)
+  for (const exp of state.expenses) {
+    if (exp.frequency === "one-time" && exp.amount >= 50000) {
+      ms.push({ month: exp.startMonth, label: exp.name, color: C.red });
+    }
+  }
+  // Large one-time incomes (≥50K)
+  for (const inc of state.incomes) {
+    if (inc.periodicity === "one-time" && inc.amount >= 50000) {
+      ms.push({ month: inc.startMonth, label: inc.name, color: C.green });
+    }
+  }
+  // Extra payment starts
+  for (const loan of state.loans) {
+    for (const a of loan.amortizations) {
+      const m = a.type === "one-time" ? a.month : a.startMonth;
+      if (m && m > 1) ms.push({ month: m, label: `Extra: ${loan.name}`, color: C.gold });
+    }
+  }
+  // Asset acquisitions
+  for (const asset of state.assets) {
+    if (asset.startMonth > 1) ms.push({ month: asset.startMonth, label: asset.name, color: C.gold });
+  }
+  // Deduplicate by month+label
+  const seen = new Set<string>();
+  return ms.filter(m => { const k = `${m.month}-${m.label}`; if (seen.has(k)) return false; seen.add(k); return true; });
+}
+
+const milestonePlugin = {
+  id: "milestones",
+  afterDraw(chart: any) {
+    const opts = chart.options?.plugins?.milestones;
+    if (!opts?.items?.length) return;
+    const { ctx, chartArea, scales } = chart;
+    for (const ms of opts.items) {
+      const x = scales.x.getPixelForValue(ms.index);
+      if (x < chartArea.left || x > chartArea.right) continue;
+      ctx.save();
+      ctx.strokeStyle = ms.color + "88";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(x, chartArea.top);
+      ctx.lineTo(x, chartArea.bottom);
+      ctx.stroke();
+      ctx.fillStyle = ms.color + "cc";
+      ctx.font = "8px monospace";
+      ctx.textAlign = "center";
+      const maxW = 60;
+      const lbl = ms.label.length > 10 ? ms.label.slice(0, 9) + "…" : ms.label;
+      ctx.fillText(lbl, Math.min(Math.max(x, chartArea.left + maxW / 2), chartArea.right - maxW / 2), chartArea.top - 4);
+      ctx.restore();
+    }
+  },
+};
+
 // ─── Calculation Engine ───────────────────────────────────────────────
 
 function simulate(state: FinanceState): SimulationResult {
@@ -315,7 +425,8 @@ function simulate(state: FinanceState): SimulationResult {
   const loanBals: Record<number, number> = {};
   const loanFixedPmt: Record<number, number> = {};
   for (const l of state.loans) {
-    loanBals[l.id] = l.currentBalance;
+    // Future loans (startMonth > 1) have zero balance until disbursed
+    loanBals[l.id] = l.startMonth <= 1 ? l.currentBalance : 0;
     const r = l.annualRate / 100 / 12;
     loanFixedPmt[l.id] = calcLoanPayment(l.currentBalance, r, l.termMonths);
   }
@@ -328,6 +439,12 @@ function simulate(state: FinanceState): SimulationResult {
     pprBals[ppr.id] = { art151: ppr.initialBalance151, art185: ppr.initialBalance185 };
     pprPrevYearContrib[ppr.id] = { art151: 0, art185: 0 };
     pprYtd[ppr.id] = { contrib151: 0, contrib185: 0 };
+  }
+
+  // Asset runtime state
+  const assetVals: Record<number, number> = {};
+  for (const a of state.assets) {
+    assetVals[a.id] = a.startMonth <= 1 ? a.value : 0;
   }
 
   let cumulativeInterestEarned = 0;
@@ -343,6 +460,7 @@ function simulate(state: FinanceState): SimulationResult {
 
     // 1. Income
     let totalIncome = 0;
+    let totalTaxPaid = 0;
     const incomeBySource: Record<number, number> = {};
     for (const inc of state.incomes) {
       let incAmt = 0;
@@ -352,37 +470,41 @@ function simulate(state: FinanceState): SimulationResult {
 
       if (inc.periodicity === "one-time") {
         if (m === inc.startMonth) incAmt = inc.amount;
-        incomeBySource[inc.id] = incAmt;
-        totalIncome += incAmt;
-        continue;
-      }
-      if (inc.periodicity === "annually") {
+      } else if (inc.periodicity === "annually") {
         if (monthInYear === (inc.startMonth > 0 ? ((inc.startMonth - 1) % 12) + 1 : 1)) {
           incAmt = inc.amount * growthFactor;
         }
-        incomeBySource[inc.id] = incAmt;
-        totalIncome += incAmt;
-        continue;
-      }
-      if (inc.periodicity === "every-n-months") {
+      } else if (inc.periodicity === "every-n-months") {
         const n = inc.frequencyMonths || 3;
         if ((m - inc.startMonth) % n === 0) {
           incAmt = inc.amount * growthFactor;
         }
-        incomeBySource[inc.id] = incAmt;
-        totalIncome += incAmt;
-        continue;
+      } else {
+        let monthlyAmt = inc.amount;
+        if (inc.periodicity === "weekly") monthlyAmt = inc.amount * 52 / 12;
+        else if (inc.periodicity === "biweekly") monthlyAmt = inc.amount * 26 / 12;
+        incAmt = monthlyAmt * growthFactor;
+        if (inc.bonusMonth > 0 && monthInYear === inc.bonusMonth) {
+          incAmt += inc.bonusAmount * growthFactor;
+        }
       }
 
-      let monthlyAmt = inc.amount;
-      if (inc.periodicity === "weekly") monthlyAmt = inc.amount * 52 / 12;
-      else if (inc.periodicity === "biweekly") monthlyAmt = inc.amount * 26 / 12;
-      incAmt = monthlyAmt * growthFactor;
-      if (inc.bonusMonth > 0 && monthInYear === inc.bonusMonth) {
-        incAmt += inc.bonusAmount * growthFactor;
+      // Apply Mexican ISR tax if enabled
+      let netAmt = incAmt;
+      if (state.config.taxEnabled && incAmt > 0) {
+        const uma = state.config.umaDiario ?? DEFAULT_UMA_DIARIO;
+        const cat = inc.taxCategory ?? "salary";
+        let tax = 0;
+        if (cat === "salary") tax = calcNetMonthlyIsr(incAmt);
+        else if (cat === "aguinaldo") tax = calcAguinaldoTax(incAmt, uma);
+        else if (cat === "ptu") tax = calcPtuTax(incAmt, uma);
+        else if (cat === "bonus") tax = calcMonthlyIsr(incAmt);
+        // "exempt" = no tax
+        netAmt = incAmt - tax;
+        totalTaxPaid += tax;
       }
-      incomeBySource[inc.id] = incAmt;
-      totalIncome += incAmt;
+      incomeBySource[inc.id] = netAmt;
+      totalIncome += netAmt;
     }
 
     // Per-participant income
@@ -434,7 +556,20 @@ function simulate(state: FinanceState): SimulationResult {
       }
     }
 
-    // 3. Loan payments (with amortization support)
+    // 3. Loan disbursements: activate future loans at startMonth
+    // Personal/credit-card: cash flows to borrower (positive cashflow)
+    // Mortgage/auto: cash goes to seller/dealer (no cashflow, debt-only)
+    let totalLoanDisbursements = 0;
+    for (const loan of state.loans) {
+      if (loan.startMonth === m && m > 1) {
+        loanBals[loan.id] = loan.currentBalance;
+        if (loan.type === "personal" || loan.type === "credit-card") {
+          totalLoanDisbursements += loan.currentBalance;
+        }
+      }
+    }
+
+    // 3b. Loan payments (with amortization support)
     let totalLoanPayments = 0;
     let totalInterestPaid = 0;
     let totalPrincipalPaid = 0;
@@ -459,7 +594,9 @@ function simulate(state: FinanceState): SimulationResult {
 
       let payment = loanFixedPmt[loan.id];
       if (loan.paymentInterval === "biweekly") {
-        payment = payment * 26 / 12;
+        // Biweekly = half the monthly payment paid 26 times/year
+        // Monthly equivalent: (monthly / 2) × 26 / 12 = monthly × 13/12
+        payment = payment * 13 / 12;
       }
       payment = Math.min(payment, bal + bal * r);
 
@@ -600,8 +737,8 @@ function simulate(state: FinanceState): SimulationResult {
       }
     }
 
-    // 4. Net cashflow
-    const netCashflow = totalIncome - totalExpenses - totalLoanPayments - totalPPRContributions;
+    // 4. Net cashflow (disbursements are positive inflows from new loans)
+    const netCashflow = totalIncome + totalLoanDisbursements - totalExpenses - totalLoanPayments - totalPPRContributions;
 
     // 5. Account interest
     let totalInterestEarned = 0;
@@ -626,10 +763,46 @@ function simulate(state: FinanceState): SimulationResult {
     cumulativeInterestEarned += totalInterestEarned;
     cumulativeInterestPaid += totalInterestPaid;
 
-    // 6. Distribute cashflow
+    // 5b. Asset appreciation
+    for (const asset of state.assets) {
+      if (asset.startMonth === m && m > 1) assetVals[asset.id] = asset.value;
+      if (asset.startMonth > m) continue;
+      assetVals[asset.id] *= 1 + asset.annualAppreciation / 100 / 12;
+    }
+
+    // 6. Distribute cashflow (waterfall-aware)
     if (netCashflow >= 0) {
-      const checkingAcc = state.accounts.find(a => a.type === "checking") || state.accounts[0];
-      if (checkingAcc) accBals[checkingAcc.id] += netCashflow;
+      let surplus = netCashflow;
+      const wf = state.waterfall;
+      if (wf && wf.length > 0) {
+        for (const step of wf) {
+          if (surplus <= 0.01) break;
+          if (step.type === "fill-account") {
+            const acc = state.accounts.find(a => a.id === step.accountId);
+            if (!acc) continue;
+            const target = step.targetBalance ?? 0;
+            const cur = accBals[acc.id];
+            if (target > 0 && cur >= target) continue;
+            const deposit = target > 0 ? Math.min(surplus, target - cur) : surplus;
+            if (deposit > 0) { accBals[acc.id] += deposit; surplus -= deposit; }
+          } else if (step.type === "pay-debt") {
+            const eligible = state.loans
+              .filter(l => loanBals[l.id] > 0.01 && l.startMonth <= m)
+              .sort((a, b) => step.debtStrategy === "lowest-balance"
+                ? loanBals[a.id] - loanBals[b.id]
+                : b.annualRate - a.annualRate);
+            if (eligible.length === 0) continue;
+            const tgt = eligible[0];
+            const extra = Math.min(surplus, loanBals[tgt.id]);
+            loanBals[tgt.id] -= extra;
+            surplus -= extra;
+          }
+        }
+      }
+      if (surplus > 0.01) {
+        const checkingAcc = state.accounts.find(a => a.type === "checking") || state.accounts[0];
+        if (checkingAcc) accBals[checkingAcc.id] += surplus;
+      }
     } else {
       let deficit = Math.abs(netCashflow);
       const checkingFirst = state.accounts.filter(a => a.type === "checking");
@@ -653,7 +826,8 @@ function simulate(state: FinanceState): SimulationResult {
     // 7. Record month data
     const accountBalSum = state.accounts.reduce((sum, a) => sum + Math.max(0, accBals[a.id]), 0);
     const totalPPRBal = Object.values(pprBals).reduce((s, b) => s + b.art151 + b.art185, 0);
-    const totalAssets = accountBalSum + totalPPRBal;
+    const totalAssetVal = state.assets.reduce((sum, a) => sum + Math.max(0, assetVals[a.id]), 0);
+    const totalAssets = accountBalSum + totalPPRBal + totalAssetVal;
     const totalDebt = state.loans.reduce((sum, l) => sum + Math.max(0, loanBals[l.id]), 0);
 
     if (debtFreeMonth === 0 && totalDebt <= 0.01 && state.loans.length > 0) {
@@ -666,6 +840,7 @@ function simulate(state: FinanceState): SimulationResult {
       totalIncome,
       totalExpenses,
       totalLoanPayments,
+      totalLoanDisbursements,
       totalInterestPaid,
       totalPrincipalPaid,
       totalInterestEarned,
@@ -675,9 +850,12 @@ function simulate(state: FinanceState): SimulationResult {
       incomeBySource: { ...incomeBySource },
       expenseBySource: { ...expenseBySource },
       loanPaymentBySource: { ...loanPaymentBySource },
+      assetValues: { ...assetVals },
+      totalAssetValue: totalAssetVal,
       totalAssets,
       totalDebt,
       netWorth: totalAssets - totalDebt,
+      totalTaxPaid,
       ...(hasParticipants ? {
         incomeByParticipant: { ...incomeByParticipant },
         expenseByParticipant: { ...expenseByParticipant },
@@ -709,12 +887,14 @@ function simulate(state: FinanceState): SimulationResult {
       totalIncome: yearMonths.reduce((s, r) => s + r.totalIncome, 0),
       totalExpenses: yearMonths.reduce((s, r) => s + r.totalExpenses, 0),
       totalLoanPayments: yearMonths.reduce((s, r) => s + r.totalLoanPayments, 0),
+      totalLoanDisbursements: yearMonths.reduce((s, r) => s + r.totalLoanDisbursements, 0),
       interestEarned: yearMonths.reduce((s, r) => s + r.totalInterestEarned, 0),
       interestPaid: yearMonths.reduce((s, r) => s + r.totalInterestPaid, 0),
       netCashflow: yearMonths.reduce((s, r) => s + r.netCashflow, 0),
       endAssets: last.totalAssets,
       endDebt: last.totalDebt,
       endNetWorth: last.netWorth,
+      totalTaxPaid: yearMonths.reduce((s, r) => s + (r.totalTaxPaid ?? 0), 0),
     });
   }
 
@@ -840,6 +1020,7 @@ function defaultState(): FinanceState {
       { id: 9, name: "Insurance", amount: 4500, frequency: "monthly", frequencyMonths: 0, category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
       { id: 10, name: "Entertainment", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
     ],
+    assets: [],
     pprs: [],
     config: { horizonYears: 10, inflationRate: 4, startDate: "" },
     nextId: 11,
@@ -870,7 +1051,8 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 7, name: "Transport", amount: 2000, frequency: "monthly", frequencyMonths: 0, category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
         { id: 8, name: "Subscriptions", amount: 800, frequency: "monthly", frequencyMonths: 0, category: "subscriptions", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
       ],
-      pprs: [],
+      assets: [],
+    pprs: [],
       config: { horizonYears: 10, inflationRate: 4, startDate: "" },
       nextId: 9,
     },
@@ -905,7 +1087,8 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 13, name: "Entertainment", amount: 5000, frequency: "monthly", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0, split: { mode: "equal", participantIds: [100, 101] } },
         { id: 14, name: "Health", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "health", inflationAdjusted: true, startMonth: 1, endMonth: 0, split: { mode: "equal", participantIds: [100, 101] } },
       ],
-      pprs: [],
+      assets: [],
+    pprs: [],
       config: { horizonYears: 15, inflationRate: 4, startDate: "" },
       nextId: 102,
     },
@@ -935,7 +1118,8 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 8, name: "Utilities", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
         { id: 9, name: "Transport", amount: 2500, frequency: "monthly", frequencyMonths: 0, category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
       ],
-      pprs: [],
+      assets: [],
+    pprs: [],
       config: { horizonYears: 8, inflationRate: 4, startDate: "" },
       nextId: 10,
     },
@@ -962,7 +1146,8 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 10, name: "Living Expenses", amount: 15000, frequency: "monthly", frequencyMonths: 0, category: "food", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
         { id: 11, name: "Travel", amount: 60000, frequency: "annually", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
       ],
-      pprs: [],
+      assets: [],
+    pprs: [],
       config: { horizonYears: 20, inflationRate: 3.5, startDate: "" },
       nextId: 12,
     },
@@ -984,6 +1169,7 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 5, name: "Utilities", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "utilities", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
         { id: 6, name: "Insurance", amount: 4000, frequency: "monthly", frequencyMonths: 0, category: "insurance", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
       ],
+      assets: [],
       pprs: [
         {
           id: 7, name: "PPR Principal", ownerId: undefined,
@@ -1006,7 +1192,8 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
       loans: [],
       incomes: [],
       expenses: [],
-      pprs: [],
+      assets: [],
+    pprs: [],
       config: { horizonYears: 10, inflationRate: 4, startDate: "" },
       nextId: 1,
     },
@@ -1026,16 +1213,19 @@ function exportJSON(state: FinanceState) {
 }
 
 function exportCSV(sim: SimulationResult, startDate: string) {
-  const headers = ["Month", "Date", "Income", "Expenses", "Loan Payments", "Interest Paid", "Interest Earned", "Net Cashflow", "Total Assets", "Total Debt", "Net Worth"];
+  const headers = ["Month", "Date", "Income", "Tax Paid", "Loan Disbursements", "Expenses", "Loan Payments", "Interest Paid", "Interest Earned", "Net Cashflow", "Asset Value", "Total Assets", "Total Debt", "Net Worth"];
   const rows = sim.months.map((r) => [
     r.month,
     startDate ? monthToDate(r.month, startDate) : `Month ${r.month}`,
     r.totalIncome.toFixed(2),
+    (r.totalTaxPaid ?? 0).toFixed(2),
+    r.totalLoanDisbursements.toFixed(2),
     r.totalExpenses.toFixed(2),
     r.totalLoanPayments.toFixed(2),
     r.totalInterestPaid.toFixed(2),
     r.totalInterestEarned.toFixed(2),
     r.netCashflow.toFixed(2),
+    r.totalAssetValue.toFixed(2),
     r.totalAssets.toFixed(2),
     r.totalDebt.toFixed(2),
     r.netWorth.toFixed(2),
@@ -1061,6 +1251,7 @@ function importJSON(file: File): Promise<FinanceState | null> {
           return;
         }
         if (!data.pprs) data.pprs = [];
+        if (!data.assets) data.assets = [];
         resolve(data);
       } catch {
         resolve(null);
@@ -1075,7 +1266,7 @@ function importJSON(file: File): Promise<FinanceState | null> {
 
 export default function FinanceSim() {
   const [state, setState] = useState<FinanceState>(defaultState);
-  const [tab, setTab] = useState<"dashboard" | "accounts" | "loans" | "income" | "expenses" | "ppr">("dashboard");
+  const [tab, setTab] = useState<"dashboard" | "accounts" | "loans" | "income" | "expenses" | "assets" | "ppr">("dashboard");
   const [chartMode, setChartMode] = useState<"networth" | "cashflow" | "balances" | "debt" | "ppr">("networth");
   const [tableOpen, setTableOpen] = useState(false);
   const [granularity, setGranularity] = useState<"monthly" | "quarterly" | "yearly">("yearly");
@@ -1108,6 +1299,7 @@ export default function FinanceSim() {
   const [incBonusAmount, setIncBonusAmount] = useState(0);
   const [incStart, setIncStart] = useState(1);
   const [incEnd, setIncEnd] = useState(0);
+  const [incTaxCategory, setIncTaxCategory] = useState<TaxCategory>("salary");
 
   // Loan amortization form
   const [amortLoanId, setAmortLoanId] = useState(0);
@@ -1156,12 +1348,27 @@ export default function FinanceSim() {
   const [pprInitBal185, setPprInitBal185] = useState(0);
   const [pprOwner, setPprOwner] = useState(0);
 
+  // Asset form
+  const [assetName, setAssetName] = useState("New Asset");
+  const [assetType, setAssetType] = useState<AssetType>("property");
+  const [assetValue, setAssetValue] = useState(1000000);
+  const [assetAppreciation, setAssetAppreciation] = useState(5);
+  const [assetStart, setAssetStart] = useState(1);
+
+  // Waterfall form
+  const [wfStepType, setWfStepType] = useState<"fill-account" | "pay-debt">("fill-account");
+  const [wfAccountId, setWfAccountId] = useState(0);
+  const [wfTarget, setWfTarget] = useState(0);
+  const [wfDebtStrategy, setWfDebtStrategy] = useState<"highest-rate" | "lowest-balance">("highest-rate");
+  const [showMilestones, setShowMilestones] = useState(true);
+
   // Editing state (null = adding new, number = editing that ID)
   const [editingAccountId, setEditingAccountId] = useState<number | null>(null);
   const [editingLoanId, setEditingLoanId] = useState<number | null>(null);
   const [editingIncomeId, setEditingIncomeId] = useState<number | null>(null);
   const [editingExpenseId, setEditingExpenseId] = useState<number | null>(null);
   const [editingPprId, setEditingPprId] = useState<number | null>(null);
+  const [editingAssetId, setEditingAssetId] = useState<number | null>(null);
 
   // Refs
   const chartRef = useRef<HTMLCanvasElement>(null);
@@ -1177,6 +1384,9 @@ export default function FinanceSim() {
 
   // Simulation
   const sim = useMemo(() => simulate(state), [state]);
+
+  // Milestones
+  const milestones = useMemo(() => detectMilestones(state, sim), [state, sim]);
 
   // Derived participants
   const participants = useMemo(() => resolveParticipants(state), [state]);
@@ -1412,14 +1622,14 @@ export default function FinanceSim() {
     setIncFreqMonths(inc.frequencyMonths || 3);
     setIncGrowth(inc.growthRate); setIncBonusMonth(inc.bonusMonth);
     setIncBonusAmount(inc.bonusAmount); setIncStart(inc.startMonth); setIncEnd(inc.endMonth);
-    setIncOwner(inc.ownerId ?? 0);
+    setIncOwner(inc.ownerId ?? 0); setIncTaxCategory(inc.taxCategory ?? "salary");
   }, []);
 
   const cancelEditIncome = useCallback(() => {
     setEditingIncomeId(null);
     setIncName("New Income"); setIncAmount(10000); setIncPeriodicity("monthly");
     setIncFreqMonths(3); setIncGrowth(3); setIncBonusMonth(0); setIncBonusAmount(0);
-    setIncStart(1); setIncEnd(0); setIncOwner(0);
+    setIncStart(1); setIncEnd(0); setIncOwner(0); setIncTaxCategory("salary");
   }, []);
 
   const startEditExpense = useCallback((exp: Expense) => {
@@ -1529,11 +1739,12 @@ export default function FinanceSim() {
   const saveIncome = useCallback(() => {
     if (!incName.trim()) return;
     const ownerData = participants.length > 1 ? { ownerId: incOwner || participants[0].id } : {};
+    const taxData = { taxCategory: incTaxCategory };
     if (editingIncomeId !== null) {
       setState(s => ({
         ...s,
         incomes: s.incomes.map(i => i.id === editingIncomeId
-          ? { ...i, name: incName, amount: incAmount, periodicity: incPeriodicity, frequencyMonths: incFreqMonths, growthRate: incGrowth, bonusMonth: incBonusMonth, bonusAmount: incBonusAmount, startMonth: incStart, endMonth: incEnd, ...ownerData }
+          ? { ...i, name: incName, amount: incAmount, periodicity: incPeriodicity, frequencyMonths: incFreqMonths, growthRate: incGrowth, bonusMonth: incBonusMonth, bonusAmount: incBonusAmount, startMonth: incStart, endMonth: incEnd, ...ownerData, ...taxData }
           : i),
       }));
       cancelEditIncome();
@@ -1546,12 +1757,12 @@ export default function FinanceSim() {
           growthRate: incGrowth,
           bonusMonth: incBonusMonth, bonusAmount: incBonusAmount,
           startMonth: incStart, endMonth: incEnd,
-          ...ownerData,
+          ...ownerData, ...taxData,
         }],
         nextId: s.nextId + 1,
       }));
     }
-  }, [incName, incAmount, incPeriodicity, incFreqMonths, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd, incOwner, participants, editingIncomeId, cancelEditIncome]);
+  }, [incName, incAmount, incPeriodicity, incFreqMonths, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd, incOwner, incTaxCategory, participants, editingIncomeId, cancelEditIncome]);
 
   const removeIncome = useCallback((id: number) => {
     setState(s => ({ ...s, incomes: s.incomes.filter(i => i.id !== id) }));
@@ -1657,6 +1868,67 @@ export default function FinanceSim() {
           : l
       ),
     }));
+  }, []);
+
+  // ── Asset CRUD ──
+  const startEditAsset = useCallback((a: Asset) => {
+    setEditingAssetId(a.id);
+    setAssetName(a.name); setAssetType(a.type); setAssetValue(a.value);
+    setAssetAppreciation(a.annualAppreciation); setAssetStart(a.startMonth);
+  }, []);
+
+  const cancelEditAsset = useCallback(() => {
+    setEditingAssetId(null);
+    setAssetName("New Asset"); setAssetType("property"); setAssetValue(1000000);
+    setAssetAppreciation(5); setAssetStart(1);
+  }, []);
+
+  const saveAsset = useCallback(() => {
+    if (!assetName.trim()) return;
+    if (editingAssetId !== null) {
+      setState(s => ({
+        ...s,
+        assets: s.assets.map(a => a.id === editingAssetId
+          ? { ...a, name: assetName, type: assetType, value: assetValue, annualAppreciation: assetAppreciation, startMonth: assetStart }
+          : a),
+      }));
+      cancelEditAsset();
+    } else {
+      setState(s => ({
+        ...s,
+        assets: [...s.assets, { id: s.nextId, name: assetName, type: assetType, value: assetValue, annualAppreciation: assetAppreciation, startMonth: assetStart }],
+        nextId: s.nextId + 1,
+      }));
+    }
+  }, [assetName, assetType, assetValue, assetAppreciation, assetStart, editingAssetId, cancelEditAsset]);
+
+  const removeAsset = useCallback((id: number) => {
+    setState(s => ({ ...s, assets: s.assets.filter(a => a.id !== id) }));
+    if (editingAssetId === id) cancelEditAsset();
+  }, [editingAssetId, cancelEditAsset]);
+
+  // ── Waterfall CRUD ──
+  const addWaterfallStep = useCallback(() => {
+    const step: WaterfallStep = wfStepType === "fill-account"
+      ? { id: Date.now(), type: "fill-account", accountId: wfAccountId || state.accounts[0]?.id, targetBalance: wfTarget }
+      : { id: Date.now(), type: "pay-debt", debtStrategy: wfDebtStrategy };
+    setState(s => ({ ...s, waterfall: [...(s.waterfall ?? []), step] }));
+  }, [wfStepType, wfAccountId, wfTarget, wfDebtStrategy, state.accounts]);
+
+  const removeWaterfallStep = useCallback((id: number) => {
+    setState(s => ({ ...s, waterfall: (s.waterfall ?? []).filter(w => w.id !== id) }));
+  }, []);
+
+  const moveWaterfallStep = useCallback((id: number, dir: -1 | 1) => {
+    setState(s => {
+      const wf = [...(s.waterfall ?? [])];
+      const idx = wf.findIndex(w => w.id === id);
+      if (idx < 0) return s;
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= wf.length) return s;
+      [wf[idx], wf[newIdx]] = [wf[newIdx], wf[idx]];
+      return { ...s, waterfall: wf };
+    });
   }, []);
 
   // ── Computed summaries ──
@@ -1786,6 +2058,17 @@ export default function FinanceSim() {
     const sampleData = (accessor: (r: MonthRow) => number) =>
       dataIndices.map(i => accessor(sim.months[i]));
 
+    // Map milestones to chart label indices
+    const msItems = showMilestones ? milestones.map(ms => {
+      let best = -1, bestDist = Infinity;
+      for (let li = 0; li < dataIndices.length; li++) {
+        const mMonth = sim.months[dataIndices[li]]?.month ?? 0;
+        const dist = Math.abs(mMonth - ms.month);
+        if (dist < bestDist) { bestDist = dist; best = li; }
+      }
+      return { index: best, label: ms.label, color: ms.color };
+    }).filter(m => m.index >= 0) : [];
+
     let datasets: any[] = [];
     let yAxisTitle = "Amount ($)";
 
@@ -1806,7 +2089,7 @@ export default function FinanceSim() {
       }];
       yAxisTitle = "Net Worth ($)";
     } else if (chartMode === "cashflow") {
-      const incomeData = sampleData(r => r.totalIncome);
+      const incomeData = sampleData(r => r.totalIncome + r.totalLoanDisbursements);
       const expenseData = sampleData(r => -(r.totalExpenses + r.totalLoanPayments));
       const netData = sampleData(r => r.netCashflow);
       const greenGrad = ctx.createLinearGradient(0, 0, 0, 340);
@@ -1921,7 +2204,7 @@ export default function FinanceSim() {
       } else if (chartMode === "cashflow") {
         datasets.push({
           label: `${sc.name} Income`,
-          data: scSample(r => r.totalIncome),
+          data: scSample(r => r.totalIncome + r.totalLoanDisbursements),
           borderColor: `${scColor}99`,
           ...dashStyle,
         });
@@ -1962,11 +2245,13 @@ export default function FinanceSim() {
     chartInstanceRef.current = new Chart(chartRef.current, {
       type: "line",
       data: { labels, datasets },
+      plugins: [milestonePlugin],
       options: {
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: "index", intersect: false },
         plugins: {
+          milestones: { items: msItems } as any,
           legend: {
             labels: {
               color: textColor,
@@ -2010,6 +2295,14 @@ export default function FinanceSim() {
                     }
                   }
                   if (state.loans.length > 0) {
+                    if (row.totalLoanDisbursements > 0.01) {
+                      lines.push("── Loan Disbursements ──");
+                      for (const loan of state.loans) {
+                        if (loan.startMonth === row.month && row.month > 1 && (loan.type === "personal" || loan.type === "credit-card")) {
+                          lines.push(`  ${loan.name}: +${fmtShort(loan.currentBalance)}`);
+                        }
+                      }
+                    }
                     lines.push("── Loan Payments ──");
                     for (const loan of state.loans) {
                       const pmt = row.loanPaymentBySource[loan.id] ?? 0;
@@ -2020,6 +2313,13 @@ export default function FinanceSim() {
                     lines.push("── Accounts ──");
                     for (const acc of state.accounts) {
                       lines.push(`  ${acc.name}: ${fmtShort(row.accountBalances[acc.id] ?? 0)}`);
+                    }
+                    if (state.assets.length > 0) {
+                      lines.push("── Assets ──");
+                      for (const asset of state.assets) {
+                        const v = row.assetValues[asset.id] ?? 0;
+                        if (v > 0.01) lines.push(`  ${asset.name}: ${fmtShort(v)}`);
+                      }
                     }
                     if (state.loans.length > 0) {
                       lines.push("── Remaining Debt ──");
@@ -2097,7 +2397,7 @@ export default function FinanceSim() {
         chartInstanceRef.current = null;
       }
     };
-  }, [sim, chartMode, tab, state.accounts, state.loans, state.pprs, state.config.startDate, granularity, getChartSamples, comparisonScenarios]);
+  }, [sim, chartMode, tab, state.accounts, state.loans, state.assets, state.pprs, state.config.startDate, granularity, getChartSamples, comparisonScenarios, milestones, showMilestones]);
 
   // ── Entity tab charts ──
   useEffect(() => {
@@ -2186,6 +2486,29 @@ export default function FinanceSim() {
         borderDash: [6, 3],
       });
       yAxisTitle = "Monthly Expenses ($)";
+    } else if (tab === "assets") {
+      datasets = state.assets.map((asset, i) => ({
+        label: asset.name,
+        data: sampleData(r => r.assetValues[asset.id] ?? 0),
+        borderColor: C.palette[i % C.palette.length],
+        backgroundColor: "transparent",
+        fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
+        pointBackgroundColor: C.palette[i % C.palette.length],
+      }));
+      if (state.assets.length > 1) {
+        const grad = ctx.createLinearGradient(0, 0, 0, 260);
+        grad.addColorStop(0, "rgba(212,168,67,0.15)");
+        grad.addColorStop(1, "rgba(212,168,67,0.02)");
+        datasets.push({
+          label: "Total",
+          data: sampleData(r => r.totalAssetValue),
+          borderColor: C.gold,
+          backgroundColor: grad,
+          fill: true, tension: 0.3, borderWidth: 2.5, pointRadius: 0,
+          borderDash: [6, 3],
+        });
+      }
+      yAxisTitle = "Asset Value ($)";
     } else if (tab === "ppr") {
       // PPR balance growth per PPR
       const cyanGrad = ctx.createLinearGradient(0, 0, 0, 260);
@@ -2279,7 +2602,7 @@ export default function FinanceSim() {
         tabChartInstanceRef.current = null;
       }
     };
-  }, [sim, tab, state.accounts, state.loans, state.incomes, state.expenses, state.pprs, state.config.startDate, granularity, getChartSamples]);
+  }, [sim, tab, state.accounts, state.loans, state.incomes, state.expenses, state.assets, state.pprs, state.config.startDate, granularity, getChartSamples]);
 
   // ── Gantt ResizeObserver ──
   useEffect(() => {
@@ -2340,6 +2663,11 @@ export default function FinanceSim() {
         }
       }
       rows.push({ name: loan.name, start: loan.startMonth, end, color: C.blue, section: "LOANS", amortMonths });
+    }
+
+    // ASSETS section
+    for (const asset of state.assets) {
+      rows.push({ name: asset.name, start: asset.startMonth, end: totalMonths, color: C.gold, section: "ASSETS", amortMonths: [] });
     }
 
     // PPR section
@@ -2410,7 +2738,7 @@ export default function FinanceSim() {
 
     // Draw sections and bars
     let y = topPad;
-    const sectionColors: Record<string, string> = { INCOME: C.green, EXPENSES: C.red, LOANS: C.blue, PPR: C.cyan };
+    const sectionColors: Record<string, string> = { INCOME: C.green, EXPENSES: C.red, LOANS: C.blue, ASSETS: C.gold, PPR: C.cyan };
 
     for (const section of sections) {
       const sectionRows = rows.filter(r => r.section === section);
@@ -2492,7 +2820,7 @@ export default function FinanceSim() {
       const lbl = sd ? monthToShortDate(m + 1, sd) : `Mo ${m + 1}`;
       ctx.fillText(lbl, x, y + 14);
     }
-  }, [sim, tab, timelineOpen, state.incomes, state.expenses, state.loans, state.pprs, state.config.startDate, ganttWidth]);
+  }, [sim, tab, timelineOpen, state.incomes, state.expenses, state.loans, state.assets, state.pprs, state.config.startDate, ganttWidth]);
 
   // ── Pill button helper ──
   const pillBtn = (
@@ -2570,6 +2898,7 @@ export default function FinanceSim() {
     { key: "loans", label: "Loans" },
     { key: "income", label: "Income" },
     { key: "expenses", label: "Expenses" },
+    { key: "assets", label: "Assets" },
     { key: "ppr", label: "PPR" },
   ] as const;
 
@@ -2620,6 +2949,32 @@ export default function FinanceSim() {
             step: 0.5,
           })}
         </div>
+      </div>
+
+      {/* ISR Tax */}
+      <div class="mx-1 h-4 w-px bg-[var(--color-border)]" />
+      <div class="flex items-center gap-2">
+        <label class="flex cursor-pointer items-center gap-1.5">
+          <input
+            type="checkbox"
+            checked={state.config.taxEnabled ?? false}
+            onChange={(e) => setState(s => ({ ...s, config: { ...s.config, taxEnabled: (e.target as HTMLInputElement).checked } }))}
+            class="accent-[#d4a843]"
+          />
+          <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+            ISR (MX)
+          </span>
+        </label>
+        {state.config.taxEnabled && (
+          <div class="w-24">
+            {numInput(state.config.umaDiario ?? DEFAULT_UMA_DIARIO, (v) => setConfig({ umaDiario: v }), {
+              prefix: "$",
+              min: 50,
+              max: 300,
+              step: 0.01,
+            })}
+          </div>
+        )}
       </div>
 
       {/* Participants */}
@@ -3025,6 +3380,8 @@ export default function FinanceSim() {
           {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
           {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
           {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
+          <div class="mx-2 h-5 w-px bg-[var(--color-border)]" />
+          {pillBtn(showMilestones, () => setShowMilestones(!showMilestones), "Milestones")}
         </div>
         <div style={{ height: "360px", position: "relative" }}>
           <canvas ref={chartRef} />
@@ -3071,7 +3428,7 @@ export default function FinanceSim() {
             <table class="w-full font-mono text-xs">
               <thead>
                 <tr style={{ borderBottom: `1px solid var(--color-border)` }}>
-                  {["Year", "Income", "Expenses", "Loan Pmts", "Int. Earned", "Int. Paid", "Assets", "Debt", "Net Worth"].map(h => (
+                  {["Year", "Income", ...(state.config.taxEnabled ? ["Tax"] : []), "Expenses", "Loan Pmts", "Int. Earned", "Int. Paid", "Assets", "Debt", "Net Worth"].map(h => (
                     <th
                       key={h}
                       class="px-2 py-2 text-left font-mono text-[9px] uppercase tracking-wider text-[var(--color-text-muted)]"
@@ -3093,6 +3450,9 @@ export default function FinanceSim() {
                         : `Yr ${ys.year}`}
                     </td>
                     <td class="px-2 py-1.5" style={{ color: C.green }}>{fmtShort(ys.totalIncome)}</td>
+                    {state.config.taxEnabled && (
+                      <td class="px-2 py-1.5" style={{ color: C.red }}>{fmtShort(ys.totalTaxPaid ?? 0)}</td>
+                    )}
                     <td class="px-2 py-1.5" style={{ color: C.red }}>{fmtShort(ys.totalExpenses)}</td>
                     <td class="px-2 py-1.5">{fmtShort(ys.totalLoanPayments)}</td>
                     <td class="px-2 py-1.5" style={{ color: C.green }}>{fmtShort(ys.interestEarned)}</td>
@@ -3619,6 +3979,18 @@ export default function FinanceSim() {
               </div>
             )}
           </div>
+          {state.config.taxEnabled && (
+            <div class="mb-4">
+              {label("Tax Category")}
+              {selectInput(incTaxCategory, (v) => setIncTaxCategory(v as TaxCategory), [
+                { value: "salary", label: "Salary (ISR table)" },
+                { value: "aguinaldo", label: "Aguinaldo (30 UMA exempt)" },
+                { value: "ptu", label: "PTU (15 UMA exempt)" },
+                { value: "bonus", label: "Bonus (no exemption)" },
+                { value: "exempt", label: "Exempt (no tax)" },
+              ])}
+            </div>
+          )}
           {editingIncomeId !== null ? (
             <div class="flex gap-2">
               {goldButton(saveIncome, "Save Changes")}
@@ -4008,6 +4380,178 @@ export default function FinanceSim() {
   // PPR Tab
   // ════════════════════════════════════════════════════════════════════
 
+  // Assets Tab
+  const totalAssetValue = useMemo(() => state.assets.reduce((s, a) => s + a.value, 0), [state.assets]);
+
+  const renderAssets = () => (
+    <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[380px_1fr]">
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>{editingAssetId !== null ? "Edit Asset" : "Add Asset"}</CardTitle>
+          <div class="mb-3">
+            {label("Asset Name")}
+            {textInput(assetName, setAssetName)}
+          </div>
+          <div class="mb-3">
+            {label("Type")}
+            {selectInput(assetType, (v) => setAssetType(v as AssetType), [
+              { value: "property", label: "Property" },
+              { value: "vehicle", label: "Vehicle" },
+              { value: "other", label: "Other" },
+            ])}
+          </div>
+          <div class="mb-3 grid grid-cols-2 gap-3">
+            <div>
+              {label("Current Value")}
+              {numInput(assetValue, setAssetValue, { prefix: "$", min: 0, step: 10000 })}
+            </div>
+            <div>
+              {label("Annual Appreciation")}
+              {numInput(assetAppreciation, setAssetAppreciation, { suffix: "%", min: -50, max: 50, step: 0.5 })}
+            </div>
+          </div>
+          <div class="mb-4">
+            {label("Acquired at Month")}
+            {numInput(assetStart, setAssetStart, { min: 1, max: 600, step: 1 })}
+          </div>
+          {editingAssetId !== null ? (
+            <div class="flex gap-2">
+              {goldButton(saveAsset, "Save Changes")}
+              <button onClick={cancelEditAsset} class="w-full rounded-lg border border-[var(--color-border)] px-3 py-2.5 font-mono text-xs uppercase tracking-wider text-[var(--color-text-muted)] transition-colors hover:border-red-500 hover:text-red-400">
+                Cancel
+              </button>
+            </div>
+          ) : goldButton(saveAsset, "Add Asset")}
+        </div>
+
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Your Assets</CardTitle>
+          <div class="flex max-h-80 flex-col gap-2 overflow-y-auto">
+            {state.assets.length === 0 ? (
+              <p class="py-3 text-center font-mono text-xs text-[var(--color-text-muted)]">
+                No assets yet. Add one above.
+              </p>
+            ) : (
+              state.assets.map((a) => {
+                const tc = ASSET_TYPE_COLORS[a.type];
+                return (
+                  <div key={a.id} class="flex items-center justify-between rounded-lg border px-3 py-2" style={{ borderColor: tc.border, background: tc.bg }}>
+                    <div>
+                      <div class="font-mono text-xs font-medium" style={{ color: tc.color }}>{a.name}</div>
+                      <div class="font-mono text-[10px] text-[var(--color-text-muted)]">
+                        {fmtShort(a.value)} · {a.annualAppreciation >= 0 ? "+" : ""}{a.annualAppreciation}%/yr · Mo {a.startMonth}
+                      </div>
+                    </div>
+                    <div class="flex gap-1">
+                      {editBtn(() => startEditAsset(a), editingAssetId === a.id)}
+                      {deleteBtn(() => removeAsset(a.id))}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Asset Summary</CardTitle>
+          <div class="grid grid-cols-2 gap-3">
+            <StatCard label="Total Value" value={fmtShort(totalAssetValue)} sub="current" color={C.gold} />
+            <StatCard
+              label="End Value"
+              value={fmtShort(sim.months.length > 0 ? sim.months[sim.months.length - 1].totalAssetValue : 0)}
+              sub="projected"
+              color={C.goldLight}
+            />
+          </div>
+        </div>
+
+        {/* Cash Waterfall Config */}
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Cash Waterfall</CardTitle>
+          <p class="mb-3 font-mono text-[10px] text-[var(--color-text-muted)]">
+            Configure how monthly surplus is distributed. Steps execute in order.
+          </p>
+          <div class="mb-3 flex max-h-48 flex-col gap-2 overflow-y-auto">
+            {(state.waterfall ?? []).length === 0 ? (
+              <p class="py-2 text-center font-mono text-[10px] text-[var(--color-text-muted)]">
+                No rules — surplus goes to checking.
+              </p>
+            ) : (
+              (state.waterfall ?? []).map((step, i) => (
+                <div key={step.id} class="flex items-center justify-between rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+                  <div class="font-mono text-xs">
+                    <span class="font-medium" style={{ color: step.type === "fill-account" ? C.blue : C.green }}>
+                      {i + 1}. {step.type === "fill-account" ? "Fill" : "Pay debt"}
+                    </span>
+                    {step.type === "fill-account" && (
+                      <span class="text-[var(--color-text-muted)]">
+                        {" → "}{state.accounts.find(a => a.id === step.accountId)?.name ?? "?"}
+                        {step.targetBalance ? ` (to ${fmtShort(step.targetBalance)})` : " (unlimited)"}
+                      </span>
+                    )}
+                    {step.type === "pay-debt" && (
+                      <span class="text-[var(--color-text-muted)]">
+                        {" → "}{step.debtStrategy === "highest-rate" ? "highest rate first" : "lowest balance first"}
+                      </span>
+                    )}
+                  </div>
+                  <div class="flex gap-1">
+                    <button onClick={() => moveWaterfallStep(step.id, -1)} class="rounded px-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)]" title="Move up">↑</button>
+                    <button onClick={() => moveWaterfallStep(step.id, 1)} class="rounded px-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)]" title="Move down">↓</button>
+                    {deleteBtn(() => removeWaterfallStep(step.id))}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          <div class="space-y-2 border-t border-[var(--color-border)] pt-3">
+            <div class="grid grid-cols-2 gap-2">
+              {selectInput(wfStepType, (v) => setWfStepType(v as any), [
+                { value: "fill-account", label: "Fill Account" },
+                { value: "pay-debt", label: "Pay Debt" },
+              ])}
+              {wfStepType === "fill-account" ? (
+                selectInput(String(wfAccountId || state.accounts[0]?.id || 0), (v) => setWfAccountId(Number(v)),
+                  state.accounts.map(a => ({ value: String(a.id), label: a.name }))
+                )
+              ) : (
+                selectInput(wfDebtStrategy, (v) => setWfDebtStrategy(v as any), [
+                  { value: "highest-rate", label: "Highest Rate" },
+                  { value: "lowest-balance", label: "Lowest Balance" },
+                ])
+              )}
+            </div>
+            {wfStepType === "fill-account" && (
+              <div>
+                {label("Target Balance (0 = unlimited)")}
+                {numInput(wfTarget, setWfTarget, { prefix: "$", min: 0, step: 10000 })}
+              </div>
+            )}
+            {goldButton(addWaterfallStep, "Add Step")}
+          </div>
+        </div>
+      </div>
+
+      {/* Right: chart */}
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <div class="mb-3 flex items-center justify-between">
+            <CardTitle>Asset Value Over Time</CardTitle>
+            <div class="flex gap-1">
+              {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
+              {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
+              {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
+            </div>
+          </div>
+          <div style={{ height: "320px", position: "relative" }}>
+            <canvas ref={tabChartRef} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderPpr = () => {
     // Compute PPR summary stats
     const lastRow = sim.months.length > 0 ? sim.months[sim.months.length - 1] : null;
@@ -4237,6 +4781,7 @@ export default function FinanceSim() {
       {tab === "loans" && renderLoans()}
       {tab === "income" && renderIncome()}
       {tab === "expenses" && renderExpenses()}
+      {tab === "assets" && renderAssets()}
       {tab === "ppr" && renderPpr()}
     </div>
   );
