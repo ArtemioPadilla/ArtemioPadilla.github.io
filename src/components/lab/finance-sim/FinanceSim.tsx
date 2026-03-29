@@ -856,57 +856,138 @@ function simulate(state: FinanceState): SimulationResult {
       assetVals[asset.id] *= 1 + asset.annualAppreciation / 100 / 12;
     }
 
-    // 6. Distribute cashflow (waterfall-aware)
+    // 6. Distribute cashflow (participant-aware + waterfall)
     let waterfallDebtByLoan: Record<number, number> | undefined;
-    if (netCashflow >= 0) {
-      let surplus = netCashflow;
-      const wf = state.waterfall;
-      if (wf && wf.length > 0) {
-        for (const step of wf) {
-          if (surplus <= 0.01) break;
-          if (step.type === "fill-account") {
-            const acc = state.accounts.find(a => a.id === step.accountId);
-            if (!acc) continue;
-            const target = step.targetBalance ?? 0;
-            const cur = accBals[acc.id];
-            if (target > 0 && cur >= target) continue;
-            const deposit = target > 0 ? Math.min(surplus, target - cur) : surplus;
-            if (deposit > 0) { accBals[acc.id] += deposit; surplus -= deposit; }
-          } else if (step.type === "pay-debt") {
-            const eligible = state.loans
-              .filter(l => loanBals[l.id] > 0.01 && l.startMonth <= m)
-              .sort((a, b) => step.debtStrategy === "lowest-balance"
-                ? loanBals[a.id] - loanBals[b.id]
-                : b.annualRate - a.annualRate);
-            if (eligible.length === 0) continue;
-            const tgt = eligible[0];
-            const extra = Math.min(surplus, loanBals[tgt.id]);
-            loanBals[tgt.id] -= extra;
-            surplus -= extra;
-            if (!waterfallDebtByLoan) waterfallDebtByLoan = {};
-            waterfallDebtByLoan[tgt.id] = (waterfallDebtByLoan[tgt.id] ?? 0) + extra;
+
+    if (hasParticipants) {
+      // Per-participant distribution: each person's net goes to their account
+      for (const p of participants) {
+        const pNet = (incomeByParticipant[p.id] ?? 0)
+          - (expenseByParticipant[p.id] ?? 0)
+          - (loanPaymentByParticipant[p.id] ?? 0);
+        const ownedAccounts = state.accounts.filter(a => a.ownerId === p.id);
+        const primaryAcc = ownedAccounts.find(a => a.type === "checking") || ownedAccounts[0];
+
+        if (pNet >= 0 && primaryAcc) {
+          accBals[primaryAcc.id] += pNet;
+        } else if (pNet < 0) {
+          let deficit = Math.abs(pNet);
+          // Deduct from own accounts first, then joint
+          const ownChecking = ownedAccounts.filter(a => a.type === "checking");
+          const ownSavings = ownedAccounts.filter(a => a.type === "savings");
+          const ownRest = ownedAccounts.filter(a => a.type !== "checking" && a.type !== "savings");
+          const jointAccounts = state.accounts.filter(a => !a.ownerId || a.ownerId === 0);
+          const deductOrder = [...ownChecking, ...ownSavings, ...ownRest, ...jointAccounts];
+          for (const acc of deductOrder) {
+            if (deficit <= 0) break;
+            const deduct = Math.min(deficit, accBals[acc.id]);
+            accBals[acc.id] -= deduct;
+            deficit -= deduct;
+          }
+          if (deficit > 0.01 && primaryAcc) accBals[primaryAcc.id] -= deficit;
+        }
+      }
+      // Disbursements go to the loan owner's account
+      if (totalLoanDisbursements > 0) {
+        for (const loan of state.loans) {
+          if ((loan.type === "personal" || loan.type === "credit-card")) {
+            const disbMonth = loan.disbursementMonth ?? loan.startMonth;
+            if (disbMonth === m && m > 1) {
+              const pid = loan.ownerId ?? 0;
+              const targetAcc = pid ? state.accounts.find(a => a.ownerId === pid && a.type === "checking")
+                : state.accounts.find(a => (!a.ownerId || a.ownerId === 0) && a.type === "checking");
+              if (targetAcc) accBals[targetAcc.id] += loan.currentBalance;
+              else if (state.accounts[0]) accBals[state.accounts[0].id] += loan.currentBalance;
+            }
           }
         }
       }
-      if (surplus > 0.01) {
-        const checkingAcc = state.accounts.find(a => a.type === "checking") || state.accounts[0];
-        if (checkingAcc) accBals[checkingAcc.id] += surplus;
+      // Apply waterfall on remaining global surplus
+      const wf = state.waterfall;
+      if (wf && wf.length > 0) {
+        const totalBal = state.accounts.reduce((s, a) => s + accBals[a.id], 0);
+        if (totalBal > 0) {
+          for (const step of wf) {
+            if (step.type === "pay-debt") {
+              const eligible = state.loans
+                .filter(l => loanBals[l.id] > 0.01 && l.startMonth <= m)
+                .sort((a, b) => step.debtStrategy === "lowest-balance"
+                  ? loanBals[a.id] - loanBals[b.id]
+                  : b.annualRate - a.annualRate);
+              if (eligible.length === 0) continue;
+              // Find surplus from all accounts above waterfall targets
+              for (const fillStep of wf) {
+                if (fillStep.type === "fill-account" && fillStep.targetBalance && fillStep.targetBalance > 0) {
+                  const acc = state.accounts.find(a => a.id === fillStep.accountId);
+                  if (acc && accBals[acc.id] > fillStep.targetBalance) {
+                    const excess = accBals[acc.id] - fillStep.targetBalance;
+                    const tgt = eligible[0];
+                    const extra = Math.min(excess, loanBals[tgt.id]);
+                    if (extra > 0) {
+                      loanBals[tgt.id] -= extra;
+                      accBals[acc.id] -= extra;
+                      if (!waterfallDebtByLoan) waterfallDebtByLoan = {};
+                      waterfallDebtByLoan[tgt.id] = (waterfallDebtByLoan[tgt.id] ?? 0) + extra;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     } else {
-      let deficit = Math.abs(netCashflow);
-      const checkingFirst = state.accounts.filter(a => a.type === "checking");
-      const savingsNext = state.accounts.filter(a => a.type === "savings");
-      const rest = state.accounts.filter(a => a.type !== "checking" && a.type !== "savings");
-      const deductOrder = [...checkingFirst, ...savingsNext, ...rest];
-      for (const acc of deductOrder) {
-        if (deficit <= 0) break;
-        const deduct = Math.min(deficit, accBals[acc.id]);
-        accBals[acc.id] -= deduct;
-        deficit -= deduct;
-      }
-      if (deficit > 0.01) {
-        const firstAcc = state.accounts[0];
-        if (firstAcc) accBals[firstAcc.id] -= deficit;
+      // Single-household mode: original global distribution
+      if (netCashflow >= 0) {
+        let surplus = netCashflow;
+        const wf = state.waterfall;
+        if (wf && wf.length > 0) {
+          for (const step of wf) {
+            if (surplus <= 0.01) break;
+            if (step.type === "fill-account") {
+              const acc = state.accounts.find(a => a.id === step.accountId);
+              if (!acc) continue;
+              const target = step.targetBalance ?? 0;
+              const cur = accBals[acc.id];
+              if (target > 0 && cur >= target) continue;
+              const deposit = target > 0 ? Math.min(surplus, target - cur) : surplus;
+              if (deposit > 0) { accBals[acc.id] += deposit; surplus -= deposit; }
+            } else if (step.type === "pay-debt") {
+              const eligible = state.loans
+                .filter(l => loanBals[l.id] > 0.01 && l.startMonth <= m)
+                .sort((a, b) => step.debtStrategy === "lowest-balance"
+                  ? loanBals[a.id] - loanBals[b.id]
+                  : b.annualRate - a.annualRate);
+              if (eligible.length === 0) continue;
+              const tgt = eligible[0];
+              const extra = Math.min(surplus, loanBals[tgt.id]);
+              loanBals[tgt.id] -= extra;
+              surplus -= extra;
+              if (!waterfallDebtByLoan) waterfallDebtByLoan = {};
+              waterfallDebtByLoan[tgt.id] = (waterfallDebtByLoan[tgt.id] ?? 0) + extra;
+            }
+          }
+        }
+        if (surplus > 0.01) {
+          const checkingAcc = state.accounts.find(a => a.type === "checking") || state.accounts[0];
+          if (checkingAcc) accBals[checkingAcc.id] += surplus;
+        }
+      } else {
+        let deficit = Math.abs(netCashflow);
+        const checkingFirst = state.accounts.filter(a => a.type === "checking");
+        const savingsNext = state.accounts.filter(a => a.type === "savings");
+        const rest = state.accounts.filter(a => a.type !== "checking" && a.type !== "savings");
+        const deductOrder = [...checkingFirst, ...savingsNext, ...rest];
+        for (const acc of deductOrder) {
+          if (deficit <= 0) break;
+          const deduct = Math.min(deficit, accBals[acc.id]);
+          accBals[acc.id] -= deduct;
+          deficit -= deduct;
+        }
+        if (deficit > 0.01) {
+          const firstAcc = state.accounts[0];
+          if (firstAcc) accBals[firstAcc.id] -= deficit;
+        }
       }
     }
 
