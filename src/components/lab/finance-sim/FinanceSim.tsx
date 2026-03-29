@@ -47,12 +47,20 @@ interface Account {
   ownerId?: number;
 }
 
+interface LoanRefinance {
+  month: number;
+  newRate: number;       // annual %
+  newTermMonths: number;
+  cost: number;          // one-time refinancing fee
+}
+
 interface Loan {
   id: number; name: string; type: LoanType;
   principal: number; currentBalance: number; annualRate: number;
   termMonths: number; paymentInterval: "monthly" | "biweekly"; startMonth: number;
   amortizations: LoanAmortization[];
   ownerId?: number;
+  refinance?: LoanRefinance;
 }
 
 type TaxCategory = "salary" | "aguinaldo" | "ptu" | "bonus" | "exempt";
@@ -386,6 +394,12 @@ function detectMilestones(state: FinanceState, sim: SimulationResult): Milestone
       if (m && m > 1) ms.push({ month: m, label: `Extra: ${loan.name}`, color: C.gold });
     }
   }
+  // Loan refinances
+  for (const loan of state.loans) {
+    if (loan.refinance && loan.refinance.month > 1) {
+      ms.push({ month: loan.refinance.month, label: `Refi: ${loan.name}`, color: C.purple });
+    }
+  }
   // Asset acquisitions
   for (const asset of state.assets) {
     if (asset.startMonth > 1) ms.push({ month: asset.startMonth, label: asset.name, color: C.gold });
@@ -618,9 +632,20 @@ function simulate(state: FinanceState): SimulationResult {
       const bal = loanBals[loan.id];
       if (bal <= 0.01) { loanPaymentBySource[loan.id] = 0; continue; }
 
-      const r = loan.annualRate / 100 / 12;
+      // Check for refinancing
+      if (loan.refinance && loan.refinance.month === m) {
+        const refi = loan.refinance;
+        const newR = refi.newRate / 100 / 12;
+        loanFixedPmt[loan.id] = calcLoanPayment(loanBals[loan.id], newR, refi.newTermMonths);
+        totalExpenses += refi.cost;
+      }
+
+      const currentAnnualRate = (loan.refinance && m >= loan.refinance.month) ? loan.refinance.newRate : loan.annualRate;
+      const r = currentAnnualRate / 100 / 12;
       const monthsElapsed = m - loan.startMonth;
-      const remainingMonths = Math.max(0, loan.termMonths - monthsElapsed);
+      const remainingMonths = (loan.refinance && m >= loan.refinance.month)
+        ? Math.max(0, loan.refinance.newTermMonths - (m - loan.refinance.month))
+        : Math.max(0, loan.termMonths - monthsElapsed);
       if (remainingMonths <= 0 && bal > 0.01) {
         const interest = bal * r;
         totalInterestPaid += interest;
@@ -659,7 +684,7 @@ function simulate(state: FinanceState): SimulationResult {
         loanPmtThisMonth += amortReal;
 
         if (amort.effect === "reduce-payment" && newBal > 0.01) {
-          const mRemaining = Math.max(1, loan.termMonths - monthsElapsed);
+          const mRemaining = Math.max(1, remainingMonths);
           loanFixedPmt[loan.id] = calcLoanPayment(newBal, r, mRemaining);
         }
         // "reduce-term": keep the same fixed payment — loan ends sooner
@@ -1478,6 +1503,13 @@ export default function FinanceSim() {
   const [showMilestones, setShowMilestones] = useState(true);
   const [showReal, setShowReal] = useState(false);
 
+  // Refinance form
+  const [refiLoanId, setRefiLoanId] = useState<number | null>(null);
+  const [refiMonth, setRefiMonth] = useState(24);
+  const [refiRate, setRefiRate] = useState(8);
+  const [refiTerm, setRefiTerm] = useState(240);
+  const [refiCost, setRefiCost] = useState(50000);
+
   // Editing state (null = adding new, number = editing that ID)
   const [editingAccountId, setEditingAccountId] = useState<number | null>(null);
   const [editingLoanId, setEditingLoanId] = useState<number | null>(null);
@@ -1855,6 +1887,23 @@ export default function FinanceSim() {
     setState(s => ({ ...s, loans: s.loans.filter(l => l.id !== id) }));
     if (editingLoanId === id) cancelEditLoan();
   }, [editingLoanId, cancelEditLoan]);
+
+  const applyRefinance = useCallback((loanId: number) => {
+    setState(s => ({
+      ...s,
+      loans: s.loans.map(l => l.id === loanId
+        ? { ...l, refinance: { month: refiMonth, newRate: refiRate, newTermMonths: refiTerm, cost: refiCost } }
+        : l),
+    }));
+    setRefiLoanId(null);
+  }, [refiMonth, refiRate, refiTerm, refiCost]);
+
+  const removeRefinance = useCallback((loanId: number) => {
+    setState(s => ({
+      ...s,
+      loans: s.loans.map(l => l.id === loanId ? { ...l, refinance: undefined } : l),
+    }));
+  }, []);
 
   const saveIncome = useCallback(() => {
     if (!incName.trim()) return;
@@ -3978,6 +4027,35 @@ export default function FinanceSim() {
                         </div>
                       );
                     })()}
+                    {/* Refinance section */}
+                    <div class="mt-2 border-t border-[var(--color-border)] pt-2">
+                      {l.refinance ? (
+                        <div class="flex items-center justify-between">
+                          <div class="font-mono text-[10px] text-[var(--color-text-muted)]">
+                            Refi Mo {l.refinance.month}: {l.refinance.newRate}% / {l.refinance.newTermMonths}mo · Cost: {fmtShort(l.refinance.cost)}
+                          </div>
+                          {deleteBtn(() => removeRefinance(l.id))}
+                        </div>
+                      ) : refiLoanId === l.id ? (
+                        <div class="space-y-2">
+                          <div class="grid grid-cols-2 gap-2">
+                            <div>{label("Month")}{numInput(refiMonth, setRefiMonth, { min: 1, max: 600, step: 1 })}</div>
+                            <div>{label("New Rate")}{numInput(refiRate, setRefiRate, { suffix: "%", min: 0, max: 100, step: 0.25 })}</div>
+                            <div>{label("New Term")}{numInput(refiTerm, setRefiTerm, { suffix: "mo", min: 1, max: 600, step: 1 })}</div>
+                            <div>{label("Cost")}{numInput(refiCost, setRefiCost, { prefix: "$", min: 0, step: 1000 })}</div>
+                          </div>
+                          <div class="flex gap-2">
+                            {goldButton(() => applyRefinance(l.id), "Apply")}
+                            <button onClick={() => setRefiLoanId(null)} class="rounded-lg border border-[var(--color-border)] px-3 py-1.5 font-mono text-[10px] text-[var(--color-text-muted)] hover:text-red-400">Cancel</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button onClick={() => { setRefiLoanId(l.id); setRefiMonth(24); setRefiRate(l.annualRate - 2); setRefiTerm(l.termMonths); setRefiCost(50000); }}
+                          class="font-mono text-[10px] text-[var(--color-text-muted)] hover:text-[var(--color-accent)]">
+                          + Refinance
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })
