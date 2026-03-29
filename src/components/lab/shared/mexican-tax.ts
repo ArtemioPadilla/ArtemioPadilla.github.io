@@ -43,15 +43,21 @@ export const SUBSIDY_MONTHLY_2025 = [
 
 export function calcMonthlyIsr(taxableIncome: number, table: IsrBracket[] = ISR_MONTHLY_2025): number {
   if (taxableIncome <= 0) return 0;
-  const bracket = table.find(b => taxableIncome >= b.lowerLimit && taxableIncome <= b.upperLimit);
-  if (!bracket) return 0;
+  // Use lowerLimit-only search to avoid floating-point gaps between brackets
+  let bracket = table[0];
+  for (const b of table) {
+    if (taxableIncome >= b.lowerLimit) bracket = b;
+    else break;
+  }
   return bracket.fixedFee + (taxableIncome - bracket.lowerLimit) * bracket.rate;
 }
 
 export function calcEmploymentSubsidy(taxableIncome: number): number {
-  const row = SUBSIDY_MONTHLY_2025.find(
-    r => taxableIncome >= r.lowerLimit && taxableIncome <= r.upperLimit
-  );
+  let row = SUBSIDY_MONTHLY_2025[0];
+  for (const r of SUBSIDY_MONTHLY_2025) {
+    if (taxableIncome >= r.lowerLimit) row = r;
+    else break;
+  }
   return row?.subsidy ?? 0;
 }
 
@@ -61,14 +67,17 @@ export function calcNetMonthlyIsr(grossMonthly: number): number {
   return Math.max(0, isr - subsidy);
 }
 
-/** Aguinaldo: first 30 * UMA daily value is exempt */
+/** Aguinaldo: first 30 * UMA daily value is exempt.
+ *  Simplified: taxes remainder via monthly ISR table. Real SAT procedure uses
+ *  Art. 96 proportional method which yields a lower effective rate. */
 export function calcAguinaldoTax(amount: number, umaDiario: number): number {
   const exempt = 30 * umaDiario;
   const taxable = Math.max(0, amount - exempt);
   return calcMonthlyIsr(taxable);
 }
 
-/** PTU: first 15 * UMA daily value is exempt */
+/** PTU: first 15 * UMA daily value is exempt.
+ *  Simplified: same approach as aguinaldo — real procedure uses proportional method. */
 export function calcPtuTax(amount: number, umaDiario: number): number {
   const exempt = 15 * umaDiario;
   const taxable = Math.max(0, amount - exempt);

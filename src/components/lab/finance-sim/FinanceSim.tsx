@@ -1052,7 +1052,7 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 8, name: "Subscriptions", amount: 800, frequency: "monthly", frequencyMonths: 0, category: "subscriptions", inflationAdjusted: false, startMonth: 1, endMonth: 0 },
       ],
       assets: [],
-    pprs: [],
+      pprs: [],
       config: { horizonYears: 10, inflationRate: 4, startDate: "" },
       nextId: 9,
     },
@@ -1088,7 +1088,7 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 14, name: "Health", amount: 3000, frequency: "monthly", frequencyMonths: 0, category: "health", inflationAdjusted: true, startMonth: 1, endMonth: 0, split: { mode: "equal", participantIds: [100, 101] } },
       ],
       assets: [],
-    pprs: [],
+      pprs: [],
       config: { horizonYears: 15, inflationRate: 4, startDate: "" },
       nextId: 102,
     },
@@ -1119,7 +1119,7 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 9, name: "Transport", amount: 2500, frequency: "monthly", frequencyMonths: 0, category: "transport", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
       ],
       assets: [],
-    pprs: [],
+      pprs: [],
       config: { horizonYears: 8, inflationRate: 4, startDate: "" },
       nextId: 10,
     },
@@ -1147,7 +1147,7 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
         { id: 11, name: "Travel", amount: 60000, frequency: "annually", frequencyMonths: 0, category: "entertainment", inflationAdjusted: true, startMonth: 1, endMonth: 0 },
       ],
       assets: [],
-    pprs: [],
+      pprs: [],
       config: { horizonYears: 20, inflationRate: 3.5, startDate: "" },
       nextId: 12,
     },
@@ -1193,7 +1193,7 @@ const SCENARIOS: { key: string; label: string; state: FinanceState }[] = [
       incomes: [],
       expenses: [],
       assets: [],
-    pprs: [],
+      pprs: [],
       config: { horizonYears: 10, inflationRate: 4, startDate: "" },
       nextId: 1,
     },
@@ -1909,10 +1909,12 @@ export default function FinanceSim() {
 
   // ── Waterfall CRUD ──
   const addWaterfallStep = useCallback(() => {
-    const step: WaterfallStep = wfStepType === "fill-account"
-      ? { id: Date.now(), type: "fill-account", accountId: wfAccountId || state.accounts[0]?.id, targetBalance: wfTarget }
-      : { id: Date.now(), type: "pay-debt", debtStrategy: wfDebtStrategy };
-    setState(s => ({ ...s, waterfall: [...(s.waterfall ?? []), step] }));
+    setState(s => {
+      const step: WaterfallStep = wfStepType === "fill-account"
+        ? { id: s.nextId, type: "fill-account", accountId: wfAccountId || state.accounts[0]?.id, targetBalance: wfTarget }
+        : { id: s.nextId, type: "pay-debt", debtStrategy: wfDebtStrategy };
+      return { ...s, waterfall: [...(s.waterfall ?? []), step], nextId: s.nextId + 1 };
+    });
   }, [wfStepType, wfAccountId, wfTarget, wfDebtStrategy, state.accounts]);
 
   const removeWaterfallStep = useCallback((id: number) => {
