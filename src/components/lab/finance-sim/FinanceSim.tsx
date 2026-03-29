@@ -26,6 +26,7 @@ import {
   projectPayoff,
   type PayoffProjection,
 } from "../shared/payoff-projection";
+import SankeyChart from "./SankeyChart";
 
 Chart.register(
   CategoryScale, LinearScale, PointElement, LineElement,
@@ -1414,6 +1415,7 @@ export default function FinanceSim() {
   const [tableOpen, setTableOpen] = useState(false);
   const [granularity, setGranularity] = useState<"monthly" | "quarterly" | "yearly">("yearly");
   const [timelineOpen, setTimelineOpen] = useState(true);
+  const [sankeyYear, setSankeyYear] = useState(1);
 
   // Account form
   const [accName, setAccName] = useState("New Account");
@@ -3820,6 +3822,36 @@ export default function FinanceSim() {
           </div>
         )}
       </div>
+
+      {/* Cash Flow Sankey Diagram */}
+      <details class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <summary class="cursor-pointer">
+          <span class="font-mono text-sm font-medium uppercase tracking-wider" style={{ color: "var(--color-heading)" }}>Cash Flow Diagram</span>
+        </summary>
+        <div class="mt-3">
+          <div class="mb-3 flex items-center gap-2">
+            {label("Year")}
+            {selectInput(String(sankeyYear), (v) => setSankeyYear(Number(v)),
+              sim.yearSummaries.map((_, i) => ({ value: String(i + 1), label: `Year ${i + 1}` }))
+            )}
+          </div>
+          <SankeyChart
+            incomes={state.incomes.map(i => ({
+              name: i.name,
+              amount: sim.months.filter(m => m.year === sankeyYear).reduce((s, m) => s + (m.incomeBySource[i.id] ?? 0), 0),
+            })).filter(i => i.amount > 0)}
+            expenses={state.expenses.map(e => ({
+              name: e.name,
+              amount: sim.months.filter(m => m.year === sankeyYear).reduce((s, m) => s + (m.expenseBySource[e.id] ?? 0), 0),
+            })).filter(e => e.amount > 0)}
+            loanPayments={state.loans.map(l => ({
+              name: l.name,
+              amount: sim.months.filter(m => m.year === sankeyYear).reduce((s, m) => s + (m.loanPaymentBySource[l.id] ?? 0), 0),
+            })).filter(l => l.amount > 0)}
+            savings={Math.max(0, sim.yearSummaries[sankeyYear - 1]?.netCashflow ?? 0)}
+          />
+        </div>
+      </details>
 
       {/* Alerts */}
       {sim.alerts.length > 0 && (
