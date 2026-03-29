@@ -136,6 +136,11 @@ interface SimulationResult {
   finalNetWorth: number; finalAssets: number; finalDebt: number;
   totalInterestEarned: number; totalInterestPaid: number;
   avgMonthlyCashflow: number; debtFreeMonth: number;
+  peakStressMonth: number;
+  peakStressBalance: number;
+  overdraftMonths: number;
+  peakDti: number;
+  peakDtiMonth: number;
   alerts: string[];
 }
 
@@ -377,6 +382,17 @@ function detectMilestones(state: FinanceState, sim: SimulationResult): Milestone
   // Asset acquisitions
   for (const asset of state.assets) {
     if (asset.startMonth > 1) ms.push({ month: asset.startMonth, label: asset.name, color: C.gold });
+  }
+  // Peak stress month
+  if (sim.months.length > 0) {
+    let worstBal = Infinity, worstMonth = 0;
+    for (const r of sim.months) {
+      const bal = Object.values(r.accountBalances).reduce((s, v) => s + v, 0);
+      if (bal < worstBal) { worstBal = bal; worstMonth = r.month; }
+    }
+    if (worstBal < 0) {
+      ms.push({ month: worstMonth, label: "Peak stress", color: C.red });
+    }
   }
   // Deduplicate by month+label
   const seen = new Set<string>();
@@ -934,6 +950,30 @@ function simulate(state: FinanceState): SimulationResult {
     alerts.push("One or more accounts go negative during the projection.");
   }
 
+  // Stress metrics
+  let peakStressMonth = 0;
+  let peakStressBalance = Infinity;
+  let overdraftMonths = 0;
+  let peakDti = 0;
+  let peakDtiMonth = 0;
+
+  for (const row of months) {
+    const accountBal = state.accounts.reduce((s, a) => s + (row.accountBalances[a.id] ?? 0), 0);
+    if (accountBal < peakStressBalance) {
+      peakStressBalance = accountBal;
+      peakStressMonth = row.month;
+    }
+    if (state.accounts.some(a => (row.accountBalances[a.id] ?? 0) < -0.01)) {
+      overdraftMonths++;
+    }
+    if (row.totalIncome > 0) {
+      const dti = (row.totalLoanPayments / row.totalIncome) * 100;
+      if (dti > peakDti) { peakDti = dti; peakDtiMonth = row.month; }
+    }
+  }
+
+  if (peakStressBalance === Infinity) peakStressBalance = 0;
+
   return {
     months,
     yearSummaries,
@@ -946,6 +986,11 @@ function simulate(state: FinanceState): SimulationResult {
       ? months.reduce((s, r) => s + r.netCashflow, 0) / months.length
       : 0,
     debtFreeMonth,
+    peakStressMonth,
+    peakStressBalance,
+    overdraftMonths,
+    peakDti,
+    peakDtiMonth,
     alerts,
   };
 }
@@ -3185,6 +3230,41 @@ export default function FinanceSim() {
             sub={`paid: ${fmtShort(sim.totalInterestPaid)}`}
             color={sim.totalInterestEarned > sim.totalInterestPaid ? C.green : C.red}
           />
+          {(sim.peakStressBalance < 0 || sim.peakDti > 40) && (
+            <div class="col-span-full mt-2">
+              <div class="rounded-xl border border-[rgba(224,92,106,0.3)] bg-[rgba(224,92,106,0.05)] p-4">
+                <div class="mb-2 font-mono text-xs font-medium uppercase tracking-wider" style={{ color: C.red }}>
+                  Stress Indicators
+                </div>
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {sim.peakStressBalance < 0 && (
+                    <StatCard
+                      label="Peak Negative"
+                      value={fmtShort(sim.peakStressBalance)}
+                      sub={state.config.startDate ? monthToShortDate(sim.peakStressMonth, state.config.startDate) : `Month ${sim.peakStressMonth}`}
+                      color={C.red}
+                    />
+                  )}
+                  {sim.overdraftMonths > 0 && (
+                    <StatCard
+                      label="Overdraft Months"
+                      value={String(sim.overdraftMonths)}
+                      sub={`of ${state.config.horizonYears * 12}`}
+                      color={C.red}
+                    />
+                  )}
+                  {sim.peakDti > 40 && (
+                    <StatCard
+                      label="Peak DTI"
+                      value={`${sim.peakDti.toFixed(0)}%`}
+                      sub={state.config.startDate ? monthToShortDate(sim.peakDtiMonth, state.config.startDate) : `Month ${sim.peakDtiMonth}`}
+                      color={sim.peakDti > 50 ? C.red : C.orange}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
