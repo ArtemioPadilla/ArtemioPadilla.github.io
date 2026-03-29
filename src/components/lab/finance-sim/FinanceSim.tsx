@@ -433,19 +433,23 @@ const milestonePlugin = {
       const x = scales.x.getPixelForValue(ms.index);
       if (x < chartArea.left || x > chartArea.right) continue;
       ctx.save();
-      ctx.strokeStyle = ms.color + "88";
+      // Draw vertical line
+      ctx.strokeStyle = ms.color + "44";
       ctx.lineWidth = 1;
-      ctx.setLineDash([4, 3]);
+      ctx.setLineDash([3, 4]);
       ctx.beginPath();
       ctx.moveTo(x, chartArea.top);
       ctx.lineTo(x, chartArea.bottom);
       ctx.stroke();
-      ctx.fillStyle = ms.color + "cc";
-      ctx.font = "8px monospace";
-      ctx.textAlign = "center";
-      const maxW = 60;
-      const lbl = ms.label.length > 10 ? ms.label.slice(0, 9) + "…" : ms.label;
-      ctx.fillText(lbl, Math.min(Math.max(x, chartArea.left + maxW / 2), chartArea.right - maxW / 2), chartArea.top - 4);
+      // Draw small triangle marker at the bottom instead of top labels
+      ctx.fillStyle = ms.color + "99";
+      const triSize = 4;
+      ctx.beginPath();
+      ctx.moveTo(x, chartArea.bottom);
+      ctx.lineTo(x - triSize, chartArea.bottom + triSize + 2);
+      ctx.lineTo(x + triSize, chartArea.bottom + triSize + 2);
+      ctx.closePath();
+      ctx.fill();
       ctx.restore();
     }
   },
@@ -1423,7 +1427,7 @@ function importJSON(file: File): Promise<FinanceState | null> {
 
 export default function FinanceSim() {
   const [state, setState] = useState<FinanceState>(defaultState);
-  const [tab, setTab] = useState<"dashboard" | "accounts" | "loans" | "income" | "expenses" | "assets" | "ppr">("dashboard");
+  const [tab, setTab] = useState<"dashboard" | "accounts" | "loans" | "income" | "expenses" | "assets" | "strategy" | "ppr">("dashboard");
   const [chartMode, setChartMode] = useState<"networth" | "cashflow" | "balances" | "debt" | "snowball" | "ppr">("networth");
   const [tableOpen, setTableOpen] = useState(false);
   const [granularity, setGranularity] = useState<"monthly" | "quarterly" | "yearly">("yearly");
@@ -2768,6 +2772,40 @@ export default function FinanceSim() {
         });
       }
       yAxisTitle = "Asset Value ($)";
+    } else if (tab === "strategy") {
+      // Show net worth: base scenario vs current (with sensitivity)
+      const baseSim = simulate(state);
+      const baseSample = (accessor: (r: MonthRow) => number) =>
+        dataIndices.map(i => i < baseSim.months.length ? accessor(baseSim.months[i]) : null);
+
+      if (sensitivity.rateOffset || sensitivity.growthOffset || sensitivity.inflOffset) {
+        datasets.push({
+          label: "Base Net Worth",
+          data: baseSample(r => r.netWorth),
+          borderColor: C.muted,
+          backgroundColor: "transparent",
+          fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
+          borderDash: [6, 3],
+        });
+        datasets.push({
+          label: "Adjusted Net Worth",
+          data: sampleData(r => r.netWorth),
+          borderColor: C.gold,
+          backgroundColor: "transparent",
+          fill: false, tension: 0.3, borderWidth: 2.5, pointRadius: ptRadius,
+          pointBackgroundColor: C.gold,
+        });
+      } else {
+        datasets.push({
+          label: "Net Worth",
+          data: sampleData(r => r.netWorth),
+          borderColor: C.gold,
+          backgroundColor: "transparent",
+          fill: false, tension: 0.3, borderWidth: 2.5, pointRadius: ptRadius,
+          pointBackgroundColor: C.gold,
+        });
+      }
+      yAxisTitle = "Net Worth ($)";
     } else if (tab === "ppr") {
       // PPR balance growth per PPR
       const cyanGrad = ctx.createLinearGradient(0, 0, 0, 260);
@@ -2861,7 +2899,7 @@ export default function FinanceSim() {
         tabChartInstanceRef.current = null;
       }
     };
-  }, [sim, tab, state.accounts, state.loans, state.incomes, state.expenses, state.assets, state.pprs, state.config.startDate, granularity, getChartSamples]);
+  }, [sim, tab, state.accounts, state.loans, state.incomes, state.expenses, state.assets, state.pprs, state.config.startDate, granularity, getChartSamples, sensitivity, state]);
 
   // ── Gantt ResizeObserver ──
   useEffect(() => {
@@ -3162,6 +3200,7 @@ export default function FinanceSim() {
     { key: "income", label: "Income" },
     { key: "expenses", label: "Expenses" },
     { key: "assets", label: "Assets" },
+    { key: "strategy", label: "Strategy" },
     { key: "ppr", label: "PPR" },
   ] as const;
 
@@ -3212,32 +3251,6 @@ export default function FinanceSim() {
             step: 0.5,
           })}
         </div>
-      </div>
-
-      {/* ISR Tax */}
-      <div class="mx-1 h-4 w-px bg-[var(--color-border)]" />
-      <div class="flex items-center gap-2">
-        <label class="flex cursor-pointer items-center gap-1.5">
-          <input
-            type="checkbox"
-            checked={state.config.taxEnabled ?? false}
-            onChange={(e) => setState(s => ({ ...s, config: { ...s.config, taxEnabled: (e.target as HTMLInputElement).checked } }))}
-            class="accent-[#d4a843]"
-          />
-          <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
-            ISR (MX)
-          </span>
-        </label>
-        {state.config.taxEnabled && (
-          <div class="w-24">
-            {numInput(state.config.umaDiario ?? DEFAULT_UMA_DIARIO, (v) => setConfig({ umaDiario: v }), {
-              prefix: "$",
-              min: 50,
-              max: 300,
-              step: 0.01,
-            })}
-          </div>
-        )}
       </div>
 
       {/* Participants */}
@@ -3696,60 +3709,8 @@ export default function FinanceSim() {
           {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
           <div class="mx-2 h-5 w-px bg-[var(--color-border)]" />
           {pillBtn(showMilestones, () => setShowMilestones(!showMilestones), "Milestones")}
-          {pillBtn(showReal, () => setShowReal(!showReal), showReal ? "Real $" : "Nominal $")}
+          {pillBtn(showReal, () => setShowReal(!showReal), showReal ? "Inflation-Adjusted" : "Current $")}
         </div>
-        <details class="mb-3">
-          <summary class="cursor-pointer font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-text)]">
-            What-If Sensitivity
-          </summary>
-          <div class="mt-2 grid grid-cols-2 gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-3 sm:grid-cols-4">
-            <div>
-              <div class="mb-1 font-mono text-[10px] text-[var(--color-text-muted)]">Loan Rate</div>
-              <input type="range" min={-3} max={3} step={0.25} value={sensitivity.rateOffset}
-                onInput={(e) => setSensitivity(s => ({ ...s, rateOffset: Number((e.target as HTMLInputElement).value) }))}
-                class="w-full" />
-              <div class="text-center font-mono text-xs" style={{ color: sensitivity.rateOffset ? C.orange : C.muted }}>
-                {sensitivity.rateOffset >= 0 ? "+" : ""}{sensitivity.rateOffset}%
-              </div>
-            </div>
-            <div>
-              <div class="mb-1 font-mono text-[10px] text-[var(--color-text-muted)]">Income Growth</div>
-              <input type="range" min={-5} max={5} step={0.5} value={sensitivity.growthOffset}
-                onInput={(e) => setSensitivity(s => ({ ...s, growthOffset: Number((e.target as HTMLInputElement).value) }))}
-                class="w-full" />
-              <div class="text-center font-mono text-xs" style={{ color: sensitivity.growthOffset ? C.green : C.muted }}>
-                {sensitivity.growthOffset >= 0 ? "+" : ""}{sensitivity.growthOffset}%
-              </div>
-            </div>
-            <div>
-              <div class="mb-1 font-mono text-[10px] text-[var(--color-text-muted)]">Inflation</div>
-              <input type="range" min={-3} max={5} step={0.5} value={sensitivity.inflOffset}
-                onInput={(e) => setSensitivity(s => ({ ...s, inflOffset: Number((e.target as HTMLInputElement).value) }))}
-                class="w-full" />
-              <div class="text-center font-mono text-xs" style={{ color: sensitivity.inflOffset ? C.red : C.muted }}>
-                {sensitivity.inflOffset >= 0 ? "+" : ""}{sensitivity.inflOffset}%
-              </div>
-            </div>
-            <div class="flex flex-col items-center justify-end gap-2">
-              <button
-                onClick={() => setSensitivity({ rateOffset: 0, growthOffset: 0, inflOffset: 0 })}
-                class="rounded-md border border-[var(--color-border)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-              >
-                Reset
-              </button>
-              {(sensitivity.rateOffset || sensitivity.growthOffset || sensitivity.inflOffset) ? (
-                <button onClick={() => {
-                  const name = `Rate ${sensitivity.rateOffset >= 0 ? "+" : ""}${sensitivity.rateOffset}%, Growth ${sensitivity.growthOffset >= 0 ? "+" : ""}${sensitivity.growthOffset}%`;
-                  setComparisonScenarios(prev => [...prev, { name, state: sensitiveState, sim }]);
-                  setSensitivity({ rateOffset: 0, growthOffset: 0, inflOffset: 0 });
-                }}
-                class="rounded-md border border-[var(--color-border)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-accent)]">
-                  Save as Scenario
-                </button>
-              ) : null}
-            </div>
-          </div>
-        </details>
         <div style={{ height: "360px", position: "relative" }}>
           <canvas ref={chartRef} />
         </div>
@@ -3865,7 +3826,13 @@ export default function FinanceSim() {
               name: l.name,
               amount: sim.months.filter(m => m.year === sankeyYear).reduce((s, m) => s + (m.loanPaymentBySource[l.id] ?? 0), 0),
             })).filter(l => l.amount > 0)}
-            savings={Math.max(0, sim.yearSummaries[sankeyYear - 1]?.netCashflow ?? 0)}
+            savings={(() => {
+              const ym = sim.months.filter(m => m.year === sankeyYear);
+              const totalInc = ym.reduce((s, m) => s + m.totalIncome, 0);
+              const totalExp = ym.reduce((s, m) => s + m.totalExpenses, 0);
+              const totalLoan = ym.reduce((s, m) => s + m.totalLoanPayments, 0);
+              return Math.max(0, totalInc - totalExp - totalLoan);
+            })()}
           />
         </div>
       </details>
@@ -4937,6 +4904,60 @@ export default function FinanceSim() {
           </div>
         </div>
 
+      </div>
+
+      {/* Right: chart */}
+      <div class="space-y-4">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <div class="mb-3 flex items-center justify-between">
+            <CardTitle>Asset Value Over Time</CardTitle>
+            <div class="flex gap-1">
+              {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
+              {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
+              {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
+            </div>
+          </div>
+          <div style={{ height: "320px", position: "relative" }}>
+            <canvas ref={tabChartRef} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderStrategy = () => (
+    <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[380px_1fr]">
+      <div class="space-y-4">
+        {/* ISR Tax Config */}
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>Tax Settings (Mexican ISR)</CardTitle>
+          <p class="mb-3 font-mono text-[10px] text-[var(--color-text-muted)]">
+            When enabled, income is reduced by Mexican payroll tax (ISR). Each income source can have a tax category that determines exemptions.
+          </p>
+          <label class="flex cursor-pointer items-center gap-1.5">
+            <input
+              type="checkbox"
+              checked={state.config.taxEnabled ?? false}
+              onChange={(e) => setState(s => ({ ...s, config: { ...s.config, taxEnabled: (e.target as HTMLInputElement).checked } }))}
+              class="accent-[#d4a843]"
+            />
+            <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+              Enable ISR Tax
+            </span>
+          </label>
+          {state.config.taxEnabled && (
+            <div class="mt-3">
+              {label("UMA Diario")}
+              {numInput(state.config.umaDiario ?? DEFAULT_UMA_DIARIO, (v) => setConfig({ umaDiario: v }), {
+                prefix: "$",
+                min: 50,
+                max: 300,
+                step: 0.01,
+              })}
+            </div>
+          )}
+        </div>
+
         {/* Cash Waterfall Config */}
         <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
           <CardTitle>Cash Waterfall</CardTitle>
@@ -5002,13 +5023,68 @@ export default function FinanceSim() {
             {goldButton(addWaterfallStep, "Add Step")}
           </div>
         </div>
+
+        {/* What-If Sensitivity */}
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <CardTitle>What-If Sensitivity</CardTitle>
+          <p class="mb-3 font-mono text-[10px] text-[var(--color-text-muted)]">
+            Adjust parameters to see how changes affect your projection. The chart shows the adjusted scenario.
+          </p>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <div class="mb-1 font-mono text-[10px] text-[var(--color-text-muted)]">Loan Rate</div>
+              <input type="range" min={-3} max={3} step={0.25} value={sensitivity.rateOffset}
+                onInput={(e) => setSensitivity(s => ({ ...s, rateOffset: Number((e.target as HTMLInputElement).value) }))}
+                class="w-full" />
+              <div class="text-center font-mono text-xs" style={{ color: sensitivity.rateOffset ? C.orange : C.muted }}>
+                {sensitivity.rateOffset >= 0 ? "+" : ""}{sensitivity.rateOffset}%
+              </div>
+            </div>
+            <div>
+              <div class="mb-1 font-mono text-[10px] text-[var(--color-text-muted)]">Income Growth</div>
+              <input type="range" min={-5} max={5} step={0.5} value={sensitivity.growthOffset}
+                onInput={(e) => setSensitivity(s => ({ ...s, growthOffset: Number((e.target as HTMLInputElement).value) }))}
+                class="w-full" />
+              <div class="text-center font-mono text-xs" style={{ color: sensitivity.growthOffset ? C.green : C.muted }}>
+                {sensitivity.growthOffset >= 0 ? "+" : ""}{sensitivity.growthOffset}%
+              </div>
+            </div>
+            <div>
+              <div class="mb-1 font-mono text-[10px] text-[var(--color-text-muted)]">Inflation</div>
+              <input type="range" min={-3} max={5} step={0.5} value={sensitivity.inflOffset}
+                onInput={(e) => setSensitivity(s => ({ ...s, inflOffset: Number((e.target as HTMLInputElement).value) }))}
+                class="w-full" />
+              <div class="text-center font-mono text-xs" style={{ color: sensitivity.inflOffset ? C.red : C.muted }}>
+                {sensitivity.inflOffset >= 0 ? "+" : ""}{sensitivity.inflOffset}%
+              </div>
+            </div>
+            <div class="flex flex-col items-center justify-end gap-2">
+              <button
+                onClick={() => setSensitivity({ rateOffset: 0, growthOffset: 0, inflOffset: 0 })}
+                class="rounded-md border border-[var(--color-border)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+              >
+                Reset
+              </button>
+              {(sensitivity.rateOffset || sensitivity.growthOffset || sensitivity.inflOffset) ? (
+                <button onClick={() => {
+                  const name = `Rate ${sensitivity.rateOffset >= 0 ? "+" : ""}${sensitivity.rateOffset}%, Growth ${sensitivity.growthOffset >= 0 ? "+" : ""}${sensitivity.growthOffset}%`;
+                  setComparisonScenarios(prev => [...prev, { name, state: sensitiveState, sim }]);
+                  setSensitivity({ rateOffset: 0, growthOffset: 0, inflOffset: 0 });
+                }}
+                class="rounded-md border border-[var(--color-border)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-accent)]">
+                  Save as Scenario
+                </button>
+              ) : null}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Right: chart */}
+      {/* Right: chart showing base vs adjusted */}
       <div class="space-y-4">
         <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
           <div class="mb-3 flex items-center justify-between">
-            <CardTitle>Asset Value Over Time</CardTitle>
+            <CardTitle>Impact Preview</CardTitle>
             <div class="flex gap-1">
               {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
               {pillBtn(granularity === "quarterly", () => setGranularity("quarterly"), "Quarterly")}
@@ -5253,6 +5329,7 @@ export default function FinanceSim() {
       {tab === "income" && renderIncome()}
       {tab === "expenses" && renderExpenses()}
       {tab === "assets" && renderAssets()}
+      {tab === "strategy" && renderStrategy()}
       {tab === "ppr" && renderPpr()}
     </div>
   );
