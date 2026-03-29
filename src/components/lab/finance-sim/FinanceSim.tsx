@@ -59,6 +59,7 @@ interface Loan {
   id: number; name: string; type: LoanType;
   principal: number; currentBalance: number; annualRate: number;
   termMonths: number; paymentInterval: "monthly" | "biweekly"; startMonth: number;
+  disbursementMonth?: number; // when cash is received (personal/credit-card); defaults to startMonth
   amortizations: LoanAmortization[];
   ownerId?: number;
   refinance?: LoanRefinance;
@@ -464,8 +465,13 @@ function simulate(state: FinanceState): SimulationResult {
   const loanBals: Record<number, number> = {};
   const loanFixedPmt: Record<number, number> = {};
   for (const l of state.loans) {
-    // Future loans (startMonth > 1) have zero balance until disbursed
-    loanBals[l.id] = l.startMonth <= 1 ? l.currentBalance : 0;
+    // Disbursement month determines when the loan balance activates
+    // For personal/credit-card: disbursementMonth (or startMonth if not set)
+    // For mortgage/auto: startMonth (no cash disbursement)
+    const effectiveDisbursement = (l.type === "personal" || l.type === "credit-card")
+      ? (l.disbursementMonth ?? l.startMonth)
+      : l.startMonth;
+    loanBals[l.id] = effectiveDisbursement <= 1 ? l.currentBalance : 0;
     const r = l.annualRate / 100 / 12;
     loanFixedPmt[l.id] = calcLoanPayment(l.currentBalance, r, l.termMonths);
   }
@@ -611,15 +617,22 @@ function simulate(state: FinanceState): SimulationResult {
       }
     }
 
-    // 3. Loan disbursements: activate future loans at startMonth
-    // Personal/credit-card: cash flows to borrower (positive cashflow)
-    // Mortgage/auto: cash goes to seller/dealer (no cashflow, debt-only)
+    // 3. Loan disbursements: activate future loans
+    // Personal/credit-card: disbursementMonth controls when cash arrives (positive cashflow)
+    //   — debt activates at disbursementMonth, payments start at startMonth
+    // Mortgage/auto: debt activates at startMonth (no cash to borrower)
     let totalLoanDisbursements = 0;
     for (const loan of state.loans) {
-      if (loan.startMonth === m && m > 1) {
-        loanBals[loan.id] = loan.currentBalance;
-        if (loan.type === "personal" || loan.type === "credit-card") {
+      if (loan.type === "personal" || loan.type === "credit-card") {
+        const disbMonth = loan.disbursementMonth ?? loan.startMonth;
+        if (disbMonth === m && m > 1) {
+          loanBals[loan.id] = loan.currentBalance;
           totalLoanDisbursements += loan.currentBalance;
+        }
+      } else {
+        // Mortgage/auto: activate debt at startMonth, no cash disbursement
+        if (loan.startMonth === m && m > 1) {
+          loanBals[loan.id] = loan.currentBalance;
         }
       }
     }
@@ -1433,6 +1446,7 @@ export default function FinanceSim() {
   const [loanTerm, setLoanTerm] = useState(60);
   const [loanInterval, setLoanInterval] = useState<"monthly" | "biweekly">("monthly");
   const [loanStart, setLoanStart] = useState(1);
+  const [loanDisbursement, setLoanDisbursement] = useState(0); // 0 = same as startMonth
 
   // Income form
   const [incName, setIncName] = useState("New Income");
@@ -1788,6 +1802,7 @@ export default function FinanceSim() {
     setLoanName(l.name); setLoanType(l.type); setLoanPrincipal(l.principal);
     setLoanBalance(l.currentBalance); setLoanRate(l.annualRate);
     setLoanTerm(l.termMonths); setLoanInterval(l.paymentInterval); setLoanStart(l.startMonth);
+    setLoanDisbursement(l.disbursementMonth ?? 0);
     setLoanOwner(l.ownerId ?? 0);
   }, []);
 
@@ -1795,7 +1810,7 @@ export default function FinanceSim() {
     setEditingLoanId(null);
     setLoanName("New Loan"); setLoanType("personal"); setLoanPrincipal(100000);
     setLoanBalance(100000); setLoanRate(12); setLoanTerm(60);
-    setLoanInterval("monthly"); setLoanStart(1); setLoanOwner(0);
+    setLoanInterval("monthly"); setLoanStart(1); setLoanDisbursement(0); setLoanOwner(0);
   }, []);
 
   const startEditIncome = useCallback((inc: Income) => {
@@ -1893,11 +1908,12 @@ export default function FinanceSim() {
   const saveLoan = useCallback(() => {
     if (!loanName.trim()) return;
     const ownerData = participants.length > 1 ? { ownerId: loanOwner } : {};
+    const disbData = loanDisbursement > 0 ? { disbursementMonth: loanDisbursement } : {};
     if (editingLoanId !== null) {
       setState(s => ({
         ...s,
         loans: s.loans.map(l => l.id === editingLoanId
-          ? { ...l, name: loanName, type: loanType, principal: loanPrincipal, currentBalance: loanBalance, annualRate: loanRate, termMonths: loanTerm, paymentInterval: loanInterval, startMonth: loanStart, ...ownerData }
+          ? { ...l, name: loanName, type: loanType, principal: loanPrincipal, currentBalance: loanBalance, annualRate: loanRate, termMonths: loanTerm, paymentInterval: loanInterval, startMonth: loanStart, ...ownerData, ...disbData }
           : l),
       }));
       cancelEditLoan();
@@ -1910,12 +1926,12 @@ export default function FinanceSim() {
           annualRate: loanRate, termMonths: loanTerm,
           paymentInterval: loanInterval, startMonth: loanStart,
           amortizations: [],
-          ...ownerData,
+          ...ownerData, ...disbData,
         }],
         nextId: s.nextId + 1,
       }));
     }
-  }, [loanName, loanType, loanPrincipal, loanBalance, loanRate, loanTerm, loanInterval, loanStart, loanOwner, participants.length, editingLoanId, cancelEditLoan]);
+  }, [loanName, loanType, loanPrincipal, loanBalance, loanRate, loanTerm, loanInterval, loanStart, loanDisbursement, loanOwner, participants.length, editingLoanId, cancelEditLoan]);
 
   const removeLoan = useCallback((id: number) => {
     setState(s => ({ ...s, loans: s.loans.filter(l => l.id !== id) }));
@@ -2538,7 +2554,8 @@ export default function FinanceSim() {
                     if (row.totalLoanDisbursements > 0.01) {
                       lines.push("── Loan Disbursements ──");
                       for (const loan of state.loans) {
-                        if (loan.startMonth === row.month && row.month > 1 && (loan.type === "personal" || loan.type === "credit-card")) {
+                        const disbMonth = loan.disbursementMonth ?? loan.startMonth;
+                        if (disbMonth === row.month && row.month > 1 && (loan.type === "personal" || loan.type === "credit-card")) {
                           lines.push(`  ${loan.name}: +${fmtShort(loan.currentBalance)}`);
                         }
                       }
@@ -4078,10 +4095,16 @@ export default function FinanceSim() {
               ])}
             </div>
             <div>
-              {label("Start Month")}
+              {label("Payments Start")}
               {numInput(loanStart, setLoanStart, { min: 1, max: 360, step: 1 })}
             </div>
           </div>
+          {(loanType === "personal" || loanType === "credit-card") && (
+            <div class="mb-3">
+              {label("Cash Received At (0 = same as payments start)")}
+              {numInput(loanDisbursement, setLoanDisbursement, { min: 0, max: 360, step: 1 })}
+            </div>
+          )}
           {editingLoanId !== null ? (
             <div class="flex gap-2">
               {goldButton(saveLoan, "Save Changes")}
@@ -4122,6 +4145,9 @@ export default function FinanceSim() {
                         </div>
                         <div class="mt-0.5 font-mono text-[10px] text-[var(--color-text-muted)]">
                           Bal: {fmtM(l.currentBalance)} | {fmtPct(l.annualRate)} | Pmt: {fmtM(pmt)} | {l.termMonths}mo | {l.paymentInterval}
+                          {l.disbursementMonth && l.disbursementMonth !== l.startMonth && (
+                            <span> | Cash Mo {l.disbursementMonth} → Pay Mo {l.startMonth}</span>
+                          )}
                         </div>
                       </div>
                       {editBtn(() => startEditLoan(l), editingLoanId === l.id)}
