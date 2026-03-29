@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Finance Simulator: Real vs Nominal Value Toggle** — inflation-adjusted chart views with "Real $" / "Nominal $" pill toggle, deflates net worth, cashflow, balances, and debt charts plus comparison scenario overlays; yearly summary table also deflates income, expenses, loan payments, assets, debt, and net worth columns; Y-axis label updates to show "(real)" suffix
+
 - **Finance Simulator: PPR Support** — Plan Personal de Retiro (PPR) with Art.151/Art.185 contribution tracking, annual caps (UMA-based), compound interest, ISR tax refund simulation, dedicated PPR tab with full CRUD, dashboard integration (PPR Growth chart mode, KPI cards, tooltip breakdown), Gantt timeline rows, and a "PPR Retirement Planning" scenario
 
 - **Database Index Visualizer** (`/lab/db-index-viz`) — B-Tree, B+ Tree, Hash Index with animated insert/delete/search, node splits, comparison mode

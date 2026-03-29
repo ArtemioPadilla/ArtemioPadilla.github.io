@@ -1442,6 +1442,7 @@ export default function FinanceSim() {
   const [wfTarget, setWfTarget] = useState(0);
   const [wfDebtStrategy, setWfDebtStrategy] = useState<"highest-rate" | "lowest-balance">("highest-rate");
   const [showMilestones, setShowMilestones] = useState(true);
+  const [showReal, setShowReal] = useState(false);
 
   // Editing state (null = adding new, number = editing that ID)
   const [editingAccountId, setEditingAccountId] = useState<number | null>(null);
@@ -2147,6 +2148,14 @@ export default function FinanceSim() {
     const sampleData = (accessor: (r: MonthRow) => number) =>
       dataIndices.map(i => accessor(sim.months[i]));
 
+    const sampleDataReal = (accessor: (r: MonthRow) => number) =>
+      dataIndices.map(i => {
+        const val = accessor(sim.months[i]);
+        if (!showReal) return val;
+        const monthsElapsed = sim.months[i]?.month ?? 0;
+        return val / Math.pow(1 + state.config.inflationRate / 100, monthsElapsed / 12);
+      });
+
     // Map milestones to chart label indices
     const msItems = showMilestones ? milestones.map(ms => {
       let best = -1, bestDist = Infinity;
@@ -2170,7 +2179,7 @@ export default function FinanceSim() {
       grad.addColorStop(1, "rgba(212,168,67,0.02)");
       datasets = [{
         label: "Net Worth",
-        data: sampleData(r => r.netWorth),
+        data: sampleDataReal(r => r.netWorth),
         borderColor: C.gold,
         backgroundColor: grad,
         fill: true, tension: 0.3, borderWidth: 2.5, pointRadius: ptRadius,
@@ -2178,9 +2187,9 @@ export default function FinanceSim() {
       }];
       yAxisTitle = "Net Worth ($)";
     } else if (chartMode === "cashflow") {
-      const incomeData = sampleData(r => r.totalIncome + r.totalLoanDisbursements);
-      const expenseData = sampleData(r => -(r.totalExpenses + r.totalLoanPayments));
-      const netData = sampleData(r => r.netCashflow);
+      const incomeData = sampleDataReal(r => r.totalIncome + r.totalLoanDisbursements);
+      const expenseData = sampleDataReal(r => -(r.totalExpenses + r.totalLoanPayments));
+      const netData = sampleDataReal(r => r.netCashflow);
       const greenGrad = ctx.createLinearGradient(0, 0, 0, 340);
       greenGrad.addColorStop(0, "rgba(63,182,138,0.3)");
       greenGrad.addColorStop(1, "rgba(63,182,138,0.02)");
@@ -2216,7 +2225,7 @@ export default function FinanceSim() {
     } else if (chartMode === "balances") {
       datasets = state.accounts.map((acc, i) => ({
         label: acc.name,
-        data: sampleData(r => r.accountBalances[acc.id] ?? 0),
+        data: sampleDataReal(r => r.accountBalances[acc.id] ?? 0),
         borderColor: C.palette[i % C.palette.length],
         backgroundColor: "transparent",
         fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
@@ -2264,7 +2273,7 @@ export default function FinanceSim() {
         const color = C.palette[i % C.palette.length];
         return {
           label: loan.name,
-          data: sampleData(r => r.loanBalances[loan.id] ?? 0),
+          data: sampleDataReal(r => r.loanBalances[loan.id] ?? 0),
           borderColor: color,
           backgroundColor: "transparent",
           fill: false, tension: 0.3, borderWidth: 2, pointRadius: ptRadius,
@@ -2274,39 +2283,47 @@ export default function FinanceSim() {
       yAxisTitle = "Remaining Balance ($)";
     }
 
+    if (showReal) yAxisTitle += " (real)";
+
     // Add comparison scenario overlays
     for (let si = 0; si < comparisonScenarios.length; si++) {
       const sc = comparisonScenarios[si];
       const scColor = C.palette[si % C.palette.length];
       const { dataIndices: scIndices } = getChartSamples(sc.sim.months, granularity, sd);
-      const scSample = (accessor: (r: MonthRow) => number) =>
-        scIndices.map(i => i < sc.sim.months.length ? accessor(sc.sim.months[i]) : null);
+      const scSampleReal = (accessor: (r: MonthRow) => number) =>
+        scIndices.map(i => {
+          if (i >= sc.sim.months.length) return null;
+          const val = accessor(sc.sim.months[i]);
+          if (!showReal) return val;
+          const monthsElapsed = sc.sim.months[i]?.month ?? 0;
+          return val / Math.pow(1 + state.config.inflationRate / 100, monthsElapsed / 12);
+        });
       const dashStyle = { borderDash: [8, 4] as number[], borderWidth: 1.5, pointRadius: 0, fill: false, backgroundColor: "transparent", tension: 0.3 };
 
       if (chartMode === "networth") {
         datasets.push({
           label: `${sc.name}`,
-          data: scSample(r => r.netWorth),
+          data: scSampleReal(r => r.netWorth),
           borderColor: scColor,
           ...dashStyle,
         });
       } else if (chartMode === "cashflow") {
         datasets.push({
           label: `${sc.name} Income`,
-          data: scSample(r => r.totalIncome + r.totalLoanDisbursements),
+          data: scSampleReal(r => r.totalIncome + r.totalLoanDisbursements),
           borderColor: `${scColor}99`,
           ...dashStyle,
         });
         datasets.push({
           label: `${sc.name} Outflows`,
-          data: scSample(r => -(r.totalExpenses + r.totalLoanPayments)),
+          data: scSampleReal(r => -(r.totalExpenses + r.totalLoanPayments)),
           borderColor: `${scColor}66`,
           ...dashStyle,
           borderDash: [4, 4],
         });
         datasets.push({
           label: `${sc.name} Net`,
-          data: scSample(r => r.netCashflow),
+          data: scSampleReal(r => r.netCashflow),
           borderColor: scColor,
           ...dashStyle,
         });
@@ -2314,7 +2331,7 @@ export default function FinanceSim() {
         for (const acc of sc.state.accounts) {
           datasets.push({
             label: `${sc.name}: ${acc.name}`,
-            data: scSample(r => r.accountBalances[acc.id] ?? 0),
+            data: scSampleReal(r => r.accountBalances[acc.id] ?? 0),
             borderColor: `${scColor}99`,
             ...dashStyle,
           });
@@ -2323,7 +2340,7 @@ export default function FinanceSim() {
         for (const loan of sc.state.loans) {
           datasets.push({
             label: `${sc.name}: ${loan.name}`,
-            data: scSample(r => r.loanBalances[loan.id] ?? 0),
+            data: scSampleReal(r => r.loanBalances[loan.id] ?? 0),
             borderColor: `${scColor}99`,
             ...dashStyle,
           });
@@ -2486,7 +2503,7 @@ export default function FinanceSim() {
         chartInstanceRef.current = null;
       }
     };
-  }, [sim, chartMode, tab, state.accounts, state.loans, state.assets, state.pprs, state.config.startDate, granularity, getChartSamples, comparisonScenarios, milestones, showMilestones]);
+  }, [sim, chartMode, tab, state.accounts, state.loans, state.assets, state.pprs, state.config.startDate, state.config.inflationRate, granularity, getChartSamples, comparisonScenarios, milestones, showMilestones, showReal]);
 
   // ── Entity tab charts ──
   useEffect(() => {
@@ -2929,6 +2946,10 @@ export default function FinanceSim() {
       {text}
     </button>
   );
+
+  // ── Deflation helper for yearly table ──
+  const deflateYear = (amount: number, year: number) =>
+    showReal ? amount / Math.pow(1 + state.config.inflationRate / 100, year) : amount;
 
   // ── Gold button ──
   const goldButton = (onClick: () => void, text: string) => (
@@ -3506,6 +3527,7 @@ export default function FinanceSim() {
           {pillBtn(granularity === "monthly", () => setGranularity("monthly"), "Monthly")}
           <div class="mx-2 h-5 w-px bg-[var(--color-border)]" />
           {pillBtn(showMilestones, () => setShowMilestones(!showMilestones), "Milestones")}
+          {pillBtn(showReal, () => setShowReal(!showReal), showReal ? "Real $" : "Nominal $")}
         </div>
         <div style={{ height: "360px", position: "relative" }}>
           <canvas ref={chartRef} />
@@ -3573,17 +3595,17 @@ export default function FinanceSim() {
                         ? monthToShortDate(ys.year * 12, state.config.startDate)
                         : `Yr ${ys.year}`}
                     </td>
-                    <td class="px-2 py-1.5" style={{ color: C.green }}>{fmtShort(ys.totalIncome)}</td>
+                    <td class="px-2 py-1.5" style={{ color: C.green }}>{fmtShort(deflateYear(ys.totalIncome, ys.year))}</td>
                     {state.config.taxEnabled && (
                       <td class="px-2 py-1.5" style={{ color: C.red }}>{fmtShort(ys.totalTaxPaid ?? 0)}</td>
                     )}
-                    <td class="px-2 py-1.5" style={{ color: C.red }}>{fmtShort(ys.totalExpenses)}</td>
-                    <td class="px-2 py-1.5">{fmtShort(ys.totalLoanPayments)}</td>
+                    <td class="px-2 py-1.5" style={{ color: C.red }}>{fmtShort(deflateYear(ys.totalExpenses, ys.year))}</td>
+                    <td class="px-2 py-1.5">{fmtShort(deflateYear(ys.totalLoanPayments, ys.year))}</td>
                     <td class="px-2 py-1.5" style={{ color: C.green }}>{fmtShort(ys.interestEarned)}</td>
                     <td class="px-2 py-1.5" style={{ color: C.red }}>{fmtShort(ys.interestPaid)}</td>
-                    <td class="px-2 py-1.5" style={{ color: C.blue }}>{fmtShort(ys.endAssets)}</td>
-                    <td class="px-2 py-1.5" style={{ color: ys.endDebt > 0 ? C.red : C.green }}>{fmtShort(ys.endDebt)}</td>
-                    <td class="px-2 py-1.5 font-medium" style={{ color: ys.endNetWorth >= 0 ? C.goldLight : C.red }}>{fmtShort(ys.endNetWorth)}</td>
+                    <td class="px-2 py-1.5" style={{ color: C.blue }}>{fmtShort(deflateYear(ys.endAssets, ys.year))}</td>
+                    <td class="px-2 py-1.5" style={{ color: ys.endDebt > 0 ? C.red : C.green }}>{fmtShort(deflateYear(ys.endDebt, ys.year))}</td>
+                    <td class="px-2 py-1.5 font-medium" style={{ color: ys.endNetWorth >= 0 ? C.goldLight : C.red }}>{fmtShort(deflateYear(ys.endNetWorth, ys.year))}</td>
                   </tr>
                 ))}
               </tbody>
