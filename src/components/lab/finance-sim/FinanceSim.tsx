@@ -1530,11 +1530,38 @@ export default function FinanceSim() {
   const [comparisonScenarios, setComparisonScenarios] = useState<ComparisonScenario[]>([]);
   const compFileInputRef = useRef<HTMLInputElement>(null);
 
+  // Sensitivity / What-If overrides
+  const [sensitivity, setSensitivity] = useState<{
+    rateOffset: number;
+    growthOffset: number;
+    inflOffset: number;
+  }>({ rateOffset: 0, growthOffset: 0, inflOffset: 0 });
+
+  // Merge sensitivity offsets into state for simulation
+  const sensitiveState = useMemo((): FinanceState => {
+    if (!sensitivity.rateOffset && !sensitivity.growthOffset && !sensitivity.inflOffset) return state;
+    return {
+      ...state,
+      loans: state.loans.map(l => ({
+        ...l,
+        annualRate: Math.max(0, l.annualRate + sensitivity.rateOffset),
+      })),
+      incomes: state.incomes.map(i => ({
+        ...i,
+        growthRate: i.growthRate + sensitivity.growthOffset,
+      })),
+      config: {
+        ...state.config,
+        inflationRate: Math.max(0, state.config.inflationRate + sensitivity.inflOffset),
+      },
+    };
+  }, [state, sensitivity]);
+
   // Simulation
-  const sim = useMemo(() => simulate(state), [state]);
+  const sim = useMemo(() => simulate(sensitiveState), [sensitiveState]);
 
   // Milestones
-  const milestones = useMemo(() => detectMilestones(state, sim), [state, sim]);
+  const milestones = useMemo(() => detectMilestones(sensitiveState, sim), [sensitiveState, sim]);
 
   // Derived participants
   const participants = useMemo(() => resolveParticipants(state), [state]);
@@ -2236,7 +2263,7 @@ export default function FinanceSim() {
         const val = accessor(sim.months[i]);
         if (!showReal) return val;
         const monthsElapsed = sim.months[i]?.month ?? 0;
-        return val / Math.pow(1 + state.config.inflationRate / 100, monthsElapsed / 12);
+        return val / Math.pow(1 + sensitiveState.config.inflationRate / 100, monthsElapsed / 12);
       });
 
     // Map milestones to chart label indices
@@ -2379,7 +2406,7 @@ export default function FinanceSim() {
           const val = accessor(sc.sim.months[i]);
           if (!showReal) return val;
           const monthsElapsed = sc.sim.months[i]?.month ?? 0;
-          return val / Math.pow(1 + state.config.inflationRate / 100, monthsElapsed / 12);
+          return val / Math.pow(1 + sensitiveState.config.inflationRate / 100, monthsElapsed / 12);
         });
       const dashStyle = { borderDash: [8, 4] as number[], borderWidth: 1.5, pointRadius: 0, fill: false, backgroundColor: "transparent", tension: 0.3 };
 
@@ -2586,7 +2613,7 @@ export default function FinanceSim() {
         chartInstanceRef.current = null;
       }
     };
-  }, [sim, chartMode, tab, state.accounts, state.loans, state.assets, state.pprs, state.config.startDate, state.config.inflationRate, granularity, getChartSamples, comparisonScenarios, milestones, showMilestones, showReal]);
+  }, [sim, chartMode, tab, sensitiveState.accounts, sensitiveState.loans, sensitiveState.assets, sensitiveState.pprs, sensitiveState.config.startDate, sensitiveState.config.inflationRate, granularity, getChartSamples, comparisonScenarios, milestones, showMilestones, showReal]);
 
   // ── Entity tab charts ──
   useEffect(() => {
@@ -3032,7 +3059,7 @@ export default function FinanceSim() {
 
   // ── Deflation helper for yearly table ──
   const deflateYear = (amount: number, year: number) =>
-    showReal ? amount / Math.pow(1 + state.config.inflationRate / 100, year) : amount;
+    showReal ? amount / Math.pow(1 + sensitiveState.config.inflationRate / 100, year) : amount;
 
   // ── Gold button ──
   const goldButton = (onClick: () => void, text: string) => (
@@ -3627,6 +3654,58 @@ export default function FinanceSim() {
           {pillBtn(showMilestones, () => setShowMilestones(!showMilestones), "Milestones")}
           {pillBtn(showReal, () => setShowReal(!showReal), showReal ? "Real $" : "Nominal $")}
         </div>
+        <details class="mb-3">
+          <summary class="cursor-pointer font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-text)]">
+            What-If Sensitivity
+          </summary>
+          <div class="mt-2 grid grid-cols-2 gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-3 sm:grid-cols-4">
+            <div>
+              <div class="mb-1 font-mono text-[10px] text-[var(--color-text-muted)]">Loan Rate</div>
+              <input type="range" min={-3} max={3} step={0.25} value={sensitivity.rateOffset}
+                onInput={(e) => setSensitivity(s => ({ ...s, rateOffset: Number((e.target as HTMLInputElement).value) }))}
+                class="w-full" />
+              <div class="text-center font-mono text-xs" style={{ color: sensitivity.rateOffset ? C.orange : C.muted }}>
+                {sensitivity.rateOffset >= 0 ? "+" : ""}{sensitivity.rateOffset}%
+              </div>
+            </div>
+            <div>
+              <div class="mb-1 font-mono text-[10px] text-[var(--color-text-muted)]">Income Growth</div>
+              <input type="range" min={-5} max={5} step={0.5} value={sensitivity.growthOffset}
+                onInput={(e) => setSensitivity(s => ({ ...s, growthOffset: Number((e.target as HTMLInputElement).value) }))}
+                class="w-full" />
+              <div class="text-center font-mono text-xs" style={{ color: sensitivity.growthOffset ? C.green : C.muted }}>
+                {sensitivity.growthOffset >= 0 ? "+" : ""}{sensitivity.growthOffset}%
+              </div>
+            </div>
+            <div>
+              <div class="mb-1 font-mono text-[10px] text-[var(--color-text-muted)]">Inflation</div>
+              <input type="range" min={-3} max={5} step={0.5} value={sensitivity.inflOffset}
+                onInput={(e) => setSensitivity(s => ({ ...s, inflOffset: Number((e.target as HTMLInputElement).value) }))}
+                class="w-full" />
+              <div class="text-center font-mono text-xs" style={{ color: sensitivity.inflOffset ? C.red : C.muted }}>
+                {sensitivity.inflOffset >= 0 ? "+" : ""}{sensitivity.inflOffset}%
+              </div>
+            </div>
+            <div class="flex flex-col items-center justify-end gap-2">
+              <button
+                onClick={() => setSensitivity({ rateOffset: 0, growthOffset: 0, inflOffset: 0 })}
+                class="rounded-md border border-[var(--color-border)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+              >
+                Reset
+              </button>
+              {(sensitivity.rateOffset || sensitivity.growthOffset || sensitivity.inflOffset) ? (
+                <button onClick={() => {
+                  const name = `Rate ${sensitivity.rateOffset >= 0 ? "+" : ""}${sensitivity.rateOffset}%, Growth ${sensitivity.growthOffset >= 0 ? "+" : ""}${sensitivity.growthOffset}%`;
+                  setComparisonScenarios(prev => [...prev, { name, state: sensitiveState, sim }]);
+                  setSensitivity({ rateOffset: 0, growthOffset: 0, inflOffset: 0 });
+                }}
+                class="rounded-md border border-[var(--color-border)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-accent)]">
+                  Save as Scenario
+                </button>
+              ) : null}
+            </div>
+          </div>
+        </details>
         <div style={{ height: "360px", position: "relative" }}>
           <canvas ref={chartRef} />
         </div>
