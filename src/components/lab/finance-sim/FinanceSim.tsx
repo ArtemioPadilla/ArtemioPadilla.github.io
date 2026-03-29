@@ -135,6 +135,7 @@ interface MonthRow {
   totalPPRContributions?: number;
   totalPPRRefunds?: number;
   totalTaxPaid?: number;
+  waterfallDebtPaidByLoan?: Record<number, number>;
 }
 
 interface YearSummary {
@@ -835,6 +836,7 @@ function simulate(state: FinanceState): SimulationResult {
     }
 
     // 6. Distribute cashflow (waterfall-aware)
+    let waterfallDebtByLoan: Record<number, number> | undefined;
     if (netCashflow >= 0) {
       let surplus = netCashflow;
       const wf = state.waterfall;
@@ -860,6 +862,8 @@ function simulate(state: FinanceState): SimulationResult {
             const extra = Math.min(surplus, loanBals[tgt.id]);
             loanBals[tgt.id] -= extra;
             surplus -= extra;
+            if (!waterfallDebtByLoan) waterfallDebtByLoan = {};
+            waterfallDebtByLoan[tgt.id] = (waterfallDebtByLoan[tgt.id] ?? 0) + extra;
           }
         }
       }
@@ -920,6 +924,7 @@ function simulate(state: FinanceState): SimulationResult {
       totalDebt,
       netWorth: totalAssets - totalDebt,
       totalTaxPaid,
+      waterfallDebtPaidByLoan: waterfallDebtByLoan ? { ...waterfallDebtByLoan } : undefined,
       ...(hasParticipants ? {
         incomeByParticipant: { ...incomeByParticipant },
         expenseByParticipant: { ...expenseByParticipant },
@@ -1405,7 +1410,7 @@ function importJSON(file: File): Promise<FinanceState | null> {
 export default function FinanceSim() {
   const [state, setState] = useState<FinanceState>(defaultState);
   const [tab, setTab] = useState<"dashboard" | "accounts" | "loans" | "income" | "expenses" | "assets" | "ppr">("dashboard");
-  const [chartMode, setChartMode] = useState<"networth" | "cashflow" | "balances" | "debt" | "ppr">("networth");
+  const [chartMode, setChartMode] = useState<"networth" | "cashflow" | "balances" | "debt" | "snowball" | "ppr">("networth");
   const [tableOpen, setTableOpen] = useState(false);
   const [granularity, setGranularity] = useState<"monthly" | "quarterly" | "yearly">("yearly");
   const [timelineOpen, setTimelineOpen] = useState(true);
@@ -2378,6 +2383,23 @@ export default function FinanceSim() {
         });
       }
       yAxisTitle = "PPR Balance ($)";
+    } else if (chartMode === "snowball") {
+      for (let li = 0; li < state.loans.length; li++) {
+        const loan = state.loans[li];
+        const color = C.palette[li % C.palette.length];
+        datasets.push({
+          label: loan.name,
+          data: sampleDataReal(r => {
+            const scheduled = r.loanPaymentBySource[loan.id] ?? 0;
+            const waterfall = r.waterfallDebtPaidByLoan?.[loan.id] ?? 0;
+            return scheduled + waterfall;
+          }),
+          borderColor: color,
+          backgroundColor: color + "40",
+          fill: true, tension: 0.3, borderWidth: 1.5, pointRadius: 0,
+        });
+      }
+      yAxisTitle = "Payment Allocation ($)";
     } else {
       datasets = state.loans.map((loan, i) => {
         const color = C.palette[i % C.palette.length];
@@ -2570,6 +2592,7 @@ export default function FinanceSim() {
         },
         scales: {
           x: {
+            stacked: chartMode === "snowball",
             title: {
               display: true,
               text: "Time",
@@ -2588,6 +2611,7 @@ export default function FinanceSim() {
             border: { color: gridColor },
           },
           y: {
+            stacked: chartMode === "snowball",
             title: {
               display: true,
               text: yAxisTitle,
@@ -2613,7 +2637,7 @@ export default function FinanceSim() {
         chartInstanceRef.current = null;
       }
     };
-  }, [sim, chartMode, tab, sensitiveState.accounts, sensitiveState.loans, sensitiveState.assets, sensitiveState.pprs, sensitiveState.config.startDate, sensitiveState.config.inflationRate, granularity, getChartSamples, comparisonScenarios, milestones, showMilestones, showReal]);
+  }, [sim, chartMode, tab, sensitiveState.accounts, sensitiveState.loans, sensitiveState.assets, sensitiveState.pprs, sensitiveState.waterfall, sensitiveState.config.startDate, sensitiveState.config.inflationRate, granularity, getChartSamples, comparisonScenarios, milestones, showMilestones, showReal]);
 
   // ── Entity tab charts ──
   useEffect(() => {
@@ -3645,6 +3669,7 @@ export default function FinanceSim() {
           {pillBtn(chartMode === "cashflow", () => setChartMode("cashflow"), "Cashflow")}
           {pillBtn(chartMode === "balances", () => setChartMode("balances"), "Balances")}
           {pillBtn(chartMode === "debt", () => setChartMode("debt"), "Debt Paydown")}
+          {(state.waterfall ?? []).length > 0 && pillBtn(chartMode === "snowball", () => setChartMode("snowball"), "Snowball")}
           {state.pprs.length > 0 && pillBtn(chartMode === "ppr", () => setChartMode("ppr"), "PPR Growth")}
           <div class="mx-2 h-5 w-px bg-[var(--color-border)]" />
           {pillBtn(granularity === "yearly", () => setGranularity("yearly"), "Yearly")}
