@@ -60,6 +60,7 @@ interface Income {
   startMonth: number; endMonth: number;
   ownerId?: number;
   taxCategory?: TaxCategory;
+  calendarMonth?: number; // 1-12; if set, annually fires on this calendar month
 }
 
 interface Expense {
@@ -68,6 +69,7 @@ interface Expense {
   category: string; inflationAdjusted: boolean;
   startMonth: number; endMonth: number;
   split?: ExpenseSplit;
+  calendarMonth?: number; // 1-12; if set, annually fires on this calendar month
 }
 
 interface Asset {
@@ -487,7 +489,15 @@ function simulate(state: FinanceState): SimulationResult {
       if (inc.periodicity === "one-time") {
         if (m === inc.startMonth) incAmt = inc.amount;
       } else if (inc.periodicity === "annually") {
-        if (monthInYear === (inc.startMonth > 0 ? ((inc.startMonth - 1) % 12) + 1 : 1)) {
+        let fires = false;
+        if (inc.calendarMonth && state.config.startDate) {
+          const d = new Date(state.config.startDate + "T00:00:00");
+          d.setMonth(d.getMonth() + m - 1);
+          fires = (d.getMonth() + 1) === inc.calendarMonth && m >= inc.startMonth;
+        } else {
+          fires = monthInYear === (inc.startMonth > 0 ? ((inc.startMonth - 1) % 12) + 1 : 1);
+        }
+        if (fires) {
           incAmt = inc.amount * growthFactor;
         }
       } else if (inc.periodicity === "every-n-months") {
@@ -544,7 +554,15 @@ function simulate(state: FinanceState): SimulationResult {
       let applies = false;
       if (exp.frequency === "monthly") applies = true;
       else if (exp.frequency === "quarterly") applies = (m - exp.startMonth) % 3 === 0;
-      else if (exp.frequency === "annually") applies = (m - exp.startMonth) % 12 === 0;
+      else if (exp.frequency === "annually") {
+        if (exp.calendarMonth && state.config.startDate) {
+          const d = new Date(state.config.startDate + "T00:00:00");
+          d.setMonth(d.getMonth() + m - 1);
+          applies = (d.getMonth() + 1) === exp.calendarMonth && m >= exp.startMonth;
+        } else {
+          applies = (m - exp.startMonth) % 12 === 0;
+        }
+      }
       else if (exp.frequency === "one-time") applies = m === exp.startMonth;
       else if (exp.frequency === "every-n-months") applies = (m - exp.startMonth) % (exp.frequencyMonths || 3) === 0;
 
@@ -1297,6 +1315,22 @@ function importJSON(file: File): Promise<FinanceState | null> {
         }
         if (!data.pprs) data.pprs = [];
         if (!data.assets) data.assets = [];
+        if (data.config.startDate) {
+          for (const inc of data.incomes) {
+            if (inc.periodicity === "annually" && !inc.calendarMonth) {
+              const d = new Date(data.config.startDate + "T00:00:00");
+              d.setMonth(d.getMonth() + inc.startMonth - 1);
+              inc.calendarMonth = d.getMonth() + 1;
+            }
+          }
+          for (const exp of data.expenses) {
+            if (exp.frequency === "annually" && !exp.calendarMonth) {
+              const d = new Date(data.config.startDate + "T00:00:00");
+              d.setMonth(d.getMonth() + exp.startMonth - 1);
+              exp.calendarMonth = d.getMonth() + 1;
+            }
+          }
+        }
         resolve(data);
       } catch {
         resolve(null);
@@ -1345,6 +1379,7 @@ export default function FinanceSim() {
   const [incStart, setIncStart] = useState(1);
   const [incEnd, setIncEnd] = useState(0);
   const [incTaxCategory, setIncTaxCategory] = useState<TaxCategory>("salary");
+  const [incCalendarMonth, setIncCalendarMonth] = useState(0);
 
   // Loan amortization form
   const [amortLoanId, setAmortLoanId] = useState(0);
@@ -1365,6 +1400,7 @@ export default function FinanceSim() {
   const [expInflation, setExpInflation] = useState(true);
   const [expStart, setExpStart] = useState(1);
   const [expEnd, setExpEnd] = useState(0);
+  const [expCalendarMonth, setExpCalendarMonth] = useState(0);
 
   // Participant form
   const [partName, setPartName] = useState("Partner");
@@ -1668,6 +1704,7 @@ export default function FinanceSim() {
     setIncGrowth(inc.growthRate); setIncBonusMonth(inc.bonusMonth);
     setIncBonusAmount(inc.bonusAmount); setIncStart(inc.startMonth); setIncEnd(inc.endMonth);
     setIncOwner(inc.ownerId ?? 0); setIncTaxCategory(inc.taxCategory ?? "salary");
+    setIncCalendarMonth(inc.calendarMonth ?? 0);
   }, []);
 
   const cancelEditIncome = useCallback(() => {
@@ -1675,6 +1712,7 @@ export default function FinanceSim() {
     setIncName("New Income"); setIncAmount(10000); setIncPeriodicity("monthly");
     setIncFreqMonths(3); setIncGrowth(3); setIncBonusMonth(0); setIncBonusAmount(0);
     setIncStart(1); setIncEnd(0); setIncOwner(0); setIncTaxCategory("salary");
+    setIncCalendarMonth(0);
   }, []);
 
   const startEditExpense = useCallback((exp: Expense) => {
@@ -1683,6 +1721,7 @@ export default function FinanceSim() {
     setExpFreqMonths(exp.frequencyMonths || 3);
     setExpCategory(exp.category); setExpInflation(exp.inflationAdjusted);
     setExpStart(exp.startMonth); setExpEnd(exp.endMonth);
+    setExpCalendarMonth(exp.calendarMonth ?? 0);
     if (exp.split) {
       setExpSplitMode(exp.split.mode);
       setExpSplitParticipants(exp.split.participantIds);
@@ -1699,6 +1738,7 @@ export default function FinanceSim() {
     setExpName("New Expense"); setExpAmount(1000); setExpFreq("monthly");
     setExpFreqMonths(3); setExpCategory("other"); setExpInflation(true); setExpStart(1); setExpEnd(0);
     setExpSplitMode("equal"); setExpSplitParticipants([]); setExpCustomShares({});
+    setExpCalendarMonth(0);
   }, []);
 
   const startEditPpr = useCallback((ppr: PPR) => {
@@ -1785,11 +1825,12 @@ export default function FinanceSim() {
     if (!incName.trim()) return;
     const ownerData = participants.length > 1 ? { ownerId: incOwner || participants[0].id } : {};
     const taxData = { taxCategory: incTaxCategory };
+    const calData = { calendarMonth: incCalendarMonth || undefined };
     if (editingIncomeId !== null) {
       setState(s => ({
         ...s,
         incomes: s.incomes.map(i => i.id === editingIncomeId
-          ? { ...i, name: incName, amount: incAmount, periodicity: incPeriodicity, frequencyMonths: incFreqMonths, growthRate: incGrowth, bonusMonth: incBonusMonth, bonusAmount: incBonusAmount, startMonth: incStart, endMonth: incEnd, ...ownerData, ...taxData }
+          ? { ...i, name: incName, amount: incAmount, periodicity: incPeriodicity, frequencyMonths: incFreqMonths, growthRate: incGrowth, bonusMonth: incBonusMonth, bonusAmount: incBonusAmount, startMonth: incStart, endMonth: incEnd, ...ownerData, ...taxData, ...calData }
           : i),
       }));
       cancelEditIncome();
@@ -1802,12 +1843,12 @@ export default function FinanceSim() {
           growthRate: incGrowth,
           bonusMonth: incBonusMonth, bonusAmount: incBonusAmount,
           startMonth: incStart, endMonth: incEnd,
-          ...ownerData, ...taxData,
+          ...ownerData, ...taxData, ...calData,
         }],
         nextId: s.nextId + 1,
       }));
     }
-  }, [incName, incAmount, incPeriodicity, incFreqMonths, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd, incOwner, incTaxCategory, participants, editingIncomeId, cancelEditIncome]);
+  }, [incName, incAmount, incPeriodicity, incFreqMonths, incGrowth, incBonusMonth, incBonusAmount, incStart, incEnd, incOwner, incTaxCategory, incCalendarMonth, participants, editingIncomeId, cancelEditIncome]);
 
   const removeIncome = useCallback((id: number) => {
     setState(s => ({ ...s, incomes: s.incomes.filter(i => i.id !== id) }));
@@ -1823,11 +1864,12 @@ export default function FinanceSim() {
         ...(expSplitMode === "custom" ? { customShares: expCustomShares } : {}),
       } as ExpenseSplit,
     } : {};
+    const calData = { calendarMonth: expCalendarMonth || undefined };
     if (editingExpenseId !== null) {
       setState(s => ({
         ...s,
         expenses: s.expenses.map(e => e.id === editingExpenseId
-          ? { ...e, name: expName, amount: expAmount, frequency: expFreq, frequencyMonths: expFreqMonths, category: expCategory, inflationAdjusted: expInflation, startMonth: expStart, endMonth: expEnd, ...splitData }
+          ? { ...e, name: expName, amount: expAmount, frequency: expFreq, frequencyMonths: expFreqMonths, category: expCategory, inflationAdjusted: expInflation, startMonth: expStart, endMonth: expEnd, ...splitData, ...calData }
           : e),
       }));
       cancelEditExpense();
@@ -1840,12 +1882,12 @@ export default function FinanceSim() {
           category: expCategory,
           inflationAdjusted: expInflation,
           startMonth: expStart, endMonth: expEnd,
-          ...splitData,
+          ...splitData, ...calData,
         }],
         nextId: s.nextId + 1,
       }));
     }
-  }, [expName, expAmount, expFreq, expFreqMonths, expCategory, expInflation, expStart, expEnd, expSplitMode, expSplitParticipants, expCustomShares, participants, editingExpenseId, cancelEditExpense]);
+  }, [expName, expAmount, expFreq, expFreqMonths, expCategory, expInflation, expStart, expEnd, expCalendarMonth, expSplitMode, expSplitParticipants, expCustomShares, participants, editingExpenseId, cancelEditExpense]);
 
   const removeExpense = useCallback((id: number) => {
     setState(s => ({ ...s, expenses: s.expenses.filter(e => e.id !== id) }));
@@ -4029,6 +4071,18 @@ export default function FinanceSim() {
               {numInput(incFreqMonths, setIncFreqMonths, { suffix: "mo", min: 2, max: 60, step: 1 })}
             </div>
           )}
+          {incPeriodicity === "annually" && state.config.startDate && (
+            <div class="mb-3">
+              {label("Calendar Month")}
+              {selectInput(String(incCalendarMonth), (v) => setIncCalendarMonth(Number(v)),
+                [{ value: "0", label: "Auto (from start month)" },
+                 ...Array.from({ length: 12 }, (_, i) => ({
+                   value: String(i + 1),
+                   label: MONTH_SHORT[i],
+                 }))]
+              )}
+            </div>
+          )}
           {incPeriodicity !== "one-time" && (
             <div class="mb-3">
               {label("Annual Growth Rate")}
@@ -4201,6 +4255,18 @@ export default function FinanceSim() {
             <div class="mb-3">
               {label("Every N months")}
               {numInput(expFreqMonths, setExpFreqMonths, { suffix: "mo", min: 2, max: 60, step: 1 })}
+            </div>
+          )}
+          {expFreq === "annually" && state.config.startDate && (
+            <div class="mb-3">
+              {label("Calendar Month")}
+              {selectInput(String(expCalendarMonth), (v) => setExpCalendarMonth(Number(v)),
+                [{ value: "0", label: "Auto (from start month)" },
+                 ...Array.from({ length: 12 }, (_, i) => ({
+                   value: String(i + 1),
+                   label: MONTH_SHORT[i],
+                 }))]
+              )}
             </div>
           )}
           <div class="mb-3">
