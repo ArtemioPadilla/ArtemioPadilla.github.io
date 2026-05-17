@@ -100,6 +100,7 @@ export const categoryMap: Record<string, string> = {
   "sql-playground": "dev",
   "mermaid-viz": "dev",
   "markdown-preview": "dev",
+  "html-preview": "dev",
   "json-visualizer": "dev",
   "git-viz": "dev",
 
@@ -184,7 +185,7 @@ export const subcategoryMap: Record<string, string> = {
 
   // Dev Tools
   "json-validator": "data-text", "json-visualizer": "data-text", "diff-viewer": "data-text",
-  "markdown-preview": "data-text", "mermaid-viz": "data-text",
+  "markdown-preview": "data-text", "html-preview": "data-text", "mermaid-viz": "data-text",
   "jwt-decoder": "encoding", "hash-generator": "encoding", "base-converter": "encoding",
   "qr-generator": "encoding",
   "regex-tester": "dev-other", "cron-parser": "dev-other", "timestamp": "dev-other",

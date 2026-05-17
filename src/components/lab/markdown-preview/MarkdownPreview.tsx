@@ -360,11 +360,16 @@ export default function MarkdownPreview(): JSX.Element {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
 
+  const [loadedFileName, setLoadedFileName] = useState<string | null>(null);
+  const [fileNameFeedback, setFileNameFeedback] = useState<string | null>(null);
+
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileNameTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const parseResult = useMemo(() => parseMarkdown(markdown), [markdown]);
   const stats = useMemo(() => countStats(markdown), [markdown]);
@@ -469,6 +474,35 @@ export default function MarkdownPreview(): JSX.Element {
       showCopyFeedback("Markdown");
     }).catch(() => {});
   }, [markdown, showCopyFeedback]);
+
+  /* ── Load File ── */
+
+  const handleLoadFile = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback(
+    (e: Event) => {
+      const input = e.target as HTMLInputElement;
+      const file = input.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const text = evt.target?.result as string;
+        if (typeof text === "string") {
+          setMarkdown(text);
+          setLoadedFileName(file.name);
+          if (fileNameTimeoutRef.current) clearTimeout(fileNameTimeoutRef.current);
+          setFileNameFeedback(file.name);
+          fileNameTimeoutRef.current = setTimeout(() => setFileNameFeedback(null), 2000);
+        }
+      };
+      reader.readAsText(file);
+      // Reset so the same file can be loaded again
+      input.value = "";
+    },
+    [],
+  );
 
   const downloadMd = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -583,6 +617,16 @@ export default function MarkdownPreview(): JSX.Element {
         </div>
 
         <div class="md-topbar-right">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".md,.txt,.markdown"
+            style="display:none"
+            onChange={handleFileChange}
+          />
+          <button class="md-btn" onClick={handleLoadFile} title="Load .md or .txt file">
+            Load File
+          </button>
           <button class="md-btn" onClick={copyMarkdown} title="Copy Markdown">
             Copy MD
           </button>
@@ -667,6 +711,18 @@ export default function MarkdownPreview(): JSX.Element {
         <span>{stats.lines} lines</span>
         <span class="md-footer-sep">|</span>
         <span>~{stats.readingTimeMinutes} min read</span>
+        {loadedFileName && !fileNameFeedback && (
+          <>
+            <span class="md-footer-sep">|</span>
+            <span class="md-file-name">{loadedFileName}</span>
+          </>
+        )}
+        {fileNameFeedback && (
+          <>
+            <span class="md-footer-sep">|</span>
+            <span class="md-copy-feedback">Loaded {fileNameFeedback}</span>
+          </>
+        )}
         {copyFeedback && (
           <>
             <span class="md-footer-sep">|</span>
@@ -1179,6 +1235,15 @@ const STYLES = `
   color: var(--color-accent);
   font-weight: 600;
   animation: md-fade-in 0.2s ease-out;
+}
+
+.md-file-name {
+  color: var(--color-text-muted);
+  font-style: italic;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @keyframes md-fade-in {
