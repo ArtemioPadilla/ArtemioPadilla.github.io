@@ -58,9 +58,9 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        globIgnores: ["**/watchboard/**", "**/mexico-weather-site/**"],
-        navigateFallbackDenylist: [/^\/watchboard/, /^\/mexico-weather-site/],
-        // Skip /watchboard/ and /mexico-weather-site/ entirely — let the network handle them
+        globIgnores: ["**/watchboard/**", "**/mexico-weather-site/**", "**/mexico-weather/**"],
+        navigateFallbackDenylist: [/^\/watchboard/, /^\/mexico-weather-site/, /^\/mexico-weather/],
+        // Skip /watchboard/, /mexico-weather-site/ and /mexico-weather/ entirely — let the network handle them
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/artemiop\.com\/watchboard\/.*/i,
@@ -76,6 +76,14 @@ export default defineConfig({
           },
           {
             urlPattern: /^https:\/\/artemiopadilla\.github\.io\/mexico-weather-site\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiop\.com\/mexico-weather\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiopadilla\.github\.io\/mexico-weather\/.*/i,
             handler: "NetworkOnly",
           },
           {
