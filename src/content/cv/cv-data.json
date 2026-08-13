@@ -48,8 +48,8 @@
           "priority": 1
         },
         {
-          "text": "Tech lead and sole architect on three consecutive enterprise engagements across financial services and automotive marketplaces, two of them launched to production",
-          "metrics": { "engagements": 3, "productionLaunches": 2 },
+          "text": "Tech lead and sole architect on three consecutive enterprise engagements across financial services and automotive marketplaces, all three launched to production",
+          "metrics": { "engagements": 3, "productionLaunches": 3 },
           "priority": 2
         },
         {
