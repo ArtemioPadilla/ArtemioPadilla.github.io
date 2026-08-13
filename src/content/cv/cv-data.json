@@ -5,7 +5,7 @@
       "last": "Padilla Robles",
       "full": "Artemio Santiago Padilla Robles"
     },
-    "title": "Deep Learning Architect",
+    "title": "AI Systems Architect",
     "location": "Mexico City",
     "contact": {
       "phone": "55-6047-6808",
@@ -18,18 +18,18 @@
     },
     "profileImage": "https://avatars.githubusercontent.com/u/58867702?s=400&u=d7a94bffbddcf21bb4ae8b3cec7cdce4c43e4836&v=4",
     "summary": {
-      "brief": "I'm a Mexican engineer who designs deep learning systems and ML infrastructure that operate reliably at scale.",
-      "tagline": "From atomic force microscopy to deep learning: I've scaled from nanometers to neural networks.",
-      "full": "With a background in nanoscience research (STM/AFM/Raman spectroscopy) and a peer-reviewed publication, I learned the discipline of working at 10⁻⁹ meters in ultra-high vacuum. Today, I apply the same rigor to deep learning architectures—designing systems that scale reliably from prototype to production.",
-      "connection": "The connection? Both demand obsessive care with signal-to-noise ratios, drift compensation, and reproducibility. Debugging a production model feels like aligning a scanning tunneling microscope—except the stakes are millions of real-time decisions instead of a research publication.",
-      "current": "I architect deep learning systems with scientific-instrument-grade reliability, coordinating cross-functional teams to translate advanced models into measurable business impact. My work spans the full stack—from model design and training infrastructure to deployment pipelines and production monitoring.",
+      "brief": "I'm a Mexican engineer who designs AI systems and the platforms that keep them reliable in production.",
+      "tagline": "From atomic force microscopy to autonomous agents: I've scaled from nanometers to production AI.",
+      "full": "With a background in nanoscience research (STM/AFM/Raman spectroscopy) and a peer-reviewed publication, I learned the discipline of working at 10⁻⁹ meters in ultra-high vacuum. Today, I apply the same rigor to AI systems—designing agentic architectures that scale reliably from prototype to production.",
+      "connection": "The connection? Both are exercises in complex systems—obsessive care with signal-to-noise ratios, drift compensation, and reproducibility. Debugging a non-deterministic agent in production feels like aligning a scanning tunneling microscope, except the emergent behavior is the system's and not the instrument's.",
+      "current": "I architect AI systems—agentic assistants and the evaluation platforms behind them—with scientific-instrument-grade reliability, and build the reusable assets that let other teams ship them. My work spans agent design, evaluation infrastructure, deployment pipelines, and production monitoring.",
       "strengths": [
         "Patience forged from months refining a single spectrum",
         "Urgency of keeping production systems alive at scale",
-        "Deep understanding of both model internals and the infrastructure that serves them",
+        "Deep understanding of both agent internals and the infrastructure that serves them",
         "Ability to align teams and stakeholders—internal and external—toward measurable impact"
       ],
-      "closing": "I also co-founded SECiD at UNAM, fostering Mexico's data science community with the same precision I once applied to spectrometers. I thrive in roles where deep learning meets systems engineering—where microscopic attention to model quality must coexist with macroscopic architecture decisions."
+      "closing": "I also co-founded SECiD at UNAM, fostering Mexico's data science community with the same precision I once applied to spectrometers. I thrive in roles where AI meets systems engineering—where microscopic attention to output quality must coexist with macroscopic architecture decisions."
     }
   },
   "experience": [
@@ -43,14 +43,39 @@
       "current": true,
       "highlights": [
         {
-          "text": "GenAI Innovation Center — LATAM: deliver generative AI solutions to leading organizations through a rapid 45-day POC-to-production model",
+          "text": "GenAI Innovation Center — LATAM: architect and deliver production generative AI systems for enterprise customers on a rapid 45-day POC-to-production model",
           "metrics": {},
           "priority": 1
         },
         {
-          "text": "Built a WhatsApp scheduling agent for peer-to-peer commerce for a major financial institution using agentic frameworks, Bedrock Agent Core, and Strands",
-          "metrics": {},
+          "text": "Tech lead and sole architect on three consecutive enterprise engagements across financial services and automotive marketplaces, two of them launched to production",
+          "metrics": { "engagements": 3, "productionLaunches": 2 },
           "priority": 2
+        },
+        {
+          "text": "Took a WhatsApp agentic assistant for consumer vehicle listings from kickoff to live in 6 weeks for a Brazilian marketplace — as the only engineer who knew the underlying reusable asset, then enabled the rest of the team to work on it autonomously",
+          "metrics": { "timeToLaunch": "6 weeks" },
+          "priority": 3
+        },
+        {
+          "text": "Built an agentic evaluation platform into a bank's CI/CD, refactoring it onto Bedrock AgentCore evaluations to cut client total cost of ownership, and adding custom invokers plus statistical variance analysis on agent user journeys",
+          "metrics": {},
+          "priority": 4
+        },
+        {
+          "text": "Delivered the agentic auto-scheduler infrastructure and backend for a Mexican financial institution's vehicle marketplace using Bedrock AgentCore, Strands, and end-to-end Terraform IaC; delivery quality earned the team a Leadership Principle award",
+          "metrics": {},
+          "priority": 5
+        },
+        {
+          "text": "Co-built Easy AWS Slides, a ProServe-wide reusable asset that generates customer-ready decks from a context brief; championed to 14 VPs and Directors by a Principal Technologist and featured in an internal Broadcast video",
+          "metrics": { "leadersReached": 14 },
+          "priority": 6
+        },
+        {
+          "text": "Speaker at two internal Tech Exchange sessions on the Intelligent Document Processing accelerator and the agentic WhatsApp reusable asset, driving cross-team adoption of both",
+          "metrics": { "sessions": 2 },
+          "priority": 7
         }
       ]
     },
@@ -500,15 +525,7 @@
     }
   ],
   "skills": {
-    "languages": [
-      "Python",
-      "SQL",
-      "R",
-      "Julia",
-      "C++",
-      "MATLAB",
-      "Fortran"
-    ],
+    "languages": ["Python", "SQL", "R", "Julia", "C++", "MATLAB", "Fortran"],
     "cloudAndMLOps": [
       "AWS (SageMaker, EMR, Lambda, Glue)",
       "Airflow",
@@ -518,22 +535,10 @@
       "Snowflake"
     ],
     "databases": {
-      "relational": [
-        "PostgreSQL",
-        "MySQL"
-      ],
-      "nosql": [
-        "MongoDB",
-        "Cassandra",
-        "Neo4j",
-        "Redis"
-      ]
+      "relational": ["PostgreSQL", "MySQL"],
+      "nosql": ["MongoDB", "Cassandra", "Neo4j", "Redis"]
     },
-    "bigData": [
-      "Spark (PySpark)",
-      "EMR",
-      "Data Lake architectures"
-    ],
+    "bigData": ["Spark (PySpark)", "EMR", "Data Lake architectures"],
     "machineLearning": [
       "PyTorch",
       "TensorFlow",
@@ -544,24 +549,9 @@
       "Distributed Training",
       "Feature Engineering"
     ],
-    "visualization": [
-      "Matplotlib",
-      "Seaborn",
-      "Plotly",
-      "D3.js"
-    ],
-    "tools": [
-      "Git",
-      "Linux",
-      "Raspberry Pi",
-      "Cloudflare"
-    ],
-    "design": [
-      "Adobe Illustrator",
-      "Photoshop",
-      "After Effects",
-      "Premier"
-    ]
+    "visualization": ["Matplotlib", "Seaborn", "Plotly", "D3.js"],
+    "tools": ["Git", "Linux", "Raspberry Pi", "Cloudflare"],
+    "design": ["Adobe Illustrator", "Photoshop", "After Effects", "Premier"]
   },
   "leadership": [
     {
@@ -744,37 +734,37 @@
     },
     "projects": [
       {
-        "name": "Deep Learning Architecture Design",
-        "description": "Designing production-grade DL systems for large-scale inference",
-        "technologies": ["PyTorch", "CUDA", "Distributed Training"]
+        "name": "Agentic Evaluation in CI/CD",
+        "description": "Evaluation platform that gates agent releases on user-journey success and variance analysis",
+        "technologies": ["Bedrock AgentCore", "Strands", "Python"]
       },
       {
-        "name": "ML Infrastructure at Scale",
-        "description": "Building training and serving pipelines for enterprise workloads",
-        "technologies": ["Kubernetes", "Docker", "Cloud Infrastructure"]
+        "name": "Reusable Agentic Assets",
+        "description": "Building and enabling assets that let delivery teams ship production agents in weeks",
+        "technologies": ["Bedrock AgentCore", "Terraform", "AWS"]
       }
     ],
     "learning": [
       {
-        "topic": "Transformer Architectures & LLMs",
+        "topic": "Agent Evaluation & Observability",
+        "platform": "Production Systems",
+        "icon": "🧪"
+      },
+      {
+        "topic": "Multi-Agent Orchestration",
         "platform": "Research & Practice",
         "icon": "🧠"
       },
       {
-        "topic": "Distributed Deep Learning",
-        "platform": "Production Systems",
+        "topic": "Technical Leadership at Scale",
+        "platform": "Delivery & Enablement",
         "icon": "⚡"
-      },
-      {
-        "topic": "Computer Vision & Multimodal Models",
-        "platform": "Research Project",
-        "icon": "👁️"
       }
     ],
     "nextGoals": [
       {
-        "goal": "Publish Deep Learning Research",
-        "targetDate": "2026-06"
+        "goal": "Publish on Agentic Evaluation in Production",
+        "targetDate": "2026-12"
       },
       {
         "goal": "Complete Master's Thesis in Applied AI",
@@ -783,8 +773,8 @@
     ]
   },
   "metadata": {
-    "version": "2.0.0",
-    "lastUpdated": "2026-03-01",
+    "version": "2.1.0",
+    "lastUpdated": "2026-08-03",
     "source": "Astro portfolio site",
     "templateOptions": {
       "formats": {
