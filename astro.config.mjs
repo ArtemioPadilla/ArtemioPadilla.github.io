@@ -58,10 +58,29 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        globIgnores: ["**/watchboard/**", "**/mexico-weather-site/**", "**/mexico-weather/**", "**/finsight-ai/**"],
-        navigateFallbackDenylist: [/^\/watchboard/, /^\/mexico-weather-site/, /^\/mexico-weather/, /^\/finsight-ai/],
-        // Skip /watchboard/, /mexico-weather-site/, /mexico-weather/ and /finsight-ai/ entirely — let the network handle them
-        // (these are separate GitHub Pages projects served under the same artemiop.com domain)
+        globIgnores: [
+          "**/watchboard/**",
+          "**/mexico-weather-site/**",
+          "**/mexico-weather/**",
+          "**/finsight-ai/**",
+          "**/resident-evil-4-guide/**",
+          "**/zelda-wind-waker-guide/**",
+          "**/zelda-ocarina-of-time-guide/**",
+          "**/pokemon-pokopia-guide/**",
+        ],
+        navigateFallbackDenylist: [
+          /^\/watchboard/,
+          /^\/mexico-weather-site/,
+          /^\/mexico-weather/,
+          /^\/finsight-ai/,
+          /^\/resident-evil-4-guide/,
+          /^\/zelda-wind-waker-guide/,
+          /^\/zelda-ocarina-of-time-guide/,
+          /^\/pokemon-pokopia-guide/,
+        ],
+        // Skip these subpaths entirely — let the network handle them
+        // (these are separate GitHub Pages projects served under the same artemiop.com domain,
+        // each with its own PWA/service worker; the root site's SW must not shadow them)
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/artemiop\.com\/watchboard\/.*/i,
@@ -93,6 +112,38 @@ export default defineConfig({
           },
           {
             urlPattern: /^https:\/\/artemiopadilla\.github\.io\/finsight-ai\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiop\.com\/resident-evil-4-guide\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiopadilla\.github\.io\/resident-evil-4-guide\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiop\.com\/zelda-wind-waker-guide\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiopadilla\.github\.io\/zelda-wind-waker-guide\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiop\.com\/zelda-ocarina-of-time-guide\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiopadilla\.github\.io\/zelda-ocarina-of-time-guide\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiop\.com\/pokemon-pokopia-guide\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/artemiopadilla\.github\.io\/pokemon-pokopia-guide\/.*/i,
             handler: "NetworkOnly",
           },
           {

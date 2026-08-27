@@ -13,6 +13,12 @@ const EXCLUDED_REPOS = new Set([
   "mna-calculadora",
   "travel-plan",
   "TravelHub",
+  // Game companion guides have their own curated hub at /games — keep them
+  // out of this generic live-repo grid to avoid duplicating that curation.
+  "resident-evil-4-guide",
+  "zelda-wind-waker-guide",
+  "zelda-ocarina-of-time-guide",
+  "pokemon-pokopia-guide",
 ]);
 
 const LANGUAGE_COLORS: Record<string, string> = {
