@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../components/layout/BaseLayout.astro";
+import Navigation from "../components/layout/Navigation.astro";
+import Footer from "../components/layout/Footer.astro";
+import ProjectCard from "../components/home/ProjectCard.astro";
+import { games } from "../data/games";
+---
+
+<BaseLayout
+  title="Games — Artemio Padilla"
+  description="Offline-first companion guides & trackers for video games, built as installable PWAs."
+>
+  <Navigation currentPath="/games" />
+
+  <main class="px-6 pt-32 pb-24 md:pt-40 md:pb-32">
+    <div class="mx-auto max-w-6xl">
+      <!-- Section label -->
+      <div class="mb-4 flex items-center gap-3">
+        <div class="h-[2px] w-8 rounded-full bg-[var(--color-primary)]"></div>
+        <span class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-primary)]">
+          Games
+        </span>
+      </div>
+
+      <h1 class="font-heading text-3xl font-bold uppercase text-[var(--color-heading)] sm:text-4xl md:text-5xl">
+        Companion Guides
+      </h1>
+      <p class="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+        Offline-first trackers and walkthroughs for games I've played through — installable PWAs,
+        no account, no ads, state saved on your own device.
+      </p>
+
+      <!-- Guide grid -->
+      <div class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {
+          games.map((g) => (
+            <ProjectCard
+              title={g.title}
+              description={`${g.game} — ${g.description}`}
+              tags={g.tags}
+              url={g.url}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
