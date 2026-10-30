@@ -101,6 +101,9 @@ export default defineConfig({
         // vite-plugin-pwa's own default via its `Object.assign(default, user)`
         // merge — omitting it would leave the "index.html" default in place.
         navigateFallback: void 0,
+        // Reloads tabs the pre-fix worker answered with the homepage (see
+        // public/sw-heal.js).
+        importScripts: ["sw-heal.js"],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
